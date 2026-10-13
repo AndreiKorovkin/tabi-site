@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tabi</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;background:#F4EFE6;color:#1E1A16;margin:0;padding:40px 20px;text-align:center}
+.b{display:inline-block;margin-top:18px;padding:14px 22px;background:#B3341F;color:#fff;border-radius:14px;text-decoration:none;font-weight:bold}</style></head>
+<body><h1>Tabi</h1>
+<p>Возвращаем вас в приложение… / Returning you to the app…</p>
+<a class="b" id="o" href="#">Открыть Tabi / Open Tabi</a>
+<script>
+// Возврат после входа через сервис: адрес с кодом передаётся приложению
+// по его схеме, если страница открылась в браузере, а не в Tabi.
+var u = "app.tabi.mobile://auth" + location.search + location.hash;
+document.getElementById("o").href = u;
+setTimeout(function(){ location.href = u; }, 300);
+</script></body></html>

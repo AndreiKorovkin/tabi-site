@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.tabi.mobile",
+    "sha256_cert_fingerprints": ["B0:4D:B7:A0:57:8A:8D:BD:9A:00:4E:61:A2:F6:65:2B:4B:08:9F:66:46:43:F6:91:D9:CA:B8:2C:44:63:C5:B1"]
+  }
+}]
