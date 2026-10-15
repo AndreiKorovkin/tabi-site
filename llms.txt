@@ -1,6 +1,6 @@
 # Tabi
 
-> Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 60,000 places on five continents. For Android.
+> Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 60,000 places on every continent. For Android.
 
 Do you remember where you’ve been? Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love.
 
@@ -37,7 +37,7 @@ Tabi works in the background and marks special places by itself while you are bu
 
 ## Collection (https://tabimobile.com/collection/)
 
-More than 60,000 special places on five continents, and any of them can become yours.
+More than 60,000 special places on every continent, and any of them can become yours.
 
 - Special places: Castles and monasteries, peaks and waterfalls, islands and caves, nature reserves and the main sights of cities across Europe, Asia, Africa and the Americas.
 - Rarity: Places are divided into five levels, from common to unique. Only a handful are unique: the finest places of their kind.
