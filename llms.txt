@@ -1,0 +1,103 @@
+# Tabi
+
+> Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 60,000 places on five continents. For Android.
+
+Do you remember where you’ve been? Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love.
+
+## Time fades even what we hold dearest
+
+The places where you were happy, amazed or in love slowly blur, and a part of your story fades with them. Tabi keeps it safe.
+
+## The map of your life
+
+Every special place you visit joins your collection. Over time it becomes a map that shows what matters to you and what is still waiting to be seen.
+
+## Achievements worth sharing
+
+Show your friends a place you made it to, or the route of a whole day, as a ready-made card that is easy to send.
+
+## All you have to do is travel
+
+Tabi works in the background and marks the special places you reach by itself. There is no need to open the app or tap anything.
+
+## Your story belongs to you
+
+Tabi takes care of your data and of your phone’s battery alike.
+
+## How it works (https://tabimobile.com/how-it-works/)
+
+Tabi works in the background and marks special places by itself while you are busy travelling.
+
+- A place marks itself: Every special place has its own zone on the map, from the square in front of a cathedral to an entire mountain range. Once you are inside, the place joins your collection, even with the app closed.
+- Cities and countries: A city opens with the first place marked in it or after half an hour within its boundary; a country opens as soon as you are on its territory.
+- Easy on the battery: While the phone lies still, Tabi uses neither GPS nor network. On the move it asks for its own position at most once every fifteen minutes and otherwise relies on what the system already knows.
+- Without the internet: Places are marked on the phone itself, using the map built into the app. When the connection returns, they are sent to your account.
+- Past trips: With your permission Tabi looks through the locations and dates of your photos and finds the special places you visited before installing it. The pictures themselves stay on your phone.
+- Only where you have really been: Places you merely drive past are not counted.
+
+## Collection (https://tabimobile.com/collection/)
+
+More than 60,000 special places on five continents, and any of them can become yours.
+
+- Special places: Castles and monasteries, peaks and waterfalls, islands and caves, nature reserves and the main sights of cities across Europe, Asia, Africa and the Americas.
+- Rarity: Places are divided into five levels, from common to unique. Only a handful are unique: the finest places of their kind.
+- Whole cities: The places of every city are grouped into sets: main sights, castles and fortresses, religious sites, gardens and parks, arts, city life. You can see what you have collected and what is left.
+- New places for you: Mark what interests you, and Tabi highlights the places that fit, near you and in any city in the world.
+- The story of every place: Every place comes with a photo and an introduction from Wikipedia in your language.
+- Your statistics: Places, cities, countries and the distance you have travelled in one overview, each with its own levels.
+
+## Your data and privacy (https://tabimobile.com/your-data/)
+
+Your collection is your personal story, and Tabi treats it with care.
+
+- Your route stays on your phone: Your route is kept on the device and sent to your account once a day.
+- Your photos never leave your phone: Only the location and date of each picture are read. The images themselves are never uploaded.
+- Export and deletion: You can export all your collection data as a file and delete your account in the app settings.
+- Details: What exactly is stored and why is described in the privacy policy.
+
+## Questions and answers (https://tabimobile.com/faq/)
+
+What people ask most often about Tabi.
+
+### What is Tabi?
+An Android app that gathers the special places you have visited into one collection and suggests new ones. Places are marked by themselves while you travel.
+
+### Do I need to do anything at a place?
+No. A place is marked as soon as you are inside its zone, even with the app closed.
+
+### Does Tabi use much battery?
+No. While the phone lies still, the app uses neither GPS nor network, and on the move it asks for its own position at most once every fifteen minutes.
+
+### Which places are in the collection?
+More than 60,000 special places in Europe, Asia, Africa and the Americas: nature, history, architecture and the main sights of cities.
+
+### Does Tabi work without the internet?
+Yes. Places are marked on the phone itself and sent to your account when a connection is available.
+
+### Can I add trips from before I installed Tabi?
+Yes. With your permission the app finds those places from the locations and dates of your photos. The pictures themselves are not uploaded.
+
+### Is there a version for iPhone?
+Not yet: the first version is for Android.
+
+### When will Tabi be available?
+The app is preparing for its release on Google Play. A link to the store will appear on this site.
+
+### Which languages does Tabi speak?
+English, Czech, German, French, Spanish, Japanese and Russian.
+
+### How do I delete my account?
+In the app settings. What happens to your data after deletion is described in the privacy policy.
+
+## Languages
+
+- [English](https://tabimobile.com/)
+- [Čeština](https://tabimobile.com/cs/)
+- [Deutsch](https://tabimobile.com/de/)
+- [Español](https://tabimobile.com/es/)
+- [Français](https://tabimobile.com/fr/)
+- [日本語](https://tabimobile.com/ja/)
+- [Русский](https://tabimobile.com/ru/)
+
+- [Privacy policy](https://tabimobile.com/privacy.html)
+- [Terms of use](https://tabimobile.com/terms.html)

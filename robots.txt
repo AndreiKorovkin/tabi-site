@@ -1,0 +1,7 @@
+# Tabi welcomes search engines and AI assistants.
+User-agent: *
+Allow: /
+Disallow: /auth.html
+Disallow: /update.html
+
+Sitemap: https://tabimobile.com/sitemap.xml
