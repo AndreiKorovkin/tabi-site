@@ -75,6 +75,7 @@ h1{text-wrap:balance;font-size:clamp(38px,5.4vw,64px);line-height:1.05;letter-sp
 h2{text-wrap:balance;font-size:clamp(30px,3.6vw,44px);line-height:1.1;letter-spacing:-.025em;margin:0 0 16px;font-weight:800}
 :lang(ja) h2{letter-spacing:0;line-height:1.3}
 h3{text-wrap:balance}
+h1,h2,h3{overflow-wrap:break-word;hyphens:auto}
 .lead{font-size:clamp(18px,1.7vw,21px);color:var(--sub);margin:0 0 30px;max-width:32em}
 .hero{background:var(--glow);padding:72px 0 48px;overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
@@ -141,6 +142,18 @@ footer .langs{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:22px}
 footer .langs a{color:var(--sub);text-decoration:none}
 footer .langs a[aria-current]{color:var(--ink);font-weight:700}
 footer .credits{margin-top:22px;font-size:13px;max-width:60em}
+.soon{display:inline-block;vertical-align:middle;margin-left:8px;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:700;white-space:nowrap}
+.faq summary .q{flex:1;min-width:0}
+.social{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.social a{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.social a:hover{color:var(--accent)}
+.social .ic{width:18px;height:18px;color:var(--accent)}
+.mission{max-width:760px}
+.mission h2{margin-top:8px}
+.mission h2 + p{margin-top:0}
+.mission p{font-size:clamp(18px,1.8vw,21px);line-height:1.65;color:var(--ink);margin:0 0 22px}
+.mission h2:not(:first-child){margin-top:56px;font-size:clamp(24px,2.4vw,30px)}
+@media (max-width:1180px){nav.sections{display:none} details.lang{margin-left:auto}}
 @media (max-width:960px){
  nav.sections{display:none}
  details.lang{margin-left:auto}
@@ -165,7 +178,7 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <a class="skip" href="#main">本文へ移動</a>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/ja/" aria-label="Tabi">Tabi</a>
-<nav class="sections" aria-label="Tabi"><a href="/ja/how-it-works/">しくみ</a><a href="/ja/collection/">コレクション</a><a href="/ja/your-data/">データ</a><a href="/ja/faq/">よくある質問</a></nav>
+<nav class="sections" aria-label="Tabi"><a href="/ja/how-it-works/">しくみ</a><a href="/ja/collection/">コレクション</a><a href="/ja/your-data/">データ</a><a href="/ja/faq/">よくある質問</a><a href="/ja/about/">Tabi について</a><a href="/ja/team/">チーム</a></nav>
 <details class="lang"><summary><span class="sr">言語: </span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>日本語<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul><li><a href="/" hreflang="en" lang="en">English</a></li><li><a href="/cs/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/de/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/es/" hreflang="es" lang="es">Español</a></li><li><a href="/fr/" hreflang="fr" lang="fr">Français</a></li><li><a href="/ja/" hreflang="ja" lang="ja" aria-current="page">日本語</a></li><li><a href="/ru/" hreflang="ru" lang="ru">Русский</a></li></ul></details>
 </div></header>
 <main id="main">
@@ -173,7 +186,7 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <div>
 <h1>行った場所を、<br>覚えていますか？</h1>
 <p class="lead">Tabi は、あなたが訪れた特別な場所をひとつのコレクションにまとめ、きっと気に入る新しい場所も見つけてくれます。</p>
-<div class="status"><span class="pill"><span class="dot"></span>Google Play で近日公開</span><span class="platform">Android 向け</span></div>
+<div class="status"><span class="pill"><span class="dot"></span>Google Play で近日公開</span><span class="platform">無料 · Android 向け</span></div>
 <p class="stat">全大陸に 60,000 以上の特別な場所</p>
 </div>
 <div class="phones">
@@ -213,10 +226,11 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <footer><div class="wrap">
 <div class="row">
 <div><a class="wordmark" href="/ja/" aria-label="Tabi">Tabi</a><p style="margin:8px 0 0">訪れた特別な場所のコレクション。</p></div>
-<nav aria-label="Tabi"><a href="/ja/how-it-works/">しくみ</a><a href="/ja/collection/">コレクション</a><a href="/ja/your-data/">データ</a><a href="/ja/faq/">よくある質問</a><a href="/privacy.html">プライバシーポリシー</a><a href="/terms.html">利用規約</a><a href="/privacy.html#delete">アカウントの削除</a><a href="mailto:korovkinandrew@gmail.com">お問い合わせ</a></nav>
+<nav aria-label="Tabi"><a href="/ja/how-it-works/">しくみ</a><a href="/ja/collection/">コレクション</a><a href="/ja/your-data/">データ</a><a href="/ja/faq/">よくある質問</a><a href="/ja/about/">Tabi について</a><a href="/ja/team/">チーム</a><a href="/privacy.html">プライバシーポリシー</a><a href="/terms.html">利用規約</a><a href="/privacy.html#delete">アカウントの削除</a><a href="mailto:korovkinandrew@gmail.com">お問い合わせ</a></nav>
 </div>
+<div class="social"><a href="#" aria-label="Telegram"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Telegram</span></a><a href="#" aria-label="Discord"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg><span>Discord</span></a></div>
 <div class="langs"><a href="/" hreflang="en" lang="en">English</a><a href="/cs/" hreflang="cs" lang="cs">Čeština</a><a href="/de/" hreflang="de" lang="de">Deutsch</a><a href="/es/" hreflang="es" lang="es">Español</a><a href="/fr/" hreflang="fr" lang="fr">Français</a><a href="/ja/" hreflang="ja" lang="ja" aria-current="page">日本語</a><a href="/ru/" hreflang="ru" lang="ru">Русский</a></div>
-<p class="credits">地図の画像：© OpenStreetMap contributors、© CARTO。場所の説明と写真：ウィキペディア、ウィキメディア・コモンズ。アプリの画像は英語版の画面です。<br>© 2026 Tabi</p>
+<p class="credits">地図の画像：© OpenStreetMap contributors、© CARTO。場所の説明と写真：ウィキペディア、ウィキメディア・コモンズ。<br>© 2026 Tabi</p>
 </div></footer>
 </body>
 </html>
