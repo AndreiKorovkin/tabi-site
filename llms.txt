@@ -2,6 +2,23 @@
 
 > Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 60,000 places on every continent. For Android.
 
+## Key facts
+
+- Type: Android app that collects the special places a person has visited (travel, category Travel & Local on Google Play)
+- Price: free
+- Platform: Android 7 and newer; no iPhone version yet
+- Availability: closed testing on Google Play (package app.tabi.mobile); public release to follow
+- Places: more than 60,000 special places on every continent (castles, monasteries, peaks, waterfalls, islands, caves, nature reserves, city landmarks), each with a photo and a Wikipedia introduction
+- How places are counted: automatically in the background when you are inside a place's zone, even with the app closed; places you only drive past are not counted
+- Cities and countries: a city opens with the first place in it or after half an hour within its boundary; a country opens as soon as you are on its territory
+- Past trips: restored from the location and date of your photos; the photos themselves never leave the phone
+- Works offline: the map and counting work on the phone without the internet
+- Battery: no GPS or network while the phone lies still; at most one own position fix every fifteen minutes on the move
+- Rarity: five levels, from common to unique
+- Languages: English, Czech, German, French, Spanish, Japanese, Russian
+- Data: route kept on the phone and sent to the account once a day; data export and account deletion in the app settings
+- Website: https://tabimobile.com
+
 Do you remember where you’ve been? Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love.
 
 ## Time fades even what we hold dearest
