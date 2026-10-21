@@ -36,6 +36,7 @@
 <li><b>Аккаунт.</b> Без регистрации создаётся анонимная учётная запись. Если вы входите по почте или через Google — хранится адрес почты.</li>
 <li><b>Сведения о телефоне.</b> Случайный номер устройства и его название (чтобы маршрут записывал один телефон), тип системы.</li>
 <li><b>Журнал работы в фоне</b> (время, точка, что решило приложение) — чтобы находить и исправлять ошибки засчитывания. Хранится 14 дней.</li>
+<li><b>Статистика использования.</b> Когда вы впервые и в последний раз открывали Tabi, сколько раз и сколько времени в нём провели, какие экраны и окна открывали и какие действия делали (например, разбор фото, ролик, покупка), модель телефона, версия Android и Tabi, какие разрешения включены и режим батареи, ошибки приложения. Мы собираем её для улучшения Tabi: чтобы понимать, что работает и что мешает, и помогать вам, если что-то не засчитывается. Подробные сеансы хранятся на сервере 14–21 день, затем переносятся в наш закрытый архив; итоги — пока у вас есть аккаунт. Статистика не передаётся рекламным сетям и третьим лицам. Её можно выключить в настройках Tabi («Отправлять статистику использования»): тогда сеансы перестают записываться, а уже записанные удаляются.</li>
 
 <li><b>Карта на телефоне.</b> Чтобы карта открывалась без лишних загрузок, приложение хранит на телефоне скачанные точки, контуры и зоны мест. Это данные Tabi, а не ваши личные данные; они удаляются вместе с приложением.</li>
 </ul>
@@ -50,7 +51,7 @@
 <p>База данных — Supabase, Евросоюз (Франкфурт). Сайт приложения (tabimobile.com) — GitHub Pages. Письма с кодами входа отправляет Resend (Евросоюз, Ирландия): ему передаются только адрес почты и текст письма. Проверку, что входит человек, а не программа, проводит Cloudflare Turnstile. Вход через Google обрабатывает Google, через Facebook — Meta. Данные передаются по защищённому соединению (HTTPS).</p>
 
 <h2>Сколько храним</h2>
-<p>Пока у вас есть аккаунт. Журнал работы в фоне — 14 дней. Анонимные аккаунты без единого посещения и маршрута удаляются после 30 дней бездействия.</p>
+<p>Пока у вас есть аккаунт. Журнал работы в фоне — 14 дней, подробные сеансы статистики — до 21 дня на сервере. Анонимные аккаунты без единого посещения и маршрута удаляются после 30 дней бездействия.</p>
 
 <h2>Ваши права</h2>
 <p>Вы можете в любой момент выключить доступ к местоположению и фото в настройках телефона, выйти из аккаунта и удалить аккаунт со всеми данными (см. ниже).</p>
@@ -79,6 +80,7 @@
 <li><b>Account.</b> Without sign-up an anonymous account is created. If you sign in with email or Google, your email address is stored.</li>
 <li><b>Device information.</b> A random device id and device name (so one phone records the route), OS type.</li>
 <li><b>Background diagnostics log</b> (time, point, what the app decided) — to find and fix counting errors. Kept for 14 days.</li>
+<li><b>Usage statistics.</b> When you first and last opened Tabi, how often and how long you used it, which screens and windows you opened and which actions you took (for example, photo import, a video, a purchase), phone model, Android and Tabi versions, which permissions are on and the battery mode, and app errors. We collect it to improve Tabi: to understand what works and what gets in the way, and to help you if something is not counted. Detailed sessions are kept on the server for 14–21 days and then moved to our private archive; totals are kept while you have an account. Statistics are not shared with ad networks or third parties. You can turn them off in Tabi settings ("Send usage statistics"): sessions then stop being recorded and those already recorded are deleted.</li>
 
 <li><b>The map on your phone.</b> So that the map opens without repeated downloads, the app keeps downloaded place points, outlines and zones on your phone. This is Tabi's data, not your personal data; it is removed together with the app.</li>
 </ul>
@@ -93,7 +95,7 @@
 <p>Database — Supabase, EU (Frankfurt). App website (tabimobile.com) — GitHub Pages. Sign-in code emails are sent by Resend (EU, Ireland), which receives only the email address and the message text. Cloudflare Turnstile checks that a person, not a program, is signing in. Google sign-in is handled by Google, Facebook sign-in by Meta. Data is sent over encrypted connections (HTTPS).</p>
 
 <h2>Retention</h2>
-<p>While you have an account. Diagnostics log — 14 days. Anonymous accounts without any visit or route are deleted after 30 days of inactivity.</p>
+<p>While you have an account. Diagnostics log — 14 days, detailed usage sessions — up to 21 days on the server. Anonymous accounts without any visit or route are deleted after 30 days of inactivity.</p>
 
 <h2>Your rights</h2>
 <p>You can turn off location and photo access in phone settings at any time, sign out, and delete your account with all data (see below).</p>
