@@ -3,5 +3,6 @@ User-agent: *
 Allow: /
 Disallow: /auth.html
 Disallow: /update.html
+Disallow: /unsub.html
 
 Sitemap: https://tabimobile.com/sitemap.xml

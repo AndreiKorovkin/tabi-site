@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tabi</title>
+<style>body{margin:0;background:#F4EFE6;color:#1E1A16;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans','Noto Sans JP',sans-serif}
+.w{max-width:480px;margin:48px auto;padding:0 16px}.t{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;margin-bottom:18px}
+.c{background:#FFFDF9;border:1px solid #D9CFC0;border-radius:18px;padding:24px;font-size:16px;line-height:24px;min-height:24px}
+.f{margin-top:18px;text-align:center;font-size:12px}.f a{color:#6F665C;text-decoration:none;font-weight:600}</style></head>
+<body><div class="w"><div class="t">Tabi</div><div class="c" id="m">…</div><div class="f"><a href="https://tabimobile.com">tabimobile.com</a></div></div>
+<script>
+// Unsubscribe from Tabi news: the link in a news email leads here with ?t=<token>;
+// the page asks the team-news function to unsubscribe (POST) and shows the answer.
+// Texts — ui_strings news_unsub_done and news_unsub_bad (30.10.2026).
+(function () {
+  var T = {
+    done: {
+      en: "You have unsubscribed from Tabi news. Service emails about your account will still arrive.",
+      ru: "Вы отписались от новостей Tabi. Служебные письма о вашей учётной записи будут приходить по-прежнему.",
+      cs: "Odhlásili jste se z odběru novinek Tabi. Služební e-maily o vašem účtu budou chodit dál.",
+      de: "Sie haben die Tabi-Neuigkeiten abbestellt. Service-E-Mails zu Ihrem Konto erhalten Sie weiterhin.",
+      fr: "Vous êtes désabonné des actualités de Tabi. Les e-mails de service concernant votre compte continueront d’arriver.",
+      es: "Se ha dado de baja de las novedades de Tabi. Seguirá recibiendo los correos de servicio sobre su cuenta.",
+      ja: "Tabiのニュースの配信を停止しました。アカウントに関するサービスメールは引き続き届きます。"
+    },
+    bad: {
+      en: "This link is out of date or invalid.",
+      ru: "Ссылка устарела или неверна.",
+      cs: "Odkaz je zastaralý nebo neplatný.",
+      de: "Dieser Link ist veraltet oder ungültig.",
+      fr: "Ce lien est périmé ou invalide.",
+      es: "Este enlace está caducado o no es válido.",
+      ja: "このリンクは期限切れか無効です。"
+    }
+  };
+  var nav = String(navigator.language || "en").slice(0, 2).toLowerCase(),
+    lang = T.bad[nav] ? nav : "en",
+    m = document.getElementById("m"),
+    show = function (k, l) {
+      l = T[k][l] ? l : lang;
+      document.documentElement.lang = l;
+      m.textContent = T[k][l];
+    },
+    t = new URLSearchParams(location.search).get("t") || "";
+  if (!/^[0-9a-f-]{36}$/i.test(t)) return show("bad", lang);
+  fetch("https://ogrdnhwfgasbgcespsou.supabase.co/functions/v1/team-news?unsub=" + encodeURIComponent(t), { method: "POST" })
+    .then(function (r) { return r.json(); })
+    .then(function (r) { r && r.ok ? show("done", r.lang || lang) : show("bad", lang); })
+    .catch(function () { show("bad", lang); });
+})();
+</script>
+</body></html>
