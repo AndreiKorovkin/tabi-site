@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tabi</title>
+<style>
+body{margin:0;background:#F4EFE6;color:#1E1A16;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans','Noto Sans JP',sans-serif}
+.w{max-width:560px;margin:48px auto;padding:0 16px}
+.t{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;margin-bottom:18px}
+.c{background:#FFFDF9;border:1px solid #D9CFC0;border-radius:18px;padding:24px;font-size:16px;line-height:24px;display:grid;gap:14px}
+.h{font-family:Georgia,'Times New Roman',serif;font-size:21px;font-weight:700;line-height:28px}
+.s{color:#6F665C;font-size:14px;line-height:20px}
+.b{appearance:none;border:0;border-radius:14px;padding:13px 16px;font:inherit;font-weight:600;cursor:pointer;background:#B33A22;color:#fff;width:100%}
+.b2{background:#EDE6DA;color:#1E1A16}
+.b:disabled{opacity:.55;cursor:default}
+.i{box-sizing:border-box;width:100%;border:1px solid #D9CFC0;border-radius:12px;padding:12px 14px;font:inherit;background:#fff;color:#1E1A16}
+.bar{height:8px;border-radius:4px;background:#EDE6DA;overflow:hidden}.bar>div{height:100%;width:0;background:#B33A22;transition:width .3s}
+.e{color:#B33A22;font-size:14px;line-height:20px}
+.f{margin-top:18px;text-align:center;font-size:12px;display:flex;gap:16px;justify-content:center}.f a{color:#6F665C;text-decoration:none;font-weight:600}
+[hidden]{display:none!important}
+</style></head>
+<body><div class="w"><div class="t">Tabi</div>
+<div class="c">
+  <div class="h" id="title"></div>
+  <div id="lead"></div>
+  <!-- Вход -->
+  <div id="vIn" hidden style="display:grid;gap:10px">
+    <button class="b" id="bGoogle"></button>
+    <div class="s" id="orMail"></div>
+    <input class="i" id="mail" type="email" autocomplete="email">
+    <button class="b b2" id="bCode"></button>
+    <input class="i" id="code" inputmode="numeric" autocomplete="one-time-code" hidden>
+    <button class="b" id="bVerify" hidden></button>
+  </div>
+  <!-- Выбор файлов -->
+  <div id="vPick" hidden style="display:grid;gap:10px">
+    <div class="s" id="who"></div>
+    <button class="b" id="bFolder"></button>
+    <button class="b b2" id="bFiles"></button>
+    <input type="file" id="fFolder" webkitdirectory multiple hidden>
+    <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4" hidden>
+    <a href="#" class="s" id="out" style="color:#6F665C"></a>
+  </div>
+  <!-- Чтение и отправка -->
+  <div id="vWork" hidden style="display:grid;gap:10px">
+    <div id="prog"></div>
+    <div class="bar"><div id="barIn"></div></div>
+  </div>
+  <div id="vDone" hidden style="display:grid;gap:10px">
+    <div id="done"></div>
+    <button class="b b2" id="bMore"></button>
+  </div>
+  <div class="e" id="err" hidden></div>
+  <div class="s" id="privacyNote"></div>
+</div>
+<div class="f"><a href="https://tabimobile.com">tabimobile.com</a><a href="https://tabimobile.com/privacy.html" id="pol"></a></div>
+</div>
+<script>
+// Медиафайлы с компьютера (15.11.2026, план Андрея). Человек входит в свою учётную запись Tabi и выбирает папку или файлы;
+// браузер сам читает в каждом файле только место и время съёмки (JPEG, HEIC, MP4, MOV) — файлы никуда не уходят. Точки
+// «время и место» уходят на сервер (pc_media_put), телефон при следующем входе проверяет их своей картой. Отбор тот же,
+// что у проверки на телефоне: без места и времени — мимо; выше 9 км или быстрее 92 м/с — снято из самолёта; серия кадров
+// ближе 150 м и 20 минут — одна точка; не раньше 1990 года и не позже завтрашнего дня.
+(function () {
+  var SB = "https://ogrdnhwfgasbgcespsou.supabase.co",
+    KEY = "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5",
+    CAPTCHA = "0x4AAAAAAFWBXZyDQ9TZ6MkF",
+    BACK = location.origin + location.pathname;
+  var T = {
+    title: { ru: "Медиафайлы с компьютера", en: "Media files from your computer", cs: "Mediální soubory z počítače", de: "Mediendateien vom Computer", fr: "Fichiers multimédias de l’ordinateur", es: "Archivos multimedia del ordenador", ja: "パソコンのメディアファイル", it: "File multimediali dal computer", pt: "Arquivos de mídia do computador", ko: "컴퓨터의 미디어 파일" },
+    lead: {
+      ru: "Старые поездки часто хранятся на компьютере. Войдите в свою учётную запись Tabi и выберите папку с фотографиями и видео — Tabi восстановит по ним места, города, страны и маршрут.",
+      en: "Old trips are often kept on a computer. Sign in to your Tabi account and choose a folder with photos and videos — Tabi will restore places, cities, countries and the route from them.",
+      cs: "Staré cesty bývají uložené v počítači. Přihlaste se ke svému účtu Tabi a vyberte složku s fotkami a videi — Tabi z nich obnoví místa, města, země a trasu.",
+      de: "Alte Reisen liegen oft auf dem Computer. Melden Sie sich in Ihrem Tabi-Konto an und wählen Sie einen Ordner mit Fotos und Videos — Tabi stellt daraus Orte, Städte, Länder und die Route wieder her.",
+      fr: "Les anciens voyages sont souvent gardés sur l’ordinateur. Connectez-vous à votre compte Tabi et choisissez un dossier de photos et de vidéos : Tabi en restaurera les lieux, les villes, les pays et l’itinéraire.",
+      es: "Los viajes antiguos suelen guardarse en el ordenador. Inicia sesión en tu cuenta de Tabi y elige una carpeta con fotos y vídeos: Tabi recuperará con ellos lugares, ciudades, países y la ruta.",
+      ja: "昔の旅はパソコンに保存されていることがよくあります。Tabiのアカウントにログインし、写真と動画のフォルダを選んでください。Tabiが場所、都市、国、ルートを復元します。",
+      it: "I viaggi passati sono spesso conservati sul computer. Acceda al Suo account Tabi e scelga una cartella con foto e video: Tabi ne ricaverà luoghi, città, paesi e percorso.",
+      pt: "Viagens antigas costumam ficar guardadas no computador. Entre na sua conta do Tabi e escolha uma pasta com fotos e vídeos — o Tabi restaurará a partir deles os lugares, as cidades, os países e o trajeto.",
+      ko: "지난 여행은 컴퓨터에 보관되어 있는 경우가 많습니다. Tabi 계정에 로그인하고 사진과 동영상이 있는 폴더를 선택하세요. Tabi가 이를 바탕으로 장소, 도시, 국가와 경로를 복원합니다."
+    },
+    google: { ru: "Войти через Google", en: "Sign in with Google", cs: "Přihlásit se přes Google", de: "Mit Google anmelden", fr: "Se connecter avec Google", es: "Iniciar sesión con Google", ja: "Googleでログイン", it: "Accedi con Google", pt: "Entrar com o Google", ko: "Google로 로그인" },
+    orMail: { ru: "Или по коду на почту учётной записи:", en: "Or with a code sent to your account email:", cs: "Nebo kódem zaslaným na e-mail účtu:", de: "Oder mit einem Code an die E-Mail Ihres Kontos:", fr: "Ou avec un code envoyé à l’e-mail du compte :", es: "O con un código enviado al correo de tu cuenta:", ja: "またはアカウントのメールに届くコードで：", it: "Oppure con un codice inviato all’e-mail dell’account:", pt: "Ou com um código enviado ao e-mail da conta:", ko: "또는 계정 이메일로 받은 코드로:" },
+    mailPh: { ru: "Почта", en: "Email", cs: "E-mail", de: "E-Mail", fr: "E-mail", es: "Correo", ja: "メールアドレス", it: "E-mail", pt: "E-mail", ko: "이메일" },
+    getCode: { ru: "Получить код", en: "Get a code", cs: "Získat kód", de: "Code anfordern", fr: "Recevoir un code", es: "Recibir un código", ja: "コードを受け取る", it: "Ricevi il codice", pt: "Receber código", ko: "코드 받기" },
+    codePh: { ru: "Код из письма", en: "Code from the email", cs: "Kód z e-mailu", de: "Code aus der E-Mail", fr: "Code reçu par e-mail", es: "Código del correo", ja: "メールのコード", it: "Codice dall’e-mail", pt: "Código do e-mail", ko: "이메일로 받은 코드" },
+    verify: { ru: "Войти", en: "Sign in", cs: "Přihlásit se", de: "Anmelden", fr: "Se connecter", es: "Iniciar sesión", ja: "ログイン", it: "Accedi", pt: "Entrar", ko: "로그인" },
+    who: { ru: "Вы вошли: {m}", en: "Signed in as {m}", cs: "Přihlášeno: {m}", de: "Angemeldet als {m}", fr: "Connecté : {m}", es: "Sesión iniciada: {m}", ja: "ログイン中：{m}", it: "Accesso eseguito: {m}", pt: "Conectado como {m}", ko: "로그인됨: {m}" },
+    folder: { ru: "Выбрать папку", en: "Choose a folder", cs: "Vybrat složku", de: "Ordner wählen", fr: "Choisir un dossier", es: "Elegir una carpeta", ja: "フォルダを選ぶ", it: "Scegli una cartella", pt: "Escolher pasta", ko: "폴더 선택" },
+    files: { ru: "Выбрать файлы", en: "Choose files", cs: "Vybrat soubory", de: "Dateien wählen", fr: "Choisir des fichiers", es: "Elegir archivos", ja: "ファイルを選ぶ", it: "Scegli i file", pt: "Escolher arquivos", ko: "파일 선택" },
+    out: { ru: "Выйти", en: "Sign out", cs: "Odhlásit se", de: "Abmelden", fr: "Se déconnecter", es: "Cerrar sesión", ja: "ログアウト", it: "Esci", pt: "Sair", ko: "로그아웃" },
+    reading: { ru: "Прочитано {a} из {b} · точек: {n}", en: "Read {a} of {b} · points: {n}", cs: "Přečteno {a} z {b} · bodů: {n}", de: "Gelesen {a} von {b} · Punkte: {n}", fr: "Lus {a} sur {b} · points : {n}", es: "Leídos {a} de {b} · puntos: {n}", ja: "{b}件中{a}件を読み込み · 地点：{n}", it: "Letti {a} di {b} · punti: {n}", pt: "Lidos {a} de {b} · pontos: {n}", ko: "{b}개 중 {a}개 읽음 · 지점: {n}" },
+    sending: { ru: "Отправляем точки в Tabi…", en: "Sending the points to Tabi…", cs: "Odesíláme body do Tabi…", de: "Punkte werden an Tabi gesendet …", fr: "Envoi des points à Tabi…", es: "Enviando los puntos a Tabi…", ja: "Tabiに地点を送信しています…", it: "Invio dei punti a Tabi…", pt: "Enviando os pontos ao Tabi…", ko: "지점을 Tabi로 보내는 중…" },
+    done: {
+      ru: "Готово: отправлено точек — {n}. Откройте Tabi на телефоне: он проверит их и добавит поездки в вашу историю.",
+      en: "Done: points sent — {n}. Open Tabi on your phone: it will check them and add the trips to your history.",
+      cs: "Hotovo: odesláno bodů — {n}. Otevřete Tabi v telefonu: body zkontroluje a přidá cesty do vaší historie.",
+      de: "Fertig: gesendete Punkte — {n}. Öffnen Sie Tabi auf dem Telefon: Es prüft sie und fügt die Reisen Ihrer Geschichte hinzu.",
+      fr: "Terminé : points envoyés — {n}. Ouvrez Tabi sur votre téléphone : il les vérifiera et ajoutera les voyages à votre histoire.",
+      es: "Listo: puntos enviados — {n}. Abre Tabi en el teléfono: los comprobará y añadirá los viajes a tu historia.",
+      ja: "完了：送信した地点 — {n}。スマートフォンでTabiを開くと、地点を確認して旅を履歴に追加します。",
+      it: "Fatto: punti inviati — {n}. Apra Tabi sul telefono: li verificherà e aggiungerà i viaggi alla Sua storia.",
+      pt: "Pronto: pontos enviados — {n}. Abra o Tabi no telefone: ele vai verificá-los e adicionar as viagens à sua história.",
+      ko: "완료: 보낸 지점 — {n}개. 휴대전화에서 Tabi를 여세요. 지점을 확인하고 여행을 기록에 추가합니다."
+    },
+    none: {
+      ru: "В выбранных файлах нет места съёмки. Место записывают камера телефона и фотоаппараты с GPS; снимки экрана и пересланные фотографии его обычно не хранят.",
+      en: "The chosen files have no shooting location. Phone cameras and cameras with GPS record it; screenshots and forwarded photos usually do not keep it.",
+      cs: "Vybrané soubory neobsahují místo pořízení. Zaznamenávají ho fotoaparáty telefonů a přístroje s GPS; snímky obrazovky a přeposlané fotky ho obvykle nemají.",
+      de: "Die gewählten Dateien enthalten keinen Aufnahmeort. Handykameras und Kameras mit GPS speichern ihn; Bildschirmfotos und weitergeleitete Fotos meist nicht.",
+      fr: "Les fichiers choisis n’ont pas de lieu de prise de vue. Les téléphones et les appareils avec GPS l’enregistrent ; les captures d’écran et les photos transférées ne le gardent généralement pas.",
+      es: "Los archivos elegidos no tienen lugar de captura. Lo guardan las cámaras de los teléfonos y las cámaras con GPS; las capturas de pantalla y las fotos reenviadas no suelen conservarlo.",
+      ja: "選んだファイルには撮影場所がありません。撮影場所はスマートフォンやGPS付きカメラが記録します。スクリーンショットや転送された写真には通常残りません。",
+      it: "I file scelti non contengono il luogo di scatto. Lo registrano le fotocamere dei telefoni e le fotocamere con GPS; gli screenshot e le foto inoltrate di solito non lo conservano.",
+      pt: "Os arquivos escolhidos não têm o local da captura. Ele é registrado pelas câmeras dos telefones e pelas câmeras com GPS; capturas de tela e fotos encaminhadas normalmente não o guardam.",
+      ko: "선택한 파일에 촬영 장소가 없습니다. 촬영 장소는 휴대전화 카메라와 GPS가 있는 카메라가 기록하며, 스크린샷과 전달받은 사진에는 보통 남아 있지 않습니다."
+    },
+    more: { ru: "Выбрать ещё", en: "Choose more", cs: "Vybrat další", de: "Weitere wählen", fr: "En choisir d’autres", es: "Elegir más", ja: "さらに選ぶ", it: "Scegli altri", pt: "Escolher mais", ko: "더 선택" },
+    note: {
+      ru: "Файлы не покидают компьютер: страница читает в них только место и время съёмки, и в Tabi уходят только эти точки.",
+      en: "Your files never leave the computer: the page reads only the shooting location and time, and only these points go to Tabi.",
+      cs: "Soubory neopouštějí počítač: stránka v nich čte jen místo a čas pořízení a do Tabi odchází jen tyto body.",
+      de: "Ihre Dateien verlassen den Computer nicht: Die Seite liest nur Aufnahmeort und -zeit, und nur diese Punkte gehen an Tabi.",
+      fr: "Vos fichiers ne quittent pas l’ordinateur : la page n’y lit que le lieu et l’heure de prise de vue, et seuls ces points partent vers Tabi.",
+      es: "Tus archivos no salen del ordenador: la página solo lee el lugar y la hora de captura, y solo esos puntos van a Tabi.",
+      ja: "ファイルはパソコンの外に出ません。ページが読むのは撮影場所と時刻だけで、Tabiに送られるのはその地点だけです。",
+      it: "I file non lasciano il computer: la pagina legge solo il luogo e l’ora dello scatto, e a Tabi vanno solo questi punti.",
+      pt: "Os arquivos não saem do computador: a página lê neles apenas o local e a hora da captura, e apenas esses pontos vão para o Tabi.",
+      ko: "파일은 컴퓨터를 벗어나지 않습니다. 페이지는 촬영 장소와 시간만 읽으며, Tabi로는 이 지점만 전송됩니다."
+    },
+    pol: { ru: "Политика конфиденциальности", en: "Privacy policy", cs: "Zásady ochrany soukromí", de: "Datenschutzerklärung", fr: "Politique de confidentialité", es: "Política de privacidad", ja: "プライバシーポリシー", it: "Informativa sulla privacy", pt: "Política de privacidade", ko: "개인정보처리방침" },
+    eNet: { ru: "Нет связи с Tabi. Проверьте интернет и попробуйте ещё раз.", en: "No connection to Tabi. Check the internet and try again.", cs: "Spojení s Tabi chybí. Zkontrolujte internet a zkuste to znovu.", de: "Keine Verbindung zu Tabi. Prüfen Sie das Internet und versuchen Sie es erneut.", fr: "Pas de connexion à Tabi. Vérifiez internet et réessayez.", es: "No hay conexión con Tabi. Comprueba internet y vuelve a intentarlo.", ja: "Tabiに接続できません。インターネットを確認して、もう一度お試しください。", it: "Nessuna connessione con Tabi. Controlli la connessione a Internet e riprovi.", pt: "Sem conexão com o Tabi. Verifique a internet e tente novamente.", ko: "Tabi에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요." },
+    eMail: { ru: "Учётной записи с этой почтой нет. Войдите той почтой, которой пользуетесь в приложении.", en: "There is no account with this email. Use the email you use in the app.", cs: "Účet s tímto e-mailem neexistuje. Použijte e-mail, který používáte v aplikaci.", de: "Es gibt kein Konto mit dieser E-Mail. Verwenden Sie die E-Mail aus der App.", fr: "Aucun compte avec cet e-mail. Utilisez l’e-mail de l’application.", es: "No hay ninguna cuenta con este correo. Usa el correo de la aplicación.", ja: "このメールのアカウントはありません。アプリで使っているメールを使ってください。", it: "Non esiste un account con questa e-mail. Usi l’e-mail con cui accede all’app.", pt: "Não há conta com este e-mail. Use o e-mail que você usa no aplicativo.", ko: "이 이메일로 된 계정이 없습니다. 앱에서 사용하는 이메일로 로그인하세요." },
+    eCode: { ru: "Код неверен или устарел.", en: "The code is wrong or out of date.", cs: "Kód je chybný nebo neplatný.", de: "Der Code ist falsch oder abgelaufen.", fr: "Le code est faux ou périmé.", es: "El código es incorrecto o ha caducado.", ja: "コードが違うか、期限切れです。", it: "Il codice è errato o scaduto.", pt: "O código está incorreto ou expirou.", ko: "코드가 올바르지 않거나 만료되었습니다." },
+    eApp: { ru: "С этой учётной записью Tabi ещё не открывали на телефоне. Войдите в неё в приложении и вернитесь сюда.", en: "Tabi has not been opened on a phone with this account yet. Sign in to it in the app and come back here.", cs: "S tímto účtem ještě nebylo Tabi v telefonu otevřeno. Přihlaste se k němu v aplikaci a vraťte se sem.", de: "Mit diesem Konto wurde Tabi noch auf keinem Telefon geöffnet. Melden Sie sich in der App an und kommen Sie zurück.", fr: "Tabi n’a encore été ouvert sur aucun téléphone avec ce compte. Connectez-vous dans l’application et revenez ici.", es: "Todavía no se ha abierto Tabi en un teléfono con esta cuenta. Inicia sesión en la aplicación y vuelve aquí.", ja: "このアカウントでまだスマートフォンのTabiを開いていません。アプリでログインしてから戻ってきてください。", it: "Con questo account Tabi non è ancora stato aperto su un telefono. Acceda all’account nell’app e torni qui.", pt: "O Tabi ainda não foi aberto em um telefone com esta conta. Entre nela no aplicativo e volte aqui.", ko: "이 계정으로 아직 휴대전화에서 Tabi를 연 적이 없습니다. 앱에서 이 계정으로 로그인한 후 다시 이곳으로 오세요." },
+    eLimit: { ru: "На сегодня точек достаточно. Откройте Tabi на телефоне — он проверит уже присланные, а остальное можно отправить завтра.", en: "That is enough points for today. Open Tabi on your phone to check the ones already sent; send the rest tomorrow.", cs: "Pro dnešek je bodů dost. Otevřete Tabi v telefonu, aby zkontrolovalo už odeslané; zbytek pošlete zítra.", de: "Für heute sind es genug Punkte. Öffnen Sie Tabi auf dem Telefon, um die gesendeten zu prüfen; den Rest senden Sie morgen.", fr: "Assez de points pour aujourd’hui. Ouvrez Tabi sur le téléphone pour vérifier ceux déjà envoyés ; envoyez le reste demain.", es: "Por hoy son suficientes puntos. Abre Tabi en el teléfono para comprobar los ya enviados; envía el resto mañana.", ja: "今日はこれ以上送れません。スマートフォンでTabiを開き、送った地点を確認してください。残りは明日送れます。", it: "Per oggi i punti sono sufficienti. Apra Tabi sul telefono: verificherà quelli già inviati; il resto si potrà inviare domani.", pt: "Por hoje, os pontos são suficientes. Abra o Tabi no telefone — ele verificará os já enviados, e o restante pode ser enviado amanhã.", ko: "오늘은 지점이 충분합니다. 휴대전화에서 Tabi를 여세요. 이미 보낸 지점을 확인하며, 나머지는 내일 보낼 수 있습니다." }
+  };
+  var nav = String(navigator.language || "en").slice(0, 2).toLowerCase(),
+    L = T.title[nav] ? nav : "en",
+    t = function (k, v) {
+      var s = (T[k] && (T[k][L] || T[k].en)) || "";
+      for (var x in v || {}) s = s.split("{" + x + "}").join(String(v[x]));
+      return s;
+    },
+    $ = function (id) { return document.getElementById(id); },
+    view = function (v) { ["vIn", "vPick", "vWork", "vDone"].forEach(function (k) { $(k).hidden = k !== v; }); },
+    err = function (k) { $("err").hidden = !k; $("err").textContent = k ? t(k) : ""; };
+  document.documentElement.lang = L;
+  $("title").textContent = t("title");
+  $("lead").textContent = t("lead");
+  $("bGoogle").textContent = t("google");
+  $("orMail").textContent = t("orMail");
+  $("mail").placeholder = t("mailPh");
+  $("bCode").textContent = t("getCode");
+  $("code").placeholder = t("codePh");
+  $("bVerify").textContent = t("verify");
+  $("bFolder").textContent = t("folder");
+  $("bFiles").textContent = t("files");
+  $("out").textContent = t("out");
+  $("bMore").textContent = t("more");
+  $("privacyNote").textContent = t("note");
+  $("pol").textContent = t("pol");
+
+  // ===== Вход: ключ входа хранится только в этой вкладке (sessionStorage) =====
+  var S = null;
+  try { S = JSON.parse(sessionStorage.getItem("tabiPc") || "null"); } catch (e) {}
+  var save = function (s) { S = s; try { s ? sessionStorage.setItem("tabiPc", JSON.stringify(s)) : sessionStorage.removeItem("tabiPc"); } catch (e) {} },
+    auth = function (path, body) {
+      return fetch(SB + "/auth/v1/" + path, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); });
+    },
+    fromToken = function (j) {
+      return j && j.access_token ? { at: j.access_token, rt: j.refresh_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000, mail: (j.user && j.user.email) || "" } : null;
+    },
+    fresh = function () {
+      if (S && S.exp - Date.now() > 60000) return Promise.resolve(S);
+      if (!S || !S.rt) return Promise.resolve(null);
+      return auth("token?grant_type=refresh_token", { refresh_token: S.rt }).then(function (r) { var s = r.ok && fromToken(r.j); save(s || null); return s; });
+    },
+    me = function () {
+      return fetch(SB + "/auth/v1/user", { headers: { apikey: KEY, Authorization: "Bearer " + S.at } }).then(function (r) { return r.ok ? r.json() : null; });
+    },
+    showPick = function () {
+      view("vPick");
+      $("who").textContent = t("who", { m: (S && S.mail) || "" });
+    };
+
+  // Вход Google — по PKCE: страница сама начинает вход, кладёт проверочную строку в эту вкладку и принимает только код,
+  // к которому она подходит. Ключи входа из адреса после «#» не принимаются вовсе: иначе чужая ссылка с чужим ключом
+  // заставила бы человека отправить свои точки в чужую учётную запись.
+  var b64u = function (buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  var qs = new URLSearchParams(location.search), code = qs.get("code"), ver = null;
+  try { ver = sessionStorage.getItem("tabiPcVer"); sessionStorage.removeItem("tabiPcVer"); } catch (e) {}
+  if (location.hash || code) history.replaceState(null, "", BACK);
+  var boot = Promise.resolve();
+  if (code && ver) {
+    boot = auth("token?grant_type=pkce", { auth_code: code, code_verifier: ver }).then(function (r) { var s = r.ok && fromToken(r.j); s ? save(s) : err("eCode"); }).catch(function () { err("eNet"); });
+  }
+  boot.then(function () {
+  if (S) {
+    fresh().then(function (s) {
+      if (!s) return view("vIn");
+      return me().then(function (u) { if (u && u.email) save(Object.assign({}, S, { mail: u.email })); showPick(); });
+    }).catch(function () { err("eNet"); view("vIn"); });
+  } else view("vIn");
+  });
+
+  $("bGoogle").onclick = function () {
+    var v = b64u(crypto.getRandomValues(new Uint8Array(48)));
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
+      try { sessionStorage.setItem("tabiPcVer", v); } catch (e) {}
+      location.href = SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(BACK) +
+        "&code_challenge=" + b64u(d) + "&code_challenge_method=s256";
+    });
+  };
+  // Код на почту — только существующей учётной записи (create_user: false); проверка Cloudflare Turnstile, как в приложении.
+  var captcha = function () {
+    return new Promise(function (ok, bad) {
+      var go = function () {
+        var box = document.createElement("div");
+        document.body.appendChild(box);
+        window.turnstile.render(box, {
+          sitekey: CAPTCHA, appearance: "interaction-only",
+          callback: function (tk) { ok(tk); setTimeout(function () { box.remove(); }, 0); },
+          "error-callback": function () { box.remove(); bad(); }
+        });
+      };
+      if (window.turnstile) return go();
+      var s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.onload = go;
+      s.onerror = bad;
+      document.head.appendChild(s);
+    });
+  };
+  $("bCode").onclick = function () {
+    var m = $("mail").value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)) return;
+    err(null);
+    $("bCode").disabled = true;
+    captcha().then(function (tk) {
+      return auth("otp", { email: m, create_user: false, gotrue_meta_security: { captcha_token: tk } });
+    }).then(function (r) {
+      $("bCode").disabled = false;
+      if (!r.ok) return err(/signup|not found|not allowed/i.test(JSON.stringify(r.j)) ? "eMail" : "eNet");
+      $("code").hidden = false;
+      $("bVerify").hidden = false;
+      $("code").focus();
+    }).catch(function () { $("bCode").disabled = false; err("eNet"); });
+  };
+  $("bVerify").onclick = function () {
+    var m = $("mail").value.trim(), c = $("code").value.replace(/\D/g, "");
+    if (!c) return;
+    err(null);
+    auth("verify", { type: "email", email: m, token: c }).then(function (r) {
+      var s = r.ok && fromToken(r.j);
+      if (!s) return err("eCode");
+      save(s);
+      showPick();
+    }).catch(function () { err("eNet"); });
+  };
+  $("out").onclick = function (e) {
+    e.preventDefault();
+    S && fetch(SB + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + S.at } }).catch(function () {});
+    save(null);
+    view("vIn");
+  };
+  $("bFolder").onclick = function () { $("fFolder").click(); };
+  $("bFiles").onclick = function () { $("fFiles").click(); };
+  $("bMore").onclick = function () { showPick(); };
+  $("fFolder").onchange = function () { run(this.files); this.value = ""; };
+  $("fFiles").onchange = function () { run(this.files); this.value = ""; };
+
+  // ===== Чтение места и времени =====
+  var u8 = function (f, a, b) { return f.slice(a, b).arrayBuffer().then(function (x) { return new Uint8Array(x); }); },
+    str = function (a, i, n) { var s = ""; for (var k = 0; k < n && i + k < a.length; k++) s += String.fromCharCode(a[i + k]); return s; },
+    be32 = function (a, i) { return ((a[i] << 24) >>> 0) + (a[i + 1] << 16) + (a[i + 2] << 8) + a[i + 3]; },
+    be16 = function (a, i) { return (a[i] << 8) + a[i + 1]; };
+
+  // TIFF (EXIF): {lat, lng, gps, cam, zoned, alt, speed}; cam — местное время камеры в поясе компьютера.
+  function tiff(a, o) {
+    var le = a[o] === 0x49, dv = new DataView(a.buffer, a.byteOffset, a.byteLength);
+    var g16 = function (i) { return dv.getUint16(o + i, le); }, g32 = function (i) { return dv.getUint32(o + i, le); };
+    if (g16(2) !== 42) return null;
+    var SZ = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 7: 1, 9: 4, 10: 8 };
+    var ifd = function (at) {
+      var out = {};
+      if (o + at + 2 > a.length) return out;
+      var n = g16(at);
+      for (var k = 0; k < n; k++) {
+        var e = at + 2 + k * 12;
+        if (o + e + 12 > a.length) break;
+        var tag = g16(e), type = g16(e + 2), cnt = g32(e + 4), size = (SZ[type] || 1) * cnt, vo = size > 4 ? g32(e + 8) : e + 8;
+        if (o + vo + size > a.length) continue;
+        out[tag] = { type: type, cnt: cnt, vo: vo };
+      }
+      return out;
+    };
+    var rat = function (x, i) { var d = dv.getUint32(o + x.vo + i * 8 + 4, le); return d ? dv.getUint32(o + x.vo + i * 8, le) / d : NaN; },
+      asc = function (x) { return x ? str(a, o + x.vo, x.cnt).replace(/\0+$/, "") : ""; };
+    var i0 = ifd(g32(4)), r = { lat: NaN, lng: NaN, gps: 0, cam: 0, zoned: 0, alt: 0, speed: 0 };
+    if (i0[0x8769]) {
+      var ex = ifd(dv.getUint32(o + i0[0x8769].vo, le)), dt = asc(ex[0x9003] || ex[0x9004] || i0[0x0132]), off = asc(ex[0x9011]);
+      var m = /^(\d{4}):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/.exec(dt);
+      if (m) {
+        r.cam = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]).getTime();
+        var z = /^([+-])(\d\d):(\d\d)$/.exec(off);
+        if (z) r.zoned = Date.UTC(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]) - (z[1] === "-" ? -1 : 1) * (z[2] * 3600000 + z[3] * 60000);
+      }
+    }
+    if (i0[0x8825]) {
+      var gp = ifd(dv.getUint32(o + i0[0x8825].vo, le));
+      if (gp[2] && gp[4] && gp[2].cnt >= 3 && gp[4].cnt >= 3) {
+        r.lat = rat(gp[2], 0) + rat(gp[2], 1) / 60 + rat(gp[2], 2) / 3600;
+        r.lng = rat(gp[4], 0) + rat(gp[4], 1) / 60 + rat(gp[4], 2) / 3600;
+        if (asc(gp[1]).charAt(0) === "S") r.lat = -r.lat;
+        if (asc(gp[3]).charAt(0) === "W") r.lng = -r.lng;
+      }
+      if (gp[6]) r.alt = rat(gp[6], 0) * (gp[5] && a[o + gp[5].vo] === 1 ? -1 : 1);
+      if (gp[0x0d]) { var sp = rat(gp[0x0d], 0), u = asc(gp[0x0c]).charAt(0); r.speed = u === "M" ? sp * 0.44704 : u === "N" ? sp * 0.514444 : sp / 3.6; }
+      var ds = /^(\d{4}):(\d\d):(\d\d)/.exec(asc(gp[0x1d]));
+      if (ds && gp[7] && gp[7].cnt >= 3) r.gps = Date.UTC(+ds[1], ds[2] - 1, +ds[3]) + Math.round((rat(gp[7], 0) * 3600 + rat(gp[7], 1) * 60 + rat(gp[7], 2)) * 1000);
+    }
+    return r;
+  }
+  function jpeg(f) {
+    return u8(f, 0, 131072).then(function (a) {
+      if (a[0] !== 0xff || a[1] !== 0xd8) return null;
+      for (var i = 2; i + 4 < a.length; ) {
+        if (a[i] !== 0xff) return null;
+        var mk = a[i + 1], len = be16(a, i + 2);
+        if (mk === 0xe1 && str(a, i + 4, 6) === "Exif\0\0") return tiff(a, i + 10);
+        if (mk === 0xda) return null;
+        i += 2 + len;
+      }
+      return null;
+    });
+  }
+  // HEIC и AVIF: ISO BMFF — блок meta, в нём номер записи Exif (iinf) и её место в файле (iloc).
+  function heic(f) {
+    return u8(f, 0, 262144).then(function (a) {
+      var box = function (s, e, want) { for (var i = s; i + 8 <= e; ) { var n = be32(a, i), ty = str(a, i + 4, 4), hl = 8; if (n === 1) { n = be32(a, i + 12); hl = 16; } if (n < hl) return null; if (ty === want) return { s: i + hl, e: Math.min(e, i + n) }; i += n; } return null; };
+      var meta = box(0, a.length, "meta");
+      if (!meta) return null;
+      var ms = meta.s + 4, iinf = box(ms, meta.e, "iinf"), iloc = box(ms, meta.e, "iloc"), id = -1;
+      if (!iinf || !iloc) return null;
+      var v = a[iinf.s], p = iinf.s + 4 + (v === 0 ? 2 : 4);
+      while (p + 8 <= iinf.e) {
+        var n = be32(a, p);
+        if (str(a, p + 4, 4) === "infe") { var iv = a[p + 8], q = p + 12, iid = iv >= 3 ? be32(a, q) : be16(a, q); q += (iv >= 3 ? 4 : 2) + 2; if (iv >= 2 && str(a, q, 4) === "Exif") { id = iid; break; } }
+        if (n < 8) break;
+        p += n;
+      }
+      if (id < 0) return null;
+      var lv = a[iloc.s], c = iloc.s + 4, os = a[c] >> 4, ls = a[c] & 15, bs = a[c + 1] >> 4, is = lv === 1 || lv === 2 ? a[c + 1] & 15 : 0;
+      c += 2;
+      var rd = function (sz) { var x = 0; for (var k = 0; k < sz; k++) x = x * 256 + a[c + k]; c += sz; return x; };
+      var cnt = lv < 2 ? rd(2) : rd(4);
+      for (var k = 0; k < cnt; k++) {
+        var item = lv < 2 ? rd(2) : rd(4);
+        if (lv === 1 || lv === 2) rd(2);
+        rd(2);
+        var base = rd(bs), ec = rd(2), first = null;
+        for (var x = 0; x < ec; x++) { if (is) rd(is); var off = rd(os), ln = rd(ls); first = first || { off: base + off, len: ln }; }
+        if (item === id && first) return u8(f, first.off, first.off + Math.min(first.len, 262144)).then(function (b) { var skip = 4 + be32(b, 0); return skip + 8 < b.length ? tiff(b, skip) : null; });
+      }
+      return null;
+    });
+  }
+  // MP4 и MOV: блок moov — время создания (mvhd, UTC от 1904 года) и место ISO 6709 («+50.0875+014.4213/»).
+  function movie(f) {
+    var find = function (at) {
+      if (at + 16 > f.size) return Promise.resolve(null);
+      return u8(f, at, at + 16).then(function (h) {
+        var n = be32(h, 0), ty = str(h, 4, 4), hl = 8;
+        if (n === 1) { n = be32(h, 8) * 4294967296 + be32(h, 12); hl = 16; }
+        if (n === 0) n = f.size - at;
+        if (n < hl) return null;
+        if (ty === "moov") return n > 33554432 ? null : u8(f, at, at + n);
+        return find(at + n);
+      });
+    };
+    return find(0).then(function (a) {
+      if (!a) return null;
+      var i = -1, s = new TextDecoder("latin1").decode(a);
+      i = s.indexOf("mvhd");
+      var r = { lat: NaN, lng: NaN, gps: 0, cam: 0, zoned: 0, alt: 0, speed: 0 };
+      if (i > 0) { var v = a[i + 4], sec = v === 1 ? be32(a, i + 8) * 4294967296 + be32(a, i + 12) : be32(a, i + 8); if (sec > 0) r.gps = (sec - 2082844800) * 1000; }
+      var m = /([+-]\d{1,2}(?:\.\d+)?)([+-]\d{1,3}(?:\.\d+)?)(?:[+-]\d+(?:\.\d+)?)?(?:CRS[^/]*)?\//.exec(s);
+      if (m) { r.lat = +m[1]; r.lng = +m[2]; }
+      return r;
+    });
+  }
+  function readOne(f) {
+    var n = (f.name || "").toLowerCase(), ty = (f.type || "").toLowerCase();
+    var p = /\.(jpe?g)$/.test(n) || ty === "image/jpeg" ? jpeg(f) : /\.(heic|heif|avif)$/.test(n) || /heic|heif|avif/.test(ty) ? heic(f) : /\.(mp4|mov|m4v|3gp)$/.test(n) || /^video\//.test(ty) ? movie(f) : null;
+    return p ? p.catch(function () { return null; }) : Promise.resolve(null);
+  }
+  // Время съёмки — как у телефона: время спутника (UTC), если оно не дальше 14 часов от времени камеры; иначе время камеры с
+  // её поясом; иначе время камеры в поясе компьютера.
+  function taken(r) {
+    var utc = r.gps > 0 && (r.cam <= 0 || Math.abs(r.gps - r.cam) <= 14 * 3600000);
+    return utc ? r.gps : r.zoned > 0 ? r.zoned : r.cam;
+  }
+  function dist(a1, o1, a2, o2) {
+    var k = Math.PI / 180, x = Math.sin(((a2 - a1) * k) / 2) * Math.sin(((a2 - a1) * k) / 2) + Math.cos(a1 * k) * Math.cos(a2 * k) * Math.sin(((o2 - o1) * k) / 2) * Math.sin(((o2 - o1) * k) / 2);
+    return 12742000 * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+
+  function run(list) {
+    var files = Array.prototype.slice.call(list || []).filter(function (f) { return /\.(jpe?g|heic|heif|avif|mp4|mov|m4v|3gp)$/i.test(f.name || "") || /^(image|video)\//.test(f.type || ""); });
+    if (!files.length) return;
+    err(null);
+    view("vWork");
+    var pts = [], done = 0, now = Date.now(), next = 0;
+    var show = function () {
+      $("prog").textContent = t("reading", { a: done, b: files.length, n: pts.length });
+      $("barIn").style.width = Math.round((done / files.length) * 100) + "%";
+    };
+    show();
+    // Четыре файла сразу: чтение файла — главная часть времени.
+    var worker = function () {
+      if (next >= files.length) return Promise.resolve();
+      var f = files[next++];
+      return readOne(f).then(function (r) {
+        done++;
+        if (r && isFinite(r.lat) && isFinite(r.lng) && !(Math.abs(r.lat) < 1e-6 && Math.abs(r.lng) < 1e-6) && Math.abs(r.lat) <= 90 && Math.abs(r.lng) <= 180) {
+          var at = taken(r);
+          if (at >= 631152000000 && at <= now + 86400000 && !(r.alt > 9000) && !(r.speed > 92)) pts.push([Math.round(r.lat * 1e5) / 1e5, Math.round(r.lng * 1e5) / 1e5, Math.min(at, now)]);
+        }
+        done % 25 === 0 && show();
+        return worker();
+      });
+    };
+    Promise.all([worker(), worker(), worker(), worker()]).then(function () {
+      show();
+      // Серия кадров одного места — одна точка: ближе 150 м и 20 минут от предыдущей.
+      pts.sort(function (x, y) { return x[2] - y[2]; });
+      var keep = [];
+      pts.forEach(function (p) { var q = keep[keep.length - 1]; if (q && p[2] - q[2] <= 1200000 && dist(q[0], q[1], p[0], p[1]) < 150) return; keep.push(p); });
+      if (!keep.length) { view("vDone"); $("done").textContent = t("none"); return; }
+      $("prog").textContent = t("sending");
+      send(keep);
+    });
+  }
+  function send(keep) {
+    var sent = 0, i = 0;
+    var step = function () {
+      if (i >= keep.length) { view("vDone"); $("done").textContent = t("done", { n: sent }); return; }
+      var part = keep.slice(i, i + 5000);
+      fresh().then(function (s) {
+        if (!s) { view("vIn"); return null; }
+        return fetch(SB + "/rest/v1/rpc/pc_media_put", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ p_points: part }) })
+          .then(function (r) { return r.json(); });
+      }).then(function (r) {
+        if (r === null) return;
+        if (!r || !r.ok) {
+          var why = r && r.reason;
+          view("vDone");
+          $("done").textContent = sent ? t("done", { n: sent }) : "";
+          return err(why === "no app" ? "eApp" : why === "day limit" || why === "pending limit" ? "eLimit" : why === "not signed in" ? "eCode" : "eNet");
+        }
+        sent += r.n || 0;
+        i += 5000;
+        $("barIn").style.width = Math.round((Math.min(i, keep.length) / keep.length) * 100) + "%";
+        step();
+      }).catch(function () { view("vDone"); $("done").textContent = sent ? t("done", { n: sent }) : ""; err("eNet"); });
+    };
+    step();
+  }
+})();
+</script>
+</body></html>
