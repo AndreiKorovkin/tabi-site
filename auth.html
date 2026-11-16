@@ -1,15 +1,68 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
 <title>Tabi</title>
 <style>body{font-family:Arial,Helvetica,sans-serif;background:#F4EFE6;color:#1E1A16;margin:0;padding:40px 20px;text-align:center}
-.b{display:inline-block;margin-top:18px;padding:14px 22px;background:#B3341F;color:#fff;border-radius:14px;text-decoration:none;font-weight:bold}</style></head>
+.b{display:inline-block;margin-top:18px;padding:14px 22px;background:#B3341F;color:#fff;border:0;border-radius:14px;text-decoration:none;font-weight:bold;font-size:16px;cursor:pointer}
+.c{display:inline-block;margin:6px 0 4px;padding:16px 22px 16px 32px;background:#FBF3EA;border:1px solid #D9CFC0;border-radius:14px;font-family:Menlo,Consolas,'Roboto Mono','Courier New',monospace;font-size:38px;font-weight:bold;letter-spacing:10px;color:#B3341F}
+.s{color:#6F665C;font-size:14px;min-height:20px;margin-top:12px}</style></head>
 <body><h1>Tabi</h1>
+<div id="ret">
 <p>Возвращаем вас в приложение… / Returning you to the app…</p>
 <a class="b" id="o" href="#">Открыть Tabi / Open Tabi</a>
+</div>
+<div id="otp" hidden>
+<div class="c" id="code"></div>
+<p id="x"></p>
+<button class="b" id="copy" type="button"></button>
+<div class="s" id="st" role="status"></div>
+</div>
 <script>
-// Возврат после входа через сервис: адрес с кодом передаётся приложению
-// по его схеме, если страница открылась в браузере, а не в Tabi.
-var u = "app.tabi.mobile://auth" + location.search + location.hash;
-document.getElementById("o").href = u;
-setTimeout(function(){ location.href = u; }, 300);
+// Кнопка «Ввести код в Tabi» из письма с кодом (16.11.2026): адрес https://tabimobile.com/auth#otp=<код>&k=…
+// Android открывает его в Tabi; сюда он попадает, только если Tabi на этом устройстве нет или ссылка открылась в
+// браузере. Тогда страница показывает код с кнопкой «Скопировать код» (вернувшись в Tabi, приложение возьмёт его из
+// буфера обмена) и не передаёт код приложению по схеме app.tabi.mobile: эту схему может объявить любое приложение
+// телефона. Код стоит после «#» — эта часть адреса на сервер не уходит; из адресной строки и истории он убирается.
+var h = new URLSearchParams(location.hash.replace(/^#/, "")), code = h.get("otp") || "";
+if (/^\d{6}$/.test(code)) {
+  var T = {
+    ru: ["Введите этот код в Tabi.", "Скопировать код", "Код скопирован."],
+    en: ["Enter this code in Tabi.", "Copy code", "Code copied."],
+    cs: ["Zadejte tento kód v Tabi.", "Zkopírovat kód", "Kód zkopírován."],
+    de: ["Geben Sie diesen Code in Tabi ein.", "Code kopieren", "Code kopiert."],
+    fr: ["Saisissez ce code dans Tabi.", "Copier le code", "Code copié."],
+    es: ["Introduzca este código en Tabi.", "Copiar código", "Código copiado."],
+    it: ["Inserisca questo codice in Tabi.", "Copia codice", "Codice copiato."],
+    pt: ["Digite este código no Tabi.", "Copiar código", "Código copiado."],
+    ja: ["このコードをTabiに入力してください。", "コードをコピー", "コードをコピーしました。"],
+    ko: ["이 코드를 Tabi에 입력하세요.", "코드 복사", "코드를 복사했습니다."]
+  };
+  var lang = (navigator.languages || [navigator.language || "en"]).map(function (l) { return String(l).slice(0, 2).toLowerCase(); }).filter(function (l) { return T[l]; })[0] || "en",
+    t = T[lang];
+  document.documentElement.lang = lang;
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+  document.getElementById("ret").hidden = true;
+  document.getElementById("otp").hidden = false;
+  document.getElementById("code").textContent = code;
+  document.getElementById("x").textContent = t[0];
+  var btn = document.getElementById("copy"), st = document.getElementById("st");
+  btn.textContent = t[1];
+  var done = function () { st.textContent = t[2]; },
+    old = function () {
+      var a = document.createElement("textarea");
+      a.value = code; a.setAttribute("readonly", ""); a.style.position = "fixed"; a.style.opacity = "0";
+      document.body.appendChild(a); a.select();
+      try { document.execCommand("copy") && done(); } catch (e) {}
+      document.body.removeChild(a);
+    };
+  btn.onclick = function () {
+    navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(code).then(done, old) : old();
+  };
+} else {
+  // Возврат после входа через сервис: адрес с кодом передаётся приложению
+  // по его схеме, если страница открылась в браузере, а не в Tabi.
+  var u = "app.tabi.mobile://auth" + location.search + location.hash;
+  document.getElementById("o").href = u;
+  setTimeout(function(){ location.href = u; }, 300);
+}
 </script></body></html>
