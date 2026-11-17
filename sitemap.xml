@@ -490,6 +490,132 @@
 <xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/ru/team/"/>
 <xhtml:link rel="alternate" hreflang="x-default" href="https://tabimobile.com/team/"/>
 </url>
-<url><loc>https://tabimobile.com/privacy.html</loc></url>
-<url><loc>https://tabimobile.com/terms.html</loc></url>
+<url><loc>https://tabimobile.com/privacy.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.ru.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.cs.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.de.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.fr.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.es.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.it.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.pt.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.ja.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/privacy.ko.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/privacy.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/privacy.ru.html"/>
+<xhtml:link rel="alternate" hreflang="cs" href="https://tabimobile.com/privacy.cs.html"/>
+<xhtml:link rel="alternate" hreflang="de" href="https://tabimobile.com/privacy.de.html"/>
+<xhtml:link rel="alternate" hreflang="fr" href="https://tabimobile.com/privacy.fr.html"/>
+<xhtml:link rel="alternate" hreflang="es" href="https://tabimobile.com/privacy.es.html"/>
+<xhtml:link rel="alternate" hreflang="it" href="https://tabimobile.com/privacy.it.html"/>
+<xhtml:link rel="alternate" hreflang="pt" href="https://tabimobile.com/privacy.pt.html"/>
+<xhtml:link rel="alternate" hreflang="ja" href="https://tabimobile.com/privacy.ja.html"/>
+<xhtml:link rel="alternate" hreflang="ko" href="https://tabimobile.com/privacy.ko.html"/>
+</url>
+<url><loc>https://tabimobile.com/terms.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/terms.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/terms.ru.html"/>
+</url>
+<url><loc>https://tabimobile.com/terms.ru.html</loc>
+<xhtml:link rel="alternate" hreflang="en" href="https://tabimobile.com/terms.html"/>
+<xhtml:link rel="alternate" hreflang="ru" href="https://tabimobile.com/terms.ru.html"/>
+</url>
 </urlset>

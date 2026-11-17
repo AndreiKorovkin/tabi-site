@@ -37,9 +37,9 @@
 @font-face{font-family:Onest;src:url(/assets/fonts/onest-cyrillic.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:Onest;src:url(/assets/fonts/onest-cyrillic-ext.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
 @font-face{font-family:TabiWord;src:url(/assets/fonts/tabi-wordmark.woff) format("woff");font-display:block}
-
-:root{--bg:#F3EEE6;--bg2:#ECE5DA;--panel:#FFFFFF;--ink:#1F1A17;--sub:#6E665E;--line:#E6DFD5;--accent:#B3341F;--accent-soft:rgba(179,52,31,.09);--on-accent:#FFFFFF;--shadow:0 2px 12px rgba(0,0,0,.06);--phone-shadow:0 0 0 1px rgba(31,26,23,.08),0 30px 70px rgba(31,26,23,.22);--glow:radial-gradient(900px 600px at 80% 0%,#fbe3d6 0%,rgba(243,238,230,0) 70%)}
-@media (prefers-color-scheme:dark){:root{--bg:#121010;--bg2:#181514;--panel:#1E1B19;--ink:#EFE9DF;--sub:#A69E94;--line:#332E2A;--accent:#E0603F;--accent-soft:rgba(224,96,63,.12);--on-accent:#1A0F0B;--shadow:none;--phone-shadow:0 0 0 1px rgba(255,255,255,.09),0 30px 80px rgba(0,0,0,.6);--glow:radial-gradient(900px 600px at 80% 0%,#2a1612 0%,rgba(18,16,16,0) 70%)}}
+:root{--bg:#F3EEE6;--bg2:#ECE5DA;--panel:#FFFFFF;--ink:#1F1A17;--sub:#6E665E;--line:#E6DFD5;--accent:#B3341F;--accent-soft:rgba(179,52,31,.09);--on-accent:#FFFFFF;--shadow:0 2px 12px rgba(0,0,0,.06);--phone-shadow:0 0 0 1px rgba(31,26,23,.08),0 30px 70px rgba(31,26,23,.22);--glow:radial-gradient(900px 600px at 80% 0%,#fbe3d6 0%,rgba(243,238,230,0) 70%);--go:#15803D;--on-go:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121010;--bg2:#181514;--panel:#1E1B19;--ink:#EFE9DF;--sub:#A69E94;--line:#332E2A;--accent:#E0603F;--accent-soft:rgba(224,96,63,.12);--on-accent:#1A0F0B;--shadow:none;--phone-shadow:0 0 0 1px rgba(255,255,255,.09),0 30px 80px rgba(0,0,0,.6);--glow:radial-gradient(900px 600px at 80% 0%,#2a1612 0%,rgba(18,16,16,0) 70%);--go:#3DBB7C;--on-go:#06140C}}
+:root[data-theme=dark]{--bg:#121010;--bg2:#181514;--panel:#1E1B19;--ink:#EFE9DF;--sub:#A69E94;--line:#332E2A;--accent:#E0603F;--accent-soft:rgba(224,96,63,.12);--on-accent:#1A0F0B;--shadow:none;--phone-shadow:0 0 0 1px rgba(255,255,255,.09),0 30px 80px rgba(0,0,0,.6);--glow:radial-gradient(900px 600px at 80% 0%,#2a1612 0%,rgba(18,16,16,0) 70%);--go:#3DBB7C;--on-go:#06140C}
 @view-transition{navigation:auto}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.32s;animation-timing-function:ease}
 @media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
@@ -80,8 +80,8 @@ h1,h2,h3{overflow-wrap:break-word;hyphens:auto}
 .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
 .status{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 a.pill{text-decoration:none}a.pill:hover{filter:brightness(1.08)}
-.pill{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:16px}
-.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--on-accent);opacity:.85;animation:pulse 2.4s ease-in-out infinite}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;background:var(--go);color:var(--on-go);font-weight:700;font-size:16px}
+.pill .dot{width:8px;height:8px;border-radius:50%;background:var(--on-go);opacity:.85;animation:pulse 2.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.pill .dot{animation:none}}
 .platform{color:var(--sub);font-weight:600;font-size:15px}
@@ -195,7 +195,7 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <footer><div class="wrap">
 <div class="row">
 <div><a class="wordmark" href="/de/" aria-label="Tabi">Tabi</a><p style="margin:8px 0 0">Eine Sammlung der besonderen Orte, an denen du warst.</p></div>
-<nav aria-label="Tabi"><a href="/de/how-it-works/">So funktioniert’s</a><a href="/de/collection/">Sammlung</a><a href="/de/your-data/">Deine Daten</a><a href="/de/faq/">Fragen</a><a href="/de/about/">Über Tabi</a><a href="/de/team/">Team</a><a href="/privacy.html">Datenschutzerklärung</a><a href="/terms.html">Nutzungsbedingungen</a><a href="/privacy.html#delete">Konto löschen</a><a href="mailto:korovkinandrew@gmail.com">Kontakt</a></nav>
+<nav aria-label="Tabi"><a href="/de/how-it-works/">So funktioniert’s</a><a href="/de/collection/">Sammlung</a><a href="/de/your-data/">Deine Daten</a><a href="/de/faq/">Fragen</a><a href="/de/about/">Über Tabi</a><a href="/de/team/">Team</a><a href="/computer/?lang=de">Mediendateien vom Computer</a><a href="/privacy.de.html">Datenschutzerklärung</a><a href="/terms.html">Nutzungsbedingungen</a><a href="/privacy.de.html#delete">Konto löschen</a><a href="mailto:korovkinandrew@gmail.com">Kontakt</a></nav>
 </div>
 <div class="social"><a href="https://t.me/tabimobile" aria-label="Telegram"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Telegram</span></a><a href="#" aria-label="Discord"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/></svg><span>Discord</span></a></div>
 <div class="langs"><a href="/team/" hreflang="en" lang="en">English</a><a href="/cs/team/" hreflang="cs" lang="cs">Čeština</a><a href="/de/team/" hreflang="de" lang="de" aria-current="page">Deutsch</a><a href="/es/team/" hreflang="es" lang="es">Español</a><a href="/fr/team/" hreflang="fr" lang="fr">Français</a><a href="/ja/team/" hreflang="ja" lang="ja">日本語</a><a href="/ru/team/" hreflang="ru" lang="ru">Русский</a></div>

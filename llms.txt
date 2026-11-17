@@ -7,7 +7,8 @@
 - Type: Android app that collects the special places a person has visited (travel, category Travel & Local on Google Play)
 - Price: free
 - Platform: Android 7 and newer; no iPhone version yet
-- Availability: early access (open testing) on Google Play, https://play.google.com/store/apps/details?id=app.tabi.mobile; public release to follow
+- Availability: on Google Play for Android, anyone can install it (open testing), https://play.google.com/store/apps/details?id=app.tabi.mobile
+- Past trips from a computer: https://tabimobile.com/computer/ reads the location and time of photos and videos in the browser; the files never leave the computer
 - Places: more than 60,000 special places on every continent (castles, monasteries, peaks, waterfalls, islands, caves, nature reserves, city landmarks), each with a photo and a Wikipedia introduction
 - How places are counted: automatically in the background when you are inside a place's zone, even with the app closed; places you only drive past are not counted
 - Cities and countries: a city opens with the first place in it or after half an hour within its boundary; a country opens as soon as you are on its territory
