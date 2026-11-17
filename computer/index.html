@@ -98,7 +98,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <div class="pc-drop" id="drop"></div>
       <p class="pc-s" id="whole"></p>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
-      <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.nef,.arw" hidden>
+      <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2" hidden>
       <a href="#" class="pc-s" id="out" style="color:var(--sub)"></a>
     </div>
     <!-- Чтение и разбор -->
@@ -137,7 +137,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 <script>
 // Медиафайлы с компьютера (15.11.2026, план Андрея; переделана 17.11.2026 по его замечаниям: язык и тема, вид сайта,
 // находки по ходу разбора, несколько папок, понятные ошибки). Человек входит в свою учётную запись Tabi и выбирает папки
-// или файлы; браузер сам читает в каждом файле только место и время съёмки (JPEG, HEIC, MP4, MOV, RAW на основе TIFF) —
+// или файлы; браузер сам читает в каждом файле только место и время съёмки (JPEG, HEIC, AVIF, PNG, WebP, MP4, MOV, 3GP, RAW: DNG, CR2, CR3, NEF, ARW, RAF, ORF, RW2 и другие) —
 // файлы никуда не уходят. По точкам страница сама находит страны, регионы и города — по тем же границам и словарю
 // городов, что и телефон (data/: borders.json, regions, towns.bin) — и показывает их не меньше десяти секунд, чтобы их
 // было видно. Особые места страница не ищет: их карта закрыта и есть только в приложении. Точки «время и место» уходят
@@ -418,10 +418,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     be16 = function (a, i) { return (a[i] << 8) + a[i + 1]; };
 
   // TIFF (EXIF): {lat, lng, gps, cam, zoned, alt, speed}; cam — местное время камеры в поясе компьютера.
-  function tiff(a, o) {
+  // mode: «exif» или «gps» — первый раздел файла сам и есть раздел EXIF или GPS (блоки CMT2 и CMT4 у CR3).
+  // Заголовок — 42 у TIFF, «RO» и «RS» у ORF (Olympus), 0x55 у RW2 (Panasonic); jpg — вложенный JPEG у RW2 (тег 0x002E).
+  function tiff(a, o, mode) {
     var le = a[o] === 0x49, dv = new DataView(a.buffer, a.byteOffset, a.byteLength);
     var g16 = function (i) { return dv.getUint16(o + i, le); }, g32 = function (i) { return dv.getUint32(o + i, le); };
-    if (o + 8 > a.length || g16(2) !== 42) return null;
+    if (o + 8 > a.length) return null;
+    var magic = g16(2);
+    if (magic !== 42 && magic !== 0x4f52 && magic !== 0x5352 && magic !== 0x55) return null;
     var SZ = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 7: 1, 9: 4, 10: 8 };
     var ifd = function (at) {
       var out = {};
@@ -431,7 +435,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         var e = at + 2 + k * 12;
         if (o + e + 12 > a.length) break;
         var tag = g16(e), type = g16(e + 2), cnt = g32(e + 4), size = (SZ[type] || 1) * cnt, vo = size > 4 ? g32(e + 8) : e + 8;
-        if (o + vo + size > a.length) continue;
+        if (o + vo + size > a.length) { tag === 0x2e && (out.jpg = { off: o + vo, len: cnt }); continue; }
         out[tag] = { type: type, cnt: cnt, vo: vo };
       }
       return out;
@@ -439,9 +443,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var rat = function (x, i) { var d = dv.getUint32(o + x.vo + i * 8 + 4, le); return d ? dv.getUint32(o + x.vo + i * 8, le) / d : NaN; },
       asc = function (x) { return x ? str(a, o + x.vo, x.cnt).replace(/\0+$/, "") : ""; };
     var i0 = ifd(g32(4)), r = { lat: NaN, lng: NaN, gps: 0, cam: 0, zoned: 0, alt: 0, speed: 0 };
-    var dt0 = asc(i0[0x0132]);
-    if (i0[0x8769]) {
-      var ex = ifd(dv.getUint32(o + i0[0x8769].vo, le)), dt = asc(ex[0x9003] || ex[0x9004]) || dt0, off = asc(ex[0x9011] || ex[0x9010]);
+    var exI = mode === "exif" ? i0 : mode ? null : i0[0x8769] ? ifd(dv.getUint32(o + i0[0x8769].vo, le)) : null,
+      gpI = mode === "gps" ? i0 : mode ? null : i0[0x8825] ? ifd(dv.getUint32(o + i0[0x8825].vo, le)) : null;
+    var dt0 = mode ? "" : asc(i0[0x0132]);
+    r.jpg = i0.jpg || (i0[0x2e] ? { off: o + i0[0x2e].vo, len: i0[0x2e].cnt } : null);
+    if (exI) {
+      var ex = exI, dt = asc(ex[0x9003] || ex[0x9004]) || dt0, off = asc(ex[0x9011] || ex[0x9010]);
       var m = /^(\d{4}):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/.exec(dt);
       if (m) {
         r.cam = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]).getTime();
@@ -452,8 +459,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       var m0 = /^(\d{4}):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/.exec(dt0);
       m0 && (r.cam = new Date(+m0[1], m0[2] - 1, +m0[3], +m0[4], +m0[5], +m0[6]).getTime());
     }
-    if (i0[0x8825]) {
-      var gp = ifd(dv.getUint32(o + i0[0x8825].vo, le));
+    if (gpI) {
+      var gp = gpI;
       if (gp[2] && gp[4] && gp[2].cnt >= 3 && gp[4].cnt >= 3) {
         r.lat = rat(gp[2], 0) + rat(gp[2], 1) / 60 + rat(gp[2], 2) / 3600;
         r.lng = rat(gp[4], 0) + rat(gp[4], 1) / 60 + rat(gp[4], 2) / 3600;
@@ -480,8 +487,56 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       return null;
     });
   }
-  // RAW на основе TIFF (DNG, CR2, NEF, ARW, PEF, SRW и другие): заголовок TIFF в начале файла (17.11.2026).
-  function raw(f) { return u8(f, 0, 524288).then(function (a) { return tiff(a, 0); }); }
+  // RAW на основе TIFF (DNG, CR2, NEF, ARW, PEF, SRW, ORF, RW2 и другие): заголовок TIFF в начале файла (17.11.2026); у RW2 место
+  // и время — во вложенном JPEG.
+  function raw(f) {
+    return u8(f, 0, 524288).then(function (a) {
+      var r = tiff(a, 0);
+      return r && isNaN(r.lat) && !r.cam && r.jpg && r.jpg.len > 4 ? jpeg(f.slice(r.jpg.off, r.jpg.off + r.jpg.len)).then(function (j) { return j || r; }) : r;
+    });
+  }
+  // CR3 (Canon с 2018 года): ISO BMFF, в блоке moov — блоки CMT2 (раздел EXIF) и CMT4 (раздел GPS), каждый — отдельный TIFF.
+  function cr3(f) {
+    return u8(f, 0, 524288).then(function (a) {
+      var s = new TextDecoder("latin1").decode(a), e = s.indexOf("CMT2"), g = s.indexOf("CMT4");
+      var re = e >= 4 ? tiff(a, e + 4, "exif") : null, rg = g >= 4 ? tiff(a, g + 4, "gps") : null, r = re || rg;
+      if (r && rg) { r.lat = rg.lat; r.lng = rg.lng; r.gps = rg.gps; r.alt = rg.alt; r.speed = rg.speed; }
+      return r;
+    });
+  }
+  // RAF (Fujifilm): в заголовке — место и длина вложенного JPEG, место и время — в его EXIF.
+  function raf(f) {
+    return u8(f, 0, 96).then(function (h) {
+      if (str(h, 0, 15) !== "FUJIFILMCCD-RAW") return null;
+      var off = be32(h, 84), len = be32(h, 88);
+      return off > 0 && len > 4 && off + len <= f.size ? jpeg(f.slice(off, off + len)) : null;
+    });
+  }
+  // PNG: блок eXIf — TIFF целиком (снимки экрана места обычно не несут, но бывают и с ним).
+  function png(f) {
+    return u8(f, 0, 1048576).then(function (a) {
+      if (be32(a, 0) !== 0x89504e47) return null;
+      for (var i = 8; i + 8 <= a.length; ) {
+        var n = be32(a, i), ty = str(a, i + 4, 4);
+        if (ty === "eXIf") return tiff(a, i + 8);
+        if (ty === "IEND") return null;
+        i += 12 + n;
+      }
+      return null;
+    });
+  }
+  // WebP: RIFF, блок EXIF (бывает и в конце файла, после картинки); не больше 64 блоков.
+  function webp(f) {
+    var step = function (at, k) {
+      if (k > 64 || at + 8 > f.size) return Promise.resolve(null);
+      return u8(f, at, at + 8).then(function (h) {
+        var ty = str(h, 0, 4), n = h[4] + (h[5] << 8) + (h[6] << 16) + ((h[7] << 24) >>> 0);
+        if (ty === "EXIF") return u8(f, at + 8, at + 8 + Math.min(n, 262144)).then(function (b) { return tiff(b, str(b, 0, 6) === "Exif\0\0" ? 6 : 0); });
+        return step(at + 8 + n + (n & 1), k + 1);
+      });
+    };
+    return u8(f, 0, 12).then(function (h) { return str(h, 0, 4) === "RIFF" && str(h, 8, 4) === "WEBP" ? step(12, 0) : null; });
+  }
   // HEIC и AVIF: ISO BMFF — блок meta, в нём номер записи Exif (iinf) и её место в файле (iloc).
   function heic(f) {
     return u8(f, 0, 262144).then(function (a) {
@@ -542,9 +597,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   "jpg jpeg jpe jfif".split(" ").forEach(function (x) { EXT[x] = jpeg; });
   "heic heif hif avif".split(" ").forEach(function (x) { EXT[x] = heic; });
   "mp4 mov m4v 3gp 3g2".split(" ").forEach(function (x) { EXT[x] = movie; });
-  "dng cr2 nef nrw arw srf sr2 pef srw tif tiff 3fr erf kdc mos iiq rwl".split(" ").forEach(function (x) { EXT[x] = raw; });
+  "dng cr2 nef nrw arw srf sr2 pef srw tif tiff 3fr erf kdc mos iiq rwl orf rw2".split(" ").forEach(function (x) { EXT[x] = raw; });
+  EXT.cr3 = cr3; EXT.raf = raf; EXT.png = png; EXT.webp = webp;
   var OTHER = {};
-  "cr3 crw orf rw2 raf x3f png webp gif bmp avi mkv wmv mts m2ts mpg mpeg webm".split(" ").forEach(function (x) { OTHER[x] = 1; });
+  "crw x3f gif bmp avi mkv wmv mts m2ts mpg mpeg webm".split(" ").forEach(function (x) { OTHER[x] = 1; });
   var extOf = function (f) { var m = /\.([a-z0-9]{2,5})$/i.exec(f.name || ""); return m ? m[1].toLowerCase() : ""; };
 
   // Время съёмки — как у телефона: время спутника (UTC), если оно не дальше 14 часов от времени камеры; иначе время камеры с
