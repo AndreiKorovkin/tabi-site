@@ -7,7 +7,7 @@
 - Type: Android app that collects the special places a person has visited (travel, category Travel & Local on Google Play)
 - Price: free
 - Platform: Android 7 and newer; no iPhone version yet
-- Availability: closed testing on Google Play (package app.tabi.mobile); public release to follow
+- Availability: early access (open testing) on Google Play, https://play.google.com/store/apps/details?id=app.tabi.mobile; public release to follow
 - Places: more than 60,000 special places on every continent (castles, monasteries, peaks, waterfalls, islands, caves, nature reserves, city landmarks), each with a photo and a Wikipedia introduction
 - How places are counted: automatically in the background when you are inside a place's zone, even with the app closed; places you only drive past are not counted
 - Cities and countries: a city opens with the first place in it or after half an hour within its boundary; a country opens as soon as you are on its territory
@@ -15,7 +15,7 @@
 - Works offline: the map and counting work on the phone without the internet
 - Battery: no GPS or network while the phone lies still; at most one own position fix every fifteen minutes on the move
 - Rarity: five levels, from common to unique
-- Languages: English, Czech, German, French, Spanish, Japanese, Russian
+- Languages: English, Czech, German, French, Spanish, Italian, Portuguese, Japanese, Korean, Russian
 - Data: route kept on the phone and sent to the account once a day; data export and account deletion in the app settings
 - Website: https://tabimobile.com
 
@@ -128,17 +128,17 @@ Your route is kept on your phone and sent to your account once a day. Tabi does 
 Not yet: the first version is for Android.
 
 ### When will Tabi be available?
-The app is preparing for its release on Google Play. A link to the store will appear on this site.
+Tabi is already available on Google Play in early access: install it with the button on this site. The full public release is the next step.
 
 ### Which languages does Tabi speak?
-English, Czech, German, French, Spanish, Japanese and Russian.
+English, Czech, German, French, Spanish, Italian, Portuguese, Japanese, Korean and Russian.
 
 ### How do I delete my account?
 In the app settings. What happens to your data after deletion is described in the privacy policy.
 
 ## Tabi — a free app for collecting special places (https://tabimobile.com/about/)
 
-Tabi gathers the special places you have visited into a personal collection and suggests new ones. An Android app in seven languages.
+Tabi gathers the special places you have visited into a personal collection and suggests new ones. An Android app in ten languages.
 
 - Special places: More than 60,000 places on every continent: castles and monasteries, national parks and islands, peaks, waterfalls, deserts and the main sights of cities. Not cafés or shops, but places worth setting out for.
 - Rarity: Every place has its own level of rarity: common, rare, epic, legendary or unique. There are only 51 unique places on Earth; among them is Point Nemo, the point of the ocean farthest from land. Travellers refine the levels of places with their own ratings.
