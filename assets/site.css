@@ -27,8 +27,12 @@ header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--b
 header.top .wrap{display:flex;align-items:center;gap:24px;height:64px}
 .wordmark{font-family:TabiWord,Georgia,serif;font-size:30px;line-height:1;color:var(--ink);text-decoration:none}
 nav.sections{display:flex;gap:22px;margin-left:auto}
-nav.sections a{color:var(--sub);text-decoration:none;font-weight:600;font-size:15px}
+nav.sections a{color:var(--sub);text-decoration:none;font-weight:600;font-size:15px;white-space:nowrap}
 nav.sections a:hover,nav.sections a[aria-current]{color:var(--ink)}
+nav.sections a.hl{color:var(--accent)}
+header.top .tacc{flex:none}
+@media (max-width:1180px){header.top .tacc{margin-left:auto}}
+.tacc{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
 details.lang{position:relative}
 details.lang summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);font-weight:600;font-size:15px;color:var(--ink)}
 details.lang summary::-webkit-details-marker{display:none}
@@ -48,6 +52,7 @@ h1,h2,h3{overflow-wrap:break-word;hyphens:auto}
 .status{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 a.pill{text-decoration:none}a.pill:hover{filter:brightness(1.08)}
 .pill{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border-radius:999px;background:var(--go);color:var(--on-go);font-weight:700;font-size:16px}
+.pill.b2{background:var(--accent-soft);color:var(--accent)}
 .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--on-go);opacity:.85;animation:pulse 2.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.pill .dot{animation:none}}
@@ -120,10 +125,9 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 .mission h2 + p{margin-top:0}
 .mission p{font-size:clamp(18px,1.8vw,21px);line-height:1.65;color:var(--ink);margin:0 0 22px}
 .mission h2:not(:first-child){margin-top:56px;font-size:clamp(24px,2.4vw,30px)}
-@media (max-width:1180px){nav.sections{display:none} details.lang{margin-left:auto}}
+@media (max-width:1180px){nav.sections{display:none}}
 @media (max-width:960px){
  nav.sections{display:none}
- details.lang{margin-left:auto}
  .hero{padding:40px 0 28px}
  .hero .wrap{grid-template-columns:1fr;gap:12px}
  .phones{height:auto;display:flex;justify-content:center;padding:20px 0 40px}

@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Tabi</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/account.js?v=da076c019a"></script>
+<script>
+// Тема — до первой отрисовки, чтобы страница не мигала.
+(function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
+</script>
+<style>
+body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
+.ac-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ac-theme{appearance:none;border:0;cursor:pointer;width:40px;height:40px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
+.ac-theme .ic{width:19px;height:19px}
+details.lang li button{all:unset;display:block;box-sizing:border-box;width:100%;padding:9px 12px;border-radius:10px;color:var(--ink);font-weight:500;cursor:pointer}
+details.lang li button:hover,details.lang li button[aria-current]{background:var(--accent-soft);color:var(--accent)}
+.ac{max-width:760px;margin:0 auto;padding:32px 20px 56px;display:grid;gap:18px}
+.ac-card{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px}
+.ac h1{margin:0 0 8px;font-size:30px;line-height:1.15}
+.ac h2{margin:0 0 10px;font-size:19px}
+.ac-t{margin:0;color:var(--sub);line-height:1.55}
+.ac-in{display:grid;gap:10px;margin-top:18px;max-width:420px}
+.ac-btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:15px;text-decoration:none}
+.ac-btn.b2{background:var(--accent-soft);color:var(--accent)}
+.ac-btn:disabled{opacity:.6;cursor:default}
+.ac-f{font:inherit;font-size:16px;padding:12px 16px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.ac-s{margin:0;color:var(--sub);font-size:14px}
+.ac-e{color:var(--accent);font-weight:600;margin:0}
+.ac-me{display:flex;align-items:center;gap:18px}
+.ac-av{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:32px;font-weight:800;position:relative;overflow:hidden}
+.ac-av.plus{background:linear-gradient(135deg,#f6d36b,#d79b20 55%,#f8e3a0);color:#5a3c00;box-shadow:0 0 0 3px #e9b949,0 0 26px rgba(233,185,73,.6)}
+.ac-av.plus::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.8) 50%,transparent 60%);animation:acShine 3.2s ease-in-out infinite}
+@keyframes acShine{0%,55%{transform:translateX(-60%)}100%{transform:translateX(60%)}}
+@media (prefers-reduced-motion:reduce){.ac-av.plus::after{animation:none;opacity:0}}
+.ac-nick{margin:0;font-size:24px;font-weight:800}
+.ac-plan{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px}
+.ac-plan.plus{background:linear-gradient(135deg,#f6d36b,#e9b949);color:#5a3c00}
+.ac-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ac-tile{background:var(--bg);border-radius:18px;padding:16px}
+.ac-tile b{display:block;font-size:28px}
+.ac-tile span{color:var(--sub);font-weight:600;font-size:14px}
+.ac-list{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.ac-list li{background:var(--bg);border-radius:14px;padding:12px 14px;font-weight:600}
+.ac-list li span{display:block;color:var(--sub);font-weight:500;font-size:13px;margin-top:2px}
+.ac-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.ac-foot{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 18px}
+.ac-foot a{color:var(--sub);font-weight:600;text-decoration:none}.ac-foot a:hover{color:var(--ink)}
+@media (max-width:520px){.ac-tiles{grid-template-columns:1fr 1fr 1fr}.ac-tile b{font-size:22px}.ac-card{padding:20px}}
+[hidden]{display:none!important}
+</style></head>
+<body>
+<header class="top"><div class="wrap">
+<a class="wordmark" href="/" id="homeLink" aria-label="Tabi">Tabi</a>
+<div class="ac-tools">
+<a data-tabi-acc id="accChip" href="/account/"></a>
+<details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
+<button class="ac-theme" id="themeBtn" type="button"></button>
+</div>
+</div></header>
+
+<main class="ac">
+  <!-- Вход -->
+  <section class="ac-card" id="vIn" hidden>
+    <h1 id="title"></h1>
+    <p class="ac-t" id="lead"></p>
+    <div class="ac-in">
+      <button class="ac-btn" id="bGoogle" type="button"></button>
+      <p class="ac-s" id="orMail"></p>
+      <input class="ac-f" id="mail" type="email" autocomplete="email">
+      <button class="ac-btn b2" id="bCode" type="button"></button>
+      <input class="ac-f" id="code" inputmode="numeric" autocomplete="one-time-code" hidden>
+      <button class="ac-btn" id="bVerify" type="button" hidden></button>
+      <p class="ac-e" id="err" hidden></p>
+    </div>
+  </section>
+  <!-- Учётная запись -->
+  <section class="ac-card" id="vMe" hidden>
+    <div class="ac-me">
+      <div class="ac-av" id="av"></div>
+      <div><p class="ac-nick" id="nick"></p><p class="ac-s" id="mailMe"></p><span class="ac-plan" id="plan"></span></div>
+    </div>
+  </section>
+  <section class="ac-card" id="vColl" hidden>
+    <h2 id="hColl"></h2>
+    <div class="ac-tiles">
+      <div class="ac-tile"><b id="nCountries">—</b><span id="sCountries"></span></div>
+      <div class="ac-tile"><b id="nCities">—</b><span id="sCities"></span></div>
+      <div class="ac-tile"><b id="nPlaces">—</b><span id="sPlaces"></span></div>
+    </div>
+  </section>
+  <section class="ac-card" id="vApp" hidden>
+    <h2 id="hApp"></h2>
+    <p class="ac-t" id="appNone" hidden></p>
+    <ul class="ac-list" id="phones"></ul>
+    <div class="ac-row"><a class="ac-btn" id="bPlay" rel="noopener" hidden></a></div>
+  </section>
+  <section class="ac-card" id="vPc" hidden>
+    <h2 id="hPc"></h2>
+    <p class="ac-t" id="pcX"></p>
+    <div class="ac-row"><a class="ac-btn" id="bPc"></a></div>
+  </section>
+  <p class="ac-s" id="wait" hidden></p>
+  <div id="vOut" hidden><button class="ac-btn b2" id="bOut" type="button"></button></div>
+</main>
+<footer class="ac-foot"><a href="/" id="fHome"></a><a href="/privacy.html" id="pol"></a><a href="/terms.html" id="terms"></a></footer>
+<script>
+// Учётная запись Tabi на сайте tabimobile.com/account (18.11.2026, слово Андрея: полноценный вход на сайте; вход
+// сохраняется после закрытия браузера; сайт знает, есть ли у человека приложение, его ник и итоги; подписчик Tabi Plus
+// виден по золотому знаку). Вход — общий сценарий сайта /assets/account.js (Google или код на почту, та же учётная
+// запись, что в приложении). Сведения — функция site_me: один запрос на открытие страницы.
+(function () {
+  "use strict";
+  var ACC = window.TabiAcc,
+    PLAY = "https://play.google.com/store/apps/details?id=app.tabi.mobile",
+    BACK = location.origin + location.pathname;
+  var T = {
+    "google": {"en": "Sign in with Google", "ru": "Войти через Google", "cs": "Přihlásit se přes Google", "de": "Mit Google anmelden", "fr": "Se connecter avec Google", "es": "Iniciar sesión con Google", "it": "Accedi con Google", "pt": "Entrar com o Google", "ja": "Googleでログイン", "ko": "Google로 로그인"},
+    "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
+    "mailPh": {"en": "Email", "ru": "Почта", "cs": "E-mail", "de": "E-Mail", "fr": "E-mail", "es": "Correo", "it": "E-mail", "pt": "E-mail", "ja": "メールアドレス", "ko": "이메일"},
+    "getCode": {"en": "Get a code", "ru": "Получить код", "cs": "Získat kód", "de": "Code anfordern", "fr": "Recevoir un code", "es": "Recibir un código", "it": "Ricevi il codice", "pt": "Receber código", "ja": "コードを受け取る", "ko": "코드 받기"},
+    "codePh": {"en": "Code from the email", "ru": "Код из письма", "cs": "Kód z e-mailu", "de": "Code aus der E-Mail", "fr": "Code reçu par e-mail", "es": "Código del correo", "it": "Codice dall’e-mail", "pt": "Código do e-mail", "ja": "メールのコード", "ko": "이메일로 받은 코드"},
+    "verify": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
+    "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
+    "eNet": {"en": "No connection to Tabi. Check the internet and try again.", "ru": "Нет связи с Tabi. Проверьте интернет и попробуйте ещё раз.", "cs": "Spojení s Tabi chybí. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zu Tabi. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion à Tabi. Vérifiez internet et réessayez.", "es": "No hay conexión con Tabi. Comprueba internet y vuelve a intentarlo.", "it": "Nessuna connessione con Tabi. Controlli la connessione a Internet e riprovi.", "pt": "Sem conexão com o Tabi. Verifique a internet e tente novamente.", "ja": "Tabiに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "Tabi에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."},
+    "install": {"en": "Install Tabi", "ru": "Установить Tabi", "cs": "Nainstalovat Tabi", "de": "Tabi installieren", "fr": "Installer Tabi", "es": "Instalar Tabi", "it": "Installa Tabi", "pt": "Instalar o Tabi", "ja": "Tabiをインストール", "ko": "Tabi 설치"},
+    "langLabel": {"en": "Language", "ru": "Язык", "cs": "Jazyk", "de": "Sprache", "fr": "Langue", "es": "Idioma", "it": "Lingua", "pt": "Idioma", "ja": "言語", "ko": "언어"},
+    "thAuto": {"en": "System theme", "ru": "Тема системы", "cs": "Motiv systému", "de": "Systemdesign", "fr": "Thème du système", "es": "Tema del sistema", "it": "Tema di sistema", "pt": "Tema do sistema", "ja": "システムのテーマ", "ko": "시스템 테마"},
+    "thLight": {"en": "Light theme", "ru": "Светлая тема", "cs": "Světlý motiv", "de": "Helles Design", "fr": "Thème clair", "es": "Tema claro", "it": "Tema chiaro", "pt": "Tema claro", "ja": "ライトテーマ", "ko": "밝은 테마"},
+    "thDark": {"en": "Dark theme", "ru": "Тёмная тема", "cs": "Tmavý motiv", "de": "Dunkles Design", "fr": "Thème sombre", "es": "Tema oscuro", "it": "Tema scuro", "pt": "Tema escuro", "ja": "ダークテーマ", "ko": "어두운 테마"},
+    "pol": {"en": "Privacy policy", "ru": "Политика конфиденциальности", "cs": "Zásady ochrany soukromí", "de": "Datenschutzerklärung", "fr": "Politique de confidentialité", "es": "Política de privacidad", "it": "Informativa sulla privacy", "pt": "Política de privacidade", "ja": "プライバシーポリシー", "ko": "개인정보처리방침"},
+    "sCountries": {"en": "Countries", "ru": "Страны", "cs": "Země", "de": "Länder", "fr": "Pays", "es": "Países", "it": "Paesi", "pt": "Países", "ja": "国", "ko": "국가"},
+    "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
+    "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
+    "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
+    "accTitle": {"en": "Tabi account", "ru": "Учётная запись Tabi", "cs": "Účet Tabi", "de": "Tabi-Konto", "fr": "Compte Tabi", "es": "Cuenta de Tabi", "it": "Account Tabi", "pt": "Conta Tabi", "ja": "Tabiアカウント", "ko": "Tabi 계정"},
+    "accLead": {"en": "The account on the website is the same as in the Tabi app. Sign in to see your collection and the results of scanning media files from your computer.", "ru": "Учётная запись на сайте — та же, что в приложении Tabi. Войдите, чтобы видеть свою коллекцию и итоги разбора медиафайлов с компьютера.", "cs": "Účet na webu je stejný jako v aplikaci Tabi. Přihlaste se a uvidíte svou sbírku a výsledky rozboru mediálních souborů z počítače.", "de": "Das Konto auf der Website ist dasselbe wie in der Tabi-App. Melden Sie sich an, um Ihre Sammlung und die Ergebnisse der Auswertung von Mediendateien vom Computer zu sehen.", "fr": "Le compte du site est le même que dans l’application Tabi. Connectez-vous pour voir votre collection et les résultats de l’analyse des fichiers multimédias de votre ordinateur.", "es": "La cuenta del sitio web es la misma que en la aplicación Tabi. Inicia sesión para ver tu colección y los resultados del análisis de los archivos multimedia de tu ordenador.", "it": "L’account del sito è lo stesso dell’app Tabi. Acceda per vedere la Sua collezione e i risultati dell’analisi dei file multimediali del computer.", "pt": "A conta do site é a mesma do aplicativo Tabi. Entre para ver sua coleção e os resultados da análise dos arquivos de mídia do computador.", "ja": "サイトのアカウントはTabiアプリと同じです。ログインすると、コレクションとパソコンのメディアファイルの分析結果を見られます。", "ko": "사이트 계정은 Tabi 앱과 같습니다. 로그인하면 컬렉션과 컴퓨터 미디어 파일 분석 결과를 볼 수 있습니다."},
+    "hColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
+    "sPlaces": {"en": "Special places", "ru": "Особые места", "cs": "Zvláštní místa", "de": "Besondere Orte", "fr": "Lieux remarquables", "es": "Lugares especiales", "it": "Luoghi speciali", "pt": "Lugares especiais", "ja": "特別な場所", "ko": "특별한 장소"},
+    "hApp": {"en": "Tabi app", "ru": "Приложение Tabi", "cs": "Aplikace Tabi", "de": "Tabi-App", "fr": "Application Tabi", "es": "Aplicación Tabi", "it": "App Tabi", "pt": "Aplicativo Tabi", "ja": "Tabiアプリ", "ko": "Tabi 앱"},
+    "appNone": {"en": "This account has no phone with the Tabi app.", "ru": "В этой учётной записи нет телефона с приложением Tabi.", "cs": "Tento účet nemá žádný telefon s aplikací Tabi.", "de": "Mit diesem Konto ist kein Telefon mit der Tabi-App verbunden.", "fr": "Aucun téléphone avec l’application Tabi n’est associé à ce compte.", "es": "Esta cuenta no tiene ningún teléfono con la aplicación Tabi.", "it": "Questo account non ha alcun telefono con l’app Tabi.", "pt": "Esta conta não tem nenhum telefone com o aplicativo Tabi.", "ja": "このアカウントにはTabiアプリを使っているスマートフォンがありません。", "ko": "이 계정에는 Tabi 앱이 설치된 휴대폰이 없습니다."},
+    "appRow": {"en": "Version {v} · last sign-in {d}", "ru": "Выпуск {v} · последний вход {d}", "cs": "Verze {v} · poslední přihlášení {d}", "de": "Version {v} · letzte Anmeldung {d}", "fr": "Version {v} · dernière connexion le {d}", "es": "Versión {v} · último acceso {d}", "it": "Versione {v} · ultimo accesso {d}", "pt": "Versão {v} · último acesso {d}", "ja": "バージョン {v} · 最終ログイン {d}", "ko": "버전 {v} · 마지막 로그인 {d}"},
+    "pcX": {"en": "From the place and time of photos and videos on your computer, the page finds the countries, cities and route of your trips and saves the result in this account.", "ru": "Страница находит по месту и времени съёмки фото и видео с компьютера страны, города и маршрут поездок и сохраняет итог в этой учётной записи.", "cs": "Stránka podle místa a času pořízení fotek a videí z počítače najde země, města a trasu vašich cest a uloží výsledek do tohoto účtu.", "de": "Anhand von Ort und Zeit der Fotos und Videos auf Ihrem Computer findet die Seite die Länder, Städte und die Route Ihrer Reisen und speichert das Ergebnis in diesem Konto.", "fr": "À partir du lieu et de l’heure des photos et vidéos de votre ordinateur, la page trouve les pays, les villes et l’itinéraire de vos voyages et enregistre le résultat dans ce compte.", "es": "A partir del lugar y la hora de las fotos y vídeos de tu ordenador, la página encuentra los países, las ciudades y la ruta de tus viajes y guarda el resultado en esta cuenta.", "it": "Dal luogo e dall’ora di foto e video del computer, la pagina trova i paesi, le città e il percorso dei Suoi viaggi e salva il risultato in questo account.", "pt": "A partir do local e da hora das fotos e vídeos do computador, a página encontra os países, as cidades e o trajeto das suas viagens e salva o resultado nesta conta.", "ja": "パソコンの写真と動画の撮影場所と時刻から、旅行した国、都市、ルートを見つけ、このアカウントに結果を保存します。", "ko": "컴퓨터의 사진과 동영상 촬영 장소와 시간으로 여행한 국가, 도시, 경로를 찾아 이 계정에 결과를 저장합니다."},
+    "pcBtn": {"en": "Open media file scanning", "ru": "Открыть разбор медиафайлов", "cs": "Otevřít rozbor mediálních souborů", "de": "Auswertung der Mediendateien öffnen", "fr": "Ouvrir l’analyse des fichiers multimédias", "es": "Abrir el análisis de archivos multimedia", "it": "Apri l’analisi dei file multimediali", "pt": "Abrir a análise de arquivos de mídia", "ja": "メディアファイルの分析を開く", "ko": "미디어 파일 분석 열기"},
+    "out": {"en": "Sign out", "ru": "Выйти", "cs": "Odhlásit se", "de": "Abmelden", "fr": "Se déconnecter", "es": "Cerrar sesión", "it": "Esci", "pt": "Sair", "ja": "ログアウト", "ko": "로그아웃"},
+    "wait": {"en": "Account details are loading.", "ru": "Сведения учётной записи загружаются.", "cs": "Údaje účtu se načítají.", "de": "Die Kontodaten werden geladen.", "fr": "Les informations du compte sont en cours de chargement.", "es": "Se están cargando los datos de la cuenta.", "it": "I dati dell’account sono in caricamento.", "pt": "Os dados da conta estão sendo carregados.", "ja": "アカウント情報を読み込んでいます。", "ko": "계정 정보를 불러오는 중입니다."},
+    "planPlus": {"en": "Tabi Plus until {d}", "ru": "Tabi Plus до {d}", "cs": "Tabi Plus do {d}", "de": "Tabi Plus bis {d}", "fr": "Tabi Plus jusqu’au {d}", "es": "Tabi Plus hasta el {d}", "it": "Tabi Plus fino al {d}", "pt": "Tabi Plus até {d}", "ja": "Tabi Plus（{d}まで）", "ko": "Tabi Plus ({d}까지)"},
+    "planPlusNow": {"en": "Tabi Plus", "ru": "Tabi Plus", "cs": "Tabi Plus", "de": "Tabi Plus", "fr": "Tabi Plus", "es": "Tabi Plus", "it": "Tabi Plus", "pt": "Tabi Plus", "ja": "Tabi Plus", "ko": "Tabi Plus"},
+    "planFree": {"en": "Free version", "ru": "Бесплатная версия", "cs": "Bezplatná verze", "de": "Kostenlose Version", "fr": "Version gratuite", "es": "Versión gratuita", "it": "Versione gratuita", "pt": "Versão gratuita", "ja": "無料版", "ko": "무료 버전"},
+    "terms": {"en": "Terms of use", "ru": "Условия использования", "cs": "Podmínky používání", "de": "Nutzungsbedingungen", "fr": "Conditions d’utilisation", "es": "Condiciones de uso", "it": "Condizioni d’uso", "pt": "Termos de uso", "ja": "利用規約", "ko": "이용약관"}
+  };
+  var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
+    LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
+    SITE_LANGS = ["en", "cs", "de", "es", "fr", "ja", "ru"];
+  var ls = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  var okLang = function (l) { l = String(l || "").slice(0, 2).toLowerCase(); return LANGS.indexOf(l) >= 0 ? l : null; };
+  var L = okLang(new URLSearchParams(location.search).get("lang")) || okLang(ls.get("tabiLang")) || okLang(navigator.language) || "en";
+  var $ = function (id) { return document.getElementById(id); },
+    t = function (k, v) {
+      var s = (T[k] && (T[k][L] || T[k].en)) || "";
+      for (var x in v || {}) s = s.split("{" + x + "}").join(String(v[x]));
+      return s;
+    },
+    num = function (n) { return Number(n || 0).toLocaleString(L); },
+    day = function (iso) { var d = new Date(iso); return isFinite(d) ? d.toLocaleDateString(L, { day: "numeric", month: "long", year: "numeric" }) : ""; },
+    errKey = null,
+    err = function (k) { errKey = k || null; $("err").hidden = !k; $("err").textContent = k ? t(k) : ""; };
+  var ME = null;
+
+  // ===== Тема и язык =====
+  var ICON = {
+    auto: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>',
+    light: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+    dark: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'
+  };
+  var theme = ls.get("tabiTheme");
+  theme = theme === "light" || theme === "dark" ? theme : "auto";
+  function applyTheme() {
+    theme === "auto" ? document.documentElement.removeAttribute("data-theme") : document.documentElement.setAttribute("data-theme", theme);
+    $("themeBtn").innerHTML = ICON[theme];
+    var lbl = t(theme === "auto" ? "thAuto" : theme === "light" ? "thLight" : "thDark");
+    $("themeBtn").setAttribute("aria-label", lbl); $("themeBtn").title = lbl;
+  }
+  $("themeBtn").onclick = function () { theme = theme === "auto" ? "light" : theme === "light" ? "dark" : "auto"; ls.set("tabiTheme", theme === "auto" ? "" : theme); applyTheme(); };
+
+  function applyTexts() {
+    document.documentElement.lang = L;
+    document.title = "Tabi — " + t("accTitle");
+    $("langLbl").textContent = t("langLabel") + ": ";
+    $("langCur").textContent = LANG_NAMES[L];
+    $("langList").innerHTML = "";
+    LANGS.forEach(function (l) {
+      var li = document.createElement("li"), b = document.createElement("button");
+      b.type = "button"; b.lang = l; b.textContent = LANG_NAMES[l];
+      l === L && b.setAttribute("aria-current", "true");
+      b.onclick = function () { L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts(); };
+      li.appendChild(b); $("langList").appendChild(li);
+    });
+    $("homeLink").href = $("fHome").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
+    $("fHome").textContent = "tabimobile.com";
+    $("pol").href = L === "en" ? "/privacy.html" : "/privacy." + L + ".html"; $("pol").textContent = t("pol");
+    $("terms").href = L === "en" ? "/terms.html" : "/terms." + L + ".html"; $("terms").textContent = t("terms");
+    var set = { title: "accTitle", lead: "accLead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", hColl: "hColl",
+      sCountries: "sCountries", sCities: "sCities", sPlaces: "sPlaces", hApp: "hApp", appNone: "appNone", bPlay: "install", hPc: "title",
+      pcX: "pcX", bPc: "pcBtn", bOut: "out", wait: "wait" };
+    for (var id in set) $(id).textContent = t(set[id]);
+    $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh");
+    $("bPlay").href = PLAY + "&hl=" + L;
+    $("bPc").href = "/computer/?lang=" + L;
+    $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); ACC.repaint && ACC.repaint();
+    errKey && err(errKey);
+    applyTheme();
+    render();
+  }
+
+  // ===== Вид страницы =====
+  function render() {
+    var S = ACC.get();
+    $("vIn").hidden = !!S;
+    ["vMe", "vColl", "vApp", "vPc", "vOut"].forEach(function (id) { $(id).hidden = !S || !ME; });
+    $("wait").hidden = !(S && !ME);
+    if (!S || !ME) return;
+    var name = ME.nick || (S.mail || "").split("@")[0] || "Tabi";
+    $("av").textContent = name.charAt(0).toUpperCase();
+    $("av").className = "ac-av" + (ME.plus ? " plus" : "");
+    $("nick").textContent = name;
+    $("mailMe").textContent = S.mail || "";
+    $("plan").className = "ac-plan" + (ME.plus ? " plus" : "");
+    $("plan").textContent = ME.plus ? (ME.plus_until && Date.parse(ME.plus_until) > Date.now() ? t("planPlus", { d: day(ME.plus_until) }) : t("planPlusNow")) : t("planFree");
+    $("nCountries").textContent = num(ME.countries);
+    $("nCities").textContent = num(ME.cities);
+    $("nPlaces").textContent = num(ME.places);
+    var ph = ME.phones || [];
+    $("appNone").hidden = ph.length > 0;
+    $("bPlay").hidden = ph.length > 0;
+    $("phones").innerHTML = "";
+    ph.forEach(function (p) {
+      var li = document.createElement("li"), s = document.createElement("span");
+      li.textContent = p.model || "Android";
+      s.textContent = t("appRow", { v: p.app || "—", d: p.seen ? day(p.seen) : "—" });
+      li.appendChild(s);
+      $("phones").appendChild(li);
+    });
+  }
+  function load(force) {
+    if (!ACC.get()) { ME = null; return render(); }
+    render();
+    ACC.me(force).then(function (v) {
+      ME = v;
+      !v && !ACC.get() && (ME = null);
+      render();
+    });
+  }
+  ACC.on(function (s) { s ? load(false) : ((ME = null), render()); });
+
+  // ===== Вход =====
+  window.addEventListener("message", function (e) {
+    if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
+    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? load(true) : err("eCode"); });
+  });
+  $("bGoogle").onclick = function () { err(null); ACC.google(BACK + "?lang=" + L); };
+  $("bCode").onclick = function () {
+    var m = $("mail").value.trim();
+    if (!/^\S+@\S+\.\S+$/.test(m)) return;
+    $("bCode").disabled = true; err(null);
+    ACC.otp(m, L).then(function (ok) {
+      $("bCode").disabled = false;
+      if (!ok) return err("eNet");
+      $("code").hidden = false; $("bVerify").hidden = false; $("code").focus();
+    }).catch(function () { $("bCode").disabled = false; err("eNet"); });
+  };
+  $("bVerify").onclick = function () {
+    var m = $("mail").value.trim(), c = $("code").value.replace(/\D/g, "");
+    if (c.length < 6) return;
+    err(null);
+    ACC.verify(m, c).then(function (s) { s ? load(true) : err("eCode"); }).catch(function () { err("eNet"); });
+  };
+  $("bOut").onclick = function () { ACC.out(); ME = null; render(); };
+
+  // Возврат из Google переходом (окно не открылось): код в адресе.
+  var q = new URLSearchParams(location.search), code = q.get("code");
+  applyTexts();
+  if (code && q.get("w") !== "1") {
+    history.replaceState(null, "", location.pathname + "?lang=" + L);
+    ACC.exchange(code).then(function (s) { s ? load(true) : err("eCode"); });
+  } else if (!code) load(false);
+})();
+</script>
+</body></html>

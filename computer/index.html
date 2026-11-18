@@ -4,20 +4,10 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/account.js?v=da076c019a"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
-// Окно входа через Google (18.11.2026): страница, открытая в нём после входа, отдаёт код своей вкладке и закрывается —
-// разбор во вкладке не теряется.
-(function () {
-  try {
-    var q = new URLSearchParams(location.search), c = q.get("code");
-    if (c && q.get("w") === "1" && window.opener && window.opener.location.origin === location.origin) {
-      window.opener.postMessage({ tabiCode: c }, location.origin);
-      window.close();
-    }
-  } catch (e) {}
-})();
 </script>
 <style>
 body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
@@ -108,6 +98,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/" id="homeLink" aria-label="Tabi">Tabi</a>
 <div class="pc-tools">
+<a data-tabi-acc id="accChip" href="/account/"></a>
 <details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
 <button class="pc-theme" id="themeBtn" type="button"></button>
 </div>
@@ -136,6 +127,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <div class="pc-drop" id="drop"></div>
       <p class="pc-s" id="whole"></p>
       <p class="pc-s" id="keepHint"></p>
+      <p class="pc-s" id="anonNote"></p>
       <a href="#" class="pc-link" id="bView"></a>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
       <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2,.json,.gpx,.kml,.tcx,.geojson" hidden>
@@ -320,7 +312,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "clearBtn": {"en": "Start over", "ru": "Начать заново", "cs": "Začít znovu", "de": "Neu beginnen", "fr": "Recommencer", "es": "Empezar de nuevo", "it": "Ricominciare", "pt": "Começar de novo", "ja": "最初からやり直す", "ko": "처음부터 다시"},
     "tlReading": {"en": "Reading the Google location history…", "ru": "Читаем историю местоположений Google…", "cs": "Čteme historii polohy Google…", "de": "Der Google-Standortverlauf wird gelesen …", "fr": "Lecture de l’historique des positions Google…", "es": "Leyendo el historial de ubicaciones de Google…", "it": "Lettura della cronologia delle posizioni di Google…", "pt": "Lendo o histórico de localização do Google…", "ja": "Googleのロケーション履歴を読み込んでいます…", "ko": "Google 위치 기록을 읽는 중…"},
     "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
-    "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."}
+    "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."},
+    "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
+    "anonNote": {"en": "Right after the scan, the place and time from the files are stored on the Tabi server without an account, under a random key of this browser. If you sign in to your Tabi account, the result moves to it; without sign-in it is erased after 30 days, and “Start over” erases it at once.", "ru": "Сразу после разбора место и время из файлов сохраняются на сервере Tabi без учётной записи, под случайным ключом этого браузера. Если вы войдёте в учётную запись Tabi, итог перейдёт в неё; без входа итог будет стёрт через 30 дней, а «Начать заново» стирает его сразу.", "cs": "Hned po rozboru se místo a čas ze souborů uloží na server Tabi bez účtu, pod náhodným klíčem tohoto prohlížeče. Pokud se přihlásíte do účtu Tabi, výsledek se do něj přesune; bez přihlášení bude za 30 dní smazán a „Začít znovu“ ho smaže hned.", "de": "Gleich nach der Auswertung werden Ort und Zeit aus den Dateien ohne Konto auf dem Tabi-Server gespeichert, unter einem zufälligen Schlüssel dieses Browsers. Wenn Sie sich bei Ihrem Tabi-Konto anmelden, geht das Ergebnis in das Konto über; ohne Anmeldung wird es nach 30 Tagen gelöscht, und „Neu beginnen“ löscht es sofort.", "fr": "Juste après l’analyse, le lieu et l’heure tirés des fichiers sont enregistrés sur le serveur Tabi sans compte, sous une clé aléatoire de ce navigateur. Si vous vous connectez à votre compte Tabi, le résultat y est transféré ; sans connexion, il est effacé au bout de 30 jours, et « Recommencer » l’efface aussitôt.", "es": "Justo después del análisis, el lugar y la hora de los archivos se guardan en el servidor de Tabi sin cuenta, con una clave aleatoria de este navegador. Si inicias sesión en tu cuenta de Tabi, el resultado pasa a ella; sin iniciar sesión se borra a los 30 días, y «Empezar de nuevo» lo borra al instante.", "it": "Subito dopo l’analisi, il luogo e l’ora dei file vengono salvati sul server di Tabi senza account, con una chiave casuale di questo browser. Se accede al Suo account Tabi, il risultato vi viene trasferito; senza accesso viene cancellato dopo 30 giorni, e «Ricominciare» lo cancella subito.", "pt": "Logo após a análise, o local e a hora dos arquivos são salvos no servidor do Tabi sem conta, com uma chave aleatória deste navegador. Se você entrar na sua conta Tabi, o resultado passa para ela; sem entrar, ele é apagado após 30 dias, e “Começar de novo” o apaga na hora.", "ja": "分析の直後、ファイルの場所と時刻はアカウントなしで、このブラウザーのランダムな鍵のもとにTabiのサーバーへ保存されます。Tabiアカウントにログインすると結果はアカウントに移ります。ログインしない場合は30日後に削除され、「最初からやり直す」ですぐに削除できます。", "ko": "분석 직후 파일의 장소와 시간은 계정 없이 이 브라우저의 임의 키로 Tabi 서버에 저장됩니다. Tabi 계정에 로그인하면 결과가 계정으로 옮겨지고, 로그인하지 않으면 30일 후 삭제되며 ‘처음부터 다시’를 누르면 즉시 삭제됩니다."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -390,12 +384,13 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
       bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
-      restoredX: "restored", slow: "slow" };
+      restoredX: "restored", slow: "slow", anonNote: "anonNote" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
     $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh");
+    $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); TACC.repaint && TACC.repaint();
     $("over").textContent = t("dropHere");
     errKey && err(errKey, errArgs);
     applyTheme();
@@ -404,79 +399,32 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     renderWhy();
   }
 
-  // ===== Вход: ключ входа хранится только в этой вкладке (sessionStorage) =====
-  var S = null;
-  try { S = JSON.parse(sessionStorage.getItem("tabiPc") || "null"); } catch (e) {}
-  var keep = function (s) { S = s; try { s ? sessionStorage.setItem("tabiPc", JSON.stringify(s)) : sessionStorage.removeItem("tabiPc"); } catch (e) {} },
-    auth = function (path, body) {
-      return fetch(SB + "/auth/v1/" + path, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
-        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); });
-    },
-    fromToken = function (j) {
-      return j && j.access_token ? { at: j.access_token, rt: j.refresh_token, exp: Date.now() + (j.expires_in || 3600) * 1000, mail: (j.user && j.user.email) || (S && S.mail) || "" } : null;
-    },
-    fresh = function () {
-      if (!S) return Promise.resolve(null);
-      if (S.exp - Date.now() > 120000) return Promise.resolve(S);
-      return auth("token?grant_type=refresh_token", { refresh_token: S.rt }).then(function (r) { var s = r.ok && fromToken(r.j); keep(s || null); return s; });
-    };
-  var b64u = function (buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  // ===== Вход — общий для всего сайта tabimobile.com (/assets/account.js, 18.11.2026, слово Андрея): ключ входа хранится в
+  // этом браузере до «Выйти», шапка показывает, кто вошёл. =====
+  // Имя TACC: ACC на этой странице — цвет акцента карты.
+  var TACC = window.TabiAcc, S = TACC.get();
+  TACC.on(function (s) { S = s; });
+  var keep = function (s) { TACC.keep(s); S = TACC.get(); },
+    fresh = function () { return TACC.fresh().then(function (s) { S = s; return s; }); };
   // Вход через Google — окном (вкладка с разбором остаётся); окно не открылось — переходом, разбор перед этим
   // сохраняется в браузере (IndexedDB) и после возврата восстанавливается.
   function exchange(code) {
-    var ver = null;
-    try { ver = sessionStorage.getItem("tabiPcVer"); } catch (e) {}
-    return auth("token?grant_type=pkce", { auth_code: code, code_verifier: ver }).then(function (r) {
-      var s = r.ok && fromToken(r.j);
-      s ? keep(s) : err("eCode");
-      return s;
-    }).catch(function () { err("eNet"); return null; });
+    return TACC.exchange(code).then(function (s) { s ? (S = s) : err("eCode"); return s; }).catch(function () { err("eNet"); return null; });
   }
   window.addEventListener("message", function (e) {
     if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
     exchange(String(e.data.tabiCode)).then(function (s) { s && signedIn(); });
   });
-  $("bGoogle").onclick = function () {
-    var v = b64u(crypto.getRandomValues(new Uint8Array(32)).buffer);
-    crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
-      try { sessionStorage.setItem("tabiPcVer", v); } catch (e) {}
-      var url = function (w) { return SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(BACK + "?lang=" + L + (w ? "&w=1" : "")) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256"; };
-      var win = null;
-      try { win = window.open(url(true), "tabiAuth", "width=520,height=700"); } catch (e) {}
-      if (!win) stash().then(function () { location.href = url(false); });
-    });
-  };
-  // Капча Cloudflare Turnstile для письма с кодом: скрипт грузится только по нажатию.
-  var captcha = function () {
-    return new Promise(function (ok, bad) {
-      var go = function () {
-        var box = document.createElement("div");
-        box.style.cssText = "position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:40";
-        document.body.appendChild(box);
-        window.turnstile.render(box, {
-          sitekey: CAPTCHA, appearance: "interaction-only",
-          callback: function (tk) { ok(tk); setTimeout(function () { box.remove(); }, 0); },
-          "error-callback": function () { box.remove(); bad(); }
-        });
-      };
-      if (window.turnstile) return go();
-      var s = document.createElement("script");
-      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      s.onload = go; s.onerror = bad;
-      document.head.appendChild(s);
-    });
-  };
-  // Код на почту: и вход, и новая учётная запись — одно действие, как в приложении.
+  $("bGoogle").onclick = function () { TACC.google(BACK + "?lang=" + L, stash); };
+  // Код на почту: и вход, и новая учётная запись — одно действие, как в приложении (капча — в общем сценарии входа).
   $("bCode").onclick = function () {
     var m = $("mail").value.trim();
     if (!/^\S+@\S+\.\S+$/.test(m)) return;
     $("bCode").disabled = true;
     err(null);
-    captcha().then(function (tk) {
-      return auth("otp", { email: m, create_user: true, data: { lang: L }, gotrue_meta_security: { captcha_token: tk } });
-    }).then(function (r) {
+    TACC.otp(m, L).then(function (ok) {
       $("bCode").disabled = false;
-      if (!r.ok) return err("eNet");
+      if (!ok) return err("eNet");
       $("code").hidden = false; $("bVerify").hidden = false; $("code").focus();
     }).catch(function () { $("bCode").disabled = false; err("eNet"); });
   };
@@ -484,10 +432,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var m = $("mail").value.trim(), c = $("code").value.replace(/\D/g, "");
     if (c.length < 6) return;
     err(null);
-    auth("verify", { type: "email", email: m, token: c }).then(function (r) {
-      var s = r.ok && fromToken(r.j);
+    TACC.verify(m, c).then(function (s) {
       if (!s) return err("eCode");
-      keep(Object.assign(s, { mail: m }));
+      S = s;
       signedIn();
     }).catch(function () { err("eNet"); });
   };
@@ -1595,7 +1542,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell();
-      S ? doSave() : renderSave();
+      S ? doSave() : (renderSave(), anonPut());
     });
   }
 
@@ -1664,16 +1611,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     saveSt.state = "saving"; err(null); renderSave();
     // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
     // две камеры одной модели, а восстановить по ним номер нельзя (одним шести знакам отвечают десятки тысяч номеров).
-    var DEVH = [], CARD = "";
-    Promise.all(DEV.list.map(function (d) {
-      return d.sn ? crypto.subtle.digest("SHA-256", new TextEncoder().encode(d.mk + "|" + d.md + "|" + d.sn)).then(function (h) {
-        return "h" + Array.prototype.map.call(new Uint8Array(h).slice(0, 3), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
-      }) : "";
-    })).then(function (hs) { DEVH = DEV.list.map(function (d, i) { return { mk: d.mk, md: d.md, sn: hs[i] }; }); return saveSt.mailed ? "" : cardB64(); }).then(function (png) { CARD = png; return fresh(); }).then(function (s) {
+    var DEVH = [], CARD = "", AKS = anonKey(false);
+    devHashes().then(function (dh) { DEVH = dh; return saveSt.mailed ? "" : cardB64(); }).then(function (png) { CARD = png; return fresh(); }).then(function (s) {
       if (!s) return { auth: true };
       // Папка — своя у каждого устройства: пары «устройство и папка» собирает функция pc-media; здесь папка — по номеру.
       var body = { op: "put", pcl: pcLabel(), devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
-        special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined };
+        special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined, anon: AKS || undefined };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
     }).then(function (res) {
@@ -1687,6 +1630,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         return renderSave();
       }
       todo.forEach(function (p) { p.sent = true; });
+      // Копия до входа перешла в учётную запись и стёрта сервером.
+      AKS && AKS === anonKey(false) && anonForget();
       saveSt.state = "saved"; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
       j.special && j.special.n != null && (saveSt.special = j.special);
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
@@ -1698,6 +1643,47 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }).catch(function () { saveSt.state = "error"; saveSt.err = ["eNet"]; err("eNet"); renderSave(); });
   }
   $("bRetry").onclick = function () { doSave(); };
+  // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
+  // две камеры одной модели, а восстановить по ним номер нельзя.
+  function devHashes() {
+    return Promise.all(DEV.list.map(function (d) {
+      return d.sn ? crypto.subtle.digest("SHA-256", new TextEncoder().encode(d.mk + "|" + d.md + "|" + d.sn)).then(function (h) {
+        return "h" + Array.prototype.map.call(new Uint8Array(h).slice(0, 3), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      }) : "";
+    })).then(function (hs) { return DEV.list.map(function (d, i) { return { mk: d.mk, md: d.md, sn: hs[i] }; }); });
+  }
+  // Точки разбора до входа (18.11.2026, слово Андрея): сразу после разбора — на сервер Tabi, без учётной записи, под
+  // случайным ключом этого браузера (сервер знает только его отпечаток). Войдёт человек — точки уходят в учётную запись
+  // (doSave с anon), копия до входа стирается; без входа сервер стирает её через 30 дней; «Начать заново» — сразу.
+  var AK = "tabiPcAnon";
+  function anonKey(make) {
+    var k = ls.get(AK);
+    if (!k && make) {
+      k = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(16)), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      ls.set(AK, k);
+    }
+    return k || null;
+  }
+  function anonForget() { try { localStorage.removeItem(AK); localStorage.removeItem(AK + "N"); } catch (e) {} }
+  function anonPut() {
+    if (S) return;
+    var todo = A.pts.filter(function (p) { return !p.sent; });
+    // Та же копия уже на сервере (итог восстановлен из браузера без новых точек) — повторно не отправляется.
+    if (!todo.length || (anonKey(false) && ls.get(AK + "N") === String(todo.length))) return;
+    devHashes().then(function (dh) {
+      var body = { op: "anon", key: anonKey(true), pcl: pcLabel(), devs: dh, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
+        sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }) };
+      return fetch(FN, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json().catch(function () { return null; }); })
+        .then(function (j) { j && j.ok && ls.set(AK + "N", String(todo.length)); });
+    }).catch(function () {});
+  }
+  function anonDrop() {
+    var k = anonKey(false);
+    if (!k) return;
+    anonForget();
+    fetch(FN, { method: "POST", keepalive: true, headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ op: "anon_drop", key: k }) }).catch(function () {});
+  }
   // Компьютер — подписью системы и браузера: по ней в приложении видно, откуда папка.
   function pcLabel() {
     var os = /Windows/i.test(UA) ? "Windows" : /Mac OS X/i.test(UA) ? "macOS" : /CrOS/i.test(UA) ? "ChromeOS" : /Linux/i.test(UA) ? "Linux" : "";
@@ -1751,6 +1737,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }).catch(function () { return null; });
   }
   function keepDrop() {
+    anonDrop();
     return idb().then(function (db) {
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
