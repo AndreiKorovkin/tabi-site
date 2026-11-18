@@ -58,8 +58,13 @@ td.n{text-align:right;white-space:nowrap}
       <div class="grid2" style="margin-top:14px"><div><h2>Почему нет места</h2><table id="siteWhy"></table></div><div><h2>Страны в разборах</h2><table id="siteCc"></table></div>
         <div><h2>Камеры</h2><table id="siteCam"></table></div><div><h2>Языки и системы</h2><table id="siteLang"></table></div></div>
     </section>
-    <section class="card"><h2>Приложение</h2><div class="tiles" id="appT"></div><div style="margin-top:12px"><h2>Выпуски</h2><table id="appV"></table></div></section>
-    <section class="card"><h2>Что делают люди в приложении</h2><div class="tiles" id="engT"></div>
+    <section class="card"><h2>Приложение</h2><div class="tiles" id="appT"></div>
+      <div class="grid2" style="margin-top:12px"><div><h2>Учётные записи по видам</h2><table id="appK"></table></div><div><h2>Выпуски</h2><table id="appV"></table></div></div></section>
+    <section class="card"><h2>Что делают люди в приложении</h2>
+      <p class="s">Все числа раздела — только живые люди. Учётные записи Андрея, эмуляторы Claude, проверка Google и тестировщики считаются отдельно, в таблице «Кто открывал приложение».</p>
+      <div class="tiles" id="engT"></div>
+      <div style="margin-top:14px"><h2>Люди</h2><table id="engR"></table></div>
+      <div style="margin-top:14px"><h2>Кто открывал приложение за период</h2><table id="engK"></table></div>
       <div class="grid2" style="margin-top:14px"><div><h2>Действия</h2><table id="engA"></table></div><div><h2>На чём заканчивается сеанс</h2><table id="engX"></table></div></div>
       <p class="s" style="margin-top:10px">Коды действий: tab — вкладка, win — окно, которое приложение открыло само, ib — «Входящие», ob и perm — вступление и разрешения, map и wm — карты, coll — коллекция, scan — проверка медиафайлов, md — устройства, net — окно о соединении.</p></section>
     <section class="card"><h2>Деньги</h2><div class="tiles" id="moneyT"></div><div style="margin-top:12px"><table id="moneyP"></table></div></section>
@@ -168,6 +173,11 @@ td.n{text-align:right;white-space:nowrap}
     });
   }
   // Действия людей в приложении (18.11.2026): сеансы, удержание, частые действия и на чём сеанс заканчивается.
+  // Виды учётных записей (18.11.2026): так их называет сервер (tabi_private.account_kind).
+  var KIND = { person: "Люди", owner: "Андрей (три учётные записи)", emulator: "Эмуляторы и нагрузочные проверки Claude",
+    google: "Проверка Google: проверяющие и устройства проверки сборок", tester: "Тестировщики Fiverr (заблокированы 06.11.2026)",
+    guest: "Прежние гостевые записи", gone: "Удалённые учётные записи" };
+  var KIND_ORDER = ["person", "owner", "emulator", "google", "tester", "guest", "gone"];
   function eng(e) {
     if (!e) return;
     var pc = function (x) { return x && x.of ? Math.round((100 * x.back) / x.of) + "% из " + num(x.of) : "—"; }, r = e.ret || {};
@@ -175,6 +185,13 @@ td.n{text-align:right;white-space:nowrap}
       ["Вернулись через сутки", pc(r.d1)], ["Через неделю", pc(r.d7)], ["Через месяц", pc(r.d30)], ["Запуск, медиана, мс", num(e.ready_ms)]]);
     table("engA", ["Действие", "Раз", "Людей"], (e.actions || []).slice(0, 40).map(function (a) { return [a.code, num(a.n), num(a.people)]; }));
     table("engX", ["Последнее действие", "Сеансов"], (e.exits || []).map(function (a) { return [a.code, num(a.n)]; }));
+    var kk = e.kinds || {};
+    table("engK", ["Кто", "Учётных записей", "Сеансов"], KIND_ORDER.filter(function (k) { return kk[k]; }).map(function (k) { return [KIND[k], num(kk[k].people), num(kk[k].sessions)]; }));
+    table("engR", ["Человек", "Пришёл", "Вход", "Телефон", "Выпуск", "Сеансов", "Минут", "Вступление", "Особых мест", "По медиафайлам", "Последний раз"],
+      (e.real || []).map(function (r) {
+        return [r.mail || "—", r.created || "—", r.via || "—", r.phone || "—", r.app || "—", num(r.sessions), num(Math.round((r.seconds || 0) / 60)),
+          r.onboarded ? "пройдено" : "не пройдено", num(r.places), num(r.media), r.last ? String(r.last).slice(0, 16).replace("T", " ") : "—"];
+      }));
   }
   function show(st, ov, mo, er, sv) {
     {
@@ -186,7 +203,9 @@ td.n{text-align:right;white-space:nowrap}
       table("siteLang", ["Язык или система", "Разборов"], top(st.langs, 10).concat(top(st.os, 10)));
       if (ov) {
         tiles("appT", [["Людей всего", num(ov.users)], ["Заходили за период", num(ov.seen)], ["За 7 дней", num(ov.active7)], ["За 30 дней", num(ov.active30)], ["Платили", num(ov.payers)], ["С подпиской", num(ov.plus)]]);
-        table("appV", ["Выпуск", "Людей"], Object.keys(ov.app || {}).sort(function (a, b) { return (+b || 0) - (+a || 0); }).slice(0, 10).map(function (k) { return [k === "?" ? "не известен" : k, num(ov.app[k])]; }));
+        var ak = ov.accounts || {};
+        table("appK", ["Вид", "Учётных записей"], KIND_ORDER.filter(function (k) { return ak[k]; }).map(function (k) { return [KIND[k], num(ak[k])]; }));
+        table("appV", ["Выпуск", "Телефонов"], Object.keys(ov.app || {}).sort(function (a, b) { return (+b || 0) - (+a || 0); }).slice(0, 10).map(function (k) { return [k === "?" ? "не известен" : k, num(ov.app[k])]; }));
       }
       if (mo) {
         tiles("moneyT", [["Подписок сейчас", num(mo.plus_active)], ["Монет у людей", num(mo.coins_total)], ["Роликов", num(mo.ads && mo.ads.n)], ["Проверок медиафайлов", num(mo.scans)]]);
