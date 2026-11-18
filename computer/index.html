@@ -138,7 +138,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <p class="pc-s" id="keepHint"></p>
       <a href="#" class="pc-link" id="bView"></a>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
-      <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2,.json" hidden>
+      <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2,.json,.gpx,.kml,.tcx,.geojson" hidden>
     </div>
     <!-- Чтение и разбор -->
     <div id="vWork" hidden style="display:grid;gap:12px">
@@ -170,6 +170,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         <button class="pc-btn" id="bVerify" hidden></button>
       </div>
       <p class="pc-s" id="who" hidden></p>
+      <button class="pc-btn" id="bSave" hidden></button>
       <label class="pc-chk" id="newsBox"><input type="checkbox" id="news"><span id="newsL"></span></label>
       <p class="pc-s" id="devNote"></p>
     </div>
@@ -319,7 +320,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "restored": {"en": "The result of the previous scan in this browser.", "ru": "Итог прошлого разбора в этом браузере.", "cs": "Výsledek předchozího procházení v tomto prohlížeči.", "de": "Das Ergebnis der vorigen Auswertung in diesem Browser.", "fr": "Le résultat de l’analyse précédente dans ce navigateur.", "es": "El resultado del análisis anterior en este navegador.", "it": "Il risultato dell’analisi precedente in questo browser.", "pt": "O resultado da análise anterior neste navegador.", "ja": "このブラウザーでの前回の分析結果です。", "ko": "이 브라우저에서 이전에 분석한 결과입니다."},
     "clearBtn": {"en": "Start over", "ru": "Начать заново", "cs": "Začít znovu", "de": "Neu beginnen", "fr": "Recommencer", "es": "Empezar de nuevo", "it": "Ricominciare", "pt": "Começar de novo", "ja": "最初からやり直す", "ko": "처음부터 다시"},
     "tlReading": {"en": "Reading the Google location history…", "ru": "Читаем историю местоположений Google…", "cs": "Čteme historii polohy Google…", "de": "Der Google-Standortverlauf wird gelesen …", "fr": "Lecture de l’historique des positions Google…", "es": "Leyendo el historial de ubicaciones de Google…", "it": "Lettura della cronologia delle posizioni di Google…", "pt": "Lendo o histórico de localização do Google…", "ja": "Googleのロケーション履歴を読み込んでいます…", "ko": "Google 위치 기록을 읽는 중…"},
-    "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."}
+    "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
+    "saveBtn": {"en": "Save the result to my account", "ru": "Сохранить итог в учётной записи", "cs": "Uložit výsledek do účtu", "de": "Ergebnis im Konto speichern", "fr": "Enregistrer le résultat dans mon compte", "es": "Guardar el resultado en mi cuenta", "it": "Salva il risultato nel mio account", "pt": "Salvar o resultado na minha conta", "ja": "結果をアカウントに保存", "ko": "결과를 내 계정에 저장"},
+    "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -386,7 +389,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
     $("credits").textContent = t("credits");
     var set = { title: "title", lead: "lead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", bFolder: "folder", bFiles: "files",
-      bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
+      bMore: "more", bSave: "saveBtn", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
       bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
       restoredX: "restored", slow: "slow" };
@@ -494,11 +497,13 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     err(null);
     if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
     renderSave();
-    A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
+    // Вошёл ради сохранения — итог сохраняется; вошёл, чтобы посмотреть сохранённое, — только показ.
+    !VIEW && A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
   }
   // Сохранённый итог учётной записи — без нового разбора (18.11.2026, Андрей): к нему можно вернуться в любой день.
   var VIEW = false, loadedOnce = false, LOOSE = new Set();
   var loose = function (p) { return Math.round(p[0] * 1e3) + ":" + Math.round(p[1] * 1e3) + ":" + Math.floor(p[2] / 60000); };
+  $("bSave").onclick = function () { S && doSave(); };
   $("bView").onclick = function (e) { e.preventDefault(); VIEW = true; S ? loadSaved() : (renderSave(), $("vSave").scrollIntoView({ behavior: "smooth", block: "center" })); };
   function loadSaved() {
     if (loadedOnce) return;
@@ -1347,6 +1352,73 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     };
     return next();
   }
+  // Файлы маршрута (18.11.2026, Андрей: включить, с отдельным источником): GPX, TCX, KML (в том числе gx:Track), GeoJSON.
+  // Берутся только точки со временем: маршрут без времени — намеченный, а не пройденный. Устройство — вид файла и
+  // программа, которая его записала («Strava GPX», «Garmin TCX»): его можно не брать в коллекцию или удалить, как камеру.
+  // Дальше как точки снимков: серия ближе 150 м и 20 минут — одна точка.
+  function isTrack(f) { return /\.(gpx|kml|tcx|geojson)$/i.test(f.name || "") && f.size < 209715200; }
+  function trkParse(s, ext) {
+    var out = [], cap = 400000, m, ms = function (v) { var d = Date.parse(String(v || "").trim()); return isFinite(d) ? d : 0; };
+    var push = function (la, lo, t) { if (out.length < cap && t > 0 && isFinite(la) && isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180 && !(Math.abs(la) < 1e-6 && Math.abs(lo) < 1e-6)) out.push([la, lo, t]); };
+    if (ext === "gpx") {
+      var re = /<(?:\w+:)?(trkpt|rtept|wpt)\b([^>]*)>([\s\S]*?)<\/(?:\w+:)?\1>/g;
+      while ((m = re.exec(s)) && out.length < cap) {
+        var la = /\blat\s*=\s*["']([-\d.eE+]+)/.exec(m[2]), lo = /\blon\s*=\s*["']([-\d.eE+]+)/.exec(m[2]), tm = /<(?:\w+:)?time>([^<]+)</.exec(m[3]);
+        la && lo && tm && push(+la[1], +lo[1], ms(tm[1]));
+      }
+    } else if (ext === "tcx") {
+      var rt = /<(?:\w+:)?Trackpoint>([\s\S]*?)<\/(?:\w+:)?Trackpoint>/g;
+      while ((m = rt.exec(s)) && out.length < cap) {
+        var a = /<(?:\w+:)?LatitudeDegrees>([^<]+)</.exec(m[1]), b = /<(?:\w+:)?LongitudeDegrees>([^<]+)</.exec(m[1]), c = /<(?:\w+:)?Time>([^<]+)</.exec(m[1]);
+        a && b && c && push(+a[1], +b[1], ms(c[1]));
+      }
+    } else if (ext === "kml") {
+      // gx:Track — пары when и gx:coord по порядку; Placemark со временем — его точка.
+      var rk = /<gx:Track>([\s\S]*?)<\/gx:Track>/g;
+      while ((m = rk.exec(s)) && out.length < cap) {
+        var w = m[1].match(/<when>[^<]+<\/when>/g) || [], g = m[1].match(/<gx:coord>[^<]+<\/gx:coord>/g) || [];
+        for (var i = 0; i < Math.min(w.length, g.length); i++) { var xy = g[i].replace(/<[^>]+>/g, "").trim().split(/\s+/); push(+xy[1], +xy[0], ms(w[i].replace(/<[^>]+>/g, ""))); }
+      }
+      var rp = /<Placemark\b[\s\S]*?<\/Placemark>/g;
+      while ((m = rp.exec(s)) && out.length < cap) {
+        if (/<gx:Track>/.test(m[0])) continue;
+        var wh = /<(?:when|begin)>([^<]+)</.exec(m[0]), co = /<Point>[\s\S]*?<coordinates>\s*([-\d.eE+]+)\s*,\s*([-\d.eE+]+)/.exec(m[0]);
+        wh && co && push(+co[2], +co[1], ms(wh[1]));
+      }
+    } else {
+      // GeoJSON: точки со временем в свойствах (time, timestamp, datetime, date) и линии со списком времён (coordTimes, times).
+      var o = JSON.parse(s), fs = o && o.type === "FeatureCollection" ? o.features || [] : o && o.type === "Feature" ? [o] : [];
+      fs.forEach(function (ft) {
+        var gm = ft && ft.geometry, pr = (ft && ft.properties) || {};
+        if (!gm || !gm.coordinates) return;
+        if (gm.type === "Point") return void push(+gm.coordinates[1], +gm.coordinates[0], ms(pr.time || pr.timestamp || pr.datetime || pr.date));
+        if (gm.type !== "LineString" && gm.type !== "MultiLineString") return;
+        var lines = gm.type === "LineString" ? [gm.coordinates] : gm.coordinates,
+          times = pr.coordTimes || pr.times || (pr.coordinateProperties && pr.coordinateProperties.times);
+        lines.forEach(function (ln, li) {
+          var tt = Array.isArray(times) ? (Array.isArray(times[li]) ? times[li] : gm.type === "LineString" ? times : null) : null;
+          tt && ln.forEach(function (c, ci) { tt[ci] && push(+c[1], +c[0], ms(tt[ci])); });
+        });
+      });
+    }
+    return out;
+  }
+  function trkRead(list, pts, now) {
+    if (!list.length) return Promise.resolve();
+    var i = 0;
+    var next = function () {
+      if (i >= list.length) return Promise.resolve();
+      var f = list[i++], ext = ((/\.(\w+)$/.exec(f.name || "") || [])[1] || "").toLowerCase();
+      $("prog").textContent = t("tlReading");
+      return f.text().then(function (s) {
+        var cr = ext === "gpx" ? /<gpx\b[^>]*\bcreator\s*=\s*["']([^"']{1,40})/i.exec(s) : ext === "tcx" ? /<Creator\b[\s\S]*?<Name>([^<]{1,40})</i.exec(s) : null;
+        var dev = devOf({ mk: cr ? cr[1].trim() : "", md: ext === "geojson" ? "GeoJSON" : ext.toUpperCase(), sn: "" }), d = dirOf(f), n = 0;
+        trkParse(s, ext).forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push([Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d]); n++; } });
+        WHY.trk = (WHY.trk || 0) + n;
+      }).catch(function () { RUN.err++; }).then(next);
+    };
+    return next();
+  }
   function camName(r) {
     var mk = r.mk || "", md = r.md || "";
     return md && mk && md.toLowerCase().indexOf(mk.toLowerCase()) === 0 ? md : [mk, md].filter(Boolean).join(" ");
@@ -1365,8 +1437,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   function renderWhy() {
     var miss = WHY.files - WHY.place, ul = $("whyL");
     // Место из описаний Google Фото — не причина, а находка: отдельной строкой вне списка причин.
-    show("sideX", (WHY.side > 0 || WHY.tl > 0) && !!A.shown);
-    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : ""].filter(Boolean).join(" ");
+    show("sideX", (WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0) && !!A.shown);
+    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : ""].filter(Boolean).join(" ");
     show("why", miss > 0 && !!(A.shown || A.none));
     if (!(miss > 0)) return;
     $("whyS").textContent = t("whyS", { n: num(miss) });
@@ -1388,10 +1460,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   }
   function run(list) {
     RUN.t0 = performance.now(); RUN.err = 0;
-    var side = sideMap(list), tlFiles = list.filter(isTimeline);
+    var side = sideMap(list), tlFiles = list.filter(isTimeline), trkFiles = list.filter(isTrack);
     var files = list.filter(function (f) { var x = extOf(f); return EXT[x] || OTHER[x]; });
     err(null);
-    if (!files.length && !tlFiles.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); return; }
+    if (!files.length && !tlFiles.length && !trkFiles.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); return; }
     show("vPick", false); show("vDone", false); show("vWork", true);
     $("barIn").style.width = "0%";
     $("when").textContent = "";
@@ -1439,6 +1511,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     };
     Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]).then(function () {
       return tlRead(tlFiles, pts, now);
+    }).then(function () {
+      return trkRead(trkFiles, pts, now);
     }).then(function () {
       files.length && prog();
       // Серия кадров одного устройства — одна точка: ближе 150 м и 20 минут от его предыдущей точки.
@@ -1525,7 +1599,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell();
-      S ? doSave() : renderSave();
+      // Итог уходит в учётную запись только по просьбе человека (18.11.2026, Андрей): у вошедшего — кнопкой «Сохранить
+      // итог в учётной записи», у невошедшего — входом ради сохранения.
+      renderSave();
     });
   }
 
@@ -1550,7 +1626,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       k: "scan", files: WHY.files, place: WHY.place, pts: A.pts.length, cc: found.countries.map(function (c) { return c.cc; }),
       regions: found.regions, cities: found.cities.length, days: found.days.size, km: Math.round(found.km / 1000),
       y0: T0 ? new Date(T0).getFullYear() : null, y1: T1 ? new Date(T1).getFullYear() : null,
-      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0 },
+      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0 },
       fmts: WHY.fmt, cams: cams, ms: Math.round(performance.now() - RUN.t0), err: RUN.err, src: RUN.src, signed: !!S
     });
     RUN.t0 = 0;
@@ -1558,7 +1634,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // ===== Сохранение итога (функция pc-media) =====
   function renderSave() {
-    var has = A.shown > 0 && !revealing, viewAsk = VIEW && !S && !A.shown;
+    var has = A.shown > 0 && !revealing, viewAsk = VIEW && !S && !A.shown, st0 = saveSt.state;
     show("vSave", ((has && saveSt.state !== "saved") || viewAsk) && !PHONE);
     $("saveT").textContent = t(viewAsk ? "viewT" : "saveT");
     $("saveX").textContent = t(viewAsk ? "viewX" : "saveX");
@@ -1566,6 +1642,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     show("bView", !S && !A.shown && !VIEW);
     show("inBox", !S);
     show("who", !!S);
+    show("bSave", !!S && has && st0 !== "saving" && A.pts.some(function (p) { return !p.sent; }));
     S && ($("who").textContent = t("who", { m: S.mail || "" }));
     var st = saveSt.state;
     show("vSaved", (has && (st === "saved" || st === "saving")) || st === "none");

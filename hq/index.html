@@ -59,6 +59,9 @@ td.n{text-align:right;white-space:nowrap}
         <div><h2>Камеры</h2><table id="siteCam"></table></div><div><h2>Языки и системы</h2><table id="siteLang"></table></div></div>
     </section>
     <section class="card"><h2>Приложение</h2><div class="tiles" id="appT"></div><div style="margin-top:12px"><h2>Выпуски</h2><table id="appV"></table></div></section>
+    <section class="card"><h2>Что делают люди в приложении</h2><div class="tiles" id="engT"></div>
+      <div class="grid2" style="margin-top:14px"><div><h2>Действия</h2><table id="engA"></table></div><div><h2>На чём заканчивается сеанс</h2><table id="engX"></table></div></div>
+      <p class="s" style="margin-top:10px">Коды действий: tab — вкладка, win — окно, которое приложение открыло само, ib — «Входящие», ob и perm — вступление и разрешения, map и wm — карты, coll — коллекция, scan — проверка медиафайлов, md — устройства, net — окно о соединении.</p></section>
     <section class="card"><h2>Деньги</h2><div class="tiles" id="moneyT"></div><div style="margin-top:12px"><table id="moneyP"></table></div></section>
     <section class="card"><h2>Ошибки приложения за 7 дней</h2><table id="errT"></table></section>
     <section class="card"><h2>Сервер</h2><div class="tiles" id="srvT"></div></section>
@@ -161,8 +164,17 @@ td.n{text-align:right;white-space:nowrap}
       if (g.st !== 200) return signIn("Сервер отказал (код " + g.st + "). Обновите страницу.");
       if (!g.j || g.j.ok !== true) return (keep(null), ($("who").textContent = ""), signIn("Эта учётная запись не владельца. Войдите учётной записью владельца."));
       $("wait").hidden = true; $("vIn").hidden = true; $("vData").hidden = false; $("bOut").hidden = false; err("");
-      return Promise.all([rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server")]).then(function (r) { show(g.j, ok(r[0]), ok(r[1]), ok(r[2]), ok(r[3])); });
+      return Promise.all([rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server"), rpc("stat_engage", { p_days: DAYS })]).then(function (r) { show(g.j, ok(r[0]), ok(r[1]), ok(r[2]), ok(r[3])); eng(ok(r[4])); });
     });
+  }
+  // Действия людей в приложении (18.11.2026): сеансы, удержание, частые действия и на чём сеанс заканчивается.
+  function eng(e) {
+    if (!e) return;
+    var pc = function (x) { return x && x.of ? Math.round((100 * x.back) / x.of) + "% из " + num(x.of) : "—"; }, r = e.ret || {};
+    tiles("engT", [["Сеансов", num(e.sessions)], ["Людей", num(e.people)], ["Сеанс, медиана, с", num(e.median_sec)], ["Новых за период", num(r.new)],
+      ["Вернулись через сутки", pc(r.d1)], ["Через неделю", pc(r.d7)], ["Через месяц", pc(r.d30)], ["Запуск, медиана, мс", num(e.ready_ms)]]);
+    table("engA", ["Действие", "Раз", "Людей"], (e.actions || []).slice(0, 40).map(function (a) { return [a.code, num(a.n), num(a.people)]; }));
+    table("engX", ["Последнее действие", "Сеансов"], (e.exits || []).map(function (a) { return [a.code, num(a.n)]; }));
   }
   function show(st, ov, mo, er, sv) {
     {
