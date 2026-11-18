@@ -1513,9 +1513,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   var RUN = { t0: 0, err: 0, src: "", tl: 0 };
   function statSend(data) {
     try {
+      // Без ключа входа: сводка обезличена, признак «вошёл» — полем signed.
       var h = { apikey: KEY, "Content-Type": "application/json" };
-      S && S.at && (h.Authorization = "Bearer " + S.at);
-      data.lang = L; data.os = pcLabel(); data.v = 1;
+      data.signed = !!S; data.lang = L; data.os = pcLabel(); data.v = 1;
       fetch(FN, { method: "POST", headers: h, keepalive: true, body: JSON.stringify({ op: "stat", data: data }) }).catch(function () {});
     } catch (e) {}
   }

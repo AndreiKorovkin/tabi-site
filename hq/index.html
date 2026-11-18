@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Tabi — штаб</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* Штаб владельца (18.11.2026, Андрей: делай): все числа в одном месте — сайт, приложение, деньги, ошибки, сервер. Данные
+   отдают функции базы только владельцу (is_owner); страница без входа пуста. Цвет ряда графика — проверенный валидатором
+   цвет сводок владельца в приложении (#2a78d6 на светлом, #3987e5 на тёмном). */
+:root{--series:#2a78d6}
+@media (prefers-color-scheme:dark){:root{--series:#3987e5}}
+body{background:var(--bg);min-height:100vh}
+.hq{max-width:1200px;margin:0 auto;padding:24px 16px 60px;display:grid;gap:18px}
+.hq h1{margin:0;font-size:28px;letter-spacing:-.02em}
+.hq h2{margin:0 0 10px;font-size:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.tile b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;color:var(--ink)}
+.tile span{font-size:12.5px;color:var(--sub)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-weight:600;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn{appearance:none;border:0;border-radius:12px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--accent);color:var(--on-accent)}
+.btn.b2{background:var(--bg2);color:var(--ink)}
+.in{box-sizing:border-box;width:100%;max-width:360px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink)}
+.s{color:var(--sub);font-size:14px;margin:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600}
+td.n{text-align:right;white-space:nowrap}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:200px}
+.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:12.5px;box-shadow:var(--shadow);white-space:nowrap;transform:translate(-50%,-110%)}
+[hidden]{display:none!important}
+</style></head>
+<body>
+<main class="hq">
+  <div class="row" style="justify-content:space-between"><h1>Штаб Tabi</h1><span class="s" id="who"></span></div>
+  <section class="card" id="vIn" hidden>
+    <h2>Вход владельца</h2>
+    <div style="display:grid;gap:10px;max-width:380px">
+      <button class="btn" id="bGoogle">Войти через Google</button>
+      <input class="in" id="mail" type="email" placeholder="Почта" autocomplete="email">
+      <button class="btn b2" id="bCode">Получить код</button>
+      <input class="in" id="code" placeholder="Код из письма" inputmode="numeric" hidden>
+      <button class="btn" id="bVerify" hidden>Войти</button>
+      <p class="s" id="err" hidden></p>
+    </div>
+  </section>
+  <div id="vData" hidden style="display:grid;gap:18px">
+    <div class="row" id="range"></div>
+    <section class="card"><h2>Сайт: страница компьютера</h2><div class="tiles" id="siteT"></div>
+      <div class="chart" style="margin-top:14px"><p class="s" style="margin-bottom:6px">Разборы по дням</p><svg id="siteC" role="img" aria-label="Разборы по дням"></svg><div class="tip" id="tip" hidden></div></div>
+      <div class="grid2" style="margin-top:14px"><div><h2>Почему нет места</h2><table id="siteWhy"></table></div><div><h2>Страны в разборах</h2><table id="siteCc"></table></div>
+        <div><h2>Камеры</h2><table id="siteCam"></table></div><div><h2>Языки и системы</h2><table id="siteLang"></table></div></div>
+    </section>
+    <section class="card"><h2>Приложение</h2><div class="tiles" id="appT"></div><div style="margin-top:12px"><h2>Выпуски</h2><table id="appV"></table></div></section>
+    <section class="card"><h2>Деньги</h2><div class="tiles" id="moneyT"></div><div style="margin-top:12px"><table id="moneyP"></table></div></section>
+    <section class="card"><h2>Ошибки приложения за 7 дней</h2><table id="errT"></table></section>
+    <section class="card"><h2>Сервер</h2><div class="tiles" id="srvT"></div></section>
+  </div>
+</main>
+<script>
+(function () {
+  "use strict";
+  var SB = "https://ogrdnhwfgasbgcespsou.supabase.co", KEY = "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5", CAPTCHA = "0x4AAAAAAFWBXZyDQ9TZ6MkF";
+  var $ = function (id) { return document.getElementById(id); }, nf = new Intl.NumberFormat("ru-RU"), num = function (n) { return nf.format(Number(n || 0)); };
+  var S = null, DAYS = 30;
+  try { S = JSON.parse(sessionStorage.getItem("tabiHq") || "null"); } catch (e) {}
+  var keep = function (s) { S = s; try { s ? sessionStorage.setItem("tabiHq", JSON.stringify(s)) : sessionStorage.removeItem("tabiHq"); } catch (e) {} };
+  var auth = function (path, body) {
+    return fetch(SB + "/auth/v1/" + path, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); });
+  };
+  var fromToken = function (j) { return j && j.access_token ? { at: j.access_token, rt: j.refresh_token, exp: Date.now() + (j.expires_in || 3600) * 1000, mail: (j.user && j.user.email) || "" } : null; };
+  var fresh = function () {
+    if (!S) return Promise.resolve(null);
+    if (S.exp - Date.now() > 120000) return Promise.resolve(S);
+    return auth("token?grant_type=refresh_token", { refresh_token: S.rt }).then(function (r) { var s = r.ok && fromToken(r.j); keep(s || null); return s; });
+  };
+  var err = function (t) { $("err").hidden = !t; $("err").textContent = t || ""; };
+  // Вход через Google — окном; страница компьютера, открытая в нём после входа, отдаёт код сюда (тот же адрес возврата).
+  var b64u = function (buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+  window.addEventListener("message", function (e) {
+    if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
+    var ver = sessionStorage.getItem("tabiHqVer");
+    auth("token?grant_type=pkce", { auth_code: e.data.tabiCode, code_verifier: ver }).then(function (r) { var s = r.ok && fromToken(r.j); s ? (keep(s), start()) : err("Вход не удался."); });
+  });
+  $("bGoogle").onclick = function () {
+    var v = b64u(crypto.getRandomValues(new Uint8Array(32)).buffer);
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
+      sessionStorage.setItem("tabiHqVer", v);
+      window.open(SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(location.origin + "/computer/?lang=ru&w=1") + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256", "tabiAuth", "width=520,height=700");
+    });
+  };
+  var captcha = function () {
+    return new Promise(function (ok, bad) {
+      var go = function () { var box = document.createElement("div"); box.style.cssText = "position:fixed;left:50%;bottom:20px;transform:translateX(-50%)"; document.body.appendChild(box);
+        window.turnstile.render(box, { sitekey: CAPTCHA, appearance: "interaction-only", callback: function (tk) { ok(tk); setTimeout(function () { box.remove(); }, 0); }, "error-callback": function () { box.remove(); bad(); } }); };
+      if (window.turnstile) return go();
+      var s = document.createElement("script"); s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; s.onload = go; s.onerror = bad; document.head.appendChild(s);
+    });
+  };
+  $("bCode").onclick = function () {
+    var m = $("mail").value.trim(); if (!/^\S+@\S+\.\S+$/.test(m)) return;
+    captcha().then(function (tk) { return auth("otp", { email: m, create_user: false, gotrue_meta_security: { captcha_token: tk } }); })
+      .then(function (r) { if (!r.ok) return err("Код не отправлен."); $("code").hidden = $("bVerify").hidden = false; }).catch(function () { err("Нет связи."); });
+  };
+  $("bVerify").onclick = function () {
+    auth("verify", { type: "email", email: $("mail").value.trim(), token: $("code").value.replace(/\D/g, "") })
+      .then(function (r) { var s = r.ok && fromToken(r.j); s ? (keep(s), start()) : err("Код неверен."); });
+  };
+  var rpc = function (fn, args) {
+    return fresh().then(function (s) {
+      if (!s) return null;
+      return fetch(SB + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(args || {}) })
+        .then(function (r) { return r.ok ? r.json() : null; });
+    }).catch(function () { return null; });
+  };
+  var tiles = function (id, rows) {
+    $(id).innerHTML = "";
+    rows.forEach(function (r) { var d = document.createElement("div"); d.className = "tile"; d.innerHTML = "<b></b><span></span>"; d.children[0].textContent = r[1]; d.children[1].textContent = r[0]; $(id).appendChild(d); });
+  };
+  var table = function (id, head, rows) {
+    var t = $(id); t.innerHTML = "";
+    var tr = document.createElement("tr"); head.forEach(function (h, i) { var th = document.createElement("th"); th.textContent = h; i && (th.style.textAlign = "right"); tr.appendChild(th); }); t.appendChild(tr);
+    rows.forEach(function (r) { var tr2 = document.createElement("tr"); r.forEach(function (c, i) { var td = document.createElement("td"); td.textContent = c; i && (td.className = "n"); tr2.appendChild(td); }); t.appendChild(tr2); });
+    rows.length || (t.innerHTML += '<tr><td class="s">Пока нет данных</td></tr>');
+  };
+  var top = function (o, n) { return Object.keys(o || {}).sort(function (a, b) { return o[b] - o[a]; }).slice(0, n || 12).map(function (k) { return [k, num(o[k])]; }); };
+  var WHY = { cam: "Камера не записала место", shot: "Снимки экрана и картинки", msg: "Мессенджеры и соцсети", gone: "Сведения удалены", edit: "Только время", video: "Видео без места", fmt: "Форматы без места", side: "Место из описаний Google Фото", tl: "Точки истории местоположений" };
+  // График разборов по дням: один ряд, столбцы со скруглённым верхом, подсказка при наведении.
+  function chart(days) {
+    var svg = $("siteC"), W = svg.clientWidth || 600, H = 200, pad = 24, n = days.length, max = Math.max(1, Math.max.apply(null, days.map(function (d) { return d.scans; })));
+    var bw = n ? Math.max(2, (W - pad * 2) / n - 2) : 0, ns = "http://www.w3.org/2000/svg";
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.innerHTML = "";
+    var base = document.createElementNS(ns, "line"); base.setAttribute("x1", pad); base.setAttribute("x2", W - pad); base.setAttribute("y1", H - pad); base.setAttribute("y2", H - pad); base.setAttribute("stroke", "var(--line)"); svg.appendChild(base);
+    days.forEach(function (d, i) {
+      var h = Math.round(((H - pad * 2) * d.scans) / max), x = pad + i * (bw + 2), y = H - pad - h;
+      var p = document.createElementNS(ns, "path"), r = Math.min(4, bw / 2, h);
+      p.setAttribute("d", h ? "M" + x + "," + (H - pad) + "V" + (y + r) + "Q" + x + "," + y + " " + (x + r) + "," + y + "H" + (x + bw - r) + "Q" + (x + bw) + "," + y + " " + (x + bw) + "," + (y + r) + "V" + (H - pad) + "Z" : "");
+      p.setAttribute("fill", "var(--series)"); svg.appendChild(p);
+      var hit = document.createElementNS(ns, "rect"); hit.setAttribute("x", x - 1); hit.setAttribute("y", pad); hit.setAttribute("width", bw + 2); hit.setAttribute("height", H - pad * 2); hit.setAttribute("fill", "transparent");
+      hit.addEventListener("mouseenter", function () { var tp = $("tip"); tp.hidden = false; tp.textContent = d.d + ": разборов " + num(d.scans) + ", сохранений " + num(d.saved) + ", с телефона " + num(d.phones); tp.style.left = ((x + bw / 2) / W) * 100 + "%"; tp.style.top = (y / H) * 200 + "px"; });
+      hit.addEventListener("mouseleave", function () { $("tip").hidden = true; });
+      svg.appendChild(hit);
+    });
+  }
+  function load() {
+    Promise.all([rpc("stat_site", { p_days: DAYS }), rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server")]).then(function (r) {
+      var st = r[0], ov = r[1], mo = r[2], er = r[3], sv = r[4];
+      if (!st || st.ok === false) { $("vData").hidden = true; $("vIn").hidden = false; return err("Эта учётная запись не владелец."); }
+      tiles("siteT", [["Разборов", num(st.scans)], ["Сохранений", num(st.saved)], ["Вошли до разбора", num(st.signed)], ["Заходов с телефона", num(st.phones)], ["Файлов", num(st.files)], ["С местом", num(st.place)], ["Точек", num(st.points)], ["Секунд на разбор (медиана)", num(Math.round(st.secs))], ["Ошибок чтения", num(st.errors)]]);
+      chart(st.days || []);
+      table("siteWhy", ["Причина", "Файлов"], Object.keys(st.why || {}).filter(function (k) { return WHY[k]; }).sort(function (a, b) { return st.why[b] - st.why[a]; }).map(function (k) { return [WHY[k], num(st.why[k])]; }));
+      table("siteCc", ["Страна", "Разборов"], top(st.countries, 20).map(function (x) { return [x[0].toUpperCase(), x[1]]; }));
+      table("siteCam", ["Камера", "Файлов"], top(st.cams, 15));
+      table("siteLang", ["Язык или система", "Разборов"], top(st.langs, 10).concat(top(st.os, 10)));
+      if (ov) {
+        tiles("appT", [["Людей всего", num(ov.users)], ["Заходили за период", num(ov.seen)], ["За 7 дней", num(ov.active7)], ["За 30 дней", num(ov.active30)], ["Платили", num(ov.payers)], ["С подпиской", num(ov.plus)]]);
+        table("appV", ["Выпуск", "Людей"], Object.keys(ov.app || {}).sort(function (a, b) { return (+b || 0) - (+a || 0); }).slice(0, 10).map(function (k) { return [k === "?" ? "не известен" : k, num(ov.app[k])]; }));
+      }
+      if (mo) {
+        tiles("moneyT", [["Подписок сейчас", num(mo.plus_active)], ["Монет у людей", num(mo.coins_total)], ["Роликов", num(mo.ads && mo.ads.n)], ["Проверок медиафайлов", num(mo.scans)]]);
+        table("moneyP", ["Покупка", "Штук"], (mo.purchases || []).slice(0, 12).map(function (p) { return [p.product + " · " + p.state, num(p.n)]; }));
+      }
+      er && table("errT", ["Ошибка", "Раз"], (er.groups || []).slice(0, 15).map(function (g) { return [g.kind + " · " + String(g.msg || "").slice(0, 90), num(g.n)]; }));
+      sv && tiles("srvT", [["База, МБ из 480", num(sv.db_mb)], ["Писем сегодня из 100", num(sv.mail && sv.mail.day)], ["Писем за месяц из 3000", num(sv.mail && sv.mail.month)], ["Точек сайта ждут телефона", num(sv.site_pending)], ["Учётных записей с итогом", num(sv.site_accounts)], ["Устройств в реестре", num(sv.devices)], ["Письмо с итогом", sv.letter_on ? "включено" : "выключено"]]);
+    });
+  }
+  function start() {
+    $("vIn").hidden = true; $("vData").hidden = false;
+    $("who").textContent = S && S.mail ? S.mail : "";
+    $("range").innerHTML = "";
+    [7, 30, 90, 365].forEach(function (d) {
+      var b = document.createElement("button"); b.className = "chip"; b.textContent = d === 365 ? "Год" : d + " дней"; b.setAttribute("aria-pressed", d === DAYS ? "true" : "false");
+      b.onclick = function () { DAYS = d; start(); }; $("range").appendChild(b);
+    });
+    load();
+  }
+  S ? start() : ($("vIn").hidden = false);
+})();
+</script>
+</body></html>
