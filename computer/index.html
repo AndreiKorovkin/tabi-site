@@ -378,8 +378,6 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       l === L && b.setAttribute("aria-current", "true");
       b.onclick = function () {
         L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts();
-        // Названия городов на новом языке — когда придёт его файл (18.11.2026).
-        G && townNames(l).then(function () { l === L && (renderLists(), (mapDirty = true), schedule()); });
       };
       li.appendChild(b); $("langList").appendChild(li);
     });
@@ -828,21 +826,30 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   // ===== Страны, регионы, города — по тем же данным, что у телефона =====
   var G = null, geoP = null, regP = {};
   function varint(b, p) { var v = 0, s = 0, c; do { c = b[p.i++]; v += (c & 127) * Math.pow(2, s); s += 7; } while (c & 128); return v; }
-  // Названия городов на языке страницы (18.11.2026): data/names/<язык>.json — номер GeoNames → название; файл языка грузится
-  // один раз, нет файла или перевода — название словаря.
-  var TN = {}, tnP = {};
-  function townNames(l) {
-    if (!tnP[l]) tnP[l] = fetch(DATA + "names/" + l + ".json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
-      .then(function (o) { TN[l] = o || {}; return TN[l]; });
-    return tnP[l];
+  // Названия городов на языке страницы (18.11.2026): data/names/<язык>/<страна>.json — номер GeoNames → название. Файл
+  // страны грузится, когда в разборе появился её первый город; пришёл — названия в списке и на карте обновляются на месте.
+  // Нет файла или перевода — название словаря.
+  var TN = {}, tnRefresh = 0;
+  function townNamesOf(l, cc) {
+    var k = l + "/" + cc;
+    if (TN[k] !== undefined) return TN[k];
+    TN[k] = null;
+    fetch(DATA + "names/" + k + ".json").then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }).then(function (o) {
+      TN[k] = o || {};
+      tnRefresh || (tnRefresh = setTimeout(function () {
+        tnRefresh = 0;
+        [].forEach.call(document.querySelectorAll("#cities .pc-city"), function (el) { el.children[0].textContent = townName(+el.dataset.ti); });
+        mapDirty = true; schedule();
+      }, 60));
+    });
+    return null;
   }
   function geo() {
     if (geoP) return geoP;
     geoP = Promise.all([
       fetch(DATA + "world.json").then(function (r) { return r.json(); }),
       fetch(DATA + "borders.json").then(function (r) { return r.json(); }),
-      fetch(DATA + "towns.bin").then(function (r) { return r.arrayBuffer(); }),
-      townNames(L)
+      fetch(DATA + "towns.bin").then(function (r) { return r.arrayBuffer(); })
     ]).then(function (res) {
       var w = res[0], bj = res[1], tb = new Uint8Array(res[2]);
       // Границы: дуги, как в TopoJSON (тот же разбор, что у карты в приложении, 86-countries).
@@ -945,7 +952,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     return best;
   }
   var dec = new TextDecoder("utf-8");
-  var townName = function (i) { var o = TN[L]; return (o && o[G.t.gi[i]]) || dec.decode(G.t.b.subarray(G.t.no[i], G.t.no[i] + G.t.nl[i])); };
+  var townName = function (i) { var o = townNamesOf(L, G.t.codes[G.t.ci[i]]); return (o && o[G.t.gi[i]]) || dec.decode(G.t.b.subarray(G.t.no[i], G.t.no[i] + G.t.nl[i])); };
   var countryName = function (cc) { var c = G && G.w[cc]; return (c && c.n && (c.n[L] || c.n.en)) || String(cc || "").toUpperCase(); };
   var flagUrl = function (cc) { var c = G && G.w[cc]; return c && c.f && c.f.h ? DATA + "flags/" + c.f.h + (c.f.t === "s" ? ".svg" : ".webp") : ""; };
   var regionName = function (rg) { return rg.n[L] || rg.n.en || rg.id; };
@@ -1019,6 +1026,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     it.className = "pc-city";
     it.innerHTML = '<span class="nm"></span><span class="cc"></span>';
     it.children[0].textContent = townName(c.i);
+    it.dataset.ti = c.i;
     it.children[1].textContent = monthYear(c.at);
     cb.insertBefore(it, idx == null ? cb.firstChild : cb.children[idx] || null);
     cb.children.length > 400 && cb.removeChild(cb.lastChild);
