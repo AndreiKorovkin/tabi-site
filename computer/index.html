@@ -58,6 +58,16 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .pc-box{display:grid;gap:10px;padding:18px;border-radius:18px;background:var(--bg);border:1px solid var(--line)}
 .pc-drop{border:2px dashed var(--line);border-radius:16px;padding:14px;text-align:center;color:var(--sub);font-size:14px}
 .pc-bar{height:8px;border-radius:999px;background:var(--bg2);overflow:hidden}.pc-bar>div{height:100%;width:0;background:var(--accent);transition:width .25s linear}
+.pc-bar.wait>div{width:30%!important;animation:pcWait 1.4s ease-in-out infinite}
+@keyframes pcWait{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
+/* Строка хода не дёргается: цифры одной ширины (18.11.2026, Андрей). */
+#prog,#eta{font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-why summary{cursor:pointer;font-weight:700;color:var(--ink);font-size:14.5px;list-style:none}
+.pc-why summary::-webkit-details-marker{display:none}
+.pc-why summary::after{content:" ›";color:var(--sub)}
+.pc-why[open] summary::after{content:" ⌄"}
+.pc-why ul{margin:8px 0 0;padding:0 0 0 18px;display:grid;gap:6px;font-size:14px;color:var(--sub);line-height:1.45}
+.pc-why li b{color:var(--ink);font-weight:650}
 .pc-when{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;min-height:1.1em}
 .pc-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .pc-stat{background:var(--bg);border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
@@ -125,6 +135,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <div class="pc-row"><button class="pc-btn" id="bFolder"></button><button class="pc-btn b2" id="bFiles"></button></div>
       <div class="pc-drop" id="drop"></div>
       <p class="pc-s" id="whole"></p>
+      <p class="pc-s" id="keepHint"></p>
       <a href="#" class="pc-link" id="bView"></a>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
       <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2" hidden>
@@ -133,12 +144,17 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     <div id="vWork" hidden style="display:grid;gap:12px">
       <div class="pc-when" id="when" aria-live="polite"></div>
       <div id="prog" class="pc-s"></div>
-      <div class="pc-bar"><div id="barIn"></div></div>
+      <div class="pc-bar" id="bar"><div id="barIn"></div></div>
+      <div id="eta" class="pc-s" hidden></div>
+      <p class="pc-s" id="slow" hidden></p>
     </div>
     <div class="pc-stats" id="stats" hidden></div>
     <!-- Итог -->
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
+      <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul></details>
+      <p class="pc-s" id="sideX" hidden></p>
+      <p class="pc-s" id="restored" hidden><span id="restoredX"></span> <a href="#" class="pc-link" id="bClear"></a></p>
       <div class="pc-row"><button class="pc-btn b2" id="bMore"></button><button class="pc-btn b2" id="bShare" hidden></button></div>
       <a href="#" class="pc-link" id="bDl" hidden></a>
     </div>
@@ -286,7 +302,23 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "viewT": {"en": "Saved result", "ru": "Сохранённый итог", "cs": "Uložený výsledek", "de": "Gespeichertes Ergebnis", "fr": "Résultat enregistré", "es": "Resultado guardado", "it": "Risultato salvato", "pt": "Resultado salvo", "ja": "保存した結果", "ko": "저장한 결과"},
     "viewX": {"en": "Sign in to the Tabi account where you saved the result: the page will show it without a new scan.", "ru": "Войдите в учётную запись Tabi, в которой сохраняли итог, — страница покажет его без нового разбора.", "cs": "Přihlaste se k účtu Tabi, do kterého jste výsledek uložili — stránka ho ukáže bez nového procházení.", "de": "Melden Sie sich in dem Tabi-Konto an, in dem Sie das Ergebnis gespeichert haben — die Seite zeigt es ohne neue Auswertung.", "fr": "Connectez-vous au compte Tabi dans lequel vous avez enregistré le résultat : la page l’affichera sans nouvelle analyse.", "es": "Inicia sesión en la cuenta de Tabi en la que guardaste el resultado: la página lo mostrará sin un nuevo análisis.", "it": "Acceda all’account Tabi in cui ha salvato il risultato: la pagina lo mostrerà senza una nuova analisi.", "pt": "Entre na conta do Tabi em que você salvou o resultado — a página vai mostrá-lo sem uma nova análise.", "ja": "結果を保存したTabiのアカウントにログインしてください。新たに分析しなくても、ページに表示されます。", "ko": "결과를 저장한 Tabi 계정에 로그인하세요. 다시 분석하지 않아도 페이지에 표시됩니다."},
     "viewNone": {"en": "This account has no saved result.", "ru": "В этой учётной записи сохранённого итога нет.", "cs": "V tomto účtu není uložený žádný výsledek.", "de": "In diesem Konto ist kein Ergebnis gespeichert.", "fr": "Ce compte ne contient aucun résultat enregistré.", "es": "Esta cuenta no tiene ningún resultado guardado.", "it": "In questo account non c’è alcun risultato salvato.", "pt": "Esta conta não tem nenhum resultado salvo.", "ja": "このアカウントには保存した結果がありません。", "ko": "이 계정에는 저장한 결과가 없습니다."},
-    "viewed": {"en": "The result from your Tabi account: {n} points.", "ru": "Итог из вашей учётной записи Tabi: точек — {n}.", "cs": "Výsledek z vašeho účtu Tabi: bodů — {n}.", "de": "Das Ergebnis aus Ihrem Tabi-Konto: {n} Punkte.", "fr": "Le résultat de votre compte Tabi : {n} points.", "es": "El resultado de tu cuenta de Tabi: {n} puntos.", "it": "Il risultato dal Suo account Tabi: {n} punti.", "pt": "O resultado da sua conta do Tabi: {n} pontos.", "ja": "Tabiのアカウントの結果：地点 {n}。", "ko": "Tabi 계정의 결과: 지점 {n}개."}
+    "viewed": {"en": "The result from your Tabi account: {n} points.", "ru": "Итог из вашей учётной записи Tabi: точек — {n}.", "cs": "Výsledek z vašeho účtu Tabi: bodů — {n}.", "de": "Das Ergebnis aus Ihrem Tabi-Konto: {n} Punkte.", "fr": "Le résultat de votre compte Tabi : {n} points.", "es": "El resultado de tu cuenta de Tabi: {n} puntos.", "it": "Il risultato dal Suo account Tabi: {n} punti.", "pt": "O resultado da sua conta do Tabi: {n} pontos.", "ja": "Tabiのアカウントの結果：地点 {n}。", "ko": "Tabi 계정의 결과: 지점 {n}개."},
+    "listing": {"en": "The browser is collecting the list of files…", "ru": "Браузер собирает список файлов…", "cs": "Prohlížeč sestavuje seznam souborů…", "de": "Der Browser stellt die Dateiliste zusammen …", "fr": "Le navigateur rassemble la liste des fichiers…", "es": "El navegador está reuniendo la lista de archivos…", "it": "Il browser sta raccogliendo l’elenco dei file…", "pt": "O navegador está reunindo a lista de arquivos…", "ja": "ブラウザーがファイルの一覧を集めています…", "ko": "브라우저가 파일 목록을 모으는 중…"},
+    "collecting": {"en": "Collecting files: {n}", "ru": "Собираем файлы: {n}", "cs": "Shromažďujeme soubory: {n}", "de": "Dateien werden gesammelt: {n}", "fr": "Collecte des fichiers : {n}", "es": "Reuniendo archivos: {n}", "it": "Raccolta dei file: {n}", "pt": "Reunindo arquivos: {n}", "ja": "ファイルを集めています：{n}", "ko": "파일을 모으는 중: {n}"},
+    "eta": {"en": "About {t} left", "ru": "Осталось около {t}", "cs": "Zbývá asi {t}", "de": "Noch etwa {t}", "fr": "Environ {t} restantes", "es": "Quedan unos {t}", "it": "Mancano circa {t}", "pt": "Faltam cerca de {t}", "ja": "残り約{t}", "ko": "약 {t} 남음"},
+    "slow": {"en": "The files are being read slowly: this happens when they are on a flash drive, an external disk or in a cloud folder that the computer downloads first.", "ru": "Файлы читаются медленно: так бывает, когда они лежат на флешке, внешнем диске или в облачной папке, которую компьютер сначала скачивает.", "cs": "Soubory se čtou pomalu: tak to bývá, když jsou na flash disku, externím disku nebo v cloudové složce, kterou počítač nejdřív stahuje.", "de": "Die Dateien werden langsam gelesen: Das kommt vor, wenn sie auf einem USB-Stick, einer externen Festplatte oder in einem Cloud-Ordner liegen, den der Computer zuerst herunterlädt.", "fr": "Les fichiers sont lus lentement : cela arrive lorsqu’ils se trouvent sur une clé USB, un disque externe ou dans un dossier cloud que l’ordinateur télécharge d’abord.", "es": "Los archivos se leen despacio: ocurre cuando están en una memoria USB, un disco externo o una carpeta en la nube que el ordenador descarga primero.", "it": "I file vengono letti lentamente: succede quando si trovano su una chiavetta USB, su un disco esterno o in una cartella cloud che il computer scarica prima.", "pt": "Os arquivos estão sendo lidos devagar: isso acontece quando estão em um pen drive, em um disco externo ou em uma pasta na nuvem que o computador baixa primeiro.", "ja": "ファイルの読み込みに時間がかかっています。USBメモリーや外付けディスク、先にダウンロードが必要なクラウドのフォルダにあるファイルでは、こうなることがあります。", "ko": "파일을 천천히 읽고 있습니다. 파일이 USB 메모리, 외장 디스크 또는 컴퓨터가 먼저 내려받아야 하는 클라우드 폴더에 있을 때 이렇게 됩니다."},
+    "whyS": {"en": "Files without a shooting location: {n}. Why", "ru": "Файлы без места съёмки: {n}. Почему", "cs": "Soubory bez místa pořízení: {n}. Proč", "de": "Dateien ohne Aufnahmeort: {n}. Warum", "fr": "Fichiers sans lieu de prise de vue : {n}. Pourquoi", "es": "Archivos sin lugar de captura: {n}. Por qué", "it": "File senza luogo di scatto: {n}. Perché", "pt": "Arquivos sem local da captura: {n}. Por quê", "ja": "撮影場所のないファイル：{n}。理由", "ko": "촬영 장소가 없는 파일: {n}. 이유"},
+    "whyCam": {"en": "The camera did not record the place: {n}. Either the camera has no GPS, or location recording was turned off in its settings:", "ru": "Камера не записала место — {n}. У камеры нет GPS, или запись места была выключена в её настройках:", "cs": "Fotoaparát místo nezaznamenal — {n}. Fotoaparát nemá GPS, nebo bylo ukládání polohy v jeho nastavení vypnuté:", "de": "Die Kamera hat den Ort nicht gespeichert: {n}. Die Kamera hat kein GPS, oder die Ortsaufzeichnung war in ihren Einstellungen ausgeschaltet:", "fr": "L’appareil n’a pas enregistré le lieu : {n}. Il n’a pas de GPS, ou l’enregistrement du lieu était désactivé dans ses réglages :", "es": "La cámara no registró el lugar: {n}. La cámara no tiene GPS o el registro de ubicación estaba desactivado en sus ajustes:", "it": "La fotocamera non ha registrato il luogo: {n}. Non ha il GPS, oppure la registrazione della posizione era disattivata nelle sue impostazioni:", "pt": "A câmera não registrou o local: {n}. A câmera não tem GPS ou o registro de localização estava desativado nas configurações dela:", "ja": "カメラが撮影場所を記録していません：{n}。GPSのないカメラか、設定で位置情報の記録がオフになっていました：", "ko": "카메라가 장소를 기록하지 않았습니다: {n}. 카메라에 GPS가 없거나 설정에서 위치 기록이 꺼져 있었습니다:"},
+    "whyShot": {"en": "Screenshots and pictures: {n}. They never contain a place.", "ru": "Снимки экрана и картинки — {n}: в них места не бывает.", "cs": "Snímky obrazovky a obrázky — {n}: místo v nich nikdy není.", "de": "Bildschirmfotos und Bilder: {n}. Sie enthalten nie einen Ort.", "fr": "Captures d’écran et images : {n}. Elles ne contiennent jamais de lieu.", "es": "Capturas de pantalla e imágenes: {n}. Nunca contienen un lugar.", "it": "Screenshot e immagini: {n}. Non contengono mai un luogo.", "pt": "Capturas de tela e imagens: {n}. Elas nunca têm local.", "ja": "スクリーンショットと画像：{n}。撮影場所が入ることはありません。", "ko": "스크린샷과 이미지: {n}. 장소가 들어 있지 않습니다."},
+    "whyMsg": {"en": "Sent through a messenger or a social network: {n}. WhatsApp, Telegram, Facebook and others remove the place when a photo is sent.", "ru": "Пересланы через мессенджер или соцсеть — {n}: WhatsApp, Telegram, Facebook и другие при пересылке стирают место.", "cs": "Přeposláno přes messenger nebo sociální síť — {n}: WhatsApp, Telegram, Facebook a další při odeslání místo mažou.", "de": "Über einen Messenger oder ein soziales Netzwerk verschickt: {n}. WhatsApp, Telegram, Facebook und andere löschen beim Senden den Ort.", "fr": "Envoyés par une messagerie ou un réseau social : {n}. WhatsApp, Telegram, Facebook et d’autres effacent le lieu lors de l’envoi.", "es": "Enviados por mensajería o una red social: {n}. WhatsApp, Telegram, Facebook y otros borran el lugar al enviar la foto.", "it": "Inviati tramite messaggistica o social network: {n}. WhatsApp, Telegram, Facebook e altri cancellano il luogo durante l’invio.", "pt": "Enviados por mensageiro ou rede social: {n}. WhatsApp, Telegram, Facebook e outros apagam o local ao enviar a foto.", "ja": "メッセージアプリやSNSで送られたもの：{n}。WhatsApp、Telegram、Facebookなどは送信時に撮影場所を消します。", "ko": "메신저나 소셜 네트워크로 전달된 파일: {n}. WhatsApp, Telegram, Facebook 등은 전송할 때 장소를 지웁니다."},
+    "whyGone": {"en": "Shooting information removed: {n}. This happens with files saved from the internet, from a social network or after an editor.", "ru": "Сведения о съёмке удалены — {n}: так бывает с файлами, сохранёнными из интернета, из соцсети или после редактора.", "cs": "Údaje o pořízení odstraněny — {n}: tak to bývá u souborů uložených z internetu, ze sociální sítě nebo po úpravě v editoru.", "de": "Aufnahmedaten entfernt: {n}. Das kommt bei Dateien vor, die aus dem Internet, aus einem sozialen Netzwerk oder nach einem Bildbearbeitungsprogramm gespeichert wurden.", "fr": "Informations de prise de vue supprimées : {n}. Cela arrive avec les fichiers enregistrés depuis internet, un réseau social ou après un éditeur.", "es": "Datos de la captura eliminados: {n}. Ocurre con archivos guardados de internet, de una red social o tras un editor.", "it": "Dati dello scatto rimossi: {n}. Succede con file salvati da internet, da un social network o dopo un editor.", "pt": "Dados da captura removidos: {n}. Isso acontece com arquivos salvos da internet, de uma rede social ou depois de um editor.", "ja": "撮影情報が削除されたもの：{n}。インターネットやSNSから保存したファイル、編集アプリで保存したファイルでよく起こります。", "ko": "촬영 정보가 삭제된 파일: {n}. 인터넷이나 소셜 네트워크에서 저장했거나 편집기로 저장한 파일에서 생깁니다."},
+    "whyEdit": {"en": "Time only, no camera: {n}. The file went through an editor or an app that kept the time but removed the place.", "ru": "Только время, без камеры — {n}: файл прошёл через редактор или приложение, которое оставило время, но стёрло место.", "cs": "Jen čas, bez fotoaparátu — {n}: soubor prošel editorem nebo aplikací, která čas ponechala, ale místo smazala.", "de": "Nur Zeit, keine Kamera: {n}. Die Datei ging durch ein Programm, das die Zeit behielt, den Ort aber löschte.", "fr": "Heure seulement, sans appareil : {n}. Le fichier est passé par un éditeur ou une application qui a gardé l’heure mais effacé le lieu.", "es": "Solo hora, sin cámara: {n}. El archivo pasó por un editor o una aplicación que conservó la hora pero borró el lugar.", "it": "Solo ora, senza fotocamera: {n}. Il file è passato per un editor o un’app che ha mantenuto l’ora ma cancellato il luogo.", "pt": "Só hora, sem câmera: {n}. O arquivo passou por um editor ou aplicativo que manteve a hora, mas apagou o local.", "ja": "時刻のみ（カメラ情報なし）：{n}。時刻は残し撮影場所を消す編集アプリやアプリを通ったファイルです。", "ko": "시간만 있고 카메라 정보 없음: {n}. 시간은 남기고 장소는 지우는 편집기나 앱을 거친 파일입니다."},
+    "whyVideo": {"en": "Videos without a place: {n}. Many phones and cameras do not record the place in videos.", "ru": "Видео без места — {n}: многие телефоны и камеры не записывают место в видео.", "cs": "Videa bez místa — {n}: mnoho telefonů a fotoaparátů místo do videí nezapisuje.", "de": "Videos ohne Ort: {n}. Viele Telefone und Kameras speichern in Videos keinen Ort.", "fr": "Vidéos sans lieu : {n}. Beaucoup de téléphones et d’appareils n’enregistrent pas le lieu dans les vidéos.", "es": "Vídeos sin lugar: {n}. Muchos teléfonos y cámaras no registran el lugar en los vídeos.", "it": "Video senza luogo: {n}. Molti telefoni e fotocamere non registrano il luogo nei video.", "pt": "Vídeos sem local: {n}. Muitos telefones e câmeras não registram o local nos vídeos.", "ja": "撮影場所のない動画：{n}。多くのスマートフォンやカメラは動画に撮影場所を記録しません。", "ko": "장소가 없는 동영상: {n}. 많은 휴대전화와 카메라는 동영상에 장소를 기록하지 않습니다."},
+    "whyFmt": {"en": "Formats that hold no place or that this page does not read: {n} ({list}).", "ru": "Форматы, в которых места не бывает или которые страница не читает, — {n} ({list}).", "cs": "Formáty, ve kterých místo nebývá nebo které stránka nečte — {n} ({list}).", "de": "Formate ohne Ort oder solche, die diese Seite nicht liest: {n} ({list}).", "fr": "Formats sans lieu ou que cette page ne lit pas : {n} ({list}).", "es": "Formatos sin lugar o que esta página no lee: {n} ({list}).", "it": "Formati senza luogo o che questa pagina non legge: {n} ({list}).", "pt": "Formatos sem local ou que esta página não lê: {n} ({list}).", "ja": "撮影場所を持たない形式、またはこのページが読めない形式：{n}（{list}）。", "ko": "장소가 없거나 이 페이지가 읽지 못하는 형식: {n}({list})."},
+    "whySide": {"en": "Place taken from Google Photos descriptions (.json files next to the photos): {n}.", "ru": "Место из описаний Google Фото (файлы .json рядом со снимками): {n}.", "cs": "Místo z popisů Fotek Google (soubory .json vedle snímků): {n}.", "de": "Ort aus den Beschreibungen von Google Fotos übernommen (.json-Dateien neben den Fotos): {n}.", "fr": "Lieu repris des descriptions de Google Photos (fichiers .json à côté des photos) : {n}.", "es": "Lugar tomado de las descripciones de Google Fotos (archivos .json junto a las fotos): {n}.", "it": "Luogo preso dalle descrizioni di Google Foto (file .json accanto alle foto): {n}.", "pt": "Local tirado das descrições do Google Fotos (arquivos .json ao lado das fotos): {n}.", "ja": "Googleフォトの説明（写真の横の.jsonファイル）から撮影場所を取得：{n}。", "ko": "Google 포토 설명(사진 옆의 .json 파일)에서 가져온 장소: {n}."},
+    "keepHint": {"en": "The result is kept in this browser. To have it on other devices and in the Tabi app, save it in your account.", "ru": "Итог хранится в этом браузере. Чтобы он был на других устройствах и в приложении Tabi, сохраните его в учётной записи.", "cs": "Výsledek se uchovává v tomto prohlížeči. Aby byl i na jiných zařízeních a v aplikaci Tabi, uložte ho do účtu.", "de": "Das Ergebnis bleibt in diesem Browser. Damit es auch auf anderen Geräten und in der Tabi-App verfügbar ist, speichern Sie es in Ihrem Konto.", "fr": "Le résultat est conservé dans ce navigateur. Pour l’avoir sur d’autres appareils et dans l’application Tabi, enregistrez-le dans votre compte.", "es": "El resultado se guarda en este navegador. Para tenerlo en otros dispositivos y en la aplicación Tabi, guárdalo en tu cuenta.", "it": "Il risultato resta in questo browser. Per averlo su altri dispositivi e nell’app Tabi, lo salvi nel Suo account.", "pt": "O resultado fica guardado neste navegador. Para tê-lo em outros dispositivos e no aplicativo Tabi, salve-o na sua conta.", "ja": "結果はこのブラウザーに保存されます。ほかの機器やTabiアプリでも見るには、アカウントに保存してください。", "ko": "결과는 이 브라우저에 보관됩니다. 다른 기기와 Tabi 앱에서도 보려면 계정에 저장하세요."},
+    "restored": {"en": "The result of the previous scan in this browser.", "ru": "Итог прошлого разбора в этом браузере.", "cs": "Výsledek předchozího procházení v tomto prohlížeči.", "de": "Das Ergebnis der vorigen Auswertung in diesem Browser.", "fr": "Le résultat de l’analyse précédente dans ce navigateur.", "es": "El resultado del análisis anterior en este navegador.", "it": "Il risultato dell’analisi precedente in questo browser.", "pt": "O resultado da análise anterior neste navegador.", "ja": "このブラウザーでの前回の分析結果です。", "ko": "이 브라우저에서 이전에 분석한 결과입니다."},
+    "clearBtn": {"en": "Start over", "ru": "Начать заново", "cs": "Začít znovu", "de": "Neu beginnen", "fr": "Recommencer", "es": "Empezar de nuevo", "it": "Ricominciare", "pt": "Começar de novo", "ja": "最初からやり直す", "ko": "처음부터 다시"}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -353,7 +385,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var set = { title: "title", lead: "lead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", bFolder: "folder", bFiles: "files",
       bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
-      bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn" };
+      bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
+      restoredX: "restored", slow: "slow" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
@@ -366,6 +399,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     applyTheme();
     renderLists(); renderStats(); renderSave(); renderLegend();
     $("done").textContent = A.none ? t("none") : "";
+    renderWhy();
   }
 
   // ===== Вход: ключ входа хранится только в этой вкладке (sessionStorage) =====
@@ -482,11 +516,34 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }).catch(function () { loadedOnce = false; err("eNet"); });
   }
 
-  $("bFolder").onclick = function () { $("fFolder").click(); };
-  $("bFiles").onclick = function () { $("fFiles").click(); };
-  $("bMore").onclick = function () { show("vPick", true); $("fFolder").click(); };
-  $("fFolder").onchange = function () { run(Array.prototype.slice.call(this.files)); this.value = ""; };
-  $("fFiles").onchange = function () { run(Array.prototype.slice.call(this.files)); this.value = ""; };
+  // Пока браузер собирает список выбранной папки (на десятках тысяч файлов — полминуты и дольше), страница показывает, что
+  // работа идёт (18.11.2026, Андрей: казалось, что сайт завис). Окно выбора закрылось — вернулся фокус: ждём список;
+  // «Отмена» в окне — событие cancel.
+  var picking = false;
+  function pick(input) {
+    picking = true;
+    var back = function () {
+      window.removeEventListener("focus", back);
+      setTimeout(function () { if (picking) busy(t("listing")); }, 250);
+    };
+    window.addEventListener("focus", back);
+    input.click();
+  }
+  function busy(text) {
+    show("vPick", false); show("vDone", false); show("vWork", true);
+    $("when").textContent = ""; $("prog").textContent = text;
+    $("bar").classList.add("wait"); show("eta", false); show("slow", false);
+  }
+  function unbusy() { picking = false; $("bar").classList.remove("wait"); }
+  ["fFolder", "fFiles"].forEach(function (id) {
+    $(id).addEventListener("cancel", function () { picking = false; unbusy(); show("vWork", false); A.shown ? show("vDone", true) : show("vPick", true); });
+  });
+  $("bFolder").onclick = function () { pick($("fFolder")); };
+  $("bFiles").onclick = function () { pick($("fFiles")); };
+  $("bMore").onclick = function () { pick($("fFolder")); };
+  $("fFolder").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
+  $("fFiles").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
+  $("bClear").onclick = function (e) { e.preventDefault(); keepDrop().then(function () { location.reload(); }); };
   $("bCopy").onclick = function () {
     var u = location.origin + "/computer/?lang=" + L;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy").textContent = t("copied"); }).catch(function () { prompt("", u); });
@@ -506,7 +563,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       out = [],
       walk = function (en) {
         if (!en) return Promise.resolve();
-        if (en.isFile) return new Promise(function (ok) { en.file(function (f) { try { f.tabiPath = en.fullPath; } catch (x) {} out.push(f); ok(); }, function () { ok(); }); });
+        if (en.isFile) return new Promise(function (ok) { en.file(function (f) { try { f.tabiPath = en.fullPath; } catch (x) {} out.push(f); out.length % 200 === 0 && ($("prog").textContent = t("collecting", { n: num(out.length) })); ok(); }, function () { ok(); }); });
         var rd = en.createReader();
         return new Promise(function (ok) {
           var next = function () {
@@ -519,7 +576,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         });
       };
     var entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; });
-    if (entries.some(Boolean)) Promise.all(entries.map(walk)).then(function () { run(out); });
+    entries.some(Boolean) && busy(t("collecting", { n: 0 }));
+    if (entries.some(Boolean)) Promise.all(entries.map(walk)).then(function () { unbusy(); run(out); });
     else run(Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.files) || []));
   });
 
@@ -877,6 +935,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // ===== Накопленное за все папки этой вкладки =====
   // Точка: [широта, долгота, мс, устройство, папка]; у точки после разбора — страна (cc) и город словаря (ct).
+  // Почему в файлах нет места (18.11.2026, Андрей): камера не записала (по моделям), снимки экрана, пересланные через
+  // мессенджер или соцсеть, сведения удалены, только время без камеры, видео без места, форматы без места; side — место
+  // взято из описаний Google Фото (.json рядом со снимком).
+  var WHY = { cam: {}, camN: 0, shot: 0, msg: 0, gone: 0, edit: 0, video: 0, fmt: {}, side: 0, files: 0, place: 0 }, resort = false;
   var A = { files: 0, pts: [], shown: 0, none: false },
     DEV = { list: [], by: {} },
     DIR = { list: [], by: {} },
@@ -903,7 +965,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("grid").classList.toggle("idle", !any);
     $("routeBox").hidden = !(revealing || A.shown);
   }
+  // Порядок — по времени (18.11.2026, Андрей: после дозагрузки Златоуст 2020 года встал между городами 2026 и 2025):
+  // страны — от первой поездки, города — новые сверху; место нового — среди уже найденных по своей дате.
+  var idxAsc = function (list, at) { var i = 0; while (i < list.length && list[i].at <= at) i++; return i; };
   function renderLists() {
+    found.countries.sort(function (a, b) { return a.at - b.at; });
+    found.cities.sort(function (a, b) { return a.at - b.at; });
     shell();
     $("nCountries").textContent = found.countries.length ? num(found.countries.length) : "";
     $("nCities").textContent = found.cities.length ? num(found.cities.length) : "";
@@ -915,7 +982,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     found.cities.slice(-400).forEach(function (c) { addCity(c); });
   }
   // Новое — сверху списка городов и в конце списка стран (по ходу времени); без полной перерисовки.
-  function addCountry(c, quiet) {
+  function addCountry(c, quiet, idx) {
     var box = $("countries"), it = document.createElement("div"), body = document.createElement("div"), fu = flagUrl(c.cc);
     it.className = "pc-item";
     if (fu) { var im = document.createElement("img"); im.src = fu; im.alt = ""; it.appendChild(im); }
@@ -923,19 +990,19 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     body.children[0].textContent = countryName(c.cc);
     body.children[1].textContent = monthYear(c.at);
     it.appendChild(body);
-    box.appendChild(it);
+    box.insertBefore(it, idx == null ? null : box.children[idx] || null);
     c.el = body.children[2];
     $("nCountries").textContent = num(found.countries.length);
-    quiet || (box.parentNode.scrollTop = box.parentNode.scrollHeight);
+    quiet || idx == null || idx < found.countries.length - 1 || (box.parentNode.scrollTop = box.parentNode.scrollHeight);
   }
   function addRegion(c, rg) { if (!c.el) return; var sp = document.createElement("span"); sp.textContent = regionName(rg); c.el.appendChild(sp); }
-  function addCity(c) {
+  function addCity(c, idx) {
     var cb = $("cities"), it = document.createElement("div");
     it.className = "pc-city";
     it.innerHTML = '<span class="nm"></span><span class="cc"></span>';
     it.children[0].textContent = c.name;
     it.children[1].textContent = monthYear(c.at);
-    cb.insertBefore(it, cb.firstChild);
+    cb.insertBefore(it, idx == null ? cb.firstChild : cb.children[idx] || null);
     cb.children.length > 400 && cb.removeChild(cb.lastChild);
     $("nCities").textContent = num(found.cities.length);
   }
@@ -1177,25 +1244,115 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   }
 
   // ===== Разбор папки =====
+  var MSG = /^(IMG|VID|AUD|PTT)-\d{8}-WA\d+|^photo_\d{4}-\d\d-\d\d_\d\d-\d\d-\d\d|^video_\d{4}-\d\d-\d\d_\d\d-\d\d-\d\d|^FB_IMG_|^received_\d+|^IMG_\d{8}_\d{6}_\d{3}\./i,
+    SHOT = /screenshot|screen shot|снимок экрана|скриншот|bildschirmfoto|capture d.écran|captura de pantalla|schermata|스크린샷|スクリーンショット/i,
+    VIDEO = { mp4: 1, mov: 1, m4v: 1, "3gp": 1, "3g2": 1 };
+  // Описание снимка Google Фото (Google Takeout): «IMG_1.JPG.json», «IMG_1.JPG.supplemental-metadata.json», имя бывает
+  // обрезано до 46 знаков. Ключ — папка и имя снимка.
+  function sideKey(dir, name) { return dir + "/" + String(name).toLowerCase(); }
+  function sideMap(list) {
+    var m = new Map();
+    list.forEach(function (f) {
+      if (!/\.json$/i.test(f.name || "") || f.size > 262144) return;
+      var base = f.name.replace(/\.json$/i, "").replace(/\.supp[a-z-]*(\(\d+\))?$/i, ""), d = dirName(f);
+      m.set(sideKey(d, base), f);
+      base.length >= 46 && m.set(sideKey(d, base.slice(0, 46)), f);
+    });
+    return m;
+  }
+  function dirName(f) { var p = String(f.webkitRelativePath || f.tabiPath || "").replace(/^\/+/, "").split("/"); p.pop(); return p.join("/"); }
+  function sideRead(m, f) {
+    var d = dirName(f), j = m.get(sideKey(d, f.name)) || m.get(sideKey(d, f.name.slice(0, 46)));
+    if (!j) return Promise.resolve(null);
+    return j.text().then(function (s) {
+      var o = JSON.parse(s), g = (o.geoDataExif && o.geoDataExif.latitude ? o.geoDataExif : o.geoData) || {}, la = +g.latitude, lo = +g.longitude;
+      var ts = o.photoTakenTime && +o.photoTakenTime.timestamp;
+      return isFinite(la) && isFinite(lo) && !(Math.abs(la) < 1e-6 && Math.abs(lo) < 1e-6) ? { lat: la, lng: lo, ms: ts > 0 ? ts * 1000 : 0 } : null;
+    }).catch(function () { return null; });
+  }
+  function camName(r) {
+    var mk = r.mk || "", md = r.md || "";
+    return md && mk && md.toLowerCase().indexOf(mk.toLowerCase()) === 0 ? md : [mk, md].filter(Boolean).join(" ");
+  }
+  function why(f, x, r) {
+    WHY.files++;
+    if (!EXT[x]) return void (WHY.fmt[x] = (WHY.fmt[x] || 0) + 1);
+    var n = f.name || "";
+    if (MSG.test(n)) return void WHY.msg++;
+    if (SHOT.test(n) || (x === "png" && !(r && (r.mk || r.md)))) return void WHY.shot++;
+    if (r && (r.mk || r.md)) { var c = camName(r); WHY.cam[c] = (WHY.cam[c] || 0) + 1; WHY.camN++; return; }
+    if (VIDEO[x]) return void WHY.video++;
+    if (r && (r.cam > 0 || r.gps > 0)) return void WHY.edit++;
+    WHY.gone++;
+  }
+  function renderWhy() {
+    var miss = WHY.files - WHY.place, ul = $("whyL");
+    // Место из описаний Google Фото — не причина, а находка: отдельной строкой вне списка причин.
+    show("sideX", WHY.side > 0 && !!A.shown);
+    WHY.side && ($("sideX").textContent = t("whySide", { n: num(WHY.side) }));
+    show("why", miss > 0 && !!(A.shown || A.none));
+    if (!(miss > 0)) return;
+    $("whyS").textContent = t("whyS", { n: num(miss) });
+    ul.innerHTML = "";
+    var add = function (text, list) {
+      var li = document.createElement("li"), b = document.createElement("b");
+      b.textContent = text; li.appendChild(b);
+      list && list.forEach(function (x) { li.appendChild(document.createElement("br")); li.appendChild(document.createTextNode(x)); });
+      ul.appendChild(li);
+    };
+    if (WHY.camN) add(t("whyCam", { n: num(WHY.camN) }), Object.keys(WHY.cam).sort(function (a, b) { return WHY.cam[b] - WHY.cam[a]; }).slice(0, 6).map(function (k) { return k + " — " + num(WHY.cam[k]); }));
+    WHY.shot && add(t("whyShot", { n: num(WHY.shot) }));
+    WHY.msg && add(t("whyMsg", { n: num(WHY.msg) }));
+    WHY.gone && add(t("whyGone", { n: num(WHY.gone) }));
+    WHY.edit && add(t("whyEdit", { n: num(WHY.edit) }));
+    WHY.video && add(t("whyVideo", { n: num(WHY.video) }));
+    var fx = Object.keys(WHY.fmt), fn = fx.reduce(function (s, k) { return s + WHY.fmt[k]; }, 0);
+    fn && add(t("whyFmt", { n: num(fn), list: fx.map(function (k) { return k.toUpperCase(); }).join(", ") }));
+  }
   function run(list) {
+    var side = sideMap(list);
     var files = list.filter(function (f) { var x = extOf(f); return EXT[x] || OTHER[x]; });
     err(null);
     if (!files.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); return; }
     show("vPick", false); show("vDone", false); show("vWork", true);
     $("barIn").style.width = "0%";
     $("when").textContent = "";
-    var pts = [], done = 0, now = Date.now(), next = 0;
-    var prog = function () { $("prog").textContent = t("reading", { a: num(done), b: num(files.length), n: num(pts.length) }); $("barIn").style.width = Math.round((done / files.length) * 100) + "%"; };
+    var pts = [], done = 0, now = Date.now(), next = 0, t0 = performance.now(), slowShown = false;
+    show("eta", false); show("slow", false);
+    // Оставшееся время — после пяти секунд чтения, по среднему темпу; медленное чтение (меньше 40 файлов в секунду после
+    // восьми секунд) — строкой о флешке, внешнем диске и облачной папке.
+    var unit = function (sec) {
+      try { return sec >= 90 ? new Intl.NumberFormat(L, { style: "unit", unit: "minute", unitDisplay: "long" }).format(Math.round(sec / 60)) : new Intl.NumberFormat(L, { style: "unit", unit: "second", unitDisplay: "long" }).format(Math.max(5, Math.round(sec / 5) * 5)); } catch (e) { return Math.round(sec) + " s"; }
+    };
+    var prog = function () {
+      $("prog").textContent = t("reading", { a: num(done), b: num(files.length), n: num(pts.length) });
+      $("barIn").style.width = Math.round((done / files.length) * 100) + "%";
+      var sec = (performance.now() - t0) / 1000, rate = done / Math.max(sec, 0.001);
+      if (sec > 5 && done > 20 && done < files.length) { show("eta", true); $("eta").textContent = t("eta", { t: unit((files.length - done) / rate) }); }
+      if (!slowShown && sec > 8 && rate < 40 && done < files.length) { slowShown = true; show("slow", true); }
+    };
     prog();
     var worker = function () {
       if (next >= files.length) return Promise.resolve();
       var f = files[next++], x = extOf(f);
       A.files++;
-      if (!EXT[x]) { done++; return worker(); }
+      if (!EXT[x]) { done++; why(f, x, null); return worker(); }
       return EXT[x](f).catch(function () { return null; }).then(function (r) {
+        var place = r && isFinite(r.lat) && isFinite(r.lng) && !(Math.abs(r.lat) < 1e-6 && Math.abs(r.lng) < 1e-6) && Math.abs(r.lat) <= 90 && Math.abs(r.lng) <= 180;
+        if (place || !side.size) return r;
+        // Места в файле нет — место из описания Google Фото рядом со снимком, если оно есть.
+        return sideRead(side, f).then(function (s) {
+          if (!s) return r;
+          r = r || { lat: NaN, lng: NaN, gps: 0, cam: 0, zoned: 0, alt: 0, speed: 0, mk: "", md: "", sn: "" };
+          r.lat = s.lat; r.lng = s.lng; r.side = true;
+          taken(r) > 0 || (r.gps = s.ms);
+          return r;
+        });
+      }).then(function (r) {
         done++;
         var place = r && isFinite(r.lat) && isFinite(r.lng) && !(Math.abs(r.lat) < 1e-6 && Math.abs(r.lng) < 1e-6) && Math.abs(r.lat) <= 90 && Math.abs(r.lng) <= 180;
         var at = r ? taken(r) : 0;
+        place ? (WHY.place++, WHY.files++, r.side && WHY.side++) : why(f, x, r);
         if (place && at >= 631152000000 && at <= now + 86400000 && !(r.alt > 9000) && !(r.speed > 92))
           pts.push([Math.round(r.lat * 1e5) / 1e5, Math.round(r.lng * 1e5) / 1e5, Math.min(at, now), devOf(r), dirOf(f)]);
         done % 25 === 0 && prog();
@@ -1212,7 +1369,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       // не добавляется.
       kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
       show("vWork", false);
-      if (!kept.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); show("vPick", !A.pts.length); return; }
+      if (!kept.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); show("vPick", !A.pts.length); renderWhy(); return; }
       A.none = false; show("done", false);
       show("vWork", true);
       $("prog").textContent = t("loadingMap");
@@ -1245,6 +1402,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         ct >= 0 && (e.ct = ct);
         ev.push(e);
       }
+      resort = false;
       var newC = Object.keys(ccs).filter(function (cc) { return !found.byCc[cc]; }).length,
         D = quickMs || Math.min(28000, Math.max(10000, 8000 + newC * 900)),
         t0 = performance.now(), k = 0;
@@ -1259,9 +1417,15 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
             found.days.add(new Date(p[2]).toDateString());
             var prev = e.i > 0 ? all[e.i - 1] : null;
             prev && p[2] - prev[2] <= 36 * 3600000 && (found.km += dist(prev[0], prev[1], p[0], p[1]));
-            if (p.cc && !found.byCc[p.cc]) { var c = { cc: p.cc, at: p[2], regs: [], rset: {} }; found.byCc[p.cc] = c; found.countries.push(c); addCountry(c); mapDirty = true; }
+            if (p.cc && !found.byCc[p.cc]) {
+              var c = { cc: p.cc, at: p[2], regs: [], rset: {} }, ci = idxAsc(found.countries, c.at);
+              found.byCc[p.cc] = c; found.countries.splice(ci, 0, c); addCountry(c, false, ci); mapDirty = true;
+            } else if (p.cc && p[2] < found.byCc[p.cc].at) { found.byCc[p.cc].at = p[2]; resort = true; }
             if (e.rg && p.cc) { var cobj = found.byCc[p.cc]; if (!cobj.rset[e.rg.id]) { cobj.rset[e.rg.id] = 1; cobj.regs.push(e.rg); found.regions++; addRegion(cobj, e.rg); } }
-            if (e.ct != null && !found.byCity[e.ct]) { var city = { i: e.ct, name: townName(e.ct), at: p[2] }; found.byCity[e.ct] = city; found.cities.push(city); addCity(city); }
+            if (e.ct != null && !found.byCity[e.ct]) {
+              var city = { i: e.ct, name: townName(e.ct), at: p[2] }, ti = idxAsc(found.cities, city.at);
+              found.byCity[e.ct] = city; found.cities.splice(ti, 0, city); addCity(city, found.cities.length - 1 - ti);
+            } else if (e.ct != null && p[2] < found.byCity[e.ct].at) { found.byCity[e.ct].at = p[2]; resort = true; }
           }
           var cur = ev[Math.min(ev.length - 1, Math.max(0, u - 1))];
           cur && ($("when").textContent = monthYear(all[cur.i][2]));
@@ -1276,8 +1440,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }).then(function () {
       revealing = false;
       A.shown = all.length;
+      resort && renderLists();
       mapDirty = true; drawMap();
-      show("vWork", false); show("vDone", true); show("bShare", true); show("bDl", canShareFiles());
+      keepPut();
+      show("vWork", false); show("vDone", true); show("bShare", true); keepPut(); show("bDl", canShareFiles()); renderWhy();
       renderStats(); renderLegend(); shell();
       S ? doSave() : renderSave();
     });
@@ -1348,7 +1514,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       j.special && j.special.n != null && (saveSt.special = j.special);
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
       j.full && err("eFull");
-      renderSave(); renderStats();
+      renderSave(); renderStats(); keepPut();
       // После сохранения — и прежде сохранённое в этой учётной записи: страница показывает весь итог.
       loadSaved();
     }).catch(function () { saveSt.state = "error"; saveSt.err = ["eNet"]; err("eNet"); renderSave(); });
@@ -1386,6 +1552,40 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         rq.onerror = function () { ok(null); };
       });
     }).catch(function () { return null; });
+  }
+
+  // Итог хранится в этом браузере (18.11.2026, Андрей: закрыл страницу — всё пропало): точки, устройства, папки, причины
+  // и отметки «сохранено». Открыл снова — итог на месте; «Начать заново» стирает его.
+  function keepPut() {
+    return idb().then(function (db) {
+      return new Promise(function (ok) {
+        var tx = db.transaction("st", "readwrite");
+        tx.objectStore("st").put({ at: Date.now(), pts: A.pts.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY, saved: saveSt.state === "saved" }, "result");
+        tx.oncomplete = ok; tx.onerror = ok;
+      });
+    }).catch(function () {});
+  }
+  function keepGet() {
+    return idb().then(function (db) {
+      return new Promise(function (ok) { var rq = db.transaction("st", "readonly").objectStore("st").get("result"); rq.onsuccess = function () { ok(rq.result || null); }; rq.onerror = function () { ok(null); }; });
+    }).catch(function () { return null; });
+  }
+  function keepDrop() {
+    return idb().then(function (db) {
+      return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
+    }).catch(function () {});
+  }
+  function restore(st, quick) {
+    DEV.list = st.devs || []; DIR.list = st.dirs || [];
+    DEV.by = {}; DIR.by = {};
+    DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
+    DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
+    st.why && (WHY = st.why);
+    var pts = (st.pts || []).map(function (p) { var q = p.slice(0, 5); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
+    if (!pts.length) return Promise.resolve(false);
+    st.saved && (saveSt.state = "saved", saveSt.view = true);
+    show("vPick", false); show("vWork", true); show("restored", true);
+    return geo().then(function () { return reveal(pts, quick); }).then(function () { return true; });
   }
 
   // ===== Картинка «Поделиться» =====
@@ -1489,8 +1689,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     show("vPick", true);
     geo();
     var q = new URLSearchParams(location.search), code = q.get("code");
-    // Уже вошедший в этой вкладке сразу видит свой сохранённый итог.
-    if (S && !code) loadSaved();
+    // Итог прошлого разбора в этом браузере — сразу; вошедший в этой вкладке получает к нему и сохранённое в учётной записи.
+    if (!code) keepGet().then(function (st) { return st ? restore(st, 1500) : false; }).then(function () { S && loadSaved(); });
     if (code && q.get("w") !== "1") {
       history.replaceState(null, "", location.pathname + "?lang=" + L);
       Promise.all([exchange(code), unstash()]).then(function (res) {
