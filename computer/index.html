@@ -1208,7 +1208,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       pts.sort(function (x, y) { return x[2] - y[2]; });
       var last = {}, kept = [];
       pts.forEach(function (p) { var q2 = last[p[3]]; if (q2 && p[2] - q2[2] <= 1200000 && dist(q2[0], q2[1], p[0], p[1]) < 150) return; last[p[3]] = p; kept.push(p); });
-      kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2]; if (seenPt.has(k)) return false; seenPt.add(k); LOOSE.add(loose(p)); return true; });
+      // Уже показанное — точка этого разбора или сохранённая в учётной записи (там время до секунды или минуты) — второй раз
+      // не добавляется.
+      kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
       show("vWork", false);
       if (!kept.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); show("vPick", !A.pts.length); return; }
       A.none = false; show("done", false);
@@ -1317,10 +1319,17 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var todo = A.pts.filter(function (p) { return !p.sent; });
     if (!todo.length) { saveSt.state = "saved"; return void renderSave(); }
     saveSt.state = "saving"; err(null); renderSave();
-    fresh().then(function (s) {
+    // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
+    // две камеры одной модели, а восстановить по ним номер нельзя (одним шести знакам отвечают десятки тысяч номеров).
+    var DEVH = [];
+    Promise.all(DEV.list.map(function (d) {
+      return d.sn ? crypto.subtle.digest("SHA-256", new TextEncoder().encode(d.mk + "|" + d.md + "|" + d.sn)).then(function (h) {
+        return "h" + Array.prototype.map.call(new Uint8Array(h).slice(0, 3), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      }) : "";
+    })).then(function (hs) { DEVH = DEV.list.map(function (d, i) { return { mk: d.mk, md: d.md, sn: hs[i] }; }); return fresh(); }).then(function (s) {
       if (!s) return { auth: true };
       // Папка — своя у каждого устройства: пары «устройство и папка» собирает функция pc-media; здесь папка — по номеру.
-      var body = { op: "put", pcl: pcLabel(), devs: DEV.list, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
+      var body = { op: "put", pcl: pcLabel(), devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
         special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }) };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
