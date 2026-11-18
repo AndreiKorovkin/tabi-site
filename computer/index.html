@@ -489,7 +489,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       signedIn();
     }).catch(function () { err("eNet"); });
   };
-  function signedIn() { err(null); renderSave(); A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved(); }
+  function signedIn() {
+    err(null);
+    if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
+    renderSave();
+    A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
+  }
   // Сохранённый итог учётной записи — без нового разбора (18.11.2026, Андрей): к нему можно вернуться в любой день.
   var VIEW = false, loadedOnce = false, LOOSE = new Set();
   var loose = function (p) { return Math.round(p[0] * 1e3) + ":" + Math.round(p[1] * 1e3) + ":" + Math.floor(p[2] / 60000); };
@@ -507,7 +512,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       (j.p || []).forEach(function (q) {
         var p = [q[0], q[1], q[2], -1, -1], k = loose(p);
         if (LOOSE.has(k)) return;
-        LOOSE.add(k); p.sent = true; add.push(p);
+        // acc — точка из учётной записи: в браузере не хранится (чужой человек за этим компьютером её не увидит).
+        LOOSE.add(k); p.sent = true; p.acc = true; add.push(p);
       });
       if (!add.length) { A.pts.length || (saveSt.state = "none"); return renderSave(); }
       saveSt.view = true;
@@ -1560,7 +1566,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     return idb().then(function (db) {
       return new Promise(function (ok) {
         var tx = db.transaction("st", "readwrite");
-        tx.objectStore("st").put({ at: Date.now(), pts: A.pts.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY, saved: saveSt.state === "saved" }, "result");
+        var own = A.pts.filter(function (p) { return !p.acc; });
+        tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
+          saved: saveSt.state === "saved", owner: own.some(function (p) { return p.sent; }) ? uidOf(S) : KEEP_OWNER || null }, "result");
         tx.oncomplete = ok; tx.onerror = ok;
       });
     }).catch(function () {});
@@ -1575,7 +1583,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
   }
+  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — чужой итог стирается.
+  var KEEP_OWNER = null;
+  function uidOf(s) {
+    if (!s) return null;
+    try { var p = s.at.split(".")[1]; return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((p.length + 3) % 4))).sub || null; } catch (e) { return null; }
+  }
   function restore(st, quick) {
+    KEEP_OWNER = st.owner || null;
     DEV.list = st.devs || []; DIR.list = st.dirs || [];
     DEV.by = {}; DIR.by = {};
     DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
@@ -1690,7 +1705,13 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     geo();
     var q = new URLSearchParams(location.search), code = q.get("code");
     // Итог прошлого разбора в этом браузере — сразу; вошедший в этой вкладке получает к нему и сохранённое в учётной записи.
-    if (!code) keepGet().then(function (st) { return st ? restore(st, 1500) : false; }).then(function () { S && loadSaved(); });
+    if (!code)
+      keepGet()
+        .then(function (st) {
+          if (st && st.owner && S && st.owner !== uidOf(S)) return keepDrop().then(function () { return false; });
+          return st ? restore(st, 1500) : false;
+        })
+        .then(function () { S && loadSaved(); });
     if (code && q.get("w") !== "1") {
       history.replaceState(null, "", location.pathname + "?lang=" + L);
       Promise.all([exchange(code), unstash()]).then(function (res) {
