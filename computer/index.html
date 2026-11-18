@@ -170,7 +170,6 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         <button class="pc-btn" id="bVerify" hidden></button>
       </div>
       <p class="pc-s" id="who" hidden></p>
-      <button class="pc-btn" id="bSave" hidden></button>
       <label class="pc-chk" id="newsBox"><input type="checkbox" id="news"><span id="newsL"></span></label>
       <p class="pc-s" id="devNote"></p>
     </div>
@@ -321,7 +320,6 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "clearBtn": {"en": "Start over", "ru": "Начать заново", "cs": "Začít znovu", "de": "Neu beginnen", "fr": "Recommencer", "es": "Empezar de nuevo", "it": "Ricominciare", "pt": "Começar de novo", "ja": "最初からやり直す", "ko": "처음부터 다시"},
     "tlReading": {"en": "Reading the Google location history…", "ru": "Читаем историю местоположений Google…", "cs": "Čteme historii polohy Google…", "de": "Der Google-Standortverlauf wird gelesen …", "fr": "Lecture de l’historique des positions Google…", "es": "Leyendo el historial de ubicaciones de Google…", "it": "Lettura della cronologia delle posizioni di Google…", "pt": "Lendo o histórico de localização do Google…", "ja": "Googleのロケーション履歴を読み込んでいます…", "ko": "Google 위치 기록을 읽는 중…"},
     "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
-    "saveBtn": {"en": "Save the result to my account", "ru": "Сохранить итог в учётной записи", "cs": "Uložit výsledek do účtu", "de": "Ergebnis im Konto speichern", "fr": "Enregistrer le résultat dans mon compte", "es": "Guardar el resultado en mi cuenta", "it": "Salva il risultato nel mio account", "pt": "Salvar o resultado na minha conta", "ja": "結果をアカウントに保存", "ko": "결과를 내 계정에 저장"},
     "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
@@ -389,7 +387,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
     $("credits").textContent = t("credits");
     var set = { title: "title", lead: "lead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", bFolder: "folder", bFiles: "files",
-      bMore: "more", bSave: "saveBtn", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
+      bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
       bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
       restoredX: "restored", slow: "slow" };
@@ -497,13 +495,11 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     err(null);
     if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
     renderSave();
-    // Вошёл ради сохранения — итог сохраняется; вошёл, чтобы посмотреть сохранённое, — только показ.
-    !VIEW && A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
+    A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
   }
   // Сохранённый итог учётной записи — без нового разбора (18.11.2026, Андрей): к нему можно вернуться в любой день.
   var VIEW = false, loadedOnce = false, LOOSE = new Set();
   var loose = function (p) { return Math.round(p[0] * 1e3) + ":" + Math.round(p[1] * 1e3) + ":" + Math.floor(p[2] / 60000); };
-  $("bSave").onclick = function () { S && doSave(); };
   $("bView").onclick = function (e) { e.preventDefault(); VIEW = true; S ? loadSaved() : (renderSave(), $("vSave").scrollIntoView({ behavior: "smooth", block: "center" })); };
   function loadSaved() {
     if (loadedOnce) return;
@@ -1599,9 +1595,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell();
-      // Итог уходит в учётную запись только по просьбе человека (18.11.2026, Андрей): у вошедшего — кнопкой «Сохранить
-      // итог в учётной записи», у невошедшего — входом ради сохранения.
-      renderSave();
+      S ? doSave() : renderSave();
     });
   }
 
@@ -1634,7 +1628,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // ===== Сохранение итога (функция pc-media) =====
   function renderSave() {
-    var has = A.shown > 0 && !revealing, viewAsk = VIEW && !S && !A.shown, st0 = saveSt.state;
+    var has = A.shown > 0 && !revealing, viewAsk = VIEW && !S && !A.shown;
     show("vSave", ((has && saveSt.state !== "saved") || viewAsk) && !PHONE);
     $("saveT").textContent = t(viewAsk ? "viewT" : "saveT");
     $("saveX").textContent = t(viewAsk ? "viewX" : "saveX");
@@ -1642,7 +1636,6 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     show("bView", !S && !A.shown && !VIEW);
     show("inBox", !S);
     show("who", !!S);
-    show("bSave", !!S && has && st0 !== "saving" && A.pts.some(function (p) { return !p.sent; }));
     S && ($("who").textContent = t("who", { m: S.mail || "" }));
     var st = saveSt.state;
     show("vSaved", (has && (st === "saved" || st === "saving")) || st === "none");
