@@ -38,7 +38,8 @@ td.n{text-align:right;white-space:nowrap}
 </style></head>
 <body>
 <main class="hq">
-  <div class="row" style="justify-content:space-between"><h1>Штаб Tabi</h1><span class="s" id="who"></span></div>
+  <div class="row" style="justify-content:space-between"><h1>Штаб Tabi</h1><div class="row"><span class="s" id="who"></span><button class="chip" id="bOut" hidden>Выйти</button></div></div>
+  <p class="s" id="wait" hidden>Проверяю доступ…</p>
   <section class="card" id="vIn" hidden>
     <h2>Вход владельца</h2>
     <div style="display:grid;gap:10px;max-width:380px">
@@ -117,7 +118,7 @@ td.n{text-align:right;white-space:nowrap}
     return fresh().then(function (s) {
       if (!s) return null;
       return fetch(SB + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(args || {}) })
-        .then(function (r) { return r.ok ? r.json() : null; });
+        .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; }); });
     }).catch(function () { return null; });
   };
   var tiles = function (id, rows) {
@@ -149,10 +150,22 @@ td.n{text-align:right;white-space:nowrap}
       svg.appendChild(hit);
     });
   }
+  // Данные показываются только после того, как сервер подтвердил владельца (18.11.2026: страница открывала экран данных до
+  // проверки и любой сбой запроса называла «не владелец»). Отказ сервера и нет связи называются своими словами.
+  var signIn = function (t) { $("wait").hidden = true; $("vData").hidden = true; $("vIn").hidden = false; $("bOut").hidden = !S; err(t); };
+  var ok = function (x) { return x && x.st === 200 ? x.j : null; };
   function load() {
-    Promise.all([rpc("stat_site", { p_days: DAYS }), rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server")]).then(function (r) {
-      var st = r[0], ov = r[1], mo = r[2], er = r[3], sv = r[4];
-      if (!st || st.ok === false) { $("vData").hidden = true; $("vIn").hidden = false; return err("Эта учётная запись не владелец."); }
+    rpc("stat_site", { p_days: DAYS }).then(function (g) {
+      if (!S) return signIn("");
+      if (!g) return signIn("Сервер не ответил. Обновите страницу.");
+      if (g.st !== 200) return signIn("Сервер отказал (код " + g.st + "). Обновите страницу.");
+      if (!g.j || g.j.ok !== true) return (keep(null), ($("who").textContent = ""), signIn("Эта учётная запись не владельца. Войдите учётной записью владельца."));
+      $("wait").hidden = true; $("vIn").hidden = true; $("vData").hidden = false; $("bOut").hidden = false; err("");
+      return Promise.all([rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server")]).then(function (r) { show(g.j, ok(r[0]), ok(r[1]), ok(r[2]), ok(r[3])); });
+    });
+  }
+  function show(st, ov, mo, er, sv) {
+    {
       tiles("siteT", [["Разборов", num(st.scans)], ["Сохранений", num(st.saved)], ["Вошли до разбора", num(st.signed)], ["Заходов с телефона", num(st.phones)], ["Файлов", num(st.files)], ["С местом", num(st.place)], ["Точек", num(st.points)], ["Секунд на разбор (медиана)", num(Math.round(st.secs))], ["Ошибок чтения", num(st.errors)]]);
       chart(st.days || []);
       table("siteWhy", ["Причина", "Файлов"], Object.keys(st.why || {}).filter(function (k) { return WHY[k]; }).sort(function (a, b) { return st.why[b] - st.why[a]; }).map(function (k) { return [WHY[k], num(st.why[k])]; }));
@@ -168,16 +181,17 @@ td.n{text-align:right;white-space:nowrap}
         table("moneyP", ["Покупка", "Штук"], (mo.purchases || []).slice(0, 12).map(function (p) { return [p.product + " · " + p.state, num(p.n)]; }));
       }
       er && table("errT", ["Ошибка", "Раз"], (er.groups || []).slice(0, 15).map(function (g) { return [g.kind + " · " + String(g.msg || "").slice(0, 90), num(g.n)]; }));
-      sv && tiles("srvT", [["База, МБ из 480", num(sv.db_mb)], ["Писем сегодня из 100", num(sv.mail && sv.mail.day)], ["Писем за месяц из 3000", num(sv.mail && sv.mail.month)], ["Точек сайта ждут телефона", num(sv.site_pending)], ["Учётных записей с итогом", num(sv.site_accounts)], ["Устройств в реестре", num(sv.devices)], ["Письмо с итогом", sv.letter_on ? "включено" : "выключено"]]);
-    });
+      sv && sv.ok !== false && tiles("srvT", [["База, МБ из 480", num(sv.db_mb)], ["Писем сегодня из 100", num(sv.mail && sv.mail.day)], ["Писем за месяц из 3000", num(sv.mail && sv.mail.month)], ["Точек сайта ждут телефона", num(sv.site_pending)], ["Учётных записей с итогом", num(sv.site_accounts)], ["Устройств в реестре", num(sv.devices)], ["Письмо с итогом", sv.letter_on ? "включено" : "выключено"]]);
+    }
   }
+  $("bOut").onclick = function () { keep(null); $("who").textContent = ""; signIn(""); };
   function start() {
-    $("vIn").hidden = true; $("vData").hidden = false;
+    $("vIn").hidden = true; $("vData").hidden = true; $("wait").hidden = false;
     $("who").textContent = S && S.mail ? S.mail : "";
     $("range").innerHTML = "";
     [7, 30, 90, 365].forEach(function (d) {
       var b = document.createElement("button"); b.className = "chip"; b.textContent = d === 365 ? "Год" : d + " дней"; b.setAttribute("aria-pressed", d === DAYS ? "true" : "false");
-      b.onclick = function () { DAYS = d; start(); }; $("range").appendChild(b);
+      b.onclick = function () { DAYS = d; [].forEach.call($("range").children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); load(); }; $("range").appendChild(b);
     });
     load();
   }
