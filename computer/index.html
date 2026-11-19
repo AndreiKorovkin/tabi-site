@@ -46,6 +46,13 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .pc-chk{display:flex;gap:10px;align-items:center;font-size:14.5px;color:var(--ink);cursor:pointer}
 .pc-chk input{width:18px;height:18px;accent-color:var(--accent)}
 .pc-box{display:grid;gap:10px;padding:18px;border-radius:18px;background:var(--bg);border:1px solid var(--line)}
+.pc-devs{display:grid;gap:12px}
+.pc-dev{display:grid;gap:3px;padding-top:12px;border-top:1px solid var(--line)}
+.pc-dev:first-child{padding-top:0;border-top:0}
+.pc-dev .hd{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.pc-dev .nm{font-weight:700;overflow-wrap:anywhere}
+.pc-dev .n{color:var(--sub);font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pc-dev .ln{color:var(--sub);font-size:14px;line-height:1.4}
 .pc-drop{border:2px dashed var(--line);border-radius:16px;padding:14px;text-align:center;color:var(--sub);font-size:14px}
 .pc-bar{height:8px;border-radius:999px;background:var(--bg2);overflow:hidden}.pc-bar>div{height:100%;width:0;background:var(--accent);transition:width .25s linear}
 .pc-bar.wait>div{width:30%!important;animation:pcWait 1.4s ease-in-out infinite}
@@ -139,6 +146,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <div class="pc-bar" id="bar"><div id="barIn"></div></div>
       <div id="eta" class="pc-s" hidden></div>
       <p class="pc-s" id="slow" hidden></p>
+      <p class="pc-s" id="sysX" hidden></p>
     </div>
     <div class="pc-stats" id="stats" hidden></div>
     <!-- Итог -->
@@ -148,6 +156,11 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <p class="pc-s" id="sideX" hidden></p>
       <p class="pc-s" id="restored" hidden><span id="restoredX"></span> <a href="#" class="pc-link" id="bClear"></a></p>
       <button class="pc-btn b2" id="bMore"></button>
+    </div>
+    <!-- Устройства: с каких устройств что пришло и через какой компьютер (19.11.2026) -->
+    <div id="devBox" hidden class="pc-box">
+      <h2 id="hDevs"></h2>
+      <div class="pc-devs" id="devList"></div>
     </div>
     <!-- Сохранение итога: вход после разбора -->
     <div id="vSave" hidden class="pc-box">
@@ -238,7 +251,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
     "drop": {"en": "Or drag folders and files here — several at once.", "ru": "Или перетащите сюда папки и файлы — можно несколько сразу.", "cs": "Nebo sem přetáhněte složky a soubory — i několik najednou.", "de": "Oder ziehen Sie Ordner und Dateien hierher – auch mehrere auf einmal.", "fr": "Ou faites glisser ici des dossiers et des fichiers, même plusieurs à la fois.", "es": "O arrastra aquí carpetas y archivos, también varios a la vez.", "it": "Oppure trascini qui cartelle e file, anche più di uno alla volta.", "pt": "Ou arraste pastas e arquivos para cá — vários de uma vez.", "ja": "またはフォルダやファイルをここにドラッグしてください。複数まとめてでもかまいません。", "ko": "또는 폴더와 파일을 여기로 끌어다 놓으세요. 여러 개를 한 번에 놓을 수도 있습니다."},
     "dropHere": {"en": "Drop to add", "ru": "Отпустите, чтобы добавить", "cs": "Pusťte a soubory se přidají", "de": "Loslassen zum Hinzufügen", "fr": "Relâchez pour ajouter", "es": "Suelta para añadir", "it": "Rilasci per aggiungere", "pt": "Solte para adicionar", "ja": "ドロップして追加", "ko": "놓아서 추가"},
-    "whole": {"en": "A browser cannot open the whole computer at once — this protects your files. Add the folders with photos one by one: the results add up.", "ru": "Браузер не открывает весь компьютер сразу — так он защищает ваши файлы. Добавляйте папки с фотографиями по очереди: найденное складывается.", "cs": "Prohlížeč neotevře celý počítač najednou — chrání tak vaše soubory. Přidávejte složky s fotkami postupně: nálezy se sčítají.", "de": "Ein Browser kann nicht den ganzen Computer auf einmal öffnen – so schützt er Ihre Dateien. Fügen Sie die Fotoordner nacheinander hinzu: Die Funde werden addiert.", "fr": "Un navigateur ne peut pas ouvrir tout l’ordinateur d’un coup : c’est ainsi qu’il protège vos fichiers. Ajoutez les dossiers de photos l’un après l’autre : les résultats s’additionnent.", "es": "Un navegador no puede abrir todo el ordenador a la vez: así protege tus archivos. Añade las carpetas de fotos una tras otra: los resultados se suman.", "it": "Un browser non può aprire tutto il computer in una volta: così protegge i Suoi file. Aggiunga le cartelle di foto una dopo l’altra: i risultati si sommano.", "pt": "Um navegador não consegue abrir o computador inteiro de uma vez — é assim que ele protege seus arquivos. Adicione as pastas de fotos uma após a outra: os resultados se somam.", "ja": "ブラウザーはファイルを守るため、パソコン全体を一度に開くことができません。写真のフォルダを順に追加してください。見つかったものは合算されます。", "ko": "브라우저는 파일을 보호하기 위해 컴퓨터 전체를 한 번에 열 수 없습니다. 사진 폴더를 하나씩 추가하세요. 찾은 결과는 합산됩니다."},
+    "whole": {"ru": "Выбирайте папки с фотографиями и видео, а не весь диск: список всех файлов диска браузер собирает очень долго. Папки можно добавлять по очереди — найденное складывается.", "en": "Choose folders with photos and videos rather than the whole drive: the browser takes a very long time to list every file on a drive. You can add folders one after another — the results add up.", "cs": "Vybírejte složky s fotkami a videi, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho. Složky můžete přidávat postupně — nálezy se sčítají.", "de": "Wählen Sie Ordner mit Fotos und Videos statt des ganzen Laufwerks: Die Liste aller Dateien eines Laufwerks erstellt der Browser sehr lange. Ordner lassen sich nacheinander hinzufügen — die Ergebnisse summieren sich.", "fr": "Choisissez des dossiers de photos et de vidéos plutôt que le disque entier : le navigateur met très longtemps à lister tous les fichiers d’un disque. Vous pouvez ajouter les dossiers l’un après l’autre — les résultats s’additionnent.", "es": "Elija carpetas con fotos y vídeos en lugar de todo el disco: el navegador tarda mucho en listar todos los archivos de un disco. Puede añadir carpetas una tras otra: los resultados se suman.", "it": "Scelga cartelle con foto e video invece dell’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco. Può aggiungere le cartelle una dopo l’altra: i risultati si sommano.", "pt": "Escolha pastas com fotos e vídeos em vez do disco inteiro: o navegador demora muito para listar todos os arquivos de um disco. Você pode adicionar pastas uma após a outra — os resultados se somam.", "ja": "ドライブ全体ではなく、写真と動画のフォルダーを選んでください。ドライブ全体のファイル一覧の作成には、ブラウザーが非常に長い時間をかけます。フォルダーは順に追加でき、結果は合算されます。", "ko": "드라이브 전체가 아니라 사진과 동영상 폴더를 선택하세요. 브라우저가 드라이브의 모든 파일 목록을 만드는 데 매우 오래 걸립니다. 폴더는 차례로 추가할 수 있으며 결과는 합산됩니다."},
     "hCountries": {"en": "Countries and regions", "ru": "Страны и регионы", "cs": "Země a regiony", "de": "Länder und Regionen", "fr": "Pays et régions", "es": "Países y regiones", "it": "Paesi e regioni", "pt": "Países e regiões", "ja": "国と地域", "ko": "국가와 지역"},
     "hCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
     "hRoute": {"en": "Route", "ru": "Маршрут", "cs": "Trasa", "de": "Route", "fr": "Itinéraire", "es": "Ruta", "it": "Percorso", "pt": "Trajeto", "ja": "ルート", "ko": "경로"},
@@ -314,7 +327,15 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
     "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "anonNote": {"en": "Right after the scan, the place and time from the files are stored on the Tabi server without an account, under a random key of this browser. If you sign in to your Tabi account, the result moves to it; without sign-in it is erased after 30 days, and “Start over” erases it at once.", "ru": "Сразу после разбора место и время из файлов сохраняются на сервере Tabi без учётной записи, под случайным ключом этого браузера. Если вы войдёте в учётную запись Tabi, итог перейдёт в неё; без входа итог будет стёрт через 30 дней, а «Начать заново» стирает его сразу.", "cs": "Hned po rozboru se místo a čas ze souborů uloží na server Tabi bez účtu, pod náhodným klíčem tohoto prohlížeče. Pokud se přihlásíte do účtu Tabi, výsledek se do něj přesune; bez přihlášení bude za 30 dní smazán a „Začít znovu“ ho smaže hned.", "de": "Gleich nach der Auswertung werden Ort und Zeit aus den Dateien ohne Konto auf dem Tabi-Server gespeichert, unter einem zufälligen Schlüssel dieses Browsers. Wenn Sie sich bei Ihrem Tabi-Konto anmelden, geht das Ergebnis in das Konto über; ohne Anmeldung wird es nach 30 Tagen gelöscht, und „Neu beginnen“ löscht es sofort.", "fr": "Juste après l’analyse, le lieu et l’heure tirés des fichiers sont enregistrés sur le serveur Tabi sans compte, sous une clé aléatoire de ce navigateur. Si vous vous connectez à votre compte Tabi, le résultat y est transféré ; sans connexion, il est effacé au bout de 30 jours, et « Recommencer » l’efface aussitôt.", "es": "Justo después del análisis, el lugar y la hora de los archivos se guardan en el servidor de Tabi sin cuenta, con una clave aleatoria de este navegador. Si inicias sesión en tu cuenta de Tabi, el resultado pasa a ella; sin iniciar sesión se borra a los 30 días, y «Empezar de nuevo» lo borra al instante.", "it": "Subito dopo l’analisi, il luogo e l’ora dei file vengono salvati sul server di Tabi senza account, con una chiave casuale di questo browser. Se accede al Suo account Tabi, il risultato vi viene trasferito; senza accesso viene cancellato dopo 30 giorni, e «Ricominciare» lo cancella subito.", "pt": "Logo após a análise, o local e a hora dos arquivos são salvos no servidor do Tabi sem conta, com uma chave aleatória deste navegador. Se você entrar na sua conta Tabi, o resultado passa para ela; sem entrar, ele é apagado após 30 dias, e “Começar de novo” o apaga na hora.", "ja": "分析の直後、ファイルの場所と時刻はアカウントなしで、このブラウザーのランダムな鍵のもとにTabiのサーバーへ保存されます。Tabiアカウントにログインすると結果はアカウントに移ります。ログインしない場合は30日後に削除され、「最初からやり直す」ですぐに削除できます。", "ko": "분석 직후 파일의 장소와 시간은 계정 없이 이 브라우저의 임의 키로 Tabi 서버에 저장됩니다. Tabi 계정에 로그인하면 결과가 계정으로 옮겨지고, 로그인하지 않으면 30일 후 삭제되며 ‘처음부터 다시’를 누르면 즉시 삭제됩니다."}
+    "anonNote": {"en": "Right after the scan, the place and time from the files are stored on the Tabi server without an account, under a random key of this browser. If you sign in to your Tabi account, the result moves to it; without sign-in it is erased after 30 days, and “Start over” erases it at once.", "ru": "Сразу после разбора место и время из файлов сохраняются на сервере Tabi без учётной записи, под случайным ключом этого браузера. Если вы войдёте в учётную запись Tabi, итог перейдёт в неё; без входа итог будет стёрт через 30 дней, а «Начать заново» стирает его сразу.", "cs": "Hned po rozboru se místo a čas ze souborů uloží na server Tabi bez účtu, pod náhodným klíčem tohoto prohlížeče. Pokud se přihlásíte do účtu Tabi, výsledek se do něj přesune; bez přihlášení bude za 30 dní smazán a „Začít znovu“ ho smaže hned.", "de": "Gleich nach der Auswertung werden Ort und Zeit aus den Dateien ohne Konto auf dem Tabi-Server gespeichert, unter einem zufälligen Schlüssel dieses Browsers. Wenn Sie sich bei Ihrem Tabi-Konto anmelden, geht das Ergebnis in das Konto über; ohne Anmeldung wird es nach 30 Tagen gelöscht, und „Neu beginnen“ löscht es sofort.", "fr": "Juste après l’analyse, le lieu et l’heure tirés des fichiers sont enregistrés sur le serveur Tabi sans compte, sous une clé aléatoire de ce navigateur. Si vous vous connectez à votre compte Tabi, le résultat y est transféré ; sans connexion, il est effacé au bout de 30 jours, et « Recommencer » l’efface aussitôt.", "es": "Justo después del análisis, el lugar y la hora de los archivos se guardan en el servidor de Tabi sin cuenta, con una clave aleatoria de este navegador. Si inicias sesión en tu cuenta de Tabi, el resultado pasa a ella; sin iniciar sesión se borra a los 30 días, y «Empezar de nuevo» lo borra al instante.", "it": "Subito dopo l’analisi, il luogo e l’ora dei file vengono salvati sul server di Tabi senza account, con una chiave casuale di questo browser. Se accede al Suo account Tabi, il risultato vi viene trasferito; senza accesso viene cancellato dopo 30 giorni, e «Ricominciare» lo cancella subito.", "pt": "Logo após a análise, o local e a hora dos arquivos são salvos no servidor do Tabi sem conta, com uma chave aleatória deste navegador. Se você entrar na sua conta Tabi, o resultado passa para ela; sem entrar, ele é apagado após 30 dias, e “Começar de novo” o apaga na hora.", "ja": "分析の直後、ファイルの場所と時刻はアカウントなしで、このブラウザーのランダムな鍵のもとにTabiのサーバーへ保存されます。Tabiアカウントにログインすると結果はアカウントに移ります。ログインしない場合は30日後に削除され、「最初からやり直す」ですぐに削除できます。", "ko": "분석 직후 파일의 장소와 시간은 계정 없이 이 브라우저의 임의 키로 Tabi 서버에 저장됩니다. Tabi 계정에 로그인하면 결과가 계정으로 옮겨지고, 로그인하지 않으면 30일 후 삭제되며 ‘처음부터 다시’를 누르면 즉시 삭제됩니다."},
+    "sysX": {"ru": "Файлы системных папок и папок программ пропущены: {n}.", "en": "Files in system and program folders skipped: {n}.", "cs": "Přeskočené soubory systémových složek a složek programů: {n}.", "de": "Übersprungene Dateien in System- und Programmordnern: {n}.", "fr": "Fichiers ignorés dans les dossiers système et de programmes : {n}.", "es": "Archivos omitidos en carpetas del sistema y de programas: {n}.", "it": "File saltati nelle cartelle di sistema e dei programmi: {n}.", "pt": "Arquivos ignorados em pastas do sistema e de programas: {n}.", "ja": "スキップしたシステムフォルダーとプログラムフォルダーのファイル：{n}", "ko": "건너뛴 시스템 폴더와 프로그램 폴더의 파일: {n}"},
+    "wholeX": {"ru": "Выбран весь диск. Файлы системных папок и папок программ пропущены: {n}.", "en": "The whole drive is selected. Files in system and program folders skipped: {n}.", "cs": "Vybrán celý disk. Přeskočené soubory systémových složek a složek programů: {n}.", "de": "Das ganze Laufwerk ist ausgewählt. Übersprungene Dateien in System- und Programmordnern: {n}.", "fr": "Le disque entier est sélectionné. Fichiers ignorés dans les dossiers système et de programmes : {n}.", "es": "Está seleccionado todo el disco. Archivos omitidos en carpetas del sistema y de programas: {n}.", "it": "È selezionato l’intero disco. File saltati nelle cartelle di sistema e dei programmi: {n}.", "pt": "O disco inteiro está selecionado. Arquivos ignorados em pastas do sistema e de programas: {n}.", "ja": "ドライブ全体が選択されています。スキップしたシステムフォルダーとプログラムフォルダーのファイル：{n}", "ko": "드라이브 전체가 선택되었습니다. 건너뛴 시스템 폴더와 프로그램 폴더의 파일: {n}"},
+    "hDevs": {"ru": "Устройства", "en": "Devices", "cs": "Zařízení", "de": "Geräte", "fr": "Appareils", "es": "Dispositivos", "it": "Dispositivi", "pt": "Dispositivos", "ja": "デバイス", "ko": "기기"},
+    "devPts": {"ru": "Точек: {n}", "en": "Points: {n}", "cs": "Bodů: {n}", "de": "Punkte: {n}", "fr": "Points : {n}", "es": "Puntos: {n}", "it": "Punti: {n}", "pt": "Pontos: {n}", "ja": "地点：{n}", "ko": "지점: {n}"},
+    "devThis": {"ru": "Через этот компьютер", "en": "Through this computer", "cs": "Přes tento počítač", "de": "Über diesen Computer", "fr": "Par cet ordinateur", "es": "A través de este ordenador", "it": "Tramite questo computer", "pt": "Por este computador", "ja": "このパソコン経由", "ko": "이 컴퓨터 경유"},
+    "devOther": {"ru": "Через компьютер {pc}", "en": "Through the computer {pc}", "cs": "Přes počítač {pc}", "de": "Über den Computer {pc}", "fr": "Par l’ordinateur {pc}", "es": "A través del ordenador {pc}", "it": "Tramite il computer {pc}", "pt": "Pelo computador {pc}", "ja": "パソコン {pc} 経由", "ko": "컴퓨터 {pc} 경유"},
+    "devOtherNone": {"ru": "Через другой компьютер", "en": "Through another computer", "cs": "Přes jiný počítač", "de": "Über einen anderen Computer", "fr": "Par un autre ordinateur", "es": "A través de otro ordenador", "it": "Tramite un altro computer", "pt": "Por outro computador", "ja": "別のパソコン経由", "ko": "다른 컴퓨터 경유"},
+    "devNone": {"ru": "Устройство не определено", "en": "Device not identified", "cs": "Zařízení neurčeno", "de": "Gerät nicht bestimmt", "fr": "Appareil non déterminé", "es": "Dispositivo no identificado", "it": "Dispositivo non identificato", "pt": "Dispositivo não identificado", "ja": "デバイス不明", "ko": "기기 확인 불가"}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -384,7 +405,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
       bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
-      restoredX: "restored", slow: "slow", anonNote: "anonNote" };
+      restoredX: "restored", slow: "slow", anonNote: "anonNote", hDevs: "hDevs" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
@@ -394,7 +415,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("over").textContent = t("dropHere");
     errKey && err(errKey, errArgs);
     applyTheme();
-    renderLists(); renderStats(); renderSave(); renderLegend();
+    renderLists(); renderStats(); renderSave(); renderLegend(); renderDevs();
     $("done").textContent = A.none ? t("none") : "";
     renderWhy();
   }
@@ -458,8 +479,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }).then(function (j) {
       if (!j || !j.ok) { loadedOnce = false; return renderSave(); }
       var add = [];
+      // Реестр устройств учётной записи и устройство каждой точки («pc:<устройство>.<папка>»): по нему блок «Устройства»
+      // называет устройство и компьютер, через который оно пришло (19.11.2026).
+      REG = {};
+      (j.devs || []).forEach(function (d) { REG[d.id] = d; });
+      var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)(?:\.(\d+))?$/.exec(String(d)); return m ? [+m[1], m[2] == null ? -1 : +m[2]] : [0, -1]; });
       (j.p || []).forEach(function (q) {
-        var p = [q[0], q[1], q[2], -1, -1], k = loose(p);
+        var p = [q[0], q[1], q[2], -1, -1], k = loose(p), dd = dsOf[q[3]] || [0, -1];
+        p.rd = dd[0]; p.rf = dd[1];
         if (LOOSE.has(k)) return;
         // acc — точка из учётной записи: в браузере не хранится (чужой человек за этим компьютером её не увидит).
         LOOSE.add(k); p.sent = true; p.acc = true; add.push(p);
@@ -1380,8 +1407,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   function renderWhy() {
     var miss = WHY.files - WHY.place, ul = $("whyL");
     // Место из описаний Google Фото — не причина, а находка: отдельной строкой вне списка причин.
-    show("sideX", (WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0) && !!A.shown);
-    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : ""].filter(Boolean).join(" ");
+    show("sideX", (WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0 || WHY.sys > 0) && !!(A.shown || A.none));
+    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : "",
+      WHY.sys ? t(WHY.whole ? "wholeX" : "sysX", { n: num(WHY.sys) }) : ""].filter(Boolean).join(" ");
     show("why", miss > 0 && !!(A.shown || A.none));
     if (!(miss > 0)) return;
     $("whyS").textContent = t("whyS", { n: num(miss) });
@@ -1401,8 +1429,35 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var fx = Object.keys(WHY.fmt), fn = fx.reduce(function (s, k) { return s + WHY.fmt[k]; }, 0);
     fn && add(t("whyFmt", { n: num(fn), list: fx.map(function (k) { return k.toUpperCase(); }).join(", ") }));
   }
+  // Системные папки и папки программ (19.11.2026, Андрей выбрал весь диск C: — 1,2 миллиона файлов): снимков человека в них
+  // нет, а картинки программ и кэши удлиняют разбор и могут принести чужие точки. Папка узнаётся по имени в пути файла;
+  // корневые папки производителей и программ (Applications, Intel, NVIDIA) — только в начале пути; Library (macOS) —
+  // кроме iCloud Drive («Mobile Documents»). Весь диск — когда среди пропущенного в начале пути есть и Windows, и Program Files.
+  var SYS = /^(windows|windows\.old|program files|program files \(x86\)|programdata|appdata|system volume information|recovery|perflogs|msocache|node_modules|\.git|\.svn|\.hg|\.cache|\.gradle|\.android|\.npm|\.nuget|\.vscode|\.idea|__pycache__|site-packages|steamapps)$/,
+    ROOT_SYS = /^(applications|system|intel|amd|nvidia|drivers|xboxgames)$/;
+  function sysSeg(f) {
+    var p = String(f.webkitRelativePath || f.tabiPath || "").replace(/^\/+/, "").split("/");
+    p.pop();
+    for (var i = 0; i < p.length; i++) {
+      var s = p[i].toLowerCase();
+      if (!s) continue;
+      if (s.charAt(0) === "$" || /\.app$/.test(s) || SYS.test(s) || (i <= 1 && ROOT_SYS.test(s))) return [i, s];
+      if (s === "library" && String(p[i + 1] || "").toLowerCase() !== "mobile documents") return [i, s];
+    }
+    return null;
+  }
   function run(list) {
     RUN.t0 = performance.now(); RUN.err = 0;
+    var sysN = 0, rootWin = false, rootPf = false;
+    list = list.filter(function (f) {
+      var g = sysSeg(f);
+      if (!g) return true;
+      sysN++;
+      g[0] <= 1 && (g[1] === "windows" ? (rootWin = true) : /^program files/.test(g[1]) && (rootPf = true));
+      return false;
+    });
+    WHY.sys = (WHY.sys || 0) + sysN; WHY.whole = !!(WHY.whole || (rootWin && rootPf));
+    $("sysX").textContent = t(WHY.whole ? "wholeX" : "sysX", { n: num(WHY.sys) }); show("sysX", sysN > 0);
     var side = sideMap(list), tlFiles = list.filter(isTimeline), trkFiles = list.filter(isTrack);
     var files = list.filter(function (f) { var x = extOf(f); return EXT[x] || OTHER[x]; });
     err(null);
@@ -1541,7 +1596,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       mapDirty = true; drawMap();
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
-      renderStats(); renderLegend(); shell();
+      renderStats(); renderLegend(); shell(); renderDevs();
       S ? doSave() : (renderSave(), anonPut());
     });
   }
@@ -1567,7 +1622,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       k: "scan", files: WHY.files, place: WHY.place, pts: A.pts.length, cc: found.countries.map(function (c) { return c.cc; }),
       regions: found.regions, cities: found.cities.length, days: found.days.size, km: Math.round(found.km / 1000),
       y0: T0 ? new Date(T0).getFullYear() : null, y1: T1 ? new Date(T1).getFullYear() : null,
-      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0 },
+      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0, sys: WHY.sys || 0, whole: !!WHY.whole },
       fmts: WHY.fmt, cams: cams, ms: Math.round(performance.now() - RUN.t0), err: RUN.err, src: RUN.src, signed: !!S
     });
     RUN.t0 = 0;
@@ -1615,7 +1670,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     devHashes().then(function (dh) { DEVH = dh; return saveSt.mailed ? "" : cardB64(); }).then(function (png) { CARD = png; return fresh(); }).then(function (s) {
       if (!s) return { auth: true };
       // Папка — своя у каждого устройства: пары «устройство и папка» собирает функция pc-media; здесь папка — по номеру.
-      var body = { op: "put", pcl: pcLabel(), devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
+      var body = { op: "put", pcl: pcLabel(), pk: PK || undefined, devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
         special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined, anon: AKS || undefined };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
@@ -1630,6 +1685,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
         return renderSave();
       }
       todo.forEach(function (p) { p.sent = true; });
+      // Номер каждого устройства в реестре учётной записи: блок «Устройства» сводит его со строками сохранённого итога.
+      (j.rid || []).forEach(function (r, i) { r > 0 && DEV.list[i] && (DEV.list[i].rid = r); });
+      renderDevs();
       // Копия до входа перешла в учётную запись и стёрта сервером.
       AKS && AKS === anonKey(false) && anonForget();
       saveSt.state = "saved"; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
@@ -1671,7 +1729,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     // Та же копия уже на сервере (итог восстановлен из браузера без новых точек) — повторно не отправляется.
     if (!todo.length || (anonKey(false) && ls.get(AK + "N") === String(todo.length))) return;
     devHashes().then(function (dh) {
-      var body = { op: "anon", key: anonKey(true), pcl: pcLabel(), devs: dh, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
+      var body = { op: "anon", key: anonKey(true), pcl: pcLabel(), pk: PK || undefined, devs: dh, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
         sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }) };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }); })
@@ -1684,6 +1742,81 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     anonForget();
     fetch(FN, { method: "POST", keepalive: true, headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ op: "anon_drop", key: k }) }).catch(function () {});
   }
+  // Знак этого компьютера (19.11.2026, слово Андрея: каждое устройство на сайте помечено компьютером, через который оно
+  // пришло). Подпись «Windows · Edge» не различает два компьютера с одной системой и браузером, поэтому браузер хранит
+  // постоянное случайное число (localStorage «tabiPcId», «Начать заново» его не стирает), а на сервер уходят только
+  // 12 знаков его отпечатка SHA-256 — у каждой папки устройства в реестре.
+  var PCK = "tabiPcId", PK = "";
+  (function () {
+    var k = ls.get(PCK);
+    if (!/^[0-9a-f]{32}$/.test(k || "")) {
+      k = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(16)), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      ls.set(PCK, k);
+    }
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode("pc|" + k)).then(function (hh) {
+      PK = Array.prototype.map.call(new Uint8Array(hh).slice(0, 6), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      renderDevs();
+    }).catch(function () {});
+  })();
+
+  // ===== Устройства (19.11.2026, слово Андрея): с каких устройств что пришло и через какой компьютер =====
+  // Строка — устройство: название, число точек, годы, страны и компьютер. Точки этого разбора пришли через этот
+  // компьютер; точки из учётной записи — через компьютер папки в реестре (знак k совпал с этим — «этот компьютер»).
+  var REG = {};
+  function renderDevs() {
+    var box = $("devBox"), list = $("devList");
+    if (!box) return;
+    if (revealing || !A.shown || !A.pts.length) return void (box.hidden = true);
+    var rows = {}, order = [], me = pcLabel();
+    A.pts.forEach(function (p) {
+      var key, name, via;
+      if (p.acc) {
+        var rg = p.rd > 0 ? REG[p.rd] : null, dir = rg && Array.isArray(rg.dirs) ? rg.dirs[p.rf] : null;
+        key = rg ? "r" + p.rd : "x";
+        name = rg ? rg.name || camName({ mk: rg.mk, md: rg.md }) : "";
+        via = !dir ? "" : dir.k && dir.k === PK ? "me" : dir.k ? "k" + dir.k + "|" + (dir.pc || "") : "l|" + (dir.pc || "");
+      } else {
+        var d = DEV.list[p[3]], rg0 = d && d.rid ? REG[d.rid] : null;
+        key = d && d.rid ? "r" + d.rid : "l" + p[3];
+        // Название из реестра: там код модели уже сведён к названию (24040RN64Y → Redmi 13).
+        name = rg0 ? rg0.name || camName({ mk: rg0.mk, md: rg0.md }) : d ? camName(d) : "";
+        via = "me";
+      }
+      var r = rows[key];
+      if (!r) { r = rows[key] = { name: name, n: 0, y0: 9999, y1: 0, cc: {}, via: {} }; order.push(key); }
+      name && !r.name && (r.name = name);
+      r.n++;
+      var y = new Date(p[2]).getFullYear();
+      y < r.y0 && (r.y0 = y); y > r.y1 && (r.y1 = y);
+      p.cc && (r.cc[p.cc] = (r.cc[p.cc] || 0) + 1);
+      via && (r.via[via] = 1);
+    });
+    order.sort(function (a, b) { return rows[b].n - rows[a].n; });
+    list.innerHTML = "";
+    order.forEach(function (key) {
+      var r = rows[key], it = document.createElement("div");
+      it.className = "pc-dev";
+      it.innerHTML = '<div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div><div class="ln"></div>';
+      it.children[0].children[0].textContent = r.name || t("devNone");
+      it.children[0].children[1].textContent = t("devPts", { n: num(r.n) });
+      var ccs = Object.keys(r.cc).sort(function (a, b) { return r.cc[b] - r.cc[a]; }).map(countryName),
+        cl = ccs.length > 6 ? ccs.slice(0, 6).join(", ") + " +" + num(ccs.length - 6) : ccs.join(", ");
+      it.children[1].textContent = [r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1, cl].filter(Boolean).join(" · ");
+      var via = [];
+      r.via.me && via.push(t("devThis") + (me ? " · " + me : ""));
+      Object.keys(r.via).forEach(function (v) {
+        if (v === "me") return;
+        var lb = v.slice(v.indexOf("|") + 1);
+        via.push(lb ? t("devOther", { pc: lb }) : t("devOtherNone"));
+      });
+      via = via.filter(function (x, i) { return via.indexOf(x) === i; });
+      it.children[2].textContent = via.join("; ");
+      it.children[2].hidden = !via.length;
+      list.appendChild(it);
+    });
+    box.hidden = !order.length;
+  }
+
   // Компьютер — подписью системы и браузера: по ней в приложении видно, откуда папка.
   function pcLabel() {
     var os = /Windows/i.test(UA) ? "Windows" : /Mac OS X/i.test(UA) ? "macOS" : /CrOS/i.test(UA) ? "ChromeOS" : /Linux/i.test(UA) ? "Linux" : "";
