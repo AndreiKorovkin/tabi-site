@@ -12,6 +12,22 @@
 <style>
 body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
 .pc-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+/* Навигация сайта (20.11.2026, Андрей): разделы в шапке, на узком экране — меню. */
+nav.sections+.pc-tools{margin-left:22px}
+details.menu{display:none}
+@media (max-width:1180px){nav.sections+.pc-tools{margin-left:auto}details.menu{display:block}}
+/* Узкий экран: у меню и языка — только значки, шапка в одну строку без прокрутки вбок. */
+@media (max-width:560px){#menuLbl,#langCur{display:none}.pc-tools{gap:8px}}
+/* Итог выбора — плитками (20.11.2026, Андрей: строка была технической). */
+.pc-run{display:grid;gap:8px}
+.pc-run .hd{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.pc-run .tl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pc-run .tl div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:9px 12px}
+.pc-run .tl b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.pc-run .tl span{font-size:12.5px;color:var(--sub)}
+.pc-run .tl div.new{border-color:var(--accent)}
+.pc-run .tl div.new b{color:var(--accent)}
+.pc-run .why0{font-size:14px;color:var(--sub);margin:0}
 .pc-theme{appearance:none;border:0;cursor:pointer;width:40px;height:40px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
 .pc-theme .ic{width:19px;height:19px}
 details.lang li button{all:unset;display:block;box-sizing:border-box;width:100%;padding:9px 12px;border-radius:10px;color:var(--ink);font-weight:500;cursor:pointer}
@@ -137,7 +153,9 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 <body>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/" id="homeLink" aria-label="Tabi">Tabi</a>
+<nav class="sections" id="nav" aria-label="Tabi"></nav>
 <div class="pc-tools">
+<details class="lang menu" id="menuBox"><summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="menuLbl"></span></summary><ul id="menuList"></ul></details>
 <a data-tabi-acc id="accChip" href="/account/"></a>
 <details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
 <button class="pc-theme" id="themeBtn" type="button"></button>
@@ -181,7 +199,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     <!-- Итог -->
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
-      <p class="pc-t" id="runX" hidden></p>
+      <div class="pc-run" id="runX" hidden><div class="hd" id="runT"></div><div class="tl" id="runTl"></div><p class="why0" id="runW" hidden></p></div>
       <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul><p class="pc-s" id="sideX" hidden style="margin-top:8px"></p></details>
       <div class="pc-row"><button class="pc-btn b2" id="bMore"></button><button class="pc-btn b2" id="bMoreF"></button></div>
     </div>
@@ -194,7 +212,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     </div>
     <div id="vSaved" hidden class="pc-box">
       <p class="pc-t" id="savedX"></p>
-      <p class="pc-t" id="mailedX" hidden></p>
       <button class="pc-btn" id="bRetry" hidden></button>
     </div>
     <!-- Особые места на снимках по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
@@ -289,7 +306,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "files": {"en": "Choose files", "ru": "Выбрать файлы", "cs": "Vybrat soubory", "de": "Dateien wählen", "fr": "Choisir des fichiers", "es": "Elegir archivos", "it": "Scegli i file", "pt": "Escolher arquivos", "ja": "ファイルを選ぶ", "ko": "파일 선택"},
     "reading": {"ru": "Прочитано {a} из {b} · с местом съёмки: {n}", "en": "Read {a} of {b} · with a shooting location: {n}", "cs": "Přečteno {a} z {b} · s místem pořízení: {n}", "de": "Gelesen {a} von {b} · mit Aufnahmeort: {n}", "fr": "Lus {a} sur {b} · avec lieu de prise de vue : {n}", "es": "Leídos {a} de {b} · con lugar de captura: {n}", "it": "Letti {a} di {b} · con luogo di scatto: {n}", "pt": "Lidos {a} de {b} · com local da captura: {n}", "ja": "{b} 件中 {a} 件を読み込み · 撮影場所あり：{n}", "ko": "{b}개 중 {a}개 읽음 · 촬영 장소 있음: {n}"},
     "pol": {"en": "Privacy policy", "ru": "Политика конфиденциальности", "cs": "Zásady ochrany soukromí", "de": "Datenschutzerklärung", "fr": "Politique de confidentialité", "es": "Política de privacidad", "it": "Informativa sulla privacy", "pt": "Política de privacidade", "ja": "プライバシーポリシー", "ko": "개인정보처리방침"},
-    "eNet": {"en": "No connection to Tabi. Check the internet and try again.", "ru": "Нет связи с Tabi. Проверьте интернет и попробуйте ещё раз.", "cs": "Spojení s Tabi chybí. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zu Tabi. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion à Tabi. Vérifiez internet et réessayez.", "es": "No hay conexión con Tabi. Comprueba internet y vuelve a intentarlo.", "it": "Nessuna connessione con Tabi. Controlli la connessione a Internet e riprovi.", "pt": "Sem conexão com o Tabi. Verifique a internet e tente novamente.", "ja": "Tabiに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "Tabi에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."},
+    "eNet": {"en": "No connection to the server. Check the internet and try again.", "ru": "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.", "cs": "Není spojení se serverem. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zum Server. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion au serveur. Vérifiez Internet et réessayez.", "es": "No hay conexión con el servidor. Comprueba internet e inténtalo de nuevo.", "it": "Nessuna connessione al server. Controlli internet e riprovi.", "pt": "Sem conexão com o servidor. Verifique a internet e tente de novo.", "ja": "サーバーに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "서버에 연결할 수 없습니다. 인터넷을 확인하고 다시 시도하세요."},
     "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
     "drop": {"en": "Or drag folders and files here — several at once.", "ru": "Или перетащите сюда папки и файлы — можно несколько сразу.", "cs": "Nebo sem přetáhněte složky a soubory — i několik najednou.", "de": "Oder ziehen Sie Ordner und Dateien hierher – auch mehrere auf einmal.", "fr": "Ou faites glisser ici des dossiers et des fichiers, même plusieurs à la fois.", "es": "O arrastra aquí carpetas y archivos, también varios a la vez.", "it": "Oppure trascini qui cartelle e file, anche più di uno alla volta.", "pt": "Ou arraste pastas e arquivos para cá — vários de uma vez.", "ja": "またはフォルダやファイルをここにドラッグしてください。複数まとめてでもかまいません。", "ko": "또는 폴더와 파일을 여기로 끌어다 놓으세요. 여러 개를 한 번에 놓을 수도 있습니다."},
     "dropHere": {"en": "Drop to add", "ru": "Отпустите, чтобы добавить", "cs": "Pusťte a soubory se přidají", "de": "Loslassen zum Hinzufügen", "fr": "Relâchez pour ajouter", "es": "Suelta para añadir", "it": "Rilasci per aggiungere", "pt": "Solte para adicionar", "ja": "ドロップして追加", "ko": "놓아서 추가"},
@@ -310,25 +327,23 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "langLabel": {"en": "Language", "ru": "Язык", "cs": "Jazyk", "de": "Sprache", "fr": "Langue", "es": "Idioma", "it": "Lingua", "pt": "Idioma", "ja": "言語", "ko": "언어"},
     "credits": {"en": "Country and region borders: Natural Earth; cities: GeoNames (CC BY 4.0).", "ru": "Границы стран и регионов — Natural Earth, города — GeoNames (CC BY 4.0).", "cs": "Hranice zemí a regionů — Natural Earth, města — GeoNames (CC BY 4.0).", "de": "Länder- und Regionsgrenzen: Natural Earth; Städte: GeoNames (CC BY 4.0).", "fr": "Frontières des pays et des régions : Natural Earth ; villes : GeoNames (CC BY 4.0).", "es": "Fronteras de países y regiones: Natural Earth; ciudades: GeoNames (CC BY 4.0).", "it": "Confini di paesi e regioni: Natural Earth; città: GeoNames (CC BY 4.0).", "pt": "Fronteiras de países e regiões: Natural Earth; cidades: GeoNames (CC BY 4.0).", "ja": "国と地域の境界：Natural Earth、都市：GeoNames（CC BY 4.0）", "ko": "국가·지역 경계: Natural Earth, 도시: GeoNames(CC BY 4.0)"},
     "home": {"en": "Home", "ru": "Главная", "cs": "Úvod", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
-    "lead": {"en": "Old trips are often kept on a computer. Choose a folder with photos and videos — Tabi will restore countries, cities and the route from them. No account is needed for this.", "ru": "Старые поездки часто хранятся на компьютере. Выберите папку с фотографиями и видео — Tabi восстановит по ним страны, города и маршрут. Учётная запись для этого не нужна.", "cs": "Staré cesty bývají uložené v počítači. Vyberte složku s fotkami a videi — Tabi z nich obnoví země, města a trasu. Účet k tomu není potřeba.", "de": "Alte Reisen liegen oft auf dem Computer. Wählen Sie einen Ordner mit Fotos und Videos — Tabi stellt daraus Länder, Städte und die Route wieder her. Ein Konto ist dafür nicht nötig.", "fr": "Les anciens voyages sont souvent gardés sur l’ordinateur. Choisissez un dossier de photos et de vidéos : Tabi en retrouvera les pays, les villes et l’itinéraire. Aucun compte n’est nécessaire.", "es": "Los viajes antiguos suelen guardarse en el ordenador. Elige una carpeta con fotos y vídeos: Tabi recuperará con ellos países, ciudades y la ruta. No necesitas una cuenta para ello.", "it": "I viaggi passati sono spesso conservati sul computer. Scelga una cartella con foto e video: Tabi ne ricaverà paesi, città e percorso. Non serve un account.", "pt": "Viagens antigas costumam ficar guardadas no computador. Escolha uma pasta com fotos e vídeos — o Tabi restaurará a partir deles os países, as cidades e o trajeto. Não é preciso ter uma conta.", "ja": "昔の旅はパソコンに保存されていることがよくあります。写真と動画のフォルダを選んでください。Tabiが国、都市、ルートを復元します。アカウントは必要ありません。", "ko": "지난 여행은 컴퓨터에 보관되어 있는 경우가 많습니다. 사진과 동영상이 있는 폴더를 선택하세요. Tabi가 이를 바탕으로 국가, 도시와 경로를 복원합니다. 계정은 필요하지 않습니다."},
+    "lead": {"en": "Old trips are often kept on a computer. Choose a folder with photos and videos, and we will restore the countries and cities you have visited and your route.", "ru": "Старые поездки часто хранятся на компьютере. Выберите папку с фотографиями и видео — мы восстановим по ним страны и города, в которых вы побывали, и ваш маршрут.", "cs": "Staré cesty bývají uložené v počítači. Vyberte složku s fotografiemi a videi a my podle nich obnovíme země a města, kde jste byli, i vaši trasu.", "de": "Alte Reisen liegen oft auf dem Computer. Wählen Sie einen Ordner mit Fotos und Videos, und wir stellen daraus die Länder und Städte, in denen Sie waren, und Ihre Route wieder her.", "fr": "Les anciens voyages sont souvent conservés sur l’ordinateur. Choisissez un dossier de photos et de vidéos : nous retrouverons les pays et les villes où vous êtes allé et votre itinéraire.", "es": "Los viajes antiguos suelen guardarse en el ordenador. Elige una carpeta con fotos y vídeos y recuperaremos los países y las ciudades que visitaste y tu ruta.", "it": "I vecchi viaggi spesso restano sul computer. Scelga una cartella di foto e video: ricostruiremo i Paesi e le città in cui è stato e il Suo percorso.", "pt": "Viagens antigas costumam ficar guardadas no computador. Escolha uma pasta com fotos e vídeos, e vamos recuperar os países e as cidades por onde você passou e o seu trajeto.", "ja": "昔の旅の記録はパソコンに残っていることがよくあります。写真と動画のフォルダーを選ぶと、訪れた国と都市、そしてルートを復元します。", "ko": "예전 여행은 컴퓨터에 남아 있는 경우가 많습니다. 사진과 동영상 폴더를 고르면 다녀온 나라와 도시, 그리고 경로를 되살려 드립니다."},
     "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
     "saving": {"en": "Saving the result…", "ru": "Сохраняем итог…", "cs": "Ukládáme výsledek…", "de": "Das Ergebnis wird gespeichert …", "fr": "Enregistrement du résultat…", "es": "Guardando el resultado…", "it": "Salvataggio del risultato…", "pt": "Salvando o resultado…", "ja": "結果を保存しています…", "ko": "결과를 저장하는 중…"},
-    "saved": {"en": "The result is saved.", "ru": "Итог сохранён.", "cs": "Výsledek je uložen.", "de": "Das Ergebnis ist gespeichert.", "fr": "Le résultat est enregistré.", "es": "El resultado está guardado.", "it": "Il risultato è salvato.", "pt": "O resultado está salvo.", "ja": "結果を保存しました。", "ko": "결과를 저장했습니다."},
-    "mailed": {"en": "We have sent the result and the picture of your route to {m}.", "ru": "Итог и картинка маршрута отправлены на {m}.", "cs": "Výsledek a obrázek trasy jsme poslali na {m}.", "de": "Wir haben das Ergebnis und das Bild Ihrer Route an {m} gesendet.", "fr": "Nous avons envoyé le résultat et l’image de votre itinéraire à {m}.", "es": "Hemos enviado el resultado y la imagen de tu ruta a {m}.", "it": "Abbiamo inviato il risultato e l’immagine del Suo percorso a {m}.", "pt": "Enviamos o resultado e a imagem do seu trajeto para {m}.", "ja": "結果とルートの画像を{m}に送信しました。", "ko": "결과와 경로 이미지를 {m}(으)로 보냈습니다."},
     "install": {"en": "Install the app", "ru": "Установить приложение", "cs": "Nainstalovat aplikaci", "de": "App installieren", "fr": "Installer l’application", "es": "Instalar la aplicación", "it": "Installa l’app", "pt": "Instalar o aplicativo", "ja": "アプリをインストール", "ko": "앱 설치"},
     "saveT": {"en": "Save the result", "ru": "Сохраните итог", "cs": "Uložte si výsledek", "de": "Ergebnis speichern", "fr": "Enregistrez le résultat", "es": "Guarda el resultado", "it": "Salvi il risultato", "pt": "Salve o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "saveX": {"en": "The result is stored only in this browser. Save it or move it to your phone.", "ru": "Итог хранится только в этом браузере. Сохраните его или перенесите на телефон.", "cs": "Výsledek je uložen jen v tomto prohlížeči. Uložte si ho, nebo ho přeneste do telefonu.", "de": "Das Ergebnis ist nur in diesem Browser gespeichert. Speichern Sie es oder übertragen Sie es auf Ihr Telefon.", "fr": "Le résultat n’est conservé que dans ce navigateur. Enregistrez-le ou transférez-le sur votre téléphone.", "es": "El resultado solo está guardado en este navegador. Guárdalo o pásalo a tu teléfono.", "it": "Il risultato è conservato solo in questo browser. Lo salvi o lo trasferisca sul telefono.", "pt": "O resultado está guardado só neste navegador. Salve-o ou passe-o para o celular.", "ja": "結果はこのブラウザーにだけ保存されています。保存するか、スマートフォンに移してください。", "ko": "결과는 이 브라우저에만 보관되어 있습니다. 저장하거나 휴대폰으로 옮기세요."},
     "eLimit": {"en": "Enough points have been saved today. The rest can be saved tomorrow.", "ru": "На сегодня сохранено достаточно точек. Остальное можно сохранить завтра.", "cs": "Pro dnešek je uloženo dost bodů. Zbytek můžete uložit zítra.", "de": "Für heute sind genug Punkte gespeichert. Den Rest können Sie morgen speichern.", "fr": "Assez de points ont été enregistrés aujourd’hui. Le reste pourra l’être demain.", "es": "Por hoy se han guardado suficientes puntos. El resto puedes guardarlo mañana.", "it": "Per oggi sono stati salvati abbastanza punti. Il resto potrà salvarlo domani.", "pt": "Por hoje, já foram salvos pontos suficientes. O restante pode ser salvo amanhã.", "ja": "今日はこれ以上保存できません。残りは明日保存できます。", "ko": "오늘은 충분한 지점이 저장되었습니다. 나머지는 내일 저장할 수 있습니다."},
-    "eFull": {"en": "Your Tabi account already holds the maximum number of points waiting to be checked. Open Tabi on your phone to check them.", "ru": "В вашей учётной записи Tabi уже ждёт проверки наибольшее число точек. Откройте Tabi на телефоне, чтобы проверить их.", "cs": "Ve vašem účtu Tabi už čeká na kontrolu nejvyšší možný počet bodů. Otevřete Tabi v telefonu, aby je zkontrolovalo.", "de": "In Ihrem Tabi-Konto warten bereits so viele Punkte auf die Prüfung, wie möglich ist. Öffnen Sie Tabi auf dem Telefon, um sie zu prüfen.", "fr": "Votre compte Tabi contient déjà le nombre maximal de points en attente de vérification. Ouvrez Tabi sur votre téléphone pour les vérifier.", "es": "Tu cuenta de Tabi ya tiene el número máximo de puntos pendientes de comprobar. Abre Tabi en el teléfono para comprobarlos.", "it": "Nel Suo account Tabi è già in attesa di verifica il numero massimo di punti. Apra Tabi sul telefono per verificarli.", "pt": "Sua conta do Tabi já tem o número máximo de pontos aguardando verificação. Abra o Tabi no telefone para verificá-los.", "ja": "Tabiのアカウントには、確認待ちの地点がすでに上限まであります。スマートフォンでTabiを開いて確認してください。", "ko": "Tabi 계정에 확인을 기다리는 지점이 이미 최대치입니다. 휴대전화에서 Tabi를 열어 확인하세요."},
+    "eFull": {"en": "The largest number of points is already waiting to be checked. Open the app on your phone to check them.", "ru": "Наибольшее число точек уже ждёт проверки. Откройте приложение на телефоне, чтобы проверить их.", "cs": "Na kontrolu už čeká největší možný počet bodů. Otevřete aplikaci v telefonu a zkontrolujte je.", "de": "Die größte Zahl an Punkten wartet bereits auf die Prüfung. Öffnen Sie die App auf Ihrem Telefon, um sie zu prüfen.", "fr": "Le nombre maximal de points attend déjà d’être vérifié. Ouvrez l’application sur votre téléphone pour les vérifier.", "es": "Ya hay el número máximo de puntos esperando revisión. Abre la aplicación en tu teléfono para revisarlos.", "it": "Il numero massimo di punti è già in attesa di verifica. Apra l’app sul telefono per verificarli.", "pt": "O número máximo de pontos já aguarda verificação. Abra o aplicativo no celular para verificá-los.", "ja": "確認待ちの地点がすでに上限に達しています。スマートフォンでアプリを開いて確認してください。", "ko": "확인을 기다리는 지점이 이미 최대입니다. 휴대폰에서 앱을 열어 확인하세요."},
     "none": {"en": "None of the chosen files contains a shooting location. Choose another folder.", "ru": "Ни в одном из выбранных файлов нет места съёмки. Выберите другую папку.", "cs": "V žádném z vybraných souborů není místo pořízení. Vyberte jinou složku.", "de": "Keine der gewählten Dateien enthält einen Aufnahmeort. Wählen Sie einen anderen Ordner.", "fr": "Aucun des fichiers choisis ne contient de lieu de prise de vue. Choisissez un autre dossier.", "es": "Ninguno de los archivos elegidos contiene el lugar de captura. Elige otra carpeta.", "it": "Nessuno dei file scelti contiene il luogo di scatto. Scelga un’altra cartella.", "pt": "Nenhum dos arquivos escolhidos contém o local da captura. Escolha outra pasta.", "ja": "選んだファイルのどれにも撮影場所がありません。別のフォルダを選んでください。", "ko": "선택한 파일 중 촬영 장소가 있는 파일이 없습니다. 다른 폴더를 선택하세요."},
-    "eSrv": {"en": "The Tabi server did not save the result (code {c}). Please try again.", "ru": "Сервер Tabi не сохранил итог (код {c}). Попробуйте ещё раз.", "cs": "Server Tabi výsledek neuložil (kód {c}). Zkuste to znovu.", "de": "Der Tabi-Server hat das Ergebnis nicht gespeichert (Code {c}). Bitte versuchen Sie es erneut.", "fr": "Le serveur Tabi n’a pas enregistré le résultat (code {c}). Veuillez réessayer.", "es": "El servidor de Tabi no guardó el resultado (código {c}). Inténtalo de nuevo.", "it": "Il server di Tabi non ha salvato il risultato (codice {c}). Riprovi.", "pt": "O servidor do Tabi não salvou o resultado (código {c}). Tente novamente.", "ja": "Tabiのサーバーが結果を保存しませんでした（コード {c}）。もう一度お試しください。", "ko": "Tabi 서버가 결과를 저장하지 않았습니다(코드 {c}). 다시 시도하세요."},
+    "eSrv": {"en": "The server did not save the result (code {c}). Please try again.", "ru": "Сервер не сохранил итог (код {c}). Попробуйте ещё раз.", "cs": "Server výsledek neuložil (kód {c}). Zkuste to znovu.", "de": "Der Server hat das Ergebnis nicht gespeichert (Code {c}). Bitte versuchen Sie es erneut.", "fr": "Le serveur n’a pas enregistré le résultat (code {c}). Réessayez.", "es": "El servidor no guardó el resultado (código {c}). Inténtalo de nuevo.", "it": "Il server non ha salvato il risultato (codice {c}). Riprovi.", "pt": "O servidor não salvou o resultado (código {c}). Tente de novo.", "ja": "サーバーが結果を保存できませんでした（コード {c}）。もう一度お試しください。", "ko": "서버가 결과를 저장하지 못했습니다(코드 {c}). 다시 시도하세요."},
     "retry": {"en": "Save again", "ru": "Сохранить ещё раз", "cs": "Uložit znovu", "de": "Erneut speichern", "fr": "Enregistrer à nouveau", "es": "Guardar de nuevo", "it": "Salva di nuovo", "pt": "Salvar novamente", "ja": "もう一度保存", "ko": "다시 저장"},
     "share": {"en": "Share", "ru": "Поделиться", "cs": "Sdílet", "de": "Teilen", "fr": "Partager", "es": "Compartir", "it": "Condividi", "pt": "Compartilhar", "ja": "共有", "ko": "공유"},
     "shareDl": {"en": "Download the picture", "ru": "Скачать картинку", "cs": "Stáhnout obrázek", "de": "Bild herunterladen", "fr": "Télécharger l’image", "es": "Descargar la imagen", "it": "Scarica l’immagine", "pt": "Baixar a imagem", "ja": "画像をダウンロード", "ko": "이미지 다운로드"},
     "cardT": {"en": "My travel history", "ru": "Моя история путешествий", "cs": "Moje historie cest", "de": "Meine Reisegeschichte", "fr": "Mon histoire de voyages", "es": "Mi historia de viajes", "it": "La mia storia di viaggi", "pt": "Minha história de viagens", "ja": "私の旅の記録", "ko": "나의 여행 기록"},
     "cardBy": {"en": "From my photos · tabimobile.com/computer", "ru": "По моим снимкам · tabimobile.com/computer", "cs": "Podle mých snímků · tabimobile.com/computer", "de": "Nach meinen Fotos · tabimobile.com/computer", "fr": "D’après mes photos · tabimobile.com/computer", "es": "Según mis fotos · tabimobile.com/computer", "it": "Dalle mie foto · tabimobile.com/computer", "pt": "Pelas minhas fotos · tabimobile.com/computer", "ja": "私の写真から · tabimobile.com/computer", "ko": "내 사진으로 · tabimobile.com/computer"},
     "phoneT": {"en": "Open this page on a computer", "ru": "Откройте эту страницу на компьютере", "cs": "Otevřete tuto stránku v počítači", "de": "Öffnen Sie diese Seite auf einem Computer", "fr": "Ouvrez cette page sur un ordinateur", "es": "Abre esta página en un ordenador", "it": "Apra questa pagina su un computer", "pt": "Abra esta página em um computador", "ja": "このページはパソコンで開いてください", "ko": "이 페이지를 컴퓨터에서 여세요"},
-    "phoneA": {"en": "Open tabimobile.com/computer on a computer to scan the media files kept on it. The media files of this phone are scanned by the Tabi app.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся. Медиафайлы этого телефона разберёт приложение Tabi.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené. Mediální soubory tohoto telefonu projde aplikace Tabi.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer, um die dort gespeicherten Mediendateien auszuwerten. Die Mediendateien dieses Telefons wertet die Tabi-App aus.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur pour analyser les fichiers multimédias qui s’y trouvent. Les fichiers multimédias de ce téléphone sont analysés par l’application Tabi.", "es": "Abre tabimobile.com/computer en un ordenador para analizar los archivos multimedia que guarda. Los archivos multimedia de este teléfono los analiza la aplicación Tabi.", "it": "Apra tabimobile.com/computer su un computer per analizzare i file multimediali che vi sono conservati. I file multimediali di questo telefono li analizza l’app Tabi.", "pt": "Abra tabimobile.com/computer em um computador para analisar os arquivos de mídia guardados nele. Os arquivos de mídia deste telefone são analisados pelo aplicativo Tabi.", "ja": "パソコンでtabimobile.com/computerを開くと、パソコンに保存されたメディアファイルを分析できます。このスマートフォンのメディアファイルはTabiアプリが分析します。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 컴퓨터에 저장된 미디어 파일을 분석할 수 있습니다. 이 휴대전화의 미디어 파일은 Tabi 앱이 분석합니다."},
+    "phoneA": {"en": "Open tabimobile.com/computer on a computer: there you can analyse the media files stored on it. The media files on this phone are analysed by the app.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся. Медиафайлы этого телефона разберёт приложение.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené. Mediální soubory tohoto telefonu projde aplikace.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer — dort lassen sich die darauf gespeicherten Mediendateien auswerten. Die Mediendateien dieses Telefons wertet die App aus.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur : vous pourrez y analyser les fichiers multimédias qu’il contient. Ceux de ce téléphone sont analysés par l’application.", "es": "Abre tabimobile.com/computer en un ordenador: allí puedes analizar los archivos multimedia que guarda. Los de este teléfono los analiza la aplicación.", "it": "Apra tabimobile.com/computer su un computer: lì può analizzare i file multimediali che contiene. Quelli di questo telefono li analizza l’app.", "pt": "Abra tabimobile.com/computer em um computador: lá você pode analisar os arquivos de mídia guardados nele. Os deste celular são analisados pelo aplicativo.", "ja": "パソコンで tabimobile.com/computer を開くと、そこに保存されたメディアファイルを分析できます。このスマートフォンのメディアファイルはアプリが分析します。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 그 안의 미디어 파일을 분석할 수 있습니다. 이 휴대폰의 미디어 파일은 앱이 분석합니다."},
     "phoneI": {"en": "Open tabimobile.com/computer on a computer to scan the media files kept on it.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer, um die dort gespeicherten Mediendateien auszuwerten.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur pour analyser les fichiers multimédias qui s’y trouvent.", "es": "Abre tabimobile.com/computer en un ordenador para analizar los archivos multimedia que guarda.", "it": "Apra tabimobile.com/computer su un computer per analizzare i file multimediali che vi sono conservati.", "pt": "Abra tabimobile.com/computer em um computador para analisar os arquivos de mídia guardados nele.", "ja": "パソコンでtabimobile.com/computerを開くと、パソコンに保存されたメディアファイルを分析できます。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 컴퓨터에 저장된 미디어 파일을 분석할 수 있습니다."},
     "copyLink": {"en": "Copy the link", "ru": "Скопировать ссылку", "cs": "Zkopírovat odkaz", "de": "Link kopieren", "fr": "Copier le lien", "es": "Copiar el enlace", "it": "Copia il link", "pt": "Copiar o link", "ja": "リンクをコピー", "ko": "링크 복사"},
     "copied": {"en": "The link is copied", "ru": "Ссылка скопирована", "cs": "Odkaz je zkopírován", "de": "Link kopiert", "fr": "Lien copié", "es": "Enlace copiado", "it": "Link copiato", "pt": "Link copiado", "ja": "リンクをコピーしました", "ko": "링크를 복사했습니다"},
@@ -361,19 +376,17 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "sysRead": {"ru": "Системные папки и папки программ: прочитано файлов — {a}, с местом съёмки — {b}.", "en": "System and program folders: files read — {a}, with a shooting location — {b}.", "cs": "Systémové složky a složky programů: přečteno souborů — {a}, s místem pořízení — {b}.", "de": "System- und Programmordner: gelesene Dateien — {a}, mit Aufnahmeort — {b}.", "fr": "Dossiers système et de programmes : fichiers lus — {a}, avec lieu de prise de vue — {b}.", "es": "Carpetas del sistema y de programas: archivos leídos — {a}, con lugar de captura — {b}.", "it": "Cartelle di sistema e dei programmi: file letti — {a}, con luogo di scatto — {b}.", "pt": "Pastas do sistema e de programas: arquivos lidos — {a}, com local da captura — {b}.", "ja": "システムフォルダーとプログラムフォルダー：読み込んだファイル {a}、撮影場所あり {b}", "ko": "시스템 폴더와 프로그램 폴더: 읽은 파일 {a}, 촬영 장소 있음 {b}"},
     "moreFolder": {"en": "Add a whole folder", "ru": "Добавить папку целиком", "cs": "Přidat celou složku", "de": "Ganzen Ordner hinzufügen", "fr": "Ajouter un dossier entier", "es": "Añadir una carpeta entera", "it": "Aggiungi una cartella intera", "pt": "Adicionar uma pasta inteira", "ja": "フォルダーごと追加", "ko": "폴더 전체 추가"},
     "moreFiles": {"en": "Add separate files", "ru": "Добавить отдельные файлы", "cs": "Přidat jednotlivé soubory", "de": "Einzelne Dateien hinzufügen", "fr": "Ajouter des fichiers séparés", "es": "Añadir archivos sueltos", "it": "Aggiungi singoli file", "pt": "Adicionar arquivos avulsos", "ja": "ファイルを個別に追加", "ko": "파일 따로 추가"},
-    "runDir": {"ru": "Папка «{name}»: прочитано файлов — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Folder “{name}”: files read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Složka „{name}“: přečteno souborů — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ordner „{name}“: gelesene Dateien — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Dossier « {name} » : fichiers lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Carpeta «{name}»: archivos leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "Cartella «{name}»: file letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Pasta “{name}”: arquivos lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "フォルダー「{name}」：読み込んだファイル {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "폴더 “{name}”: 읽은 파일 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
-    "runFiles": {"ru": "Выбранные файлы: прочитано — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Chosen files: read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Vybrané soubory: přečteno — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ausgewählte Dateien: gelesen — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Fichiers choisis : lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Archivos elegidos: leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "File scelti: letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Arquivos escolhidos: lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "選んだファイル：読み込み {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "선택한 파일: 읽음 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
     "runNoPlace": {"ru": "В этих файлах нет места съёмки: камера его не записала.", "en": "These files contain no shooting location: the camera did not record it.", "cs": "Tyto soubory neobsahují místo pořízení: fotoaparát ho nezaznamenal.", "de": "Diese Dateien enthalten keinen Aufnahmeort: Die Kamera hat ihn nicht gespeichert.", "fr": "Ces fichiers ne contiennent pas de lieu de prise de vue : l’appareil ne l’a pas enregistré.", "es": "Estos archivos no contienen lugar de captura: la cámara no lo registró.", "it": "Questi file non contengono il luogo di scatto: la fotocamera non lo ha registrato.", "pt": "Estes arquivos não contêm local da captura: a câmera não o registrou.", "ja": "これらのファイルには撮影場所がありません。カメラが記録していません。", "ko": "이 파일에는 촬영 장소가 없습니다. 카메라가 기록하지 않았습니다."},
     "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже были в итоге.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
     "saveAcc": {"en": "Save the result", "ru": "Сохранить итог", "cs": "Uložit výsledek", "de": "Ergebnis speichern", "fr": "Enregistrer le résultat", "es": "Guardar el resultado", "it": "Salva il risultato", "pt": "Salvar o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "savePhone": {"en": "Move to my phone", "ru": "Перенести на телефон", "cs": "Přenést do telefonu", "de": "Aufs Telefon übertragen", "fr": "Transférer sur mon téléphone", "es": "Pasar a mi teléfono", "it": "Trasferisci sul telefono", "pt": "Passar para o celular", "ja": "スマートフォンに移す", "ko": "휴대폰으로 옮기기"},
     "openPlay": {"en": "Open in Google Play", "ru": "Открыть в Google Play", "cs": "Otevřít v Google Play", "de": "In Google Play öffnen", "fr": "Ouvrir dans Google Play", "es": "Abrir en Google Play", "it": "Apri in Google Play", "pt": "Abrir no Google Play", "ja": "Google Playで開く", "ko": "Google Play에서 열기"},
-    "shotA": {"en": "City map in the Tabi app", "ru": "Карта города в приложении Tabi", "cs": "Mapa města v aplikaci Tabi", "de": "Stadtkarte in der Tabi-App", "fr": "Carte d’une ville dans l’application Tabi", "es": "Mapa de una ciudad en la aplicación Tabi", "it": "Mappa di una città nell’app Tabi", "pt": "Mapa de uma cidade no aplicativo Tabi", "ja": "Tabiアプリの都市マップ", "ko": "Tabi 앱의 도시 지도"},
-    "shotB": {"en": "A special place in the Tabi app", "ru": "Особое место в приложении Tabi", "cs": "Výjimečné místo v aplikaci Tabi", "de": "Ein besonderer Ort in der Tabi-App", "fr": "Un lieu d’exception dans l’application Tabi", "es": "Un lugar especial en la aplicación Tabi", "it": "Un luogo speciale nell’app Tabi", "pt": "Um lugar especial no aplicativo Tabi", "ja": "Tabiアプリの特別な場所", "ko": "Tabi 앱의 특별한 장소"},
-    "shotC": {"en": "World map in the Tabi app", "ru": "Карта мира в приложении Tabi", "cs": "Mapa světa v aplikaci Tabi", "de": "Weltkarte in der Tabi-App", "fr": "Carte du monde dans l’application Tabi", "es": "Mapa del mundo en la aplicación Tabi", "it": "Mappa del mondo nell’app Tabi", "pt": "Mapa-múndi no aplicativo Tabi", "ja": "Tabiアプリの世界地図", "ko": "Tabi 앱의 세계 지도"},
-    "qrLbl": {"en": "Code with a link to Tabi on Google Play", "ru": "Код со ссылкой на Tabi в Google Play", "cs": "Kód s odkazem na Tabi v Google Play", "de": "Code mit einem Link zu Tabi in Google Play", "fr": "Code avec un lien vers Tabi sur Google Play", "es": "Código con un enlace a Tabi en Google Play", "it": "Codice con il link a Tabi su Google Play", "pt": "Código com o link para o Tabi no Google Play", "ja": "Google PlayのTabiへのリンクのコード", "ko": "Google Play의 Tabi 링크 코드"},
+    "shotA": {"en": "City map in the app", "ru": "Карта города в приложении", "cs": "Mapa města v aplikaci", "de": "Stadtkarte in der App", "fr": "Carte d’une ville dans l’application", "es": "Mapa de una ciudad en la aplicación", "it": "Mappa di una città nell’app", "pt": "Mapa de uma cidade no aplicativo", "ja": "アプリの都市マップ", "ko": "앱의 도시 지도"},
+    "shotB": {"en": "A special place in the app", "ru": "Особое место в приложении", "cs": "Výjimečné místo v aplikaci", "de": "Ein besonderer Ort in der App", "fr": "Un lieu d’exception dans l’application", "es": "Un lugar especial en la aplicación", "it": "Un luogo speciale nell’app", "pt": "Um lugar especial no aplicativo", "ja": "アプリの特別な場所", "ko": "앱의 특별한 장소"},
+    "shotC": {"en": "World map in the app", "ru": "Карта мира в приложении", "cs": "Mapa světa v aplikaci", "de": "Weltkarte in der App", "fr": "Carte du monde dans l’application", "es": "Mapa del mundo en la aplicación", "it": "Mappa del mondo nell’app", "pt": "Mapa-múndi no aplicativo", "ja": "アプリの世界地図", "ko": "앱의 세계 지도"},
+    "qrLbl": {"en": "Code with a link to the app on Google Play", "ru": "Код со ссылкой на приложение в Google Play", "cs": "Kód s odkazem na aplikaci v Google Play", "de": "Code mit einem Link zur App in Google Play", "fr": "Code avec un lien vers l’application sur Google Play", "es": "Código con un enlace a la aplicación en Google Play", "it": "Codice con il link all’app su Google Play", "pt": "Código com o link para o aplicativo no Google Play", "ja": "Google Playのアプリへのリンクのコード", "ko": "Google Play 앱 링크 코드"},
     "dlgT": {"en": "Start over?", "ru": "Начать заново?", "cs": "Začít znovu?", "de": "Neu beginnen?", "fr": "Recommencer ?", "es": "¿Empezar de nuevo?", "it": "Ricominciare?", "pt": "Começar de novo?", "ja": "最初からやり直しますか？", "ko": "처음부터 다시 시작할까요?"},
-    "dlgX": {"en": "The result of this analysis will disappear from the page and from this browser, and its copy from the Tabi server. It can’t be restored, only by analysing the files again.", "ru": "Итог этого разбора исчезнет со страницы и из этого браузера, а его копия — с сервера Tabi. Вернуть его будет нельзя, только разобрать файлы заново.", "cs": "Výsledek této analýzy zmizí ze stránky a z tohoto prohlížeče a jeho kopie ze serveru Tabi. Obnovit ho nepůjde, jen znovu projít soubory.", "de": "Das Ergebnis dieser Auswertung verschwindet von der Seite und aus diesem Browser, seine Kopie vom Tabi-Server. Es lässt sich nicht wiederherstellen, nur durch eine neue Auswertung der Dateien.", "fr": "Le résultat de cette analyse disparaîtra de la page et de ce navigateur, et sa copie du serveur Tabi. Il ne pourra pas être restauré, seulement refait en analysant à nouveau les fichiers.", "es": "El resultado de este análisis desaparecerá de la página y de este navegador, y su copia del servidor de Tabi. No se podrá recuperar, solo volver a analizar los archivos.", "it": "Il risultato di questa analisi sparirà dalla pagina e da questo browser, e la sua copia dal server di Tabi. Non si potrà recuperare, solo rifare analizzando di nuovo i file.", "pt": "O resultado desta análise vai desaparecer da página e deste navegador, e a cópia dele, do servidor do Tabi. Não será possível recuperá-lo, só analisar os arquivos de novo.", "ja": "この分析の結果は、ページとこのブラウザーから消え、Tabiのサーバー上のコピーも削除されます。元に戻すことはできず、ファイルをもう一度分析するしかありません。", "ko": "이 분석 결과가 페이지와 이 브라우저에서 사라지고, Tabi 서버의 사본도 삭제됩니다. 되돌릴 수 없으며, 파일을 다시 분석해야 합니다."},
+    "dlgX": {"en": "The result of this analysis will disappear from the page and from this browser, and its copy from our server. It can’t be restored, only by analysing the files again.", "ru": "Итог этого разбора исчезнет со страницы и из этого браузера, а его копия — с нашего сервера. Вернуть его будет нельзя, только разобрать файлы заново.", "cs": "Výsledek této analýzy zmizí ze stránky a z tohoto prohlížeče a jeho kopie z našeho serveru. Obnovit ho nepůjde, jen znovu projít soubory.", "de": "Das Ergebnis dieser Auswertung verschwindet von der Seite und aus diesem Browser, seine Kopie von unserem Server. Es lässt sich nicht wiederherstellen, nur durch eine neue Auswertung der Dateien.", "fr": "Le résultat de cette analyse disparaîtra de la page et de ce navigateur, et sa copie de notre serveur. Il ne pourra pas être restauré, seulement refait en analysant à nouveau les fichiers.", "es": "El resultado de este análisis desaparecerá de la página y de este navegador, y su copia de nuestro servidor. No se podrá recuperar, solo volver a analizar los archivos.", "it": "Il risultato di questa analisi sparirà dalla pagina e da questo browser, e la sua copia dal nostro server. Non si potrà recuperare, solo rifare analizzando di nuovo i file.", "pt": "O resultado desta análise vai desaparecer da página e deste navegador, e a cópia dele, do nosso servidor. Não será possível recuperá-lo, só analisar os arquivos de novo.", "ja": "この分析の結果は、ページとこのブラウザーから消え、サーバー上のコピーも削除されます。元に戻すことはできず、ファイルをもう一度分析するしかありません。", "ko": "이 분석 결과가 페이지와 이 브라우저에서 사라지고, 서버의 사본도 삭제됩니다. 되돌릴 수 없으며, 파일을 다시 분석해야 합니다."},
     "dlgNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
     "spT": {"en": "Special places in your photos: {n}", "ru": "Особые места на ваших снимках: {n}", "cs": "Výjimečná místa na vašich snímcích: {n}", "de": "Besondere Orte auf Ihren Fotos: {n}", "fr": "Lieux d’exception sur vos photos : {n}", "es": "Lugares especiales en tus fotos: {n}", "it": "Luoghi speciali nelle Sue foto: {n}", "pt": "Lugares especiais nas suas fotos: {n}", "ja": "写真に写った特別な場所：{n}か所", "ko": "사진 속 특별한 장소: {n}곳"},
     "spTMin": {"en": "Special places in your photos: at least {n}", "ru": "Особые места на ваших снимках: не меньше {n}", "cs": "Výjimečná místa na vašich snímcích: nejméně {n}", "de": "Besondere Orte auf Ihren Fotos: mindestens {n}", "fr": "Lieux d’exception sur vos photos : au moins {n}", "es": "Lugares especiales en tus fotos: al menos {n}", "it": "Luoghi speciali nelle Sue foto: almeno {n}", "pt": "Lugares especiais nas suas fotos: pelo menos {n}", "ja": "写真に写った特別な場所：{n}か所以上", "ko": "사진 속 특별한 장소: {n}곳 이상"},
@@ -383,16 +396,16 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "tLegendary": {"en": "Legendary", "ru": "Легендарные", "cs": "Legendární", "de": "Legendäre", "fr": "Légendaires", "es": "Legendarios", "it": "Leggendari", "pt": "Lendários", "ja": "秘境", "ko": "전설"},
     "tMythic": {"en": "Unique", "ru": "Уникальные", "cs": "Unikátní", "de": "Einzigartige", "fr": "Uniques", "es": "Únicos", "it": "Unici", "pt": "Únicos", "ja": "唯一無二", "ko": "유일"},
     "tDangerous": {"en": "Dangerous", "ru": "Опасные", "cs": "Nebezpečná", "de": "Gefährliche", "fr": "Dangereux", "es": "Peligrosos", "it": "Pericolosi", "pt": "Perigosos", "ja": "危険", "ko": "위험"},
-    "tierHint": {"en": "{tier}: you have {n} of {all} on the whole Tabi map.", "ru": "{tier}: у вас {n} из {all} на всей карте Tabi.", "cs": "{tier}: máte {n} z {all} na celé mapě Tabi.", "de": "{tier}: Sie haben {n} von {all} auf der ganzen Tabi-Karte.", "fr": "{tier} : vous en avez {n} sur {all} sur toute la carte Tabi.", "es": "{tier}: tienes {n} de {all} en todo el mapa de Tabi.", "it": "{tier}: ne ha {n} su {all} in tutta la mappa di Tabi.", "pt": "{tier}: você tem {n} de {all} em todo o mapa do Tabi.", "ja": "{tier}：Tabiの地図全体の{all}か所のうち{n}か所。", "ko": "{tier}: Tabi 지도 전체 {all}곳 중 {n}곳."},
-    "spApp": {"en": "The Tabi app will show which places these are.", "ru": "Какие это места, покажет приложение Tabi.", "cs": "Která místa to jsou, ukáže aplikace Tabi.", "de": "Welche Orte das sind, zeigt die Tabi-App.", "fr": "L’application Tabi vous montrera de quels lieux il s’agit.", "es": "La aplicación Tabi te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app Tabi.", "pt": "O aplicativo Tabi mostrará quais lugares são.", "ja": "どの場所かはTabiアプリでわかります。", "ko": "어떤 장소인지는 Tabi 앱에서 볼 수 있습니다."},
+    "tierHint": {"en": "{tier}: you have {n} of {all} on the whole map.", "ru": "{tier}: у вас {n} из {all} на всей карте.", "cs": "{tier}: máte {n} z {all} na celé mapě.", "de": "{tier}: Sie haben {n} von {all} auf der ganzen Karte.", "fr": "{tier} : vous en avez {n} sur {all} sur toute la carte.", "es": "{tier}: tienes {n} de {all} en todo el mapa.", "it": "{tier}: ne ha {n} su {all} in tutta la mappa.", "pt": "{tier}: você tem {n} de {all} em todo o mapa.", "ja": "{tier}：地図全体の{all}か所のうち{n}か所。", "ko": "{tier}: 지도 전체 {all}곳 중 {n}곳."},
+    "spApp": {"en": "The app will show which places these are.", "ru": "Какие это места, покажет приложение.", "cs": "Která místa to jsou, ukáže aplikace.", "de": "Welche Orte das sind, zeigt die App.", "fr": "L’application vous montrera de quels lieux il s’agit.", "es": "La aplicación te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app.", "pt": "O aplicativo mostrará quais lugares são.", "ja": "どの場所かはアプリでわかります。", "ko": "어떤 장소인지는 앱에서 볼 수 있습니다."},
     "spGet": {"en": "Point your phone’s camera at the code or open Google Play, then sign in to the app with the same Google account.", "ru": "Наведите камеру телефона на код или откройте Google Play, затем войдите в приложении с той же учётной записью Google.", "cs": "Namiřte fotoaparát telefonu na kód nebo otevřete Google Play a pak se v aplikaci přihlaste stejným účtem Google.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und melden Sie sich dann in der App mit demselben Google-Konto an.", "fr": "Pointez l’appareil photo de votre téléphone vers le code ou ouvrez Google Play, puis connectez-vous à l’application avec le même compte Google.", "es": "Apunta la cámara del teléfono al código o abre Google Play y luego inicia sesión en la aplicación con la misma cuenta de Google.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play, poi acceda all’app con lo stesso account Google.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e depois entre no aplicativo com a mesma conta do Google.", "ja": "スマートフォンのカメラでコードを読み取るかGoogle Playを開き、同じGoogleアカウントでアプリにログインしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play를 연 다음, 같은 Google 계정으로 앱에 로그인하세요."},
     "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
     "q1": {"en": "Are my photos uploaded anywhere?", "ru": "Снимки куда-нибудь загружаются?", "cs": "Nahrávají se moje snímky někam?", "de": "Werden meine Fotos irgendwohin hochgeladen?", "fr": "Mes photos sont-elles envoyées quelque part ?", "es": "¿Se suben mis fotos a algún sitio?", "it": "Le mie foto vengono caricate da qualche parte?", "pt": "Minhas fotos são enviadas para algum lugar?", "ja": "写真はどこかにアップロードされますか？", "ko": "사진이 어딘가에 업로드되나요?"},
     "a1": {"en": "No. The page reads only the place and time of shooting and the camera model; the photos and videos themselves stay on your computer.", "ru": "Нет. Страница читает в файлах только место и время съёмки и модель камеры; сами снимки и видео остаются на компьютере.", "cs": "Ne. Stránka čte v souborech jen místo a čas pořízení a model fotoaparátu; samotné snímky a videa zůstávají v počítači.", "de": "Nein. Die Seite liest in den Dateien nur Aufnahmeort, Aufnahmezeit und Kameramodell; die Fotos und Videos selbst bleiben auf Ihrem Computer.", "fr": "Non. La page ne lit dans les fichiers que le lieu et l’heure de prise de vue et le modèle d’appareil ; les photos et vidéos restent sur votre ordinateur.", "es": "No. La página solo lee en los archivos el lugar y la hora de la toma y el modelo de cámara; las fotos y los vídeos se quedan en tu ordenador.", "it": "No. La pagina legge nei file solo il luogo e l’ora dello scatto e il modello della fotocamera; foto e video restano sul Suo computer.", "pt": "Não. A página lê nos arquivos só o local e a hora da foto e o modelo da câmera; as fotos e os vídeos ficam no seu computador.", "ja": "いいえ。ページがファイルから読むのは撮影場所・撮影時刻・カメラの機種だけで、写真や動画そのものはパソコンに残ります。", "ko": "아니요. 페이지는 파일에서 촬영 장소와 시간, 카메라 모델만 읽으며, 사진과 동영상은 컴퓨터에 그대로 남습니다."},
     "q2": {"en": "Where is the result stored?", "ru": "Где хранится итог?", "cs": "Kde se výsledek ukládá?", "de": "Wo wird das Ergebnis gespeichert?", "fr": "Où le résultat est-il conservé ?", "es": "¿Dónde se guarda el resultado?", "it": "Dove viene conservato il risultato?", "pt": "Onde o resultado fica guardado?", "ja": "結果はどこに保存されますか？", "ko": "결과는 어디에 보관되나요?"},
-    "a2": {"en": "In this browser: it stays when you close the page. Right after the analysis, the places and times are also kept on the Tabi server without an account for 30 days. A saved result is kept in your account.", "ru": "В этом браузере: закроете страницу — он останется. Сразу после разбора место и время сохраняются и на сервере Tabi без учётной записи, на 30 дней. Сохранённый итог хранится в вашей учётной записи.", "cs": "V tomto prohlížeči: když stránku zavřete, zůstane. Hned po analýze se místa a časy uloží i na server Tabi bez účtu, na 30 dní. Uložený výsledek je ve vašem účtu.", "de": "In diesem Browser: Es bleibt erhalten, wenn Sie die Seite schließen. Gleich nach der Auswertung werden Orte und Zeiten auch ohne Konto für 30 Tage auf dem Tabi-Server gespeichert. Ein gespeichertes Ergebnis liegt in Ihrem Konto.", "fr": "Dans ce navigateur : il reste quand vous fermez la page. Juste après l’analyse, les lieux et les heures sont aussi conservés sur le serveur Tabi sans compte, pendant 30 jours. Un résultat enregistré est conservé dans votre compte.", "es": "En este navegador: se conserva aunque cierres la página. Justo después del análisis, los lugares y las horas también se guardan en el servidor de Tabi sin cuenta durante 30 días. Un resultado guardado se conserva en tu cuenta.", "it": "In questo browser: resta anche se chiude la pagina. Subito dopo l’analisi luoghi e orari vengono conservati anche sul server di Tabi senza account, per 30 giorni. Un risultato salvato resta nel Suo account.", "pt": "Neste navegador: ele continua lá quando você fecha a página. Logo após a análise, os locais e horários também ficam no servidor do Tabi sem conta, por 30 dias. Um resultado salvo fica na sua conta.", "ja": "このブラウザーです。ページを閉じても残ります。分析の直後には、場所と時刻がアカウントなしでTabiのサーバーにも30日間保存されます。保存した結果はアカウントに保管されます。", "ko": "이 브라우저에 보관되며, 페이지를 닫아도 남아 있습니다. 분석 직후에는 장소와 시간이 계정 없이 Tabi 서버에도 30일 동안 저장됩니다. 저장한 결과는 계정에 보관됩니다."},
+    "a2": {"en": "In this browser: it stays when you close the page. Right after the analysis, the places and times are also kept on our server without an account for 30 days. A saved result is kept in your account.", "ru": "В этом браузере: закроете страницу — он останется. Сразу после разбора место и время сохраняются и на нашем сервере без учётной записи, на 30 дней. Сохранённый итог хранится в вашей учётной записи.", "cs": "V tomto prohlížeči: když stránku zavřete, zůstane. Hned po analýze se místa a časy uloží i na náš server bez účtu, na 30 dní. Uložený výsledek je ve vašem účtu.", "de": "In diesem Browser: Es bleibt erhalten, wenn Sie die Seite schließen. Gleich nach der Auswertung werden Orte und Zeiten auch ohne Konto für 30 Tage auf unserem Server gespeichert. Ein gespeichertes Ergebnis liegt in Ihrem Konto.", "fr": "Dans ce navigateur : il reste quand vous fermez la page. Juste après l’analyse, les lieux et les heures sont aussi conservés sur notre serveur sans compte, pendant 30 jours. Un résultat enregistré est conservé dans votre compte.", "es": "En este navegador: se conserva aunque cierres la página. Justo después del análisis, los lugares y las horas también se guardan en nuestro servidor sin cuenta durante 30 días. Un resultado guardado se conserva en tu cuenta.", "it": "In questo browser: resta anche se chiude la pagina. Subito dopo l’analisi luoghi e orari vengono conservati anche sul nostro server senza account, per 30 giorni. Un risultato salvato resta nel Suo account.", "pt": "Neste navegador: ele continua lá quando você fecha a página. Logo após a análise, os locais e horários também ficam no nosso servidor sem conta, por 30 dias. Um resultado salvo fica na sua conta.", "ja": "このブラウザーです。ページを閉じても残ります。分析の直後には、場所と時刻がアカウントなしで当社のサーバーにも30日間保存されます。保存した結果はアカウントに保管されます。", "ko": "이 브라우저에 보관되며, 페이지를 닫아도 남아 있습니다. 분석 직후에는 장소와 시간이 계정 없이 저희 서버에도 30일 동안 저장됩니다. 저장한 결과는 계정에 보관됩니다."},
     "q3": {"en": "How do I move the result to my phone?", "ru": "Как перенести итог на телефон?", "cs": "Jak výsledek přenést do telefonu?", "de": "Wie übertrage ich das Ergebnis auf mein Telefon?", "fr": "Comment transférer le résultat sur mon téléphone ?", "es": "¿Cómo paso el resultado a mi teléfono?", "it": "Come trasferisco il risultato sul telefono?", "pt": "Como passo o resultado para o celular?", "ja": "結果をスマートフォンに移すには？", "ko": "결과를 휴대폰으로 옮기려면?"},
-    "a3": {"en": "Press “Move to my phone” and sign in with Google. Then install the Tabi app and sign in with the same Google account: the app will offer to add the result to your collection.", "ru": "Нажмите «Перенести на телефон» и войдите через Google. Затем установите приложение Tabi и войдите в нём с той же учётной записью Google: приложение предложит добавить итог в коллекцию.", "cs": "Stiskněte „Přenést do telefonu“ a přihlaste se přes Google. Pak nainstalujte aplikaci Tabi a přihlaste se v ní stejným účtem Google: aplikace nabídne přidat výsledek do sbírky.", "de": "Drücken Sie „Aufs Telefon übertragen“ und melden Sie sich mit Google an. Installieren Sie dann die Tabi-App und melden Sie sich dort mit demselben Google-Konto an: Die App bietet an, das Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "Appuyez sur « Transférer sur mon téléphone » et connectez-vous avec Google. Installez ensuite l’application Tabi et connectez-vous avec le même compte Google : l’application proposera d’ajouter le résultat à votre collection.", "es": "Pulsa «Pasar a mi teléfono» e inicia sesión con Google. Luego instala la aplicación Tabi e inicia sesión con la misma cuenta de Google: la aplicación te ofrecerá añadir el resultado a tu colección.", "it": "Prema «Trasferisci sul telefono» e acceda con Google. Poi installi l’app Tabi e acceda con lo stesso account Google: l’app Le proporrà di aggiungere il risultato alla collezione.", "pt": "Toque em “Passar para o celular” e entre com o Google. Depois instale o aplicativo Tabi e entre com a mesma conta do Google: o aplicativo vai oferecer adicionar o resultado à sua coleção.", "ja": "「スマートフォンに移す」を押してGoogleでログインします。次にTabiアプリをインストールし、同じGoogleアカウントでログインすると、結果をコレクションに加えるよう案内されます。", "ko": "‘휴대폰으로 옮기기’를 누르고 Google로 로그인하세요. 그런 다음 Tabi 앱을 설치하고 같은 Google 계정으로 로그인하면 앱이 결과를 컬렉션에 추가하도록 안내합니다."},
+    "a3": {"en": "Press “Move to my phone” and sign in with Google. Then install the app and sign in with the same Google account: the app will offer to add the result to your collection.", "ru": "Нажмите «Перенести на телефон» и войдите через Google. Затем установите приложение и войдите в нём с той же учётной записью Google: приложение предложит добавить итог в коллекцию.", "cs": "Stiskněte „Přenést do telefonu“ a přihlaste se přes Google. Pak nainstalujte aplikaci a přihlaste se v ní stejným účtem Google: aplikace nabídne přidat výsledek do sbírky.", "de": "Drücken Sie „Aufs Telefon übertragen“ und melden Sie sich mit Google an. Installieren Sie dann die App und melden Sie sich dort mit demselben Google-Konto an: Die App bietet an, das Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "Appuyez sur « Transférer sur mon téléphone » et connectez-vous avec Google. Installez ensuite l’application et connectez-vous avec le même compte Google : elle proposera d’ajouter le résultat à votre collection.", "es": "Pulsa «Pasar a mi teléfono» e inicia sesión con Google. Luego instala la aplicación e inicia sesión con la misma cuenta de Google: la aplicación te ofrecerá añadir el resultado a tu colección.", "it": "Prema «Trasferisci sul telefono» e acceda con Google. Poi installi l’app e acceda con lo stesso account Google: l’app Le proporrà di aggiungere il risultato alla collezione.", "pt": "Toque em “Passar para o celular” e entre com o Google. Depois instale o aplicativo e entre com a mesma conta do Google: o aplicativo vai oferecer adicionar o resultado à sua coleção.", "ja": "「スマートフォンに移す」を押してGoogleでログインします。次にアプリをインストールし、同じGoogleアカウントでログインすると、結果をコレクションに加えるよう案内されます。", "ko": "‘휴대폰으로 옮기기’를 누르고 Google로 로그인하세요. 그런 다음 앱을 설치하고 같은 Google 계정으로 로그인하면 앱이 결과를 컬렉션에 추가하도록 안내합니다."},
     "q4": {"en": "What is the difference between “Add a whole folder” and “Add separate files”?", "ru": "Чем отличаются «Добавить папку целиком» и «Добавить отдельные файлы»?", "cs": "Jaký je rozdíl mezi „Přidat celou složku“ a „Přidat jednotlivé soubory“?", "de": "Was ist der Unterschied zwischen „Ganzen Ordner hinzufügen“ und „Einzelne Dateien hinzufügen“?", "fr": "Quelle est la différence entre « Ajouter un dossier entier » et « Ajouter des fichiers séparés » ?", "es": "¿En qué se diferencian «Añadir una carpeta entera» y «Añadir archivos sueltos»?", "it": "Che differenza c’è tra «Aggiungi una cartella intera» e «Aggiungi singoli file»?", "pt": "Qual é a diferença entre “Adicionar uma pasta inteira” e “Adicionar arquivos avulsos”?", "ja": "「フォルダーごと追加」と「ファイルを個別に追加」の違いは？", "ko": "‘폴더 전체 추가’와 ‘파일 따로 추가’는 어떻게 다른가요?"},
     "a4": {"en": "A folder is added with all the files inside it, including subfolders. Separate files are chosen one by one or several from one folder. You can also drag folders and files onto the page.", "ru": "Папка добавляется со всеми файлами внутри, включая вложенные папки. Отдельные файлы выбираются по одному или по несколько из одной папки. Папки и файлы можно и перетащить на страницу.", "cs": "Složka se přidá se všemi soubory uvnitř včetně podsložek. Jednotlivé soubory se vybírají po jednom nebo po několika z jedné složky. Složky i soubory lze také přetáhnout na stránku.", "de": "Ein Ordner wird mit allen Dateien darin hinzugefügt, auch mit Unterordnern. Einzelne Dateien wählen Sie einzeln oder mehrere aus einem Ordner. Ordner und Dateien lassen sich auch auf die Seite ziehen.", "fr": "Un dossier est ajouté avec tous les fichiers qu’il contient, sous-dossiers compris. Les fichiers séparés se choisissent un par un ou à plusieurs dans un même dossier. Vous pouvez aussi glisser dossiers et fichiers sur la page.", "es": "Una carpeta se añade con todos los archivos que contiene, incluidas las subcarpetas. Los archivos sueltos se eligen de uno en uno o varios de una misma carpeta. También puedes arrastrar carpetas y archivos a la página.", "it": "Una cartella viene aggiunta con tutti i file che contiene, sottocartelle comprese. I singoli file si scelgono uno alla volta o più insieme da una stessa cartella. Cartelle e file si possono anche trascinare sulla pagina.", "pt": "A pasta é adicionada com todos os arquivos dentro dela, inclusive as subpastas. Os arquivos avulsos são escolhidos um a um ou vários de uma mesma pasta. Você também pode arrastar pastas e arquivos para a página.", "ja": "フォルダーは、サブフォルダーも含め中のファイルごと追加されます。個別のファイルは、1つずつ、または同じフォルダーから複数選べます。フォルダーやファイルはページにドラッグすることもできます。", "ko": "폴더는 하위 폴더를 포함해 안의 모든 파일과 함께 추가됩니다. 파일은 하나씩 또는 한 폴더에서 여러 개를 골라 추가합니다. 폴더와 파일은 페이지로 끌어다 놓을 수도 있습니다."},
     "q5": {"en": "Why are there fewer points than photos?", "ru": "Почему точек меньше, чем снимков?", "cs": "Proč je bodů méně než snímků?", "de": "Warum gibt es weniger Punkte als Fotos?", "fr": "Pourquoi y a-t-il moins de points que de photos ?", "es": "¿Por qué hay menos puntos que fotos?", "it": "Perché ci sono meno punti che foto?", "pt": "Por que há menos pontos do que fotos?", "ja": "地点の数が写真より少ないのはなぜですか？", "ko": "왜 사진보다 지점이 적나요?"},
@@ -402,12 +415,22 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "q7": {"en": "What is saved together with the points?", "ru": "Что сохраняется вместе с точками?", "cs": "Co se ukládá spolu s body?", "de": "Was wird zusammen mit den Punkten gespeichert?", "fr": "Qu’est-ce qui est enregistré avec les points ?", "es": "¿Qué se guarda junto con los puntos?", "it": "Che cosa viene salvato insieme ai punti?", "pt": "O que é salvo junto com os pontos?", "ja": "地点と一緒に何が保存されますか？", "ko": "지점과 함께 무엇이 저장되나요?"},
     "a7": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."},
     "q8": {"en": "What are special places?", "ru": "Что такое особые места?", "cs": "Co jsou výjimečná místa?", "de": "Was sind besondere Orte?", "fr": "Que sont les lieux d’exception ?", "es": "¿Qué son los lugares especiales?", "it": "Che cosa sono i luoghi speciali?", "pt": "O que são lugares especiais?", "ja": "特別な場所とは？", "ko": "특별한 장소란?"},
-    "a8": {"en": "Places of the Tabi collection: sights, museums, parks, peaks and more. By rarity they are common, rare, epic, legendary and unique.", "ru": "Места коллекции Tabi: достопримечательности, музеи, парки, вершины и другие. По редкости они бывают обычными, редкими, эпическими, легендарными и уникальными.", "cs": "Místa sbírky Tabi: pamětihodnosti, muzea, parky, vrcholy a další. Podle vzácnosti jsou běžná, vzácná, epická, legendární a unikátní.", "de": "Orte der Tabi-Sammlung: Sehenswürdigkeiten, Museen, Parks, Gipfel und mehr. Nach Seltenheit sind sie gewöhnlich, selten, episch, legendär und einzigartig.", "fr": "Les lieux de la collection Tabi : monuments, musées, parcs, sommets et autres. Selon leur rareté, ils sont communs, rares, épiques, légendaires et uniques.", "es": "Los lugares de la colección de Tabi: monumentos, museos, parques, cumbres y más. Según su rareza son comunes, raros, épicos, legendarios y únicos.", "it": "I luoghi della collezione Tabi: monumenti, musei, parchi, vette e altro. Per rarità sono comuni, rari, epici, leggendari e unici.", "pt": "Os lugares da coleção do Tabi: pontos turísticos, museus, parques, picos e outros. Pela raridade, são comuns, raros, épicos, lendários e únicos.", "ja": "Tabiのコレクションの場所です。名所、博物館、公園、山頂などがあり、希少度によって定番・名勝・絶景・秘境・唯一無二に分かれます。", "ko": "Tabi 컬렉션의 장소로, 명소, 박물관, 공원, 봉우리 등이 있습니다. 희귀도에 따라 일반, 희귀, 에픽, 전설, 유일로 나뉩니다."},
+    "a8": {"en": "Places of the collection: sights, museums, parks, peaks and more. By rarity they are common, rare, epic, legendary and unique.", "ru": "Места коллекции: достопримечательности, музеи, парки, вершины и другие. По редкости они бывают обычными, редкими, эпическими, легендарными и уникальными.", "cs": "Místa sbírky: pamětihodnosti, muzea, parky, vrcholy a další. Podle vzácnosti jsou běžná, vzácná, epická, legendární a unikátní.", "de": "Orte der Sammlung: Sehenswürdigkeiten, Museen, Parks, Gipfel und mehr. Nach Seltenheit sind sie gewöhnlich, selten, episch, legendär und einzigartig.", "fr": "Les lieux de la collection : monuments, musées, parcs, sommets et autres. Selon leur rareté, ils sont communs, rares, épiques, légendaires et uniques.", "es": "Los lugares de la colección: monumentos, museos, parques, cumbres y más. Según su rareza son comunes, raros, épicos, legendarios y únicos.", "it": "I luoghi della collezione: monumenti, musei, parchi, vette e altro. Per rarità sono comuni, rari, epici, leggendari e unici.", "pt": "Os lugares da coleção: pontos turísticos, museus, parques, picos e outros. Pela raridade, são comuns, raros, épicos, lendários e únicos.", "ja": "コレクションの場所です。名所、博物館、公園、山頂などがあり、希少度によって定番・名勝・絶景・秘境・唯一無二に分かれます。", "ko": "컬렉션의 장소로, 명소, 박물관, 공원, 봉우리 등이 있습니다. 희귀도에 따라 일반, 희귀, 에픽, 전설, 유일로 나뉩니다."},
     "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
     "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
     "dlgDevX": {"en": "The points of {name} will disappear from this result. You can bring them back by choosing the folder with its photos again.", "ru": "Точки устройства {name} исчезнут из этого итога. Вернуть их можно, снова выбрав папку с его снимками.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Vrátit je můžete tak, že znovu vyberete složku s jeho snímky.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. Sie kommen zurück, wenn Sie den Ordner mit seinen Fotos erneut auswählen.", "fr": "Les points de {name} disparaîtront de ce résultat. Vous pourrez les récupérer en choisissant à nouveau le dossier avec ses photos.", "es": "Los puntos de {name} desaparecerán de este resultado. Puedes recuperarlos eligiendo de nuevo la carpeta con sus fotos.", "it": "I punti di {name} spariranno da questo risultato. Potrà recuperarli scegliendo di nuovo la cartella con le sue foto.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Você pode recuperá-los escolhendo de novo a pasta com as fotos dele.", "ja": "{name}の地点がこの結果から消えます。その機器の写真が入ったフォルダーをもう一度選べば元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 그 기기의 사진이 있는 폴더를 다시 고르면 되돌릴 수 있습니다."},
     "eAnonLimit": {"en": "Today the server no longer accepts results without signing in. The result is kept in this browser; save it so that it is not lost.", "ru": "Сегодня сервер больше не принимает итоги без входа. Итог хранится в этом браузере — сохраните его, чтобы он не потерялся.", "cs": "Dnes už server nepřijímá výsledky bez přihlášení. Výsledek je uložen v tomto prohlížeči — uložte si ho, aby se neztratil.", "de": "Heute nimmt der Server keine Ergebnisse ohne Anmeldung mehr an. Das Ergebnis ist in diesem Browser gespeichert — speichern Sie es, damit es nicht verloren geht.", "fr": "Aujourd’hui, le serveur n’accepte plus de résultats sans connexion. Le résultat est conservé dans ce navigateur : enregistrez-le pour ne pas le perdre.", "es": "Hoy el servidor ya no acepta resultados sin iniciar sesión. El resultado está guardado en este navegador: guárdalo para no perderlo.", "it": "Oggi il server non accetta più risultati senza accesso. Il risultato è conservato in questo browser: lo salvi per non perderlo.", "pt": "Hoje o servidor não aceita mais resultados sem login. O resultado está guardado neste navegador: salve-o para não perdê-lo.", "ja": "本日はログインなしの結果をサーバーが受け付けられません。結果はこのブラウザーに保存されています。失わないように保存してください。", "ko": "오늘은 서버가 로그인 없는 결과를 더 받지 않습니다. 결과는 이 브라우저에 보관되어 있으니, 잃지 않도록 저장하세요."},
-    "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые итоги. Итог останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."}
+    "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые итоги. Итог останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."},
+    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
+    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
+    "navData": {"en": "Your data", "ru": "Данные", "cs": "Data", "de": "Deine Daten", "fr": "Tes données", "es": "Tus datos", "it": "I tuoi dati", "pt": "Seus dados", "ja": "データ", "ko": "내 데이터"},
+    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
+    "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
+    "runTitleDir": {"en": "Folder “{name}”", "ru": "Папка «{name}»", "cs": "Složka „{name}“", "de": "Ordner „{name}“", "fr": "Dossier « {name} »", "es": "Carpeta «{name}»", "it": "Cartella «{name}»", "pt": "Pasta “{name}”", "ja": "フォルダー「{name}」", "ko": "폴더 ‘{name}’"},
+    "runTitleFiles": {"en": "Chosen files", "ru": "Выбранные файлы", "cs": "Vybrané soubory", "de": "Ausgewählte Dateien", "fr": "Fichiers choisis", "es": "Archivos elegidos", "it": "File scelti", "pt": "Arquivos escolhidos", "ja": "選んだファイル", "ko": "선택한 파일"},
+    "lblRead": {"en": "files read", "ru": "файлов прочитано", "cs": "souborů přečteno", "de": "Dateien gelesen", "fr": "fichiers lus", "es": "archivos leídos", "it": "file letti", "pt": "arquivos lidos", "ja": "読み込んだファイル", "ko": "읽은 파일"},
+    "lblPlace": {"en": "with a location", "ru": "с местом съёмки", "cs": "s místem pořízení", "de": "mit Aufnahmeort", "fr": "avec un lieu", "es": "con lugar", "it": "con luogo", "pt": "com local", "ja": "撮影場所あり", "ko": "촬영 장소 있음"},
+    "lblNew": {"en": "new points", "ru": "новых точек", "cs": "nových bodů", "de": "neue Punkte", "fr": "nouveaux points", "es": "puntos nuevos", "it": "nuovi punti", "pt": "pontos novos", "ja": "新しい地点", "ko": "새 지점"}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -479,6 +502,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       hDevs: "hDevs", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
+    renderNav();
     shotsLang = "";
     renderFaq();
     $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
@@ -493,6 +517,23 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     renderWhy();
   }
 
+  // Разделы сайта (20.11.2026, Андрей: по сайту нельзя было перемещаться) — как в шапке главной: этот разбор первым и выделен.
+  function renderNav() {
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [["/computer/?lang=" + L, t("title"), 1], [base + "how-it-works/", t("navHow")],
+      [base + "collection/", t("navColl")], [base + "your-data/", t("navData")], [base + "faq/", t("navFaq")]];
+    var nav = $("nav"), ml = $("menuList");
+    nav.innerHTML = ""; ml.innerHTML = "";
+    items.forEach(function (it) {
+      var a = document.createElement("a");
+      a.href = it[0]; a.textContent = it[1];
+      it[2] && (a.className = "hl", a.setAttribute("aria-current", "page"));
+      nav.appendChild(a);
+      var li = document.createElement("li"), b = a.cloneNode(true);
+      b.className = "";
+      li.appendChild(b); ml.appendChild(li);
+    });
+    $("menuLbl").textContent = t("menu");
+  }
   // ===== Вход — общий для всего сайта tabimobile.com (/assets/account.js, 18.11.2026, слово Андрея): ключ входа хранится в
   // этом браузере до «Выйти», шапка показывает, кто вошёл. =====
   // Имя TACC: ACC на этой странице — цвет акцента карты.
@@ -1079,35 +1120,115 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
 
   // ===== Карта маршрута: приближение колесом, кнопками и пальцами, сдвиг мышью; цвет точки — время снимка =====
-  // Мировые единицы: X = долгота × K0, Y = −широта (K0 — косинус средней широты точек, чтобы страны не сплющивались).
+  // Проекция (20.11.2026, Андрей: мир был растянут — Гренландия, Россия, Африка): вид мира — Natural Earth, классическая
+  // проекция атласов (Šavrič, Patterson, Jenny, 2011; та же, что d3.geoNaturalEarth1); при приближении она плавно переходит
+  // в местную равноугольную вокруг центра вида — город и маршрут без искажений. MV — центр вида в градусах (lng, lat),
+  // s — точек экрана на единицу проекции, t — доля местной проекции (0 на виде мира, 1 с приближения в 16 раз).
   // Подложка — границы стран и, при приближении, регионов посещённых стран из тех же данных; чужих карт страница не
   // грузит: адреса плиток выдали бы стороннему серверу, где сделаны снимки.
-  var cv = $("map"), cx = cv.getContext("2d"), mapDirty = true, MV = null, K0 = 1, CW = 0, CH = 0, DPR = 1,
+  var cv = $("map"), cx = cv.getContext("2d"), mapDirty = true, MV = null, PC = null, CW = 0, CH = 0, DPR = 1,
     land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
+  var D2R = Math.PI / 180;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-  function sx(lng) { return (lng * K0 - MV.x) * MV.s + CW / 2; }
-  function sy(lat) { return (-lat - MV.y) * MV.s + CH / 2; }
+  // Natural Earth: радианы → [x, y] (y — на север) и вертикальный масштаб ∂y/∂φ.
+  function ne(l, f) {
+    var f2 = f * f, f4 = f2 * f2, f6 = f4 * f2, f8 = f4 * f4, f10 = f8 * f2, f12 = f6 * f6;
+    return [l * (0.8707 - 0.131979 * f2 - 0.013791 * f4 + 0.003971 * f10 - 0.001529 * f12),
+      f * (1.007226 + 0.015085 * f2 - 0.044475 * f6 + 0.028874 * f8 - 0.005916 * f10)];
+  }
+  function neKy(f) {
+    var f2 = f * f, f6 = f2 * f2 * f2, f8 = f6 * f2, f10 = f8 * f2;
+    return 1.007226 + 3 * 0.015085 * f2 - 7 * 0.044475 * f6 + 9 * 0.028874 * f8 - 11 * 0.005916 * f10;
+  }
+  // Масштаб, при котором виден весь мир с Антарктидой, — от него считается доля местной проекции.
+  function worldS() { var h = ne(0, 84 * D2R)[1] - ne(0, -90 * D2R)[1]; return Math.min(CW / (2 * Math.PI * 0.8707), CH / h) * 0.98; }
+  function prep() {
+    var l = MV.lng * D2R, f = MV.lat * D2R;
+    MV.t = Math.max(0, Math.min(1, (Math.log(MV.s / worldS()) / Math.LN2 - 1.5) / 2.5));
+    PC = { l: l, f: f, c: ne(l, f), ky: neKy(f), cf: Math.cos(f) };
+  }
+  function proj(lng, lat) {
+    var l = lng * D2R, f = lat * D2R, a = ne(l, f);
+    if (MV.t <= 0) return a;
+    var dl = l - PC.l;
+    dl > Math.PI ? (dl -= 2 * Math.PI) : dl < -Math.PI && (dl += 2 * Math.PI);
+    var bx = PC.c[0] + dl * PC.cf * PC.ky, by = PC.c[1] + (f - PC.f) * PC.ky;
+    return [a[0] + (bx - a[0]) * MV.t, a[1] + (by - a[1]) * MV.t];
+  }
+  // Точка карты → точка экрана (y вниз).
+  function scr(lng, lat) { var p = proj(lng, lat); return [(p[0] - PC.c[0]) * MV.s + CW / 2, -(p[1] - PC.c[1]) * MV.s + CH / 2]; }
+  // Точек экрана на градус у центра вида — пороги регионов и подписей.
+  function ppd() { return MV.s * D2R * PC.ky * (MV.t * PC.cf + (1 - MV.t) * 0.87); }
+  function setView(lng, lat, s) {
+    MV = { lng: ((lng + 540) % 360) - 180, lat: Math.max(-80, Math.min(82, lat)), s: s, t: 0 };
+    clampView();
+  }
+  // Экран → точка карты: Ньютон с числовой производной (проекция гладкая, пяти шагов хватает).
+  function invert(mx, my) {
+    var g = [MV.lng, MV.lat], e = 1e-3;
+    for (var k = 0; k < 6; k++) {
+      var q = scr(g[0], g[1]), dx = q[0] - mx, dy = q[1] - my;
+      if (Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05) break;
+      var qa = scr(g[0] + e, g[1]), qb = scr(g[0], g[1] + e),
+        a11 = (qa[0] - q[0]) / e, a21 = (qa[1] - q[1]) / e, a12 = (qb[0] - q[0]) / e, a22 = (qb[1] - q[1]) / e, det = a11 * a22 - a12 * a21;
+      if (!det) break;
+      g[0] -= (a22 * dx - a12 * dy) / det; g[1] -= (-a21 * dx + a11 * dy) / det;
+      g[1] = Math.max(-89, Math.min(89, g[1]));
+    }
+    return g;
+  }
   function fit(pts) {
-    var w = 180, e = -180, s = 90, n = -90;
-    pts.forEach(function (p) { p[1] < w && (w = p[1]); p[1] > e && (e = p[1]); p[0] < s && (s = p[0]); p[0] > n && (n = p[0]); });
-    if (!pts.length || e - w > 200) { w = -170; e = 190; s = -56; n = 78; }
-    var cl = Math.max(-70, Math.min(70, (s + n) / 2));
-    K0 = Math.max(0.3, Math.cos((cl * Math.PI) / 180));
-    var dw = Math.max(1.2, e - w) * 1.12, dh = Math.max(0.8, n - s) * 1.12;
-    MV = { x: ((w + e) / 2) * K0, y: -(s + n) / 2, s: Math.min(CW / (dw * K0), CH / dh) };
+    var w = 180, e = -180, so = 90, n = -90;
+    pts.forEach(function (p) { p[1] < w && (w = p[1]); p[1] > e && (e = p[1]); p[0] < so && (so = p[0]); p[0] > n && (n = p[0]); });
+    MV = MV || { lng: 0, lat: 0, s: 1, t: 0 };
+    if (!pts.length || e - w > 200) { setView(0, 0, worldS()); fitS = MV.s; return; }
+    var cl = (so + n) / 2, f = cl * D2R, ky = neKy(f),
+      dw = Math.max(0.01, (e - w) * D2R * Math.cos(f) * ky) * 1.15, dh = Math.max(0.006, (n - so) * D2R * ky) * 1.15;
+    setView((w + e) / 2, cl, Math.min(CW / dw, CH / dh));
+    // Широкий охват (страны и материки) — доля Natural Earth больше, и масштаб уточняется по краям охвата.
+    for (var k = 0; k < 3; k++) {
+      var a = scr(w, n), b = scr(e, so), c = scr(w, so), d = scr(e, n),
+        bw = Math.max(a[0], b[0], c[0], d[0]) - Math.min(a[0], b[0], c[0], d[0]), bh = Math.max(a[1], b[1], c[1], d[1]) - Math.min(a[1], b[1], c[1], d[1]);
+      if (!bw || !bh) break;
+      MV.s *= Math.min(CW / (bw * 1.12), CH / (bh * 1.12)); clampView();
+    }
     fitS = MV.s;
   }
   function clampView() {
-    var sMin = Math.min(fitS, CW / (360 * K0)) * 0.8, sMax = CW / (0.004 * K0);
+    var sMin = worldS() * 0.8, sMax = CW / (0.004 * D2R);
     MV.s = Math.max(sMin, Math.min(sMax, MV.s));
-    MV.y = Math.max(-85, Math.min(85, MV.y));
+    MV.lat = Math.max(-80, Math.min(82, MV.lat));
+    prep();
+    // Вид мира не уезжает за край карты: мир уже окна — по середине, шире — край карты у края окна.
+    if (MV.t > 0) return;
+    var top = ne(0, 84 * D2R)[1], bot = ne(0, -90 * D2R)[1], hw = Math.PI * 0.8707, c = PC.c, hh = CH / 2 / MV.s, ww = CW / 2 / MV.s,
+      cy = top - bot <= 2 * hh ? (top + bot) / 2 : Math.max(bot + hh, Math.min(top - hh, c[1])),
+      cxp = hw <= ww ? 0 : Math.max(-hw + ww, Math.min(hw - ww, c[0]));
+    if (Math.abs(cy - c[1]) < 1e-9 && Math.abs(cxp - c[0]) < 1e-9) return;
+    // Широта по y проекции (y зависит только от широты) — Ньютоном, долгота — делением на ширину параллели.
+    var f = MV.lat * D2R;
+    for (var k = 0; k < 8; k++) f -= (ne(0, f)[1] - cy) / neKy(f);
+    var xs = ne(1, f)[0];
+    MV.lat = f / D2R; MV.lng = Math.max(-180, Math.min(180, cxp / xs / D2R));
+    prep();
   }
   function zoomAt(f, mx, my) {
     if (!MV) return;
-    var wx = (mx - CW / 2) / MV.s + MV.x, wy = (my - CH / 2) / MV.s + MV.y;
+    var g = invert(mx, my);
     MV.s *= f; clampView();
-    MV.x = wx - (mx - CW / 2) / MV.s; MV.y = wy - (my - CH / 2) / MV.s;
+    // Точка под курсором остаётся под курсором: центр вида сдвигается, пока она не встанет на место.
+    for (var k = 0; k < 5; k++) {
+      var q = scr(g[0], g[1]), dx = q[0] - mx, dy = q[1] - my;
+      if (Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3) break;
+      var c = invert(CW / 2 + dx, CH / 2 + dy);
+      MV.lng = c[0]; MV.lat = c[1]; clampView();
+    }
     mapDirty = true; schedule();
+  }
+  // Сдвиг мышью: точка, бывшая под курсором, остаётся под ним.
+  function panBy(dx, dy) {
+    var c = invert(CW / 2 - dx, CH / 2 - dy);
+    MV.lng = ((c[0] + 540) % 360) - 180; MV.lat = c[1]; clampView();
   }
   function schedule() { if (!raf) raf = requestAnimationFrame(function () { raf = 0; drawMap(); }); }
   function colorAt(ms) {
@@ -1121,7 +1242,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   function ringPath(g, pts) {
     var lx = -1e9, ly = -1e9, first = true;
     for (var i = 0; i < pts.length; i++) {
-      var x = sx(pts[i][0]), y = sy(pts[i][1]);
+      var q = scr(pts[i][0], pts[i][1]), x = q[0], y = q[1];
       if (!first && Math.abs(x - lx) < 0.8 && Math.abs(y - ly) < 0.8) continue;
       first ? g.moveTo(x, y) : g.lineTo(x, y); first = false; lx = x; ly = y;
     }
@@ -1134,29 +1255,41 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     found.countries.forEach(function (c) { visited[c.cc] = 1; });
     g.fillStyle = css("--bg"); g.fillRect(0, 0, land.width, land.height);
     if (!G || !MV) return;
-    var vw = (MV.x - CW / 2 / MV.s) / K0, ve = (MV.x + CW / 2 / MV.s) / K0, vn = -(MV.y - CH / 2 / MV.s), vs = -(MV.y + CH / 2 / MV.s);
+    var vb = viewBox(), pd = ppd();
     var landC = css("--bg2"), lineC = css("--line"), accC = css("--accent"), subC = css("--sub");
     G.rings.forEach(function (r) {
-      if (r.e < vw || r.w > ve || r.n < vs || r.s > vn) return;
-      if ((r.e - r.w) * K0 * MV.s < 1.2 && (r.n - r.s) * MV.s < 1.2) return;
+      if (vb && (r.e < vb[0] || r.w > vb[1] || r.n < vb[2] || r.s > vb[3])) return;
+      if ((r.e - r.w) * pd < 1.2 && (r.n - r.s) * pd < 1.2) return;
       g.beginPath(); ringPath(g, r.p);
       g.fillStyle = landC; g.fill();
       if (visited[r.cc]) { g.globalAlpha = 0.22; g.fillStyle = accC; g.fill(); g.globalAlpha = 1; }
       g.strokeStyle = lineC; g.lineWidth = 0.7 * DPR; g.stroke();
     });
     // Регионы посещённых стран — когда градус шире 40 точек экрана.
-    if (MV.s * K0 > 40 * DPR) {
+    if (pd > 40 * DPR) {
       g.strokeStyle = subC; g.globalAlpha = 0.35; g.lineWidth = 0.6 * DPR; g.setLineDash([3 * DPR, 3 * DPR]);
       Object.keys(visited).forEach(function (cc) {
         (regCache[cc] || []).forEach(function (rg) {
           rg.polys.forEach(function (pg) {
-            if (pg.e < vw || pg.w > ve || pg.n < vs || pg.s > vn) return;
+            if (vb && (pg.e < vb[0] || pg.w > vb[1] || pg.n < vb[2] || pg.s > vb[3])) return;
             g.beginPath(); pg.rings.forEach(function (ring) { ringPath(g, ring); }); g.stroke();
           });
         });
       });
       g.setLineDash([]); g.globalAlpha = 1;
     }
+  }
+  // Видимая область в градусах [запад, восток, юг, север] с запасом; вид шире полушария — null (рисуется всё).
+  function viewBox() {
+    if (MV.t < 0.3) return null;
+    var w = 999, e = -999, so = 999, n = -999;
+    [[0, 0], [CW / 2, 0], [CW, 0], [CW, CH / 2], [CW, CH], [CW / 2, CH], [0, CH], [0, CH / 2]].forEach(function (c) {
+      var g = invert(c[0], c[1]);
+      g[0] < w && (w = g[0]); g[0] > e && (e = g[0]); g[1] < so && (so = g[1]); g[1] > n && (n = g[1]);
+    });
+    if (e - w > 180) return null;
+    var mw = (e - w) * 0.1, mh = (n - so) * 0.1;
+    return [w - mw, e + mw, so - mh, n + mh];
   }
   // Точки и отрезки — пачками по 32 оттенкам времени: десятки тысяч точек рисуются за несколько десятков путей, а не по
   // одному пути на точку.
@@ -1169,13 +1302,13 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     for (i = Math.max(1, from); i < to && i < pts.length; i++) {
       var a = pts[i - 1], b = pts[i];
       if (b[2] - a[2] > 36 * 3600000) continue;
-      var x1 = sx(a[1]), y1 = sy(a[0]), x2 = sx(b[1]), y2 = sy(b[0]);
+      var qa = scr(a[1], a[0]), qb = scr(b[1], b[0]), x1 = qa[0], y1 = qa[1], x2 = qb[0], y2 = qb[1];
       if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || (x1 > CW && x2 > CW) || (y1 > CH && y2 > CH)) continue;
       if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
       (dist(a[0], a[1], b[0], b[1]) > 300000 ? far : near)[binOf(b[2])].push(x1, y1, x2, y2);
     }
     for (i = from; i < to && i < pts.length; i++) {
-      var x = sx(pts[i][1]), y = sy(pts[i][0]);
+      var qp = scr(pts[i][1], pts[i][0]), x = qp[0], y = qp[1];
       if (x < -R || y < -R || x > CW + R || y > CH + R) continue;
       dots[binOf(pts[i][2])].push(x, y);
     }
@@ -1201,11 +1334,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
   // Названия найденных городов — при приближении, без наложения, по одной строке на город.
   function drawLabels() {
-    if (!G || MV.s * K0 < 20 * DPR) return;
+    if (!G || ppd() < 20 * DPR) return;
     var boxes = [], fs = 12.5 * DPR, ink = css("--ink"), bg = css("--bg");
     cx.font = "600 " + fs + "px Onest, system-ui, sans-serif"; cx.textBaseline = "middle"; cx.lineJoin = "round";
     found.cities.slice().sort(function (a, b) { return G.t.pop[b.i] - G.t.pop[a.i]; }).slice(0, 300).forEach(function (c) {
-      var x = sx(G.t.ln[c.i] / 1e5) + 7 * DPR, y = sy(G.t.la[c.i] / 1e5);
+      var qc = scr(G.t.ln[c.i] / 1e5, G.t.la[c.i] / 1e5), x = qc[0] + 7 * DPR, y = qc[1];
       if (x < 0 || y < 0 || x > CW || y > CH) return;
       var nm = townName(c.i), w = cx.measureText(nm).width, bx = [x - 2, y - fs / 2 - 2, x + w + 2, y + fs / 2 + 2];
       for (var k = 0; k < boxes.length; k++) { var o = boxes[k]; if (bx[0] < o[2] && bx[2] > o[0] && bx[1] < o[3] && bx[3] > o[1]) return; }
@@ -1218,7 +1351,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     hitGrid = new Map();
     var cell = 18 * DPR;
     for (var i = 0; i < A.shown && i < A.pts.length; i++) {
-      var x = sx(A.pts[i][1]), y = sy(A.pts[i][0]);
+      var qh = scr(A.pts[i][1], A.pts[i][0]), x = qh[0], y = qh[1];
       if (x < 0 || y < 0 || x > CW || y > CH) continue;
       var k = Math.floor(x / cell) + ":" + Math.floor(y / cell);
       hitGrid.has(k) ? hitGrid.get(k).push(i) : hitGrid.set(k, [i]);
@@ -1231,6 +1364,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     DPR = dpr;
     if (!MV) { CW = W; CH = H; fit(A.pts); mapDirty = true; }
     else if (CW !== W || CH !== H) { MV.s *= W / CW; CW = W; CH = H; clampView(); mapDirty = true; }
+    prep();
     mapDirty && (ACC = hexRgb(css("--accent") || "#B3341F"));
     var to = revealing ? upto : A.pts.length;
     if (mapDirty || drawnTo > to) { drawLand(); cx.drawImage(land, 0, 0); drawnTo = 0; mapDirty = false; drawPts(0, to); }
@@ -1269,7 +1403,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       pinch0 = d;
       return;
     }
-    if (MV) { MV.x -= ((e.clientX - p.x) * DPR) / MV.s; MV.y -= ((e.clientY - p.y) * DPR) / MV.s; clampView(); mapDirty = true; schedule(); }
+    if (MV) { panBy((e.clientX - p.x) * DPR, (e.clientY - p.y) * DPR); mapDirty = true; schedule(); }
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   });
   var ptrEnd = function (e) { ptrs.delete(e.pointerId); ptrs.size || cv.classList.remove("drag"); pinch0 = 0; };
@@ -1282,7 +1416,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     var r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * DPR, my = (e.clientY - r.top) * DPR, cell = 18 * DPR, best = -1, bd = 10 * DPR;
     for (var gx = -1; gx <= 1; gx++) for (var gy = -1; gy <= 1; gy++) {
       (hitGrid.get((Math.floor(mx / cell) + gx) + ":" + (Math.floor(my / cell) + gy)) || []).forEach(function (i) {
-        var d = Math.hypot(sx(A.pts[i][1]) - mx, sy(A.pts[i][0]) - my);
+        var qd = scr(A.pts[i][1], A.pts[i][0]), d = Math.hypot(qd[0] - mx, qd[1] - my);
         d < bd && ((bd = d), (best = i));
       });
     }
@@ -1295,7 +1429,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     tip.children[0].textContent = when; tip.children[1].textContent = place;
     tip.hidden = false;
     // Подсказка не выходит за края карты.
-    var hw = tip.offsetWidth / 2, bw = cv.clientWidth, px = Math.max(hw + 6, Math.min(bw - hw - 6, sx(p[1]) / DPR)), py = sy(p[0]) / DPR;
+    var hw = tip.offsetWidth / 2, bw = cv.clientWidth, qt = scr(p[1], p[0]), px = Math.max(hw + 6, Math.min(bw - hw - 6, qt[0] / DPR)), py = qt[1] / DPR;
     tip.style.left = px + "px"; tip.style.top = Math.max(tip.offsetHeight + 16, py) + "px";
   }
   function renderLegend() {
@@ -1517,9 +1651,18 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // Итог последнего выбора (20.11.2026, Андрей: после «Выбрать ещё» непонятно, прошло или нет): папка или файлы,
   // сколько прочитано, у скольких есть место съёмки и сколько новых точек; ноль — почему.
   function runSay(name, a, b, c) {
-    var x = t(name ? "runDir" : "runFiles", { name: name, a: num(a), b: num(b), c: num(c) });
-    if (!c) x += " " + t(b ? "runNoNew" : "runNoPlace");
-    $("runX").textContent = x; show("runX", true);
+    $("runT").textContent = name ? t("runTitleDir", { name: name }) : t("runTitleFiles");
+    var tl = $("runTl");
+    tl.innerHTML = "";
+    [[a, "lblRead", ""], [b, "lblPlace", ""], [c, "lblNew", c ? "new" : ""]].forEach(function (x) {
+      var d = document.createElement("div");
+      d.className = x[2]; d.innerHTML = "<b></b><span></span>";
+      d.children[0].textContent = (x[2] ? "+" : "") + num(x[0]); d.children[1].textContent = t(x[1]);
+      tl.appendChild(d);
+    });
+    $("runW").textContent = c ? "" : t(b ? "runNoNew" : "runNoPlace");
+    show("runW", !c);
+    show("runX", true);
   }
   function runName(list) {
     var first = null, same = true;
@@ -1731,13 +1874,10 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     show("saveWays", !S && !WAY);
     show("bGoogle", !S && !!WAY);
     var retry = st === "error" && !!saveSt.err && saveSt.err[0] !== "eAuth" && saveSt.err[0] !== "eLimit" && saveSt.err[0] !== "eFull" && saveSt.err[0] !== "eLimitAll";
-    // «Итог сохранён» — только сразу после сохранения в это открытие, не при каждом возвращении на страницу.
-    show("vSaved", (has && (st === "saving" || (st === "saved" && !!saveSt.now))) || retry);
-    show("savedX", st !== "error");
-    if (st === "saving") $("savedX").textContent = t("saving");
-    if (st === "saved") $("savedX").textContent = t("saved");
-    $("mailedX").hidden = !(st === "saved" && saveSt.mailed);
-    saveSt.mailed && ($("mailedX").textContent = t("mailed", { m: saveSt.mailed }));
+    // После сохранения строк-уведомлений нет (20.11.2026, Андрей): итог показывает блок особых мест.
+    show("vSaved", (has && st === "saving") || retry);
+    show("savedX", st === "saving");
+    $("savedX").textContent = t("saving");
     show("bRetry", retry);
     show("endBox", !PHONE && !revealing && (A.shown > 0 || A.none));
     $("under").classList.toggle("idle", !(A.shown > 0) || PHONE);
@@ -1836,7 +1976,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       renderDevs();
       // Копия до входа перешла в учётную запись и стёрта сервером.
       AKS && AKS === anonKey(false) && anonForget();
-      saveSt.state = "saved"; saveSt.now = true; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
+      saveSt.state = "saved"; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
       j.special && j.special.n != null && (saveSt.special = j.special);
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
       statSend({ k: "save", n: j.n || 0, letter: j.letter || "" });
@@ -2120,13 +2260,13 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     var mx = 64, my = 300, mw = W - 128, mh = 560;
     g.save(); g.beginPath(); g.roundRect ? g.roundRect(mx, my, mw, mh, 28) : g.rect(mx, my, mw, mh); g.clip();
     g.fillStyle = "#121010"; g.fillRect(mx, my, mw, mh);
-    var keepMV = MV, keepCW = CW, keepCH = CH, keepK = K0, keepFit = fitS;
-    CW = mw; CH = mh; fit(A.pts);
+    var keepMV = MV && { lng: MV.lng, lat: MV.lat, s: MV.s, t: MV.t }, keepCW = CW, keepCH = CH, keepFit = fitS;
+    CW = mw; CH = mh; MV = null; fit(A.pts);
+    var cvb = viewBox();
     var vis = {}; found.countries.forEach(function (q) { vis[q.cc] = 1; });
     g.translate(mx, my);
     G && G.rings.forEach(function (r) {
-      var vw = (MV.x - CW / 2 / MV.s) / K0, ve = (MV.x + CW / 2 / MV.s) / K0, vn = -(MV.y - CH / 2 / MV.s), vs = -(MV.y + CH / 2 / MV.s);
-      if (r.e < vw || r.w > ve || r.n < vs || r.s > vn) return;
+      if (cvb && (r.e < cvb[0] || r.w > cvb[1] || r.n < cvb[2] || r.s > cvb[3])) return;
       g.beginPath(); ringPath(g, r.p);
       g.fillStyle = vis[r.cc] ? "#6e3527" : "#2a2420"; g.fill();
       g.strokeStyle = vis[r.cc] ? "#a0503b" : "#3d3531"; g.lineWidth = 1.2; g.stroke();
@@ -2138,12 +2278,13 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       if (b[2] - a[2] > 36 * 3600000) continue;
       if (dist(a[0], a[1], b[0], b[1]) > 300000) continue;
       g.strokeStyle = colorAt(b[2]); g.globalAlpha = 0.85; g.lineWidth = 4;
-      g.beginPath(); g.moveTo(sx(a[1]), sy(a[0])); g.lineTo(sx(b[1]), sy(b[0])); g.stroke();
+      var ca = scr(a[1], a[0]), cb = scr(b[1], b[0]);
+      g.beginPath(); g.moveTo(ca[0], ca[1]); g.lineTo(cb[0], cb[1]); g.stroke();
     }
     g.globalAlpha = 1;
-    pts.forEach(function (p) { g.fillStyle = colorAt(p[2]); g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.5; g.beginPath(); g.arc(sx(p[1]), sy(p[0]), 7, 0, 6.2832); g.fill(); g.stroke(); });
+    pts.forEach(function (p) { g.fillStyle = colorAt(p[2]); g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.5; var cp = scr(p[1], p[0]); g.beginPath(); g.arc(cp[0], cp[1], 7, 0, 6.2832); g.fill(); g.stroke(); });
     g.restore();
-    MV = keepMV; CW = keepCW; CH = keepCH; K0 = keepK; fitS = keepFit;
+    MV = keepMV; CW = keepCW; CH = keepCH; fitS = keepFit; MV && prep();
     // Числа.
     var rows = [["sCountries", found.countries.length], ["sCities", found.cities.length], ["sRegions", found.regions], ["sDays", found.days.size], ["sKm", Math.round(found.km / 1000)]];
     var tw = (W - 128 - 4 * 16) / 5;

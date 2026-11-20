@@ -12,6 +12,11 @@
 <style>
 body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
 .ac-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
+/* Навигация сайта (20.11.2026, Андрей): разделы в шапке, на узком экране — меню. */
+nav.sections+.ac-tools{margin-left:22px}
+details.menu{display:none}
+@media (max-width:1180px){nav.sections+.ac-tools{margin-left:auto}details.menu{display:block}}
+@media (max-width:560px){#menuLbl,#langCur{display:none}.ac-tools{gap:8px}}
 .ac-theme{appearance:none;border:0;cursor:pointer;width:40px;height:40px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
 .ac-theme .ic{width:19px;height:19px}
 details.lang li button{all:unset;display:block;box-sizing:border-box;width:100%;padding:9px 12px;border-radius:10px;color:var(--ink);font-weight:500;cursor:pointer}
@@ -53,7 +58,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 <body>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/" id="homeLink" aria-label="Tabi">Tabi</a>
+<nav class="sections" id="nav" aria-label="Tabi"></nav>
 <div class="ac-tools">
+<details class="lang menu" id="menuBox"><summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="menuLbl"></span></summary><ul id="menuList"></ul></details>
 <a data-tabi-acc id="accChip" href="/account/"></a>
 <details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
 <button class="ac-theme" id="themeBtn" type="button"></button>
@@ -123,7 +130,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "codePh": {"en": "Code from the email", "ru": "Код из письма", "cs": "Kód z e-mailu", "de": "Code aus der E-Mail", "fr": "Code reçu par e-mail", "es": "Código del correo", "it": "Codice dall’e-mail", "pt": "Código do e-mail", "ja": "メールのコード", "ko": "이메일로 받은 코드"},
     "verify": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
     "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
-    "eNet": {"en": "No connection to Tabi. Check the internet and try again.", "ru": "Нет связи с Tabi. Проверьте интернет и попробуйте ещё раз.", "cs": "Spojení s Tabi chybí. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zu Tabi. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion à Tabi. Vérifiez internet et réessayez.", "es": "No hay conexión con Tabi. Comprueba internet y vuelve a intentarlo.", "it": "Nessuna connessione con Tabi. Controlli la connessione a Internet e riprovi.", "pt": "Sem conexão com o Tabi. Verifique a internet e tente novamente.", "ja": "Tabiに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "Tabi에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."},
+    "eNet": {"en": "No connection to the server. Check the internet and try again.", "ru": "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.", "cs": "Není spojení se serverem. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zum Server. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion au serveur. Vérifiez Internet et réessayez.", "es": "No hay conexión con el servidor. Comprueba internet e inténtalo de nuevo.", "it": "Nessuna connessione al server. Controlli internet e riprovi.", "pt": "Sem conexão com o servidor. Verifique a internet e tente de novo.", "ja": "サーバーに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "서버에 연결할 수 없습니다. 인터넷을 확인하고 다시 시도하세요."},
     "install": {"en": "Install the app", "ru": "Установить приложение", "cs": "Nainstalovat aplikaci", "de": "App installieren", "fr": "Installer l’application", "es": "Instalar la aplicación", "it": "Installa l’app", "pt": "Instalar o aplicativo", "ja": "アプリをインストール", "ko": "앱 설치"},
     "langLabel": {"en": "Language", "ru": "Язык", "cs": "Jazyk", "de": "Sprache", "fr": "Langue", "es": "Idioma", "it": "Lingua", "pt": "Idioma", "ja": "言語", "ko": "언어"},
     "thAuto": {"en": "System theme", "ru": "Тема системы", "cs": "Motiv systému", "de": "Systemdesign", "fr": "Thème du système", "es": "Tema del sistema", "it": "Tema di sistema", "pt": "Tema do sistema", "ja": "システムのテーマ", "ko": "시스템 테마"},
@@ -134,6 +141,11 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
     "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
+    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
+    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
+    "navData": {"en": "Your data", "ru": "Данные", "cs": "Data", "de": "Deine Daten", "fr": "Tes données", "es": "Tus datos", "it": "I tuoi dati", "pt": "Seus dados", "ja": "データ", "ko": "내 데이터"},
+    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
+    "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
     "accTitle": {"en": "Tabi account", "ru": "Учётная запись Tabi", "cs": "Účet Tabi", "de": "Tabi-Konto", "fr": "Compte Tabi", "es": "Cuenta de Tabi", "it": "Account Tabi", "pt": "Conta Tabi", "ja": "Tabiアカウント", "ko": "Tabi 계정"},
     "accLead": {"en": "The account on the website is the same as in the Tabi app. Sign in to see your collection and the results of scanning media files from your computer.", "ru": "Учётная запись на сайте — та же, что в приложении Tabi. Войдите, чтобы видеть свою коллекцию и итоги разбора медиафайлов с компьютера.", "cs": "Účet na webu je stejný jako v aplikaci Tabi. Přihlaste se a uvidíte svou sbírku a výsledky rozboru mediálních souborů z počítače.", "de": "Das Konto auf der Website ist dasselbe wie in der Tabi-App. Melden Sie sich an, um Ihre Sammlung und die Ergebnisse der Auswertung von Mediendateien vom Computer zu sehen.", "fr": "Le compte du site est le même que dans l’application Tabi. Connectez-vous pour voir votre collection et les résultats de l’analyse des fichiers multimédias de votre ordinateur.", "es": "La cuenta del sitio web es la misma que en la aplicación Tabi. Inicia sesión para ver tu colección y los resultados del análisis de los archivos multimedia de tu ordenador.", "it": "L’account del sito è lo stesso dell’app Tabi. Acceda per vedere la Sua collezione e i risultati dell’analisi dei file multimediali del computer.", "pt": "A conta do site é a mesma do aplicativo Tabi. Entre para ver sua coleção e os resultados da análise dos arquivos de mídia do computador.", "ja": "サイトのアカウントはTabiアプリと同じです。ログインすると、コレクションとパソコンのメディアファイルの分析結果を見られます。", "ko": "사이트 계정은 Tabi 앱과 같습니다. 로그인하면 컬렉션과 컴퓨터 미디어 파일 분석 결과를 볼 수 있습니다."},
     "hColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
@@ -184,6 +196,22 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   }
   $("themeBtn").onclick = function () { theme = theme === "auto" ? "light" : theme === "light" ? "dark" : "auto"; ls.set("tabiTheme", theme === "auto" ? "" : theme); applyTheme(); };
 
+  // Разделы сайта (20.11.2026, Андрей: по сайту нельзя было перемещаться) — как в шапке главной, разбор медиафайлов первым.
+  function renderNav() {
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [["/computer/?lang=" + L, t("title"), "hl"], [base + "how-it-works/", t("navHow")],
+      [base + "collection/", t("navColl")], [base + "your-data/", t("navData")], [base + "faq/", t("navFaq")]];
+    var nav = $("nav"), ml = $("menuList");
+    nav.innerHTML = ""; ml.innerHTML = "";
+    items.forEach(function (it) {
+      var a = document.createElement("a");
+      a.href = it[0]; a.textContent = it[1]; it[2] && (a.className = it[2]);
+      nav.appendChild(a);
+      var li = document.createElement("li"), b = document.createElement("a");
+      b.href = it[0]; b.textContent = it[1];
+      li.appendChild(b); ml.appendChild(li);
+    });
+    $("menuLbl").textContent = t("menu");
+  }
   function applyTexts() {
     document.documentElement.lang = L;
     document.title = "Tabi — " + t("accTitle");
@@ -198,6 +226,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       li.appendChild(b); $("langList").appendChild(li);
     });
     $("homeLink").href = $("fHome").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
+    renderNav();
     $("fHome").textContent = "tabimobile.com";
     $("pol").href = L === "en" ? "/privacy.html" : "/privacy." + L + ".html"; $("pol").textContent = t("pol");
     $("terms").href = L === "en" ? "/terms.html" : "/terms." + L + ".html"; $("terms").textContent = t("terms");
