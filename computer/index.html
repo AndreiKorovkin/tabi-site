@@ -1731,7 +1731,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     show("saveWays", !S && !WAY);
     show("bGoogle", !S && !!WAY);
     var retry = st === "error" && !!saveSt.err && saveSt.err[0] !== "eAuth" && saveSt.err[0] !== "eLimit" && saveSt.err[0] !== "eFull" && saveSt.err[0] !== "eLimitAll";
-    show("vSaved", (has && (st === "saved" || st === "saving")) || retry);
+    // «Итог сохранён» — только сразу после сохранения в это открытие, не при каждом возвращении на страницу.
+    show("vSaved", (has && (st === "saving" || (st === "saved" && !!saveSt.now))) || retry);
     show("savedX", st !== "error");
     if (st === "saving") $("savedX").textContent = t("saving");
     if (st === "saved") $("savedX").textContent = t("saved");
@@ -1835,7 +1836,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       renderDevs();
       // Копия до входа перешла в учётную запись и стёрта сервером.
       AKS && AKS === anonKey(false) && anonForget();
-      saveSt.state = "saved"; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
+      saveSt.state = "saved"; saveSt.now = true; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
       j.special && j.special.n != null && (saveSt.special = j.special);
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
       statSend({ k: "save", n: j.n || 0, letter: j.letter || "" });
