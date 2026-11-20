@@ -156,7 +156,7 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 /* Открытие (20.11.2026, Андрей: сначала мелькал вид «до разбора» с вопросами): пока идут итог браузера и учётная запись —
    только тонкая полоса посередине, затем страница появляется сразу в своём виде. */
 .pc-loader{max-width:320px;margin:22vh auto 0;padding:0 20px}
-main.pc.pc-load{display:none}
+main.pc.pc-load,main.pc.pc-load~.pc-foot{display:none}
 main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
