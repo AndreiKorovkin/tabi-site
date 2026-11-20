@@ -1932,7 +1932,10 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // Pro, сохранённые страницей до 19.11.2026 без устройства): сначала папка, которую снимало ровно одно устройство (то же
   // правило, что у реестра, pc_dev_reg); затем день — устройство, одно снимавшее в тот же день; затем срок — единственное
   // устройство, чей срок съёмки накрывает время точки. Иначе — «Устройство не определено». Когда показан сохранённый итог
-  // учётной записи, точки этого браузера, уже сохранённые в неё, в числе не повторяются: это те же снимки.
+  // учётной записи, точка этого браузера, уже сохранённая в неё, в числе не повторяется, если у учётной записи есть точка
+  // в пределах получаса и 1,5 км (телефон сводит точки медиафайлов к одной на полчаса и около километра): это тот же снимок,
+  // и его устройство переходит к точке учётной записи без устройства. Сохранённые точки без такой пары (их телефон нашёл
+  // сам в своей галерее, и в итог учётной записи с компьютера они не вошли) считаются как точки этого браузера.
   function renderDevs() {
     var box = $("devBox"), list = $("devList");
     if (!box) return;
@@ -1976,8 +1979,22 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         }
         via = "me";
       }
-      p._k = key; p._n = name; p._v = via;
+      p._k = key; p._n = name; p._v = via; p._skip = false; p._v2 = "";
     });
+    if (accShown) {
+      var HB = 1800000, byB = {};
+      A.pts.forEach(function (p) { if (p.acc) { var bk = Math.floor(p[2] / HB); (byB[bk] = byB[bk] || []).push(p); } });
+      A.pts.forEach(function (p) {
+        if (p.acc || !p.sent) return;
+        var bk = Math.floor(p[2] / HB), best = null, bd = 1500;
+        for (var j = bk - 1; j <= bk + 1; j++)
+          (byB[j] || []).forEach(function (q) { if (Math.abs(q[2] - p[2]) <= HB) { var dd = dist(p[0], p[1], q[0], q[1]); dd < bd && (bd = dd, best = q); } });
+        if (!best) return;
+        p._skip = true;
+        best._k === "x" && p._k !== "x" && (best._k = p._k, best._n = p._n);
+        p._v && (best._v2 = p._v);
+      });
+    }
     // Второй проход: дни и сроки съёмки известных устройств.
     var byDay = {}, span = {}, names = {};
     A.pts.forEach(function (p) {
@@ -1996,7 +2013,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       ks.length === 1 && (p._k = ks[0], p._n = names[ks[0]] || "");
     });
     A.pts.forEach(function (p) {
-      if (accShown && !p.acc && p.sent) return;
+      if (p._skip) return;
       var key = p._k, r = rows[key];
       if (!r) { r = rows[key] = { name: p._n, n: 0, y0: 9999, y1: 0, cc: {}, via: {} }; order.push(key); }
       p._n && !r.name && (r.name = p._n);
@@ -2005,6 +2022,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       y < r.y0 && (r.y0 = y); y > r.y1 && (r.y1 = y);
       p.cc && (r.cc[p.cc] = (r.cc[p.cc] || 0) + 1);
       p._v && (r.via[p._v] = 1);
+      p._v2 && (r.via[p._v2] = 1);
     });
     order.sort(function (a, b) { return a === "x" ? 1 : b === "x" ? -1 : rows[b].n - rows[a].n; });
     list.innerHTML = "";
