@@ -25,7 +25,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .pc-main h1{font-size:clamp(26px,2.6vw,34px);line-height:1.15;letter-spacing:-.02em;margin:0}
 .pc-main h2{font-size:20px;margin:0;letter-spacing:-.01em}
 .pc-lead{color:var(--sub);margin:0}
-.pc-side{position:sticky;top:84px;max-height:calc(100vh - 110px);overflow-y:auto;overflow-x:hidden;display:grid;gap:12px;align-content:start}
+.pc-side{max-height:calc(100vh - 110px);overflow-y:auto;overflow-x:hidden;display:grid;gap:12px;align-content:start}
 /* Полосы прокрутки боковых списков — в цветах сайта (18.11.2026, Андрей: белые полосы выглядели чужими). */
 .pc-side{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .pc-side::-webkit-scrollbar{width:8px}
@@ -94,6 +94,26 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-route{margin-top:20px;display:grid;gap:12px}
 /* Под картой — две половины (20.11.2026, Андрей: устройства — левая половина, правая пока пуста). */
 .pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.pc-under.idle{grid-template-columns:minmax(0,600px);justify-content:center}
+/* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
+.pc-tierbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--bg2)}
+.pc-tierbar i{display:block;height:100%;width:0;transition:width .9s ease}
+.pc-tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
+.pc-tier{appearance:none;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer;text-align:left;display:grid;gap:2px;position:relative;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease}
+.pc-tier::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--tc)}
+.pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.pc-tier span{font-size:12.5px;color:var(--sub)}
+.pc-tier:hover{transform:translateY(-2px)}
+.pc-tier[aria-pressed="true"]{box-shadow:0 0 0 2px var(--tc)}
+.pc-tier.zero{opacity:.45}
+/* Вопросы и ответы — справа от устройств: подробности, которые не нужны на главном месте (20.11.2026, Андрей). */
+.pc-faq{border-top:1px solid var(--line);padding:11px 0}
+.pc-faq:first-of-type{border-top:0;padding-top:0}
+.pc-faq summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;line-height:1.4}
+.pc-faq summary::-webkit-details-marker{display:none}
+.pc-faq summary::after{content:" ›";color:var(--sub)}
+.pc-faq[open] summary::after{content:" ⌄"}
+.pc-faq p{margin:8px 0 0;color:var(--sub);font-size:14.5px;line-height:1.5}
 .pc-map{position:relative;border-radius:16px;overflow:hidden;background:var(--bg)}
 .pc-map canvas{width:100%;height:clamp(420px,62vh,720px);display:block;touch-action:none;cursor:grab}
 .pc-map canvas.drag{cursor:grabbing}
@@ -145,10 +165,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     <div id="vPick" hidden style="display:grid;gap:10px">
       <div class="pc-row"><button class="pc-btn" id="bFolder"></button><button class="pc-btn b2" id="bFiles"></button></div>
       <div class="pc-drop" id="drop"></div>
-      <p class="pc-s" id="whole"></p>
-      <p class="pc-s" id="keepHint"></p>
-      <p class="pc-s" id="anonNote"></p>
-      <a href="#" class="pc-link" id="bView"></a>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
       <input type="file" id="fFiles" multiple accept="image/*,video/*,.heic,.heif,.mov,.mp4,.dng,.cr2,.cr3,.nef,.arw,.raf,.orf,.rw2,.json,.gpx,.kml,.tcx,.geojson" hidden>
     </div>
@@ -166,51 +182,41 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
       <p class="pc-t" id="runX" hidden></p>
-      <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul></details>
-      <p class="pc-s" id="sideX" hidden></p>
+      <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul><p class="pc-s" id="sideX" hidden style="margin-top:8px"></p></details>
       <div class="pc-row"><button class="pc-btn b2" id="bMore"></button><button class="pc-btn b2" id="bMoreF"></button></div>
     </div>
-    <!-- Сохранение итога (20.11.2026, Андрей): два пути — «Сохранить итог» и «Перенести на телефон»; оба ведут ко входу
-         через Google или по коду на почту, итог уходит в учётную запись -->
+    <!-- Сохранение (20.11.2026, Андрей): «Сохранить итог» или «Перенести на телефон», затем только «Войти через Google» -->
     <div id="vSave" hidden class="pc-box">
       <h2 id="saveT"></h2>
       <p class="pc-t" id="saveX"></p>
       <div class="pc-row" id="saveWays"><button class="pc-btn" id="bSaveAcc" type="button"></button><button class="pc-btn b2" id="bSavePhone" type="button"></button></div>
-      <div id="inBox" hidden style="display:grid;gap:10px">
-        <p class="pc-s" id="inX"></p>
-        <button class="pc-btn" id="bGoogle"></button>
-        <p class="pc-s" id="orMail"></p>
-        <input class="pc-in" id="mail" type="email" autocomplete="email">
-        <button class="pc-btn b2" id="bCode"></button>
-        <input class="pc-in" id="code" inputmode="numeric" autocomplete="one-time-code" hidden>
-        <button class="pc-btn" id="bVerify" hidden></button>
-      </div>
-      <p class="pc-s" id="who" hidden></p>
-      <label class="pc-chk" id="newsBox"><input type="checkbox" id="news"><span id="newsL"></span></label>
-      <p class="pc-s" id="devNote"></p>
+      <button class="pc-btn" id="bGoogle" type="button" hidden></button>
     </div>
     <div id="vSaved" hidden class="pc-box">
       <p class="pc-t" id="savedX"></p>
       <p class="pc-t" id="mailedX" hidden></p>
       <button class="pc-btn" id="bRetry" hidden></button>
     </div>
-    <!-- Приложение (20.11.2026, Андрей): не реклама, а следующий шаг — продолжить коллекцию на телефоне; код и ссылка
-         Google Play, три шага и экраны приложения; приложение уже есть — одна строка о нём -->
+    <!-- Особые места на снимках по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
+         приложение: код и ссылка Google Play, экраны приложения; приложение уже есть — без строк о нём -->
     <div id="vApp" hidden class="pc-box">
-      <h2 id="appT"></h2>
-      <p class="pc-t" id="appX"></p>
-      <p class="pc-t" id="specialX" hidden style="font-weight:700"></p>
-      <div class="pc-app" id="appGet">
-        <div class="pc-qr" id="qr" role="img"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33"><path stroke="#000" d="M0 0.5h7m1 0h3m7 0h4m1 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m2 0h1m4 0h1m5 0h2m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h3m7 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m5 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m2 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m4 0h1m2 0h1m1 0h6m2 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m7 0h3m1 0h1m1 0h2m-24 1h1m1 0h2m1 0h3m1 0h1m1 0h1m2 0h6m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m-32 1h4m2 0h1m2 0h3m3 0h5m2 0h2m1 0h2m1 0h4m-33 1h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h4m1 0h2m-33 1h1m1 0h4m2 0h3m2 0h1m1 0h2m1 0h1m1 0h1m6 0h1m1 0h1m1 0h1m-32 1h4m2 0h2m3 0h1m3 0h1m1 0h3m2 0h4m1 0h3m-28 1h2m3 0h3m4 0h3m2 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m-32 1h1m1 0h2m2 0h2m2 0h1m2 0h1m4 0h2m1 0h1m2 0h1m1 0h1m1 0h3m-31 1h1m1 0h1m1 0h2m3 0h1m1 0h1m2 0h2m4 0h4m1 0h2m3 0h1m-31 1h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h4m3 0h3m1 0h3m1 0h3m-31 1h1m1 0h2m4 0h1m1 0h4m1 0h1m1 0h1m4 0h3m1 0h1m1 0h2m2 0h1m-32 1h1m3 0h3m3 0h1m3 0h3m2 0h2m4 0h3m1 0h2m-29 1h3m1 0h1m2 0h2m1 0h5m4 0h2m1 0h2m1 0h1m3 0h1m-33 1h2m3 0h3m2 0h1m1 0h1m2 0h7m2 0h1m2 0h1m1 0h3m-32 1h2m2 0h2m1 0h1m1 0h2m3 0h1m1 0h5m1 0h3m1 0h1m2 0h1m2 0h1m-30 1h1m2 0h4m1 0h1m2 0h1m3 0h1m1 0h5m1 0h2m2 0h3m-32 1h1m1 0h1m5 0h2m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m-30 1h1m1 0h1m1 0h1m1 0h3m1 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h2m2 0h3m1 0h2m3 0h2m3 0h2m1 0h1m-32 1h7m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h2m5 0h2m3 0h2m1 0h2m3 0h4m-32 1h1m1 0h3m1 0h1m2 0h1m2 0h2m4 0h11m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m11 0h1m1 0h1m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m3 0h2m2 0h2m2 0h1m-31 1h1m5 0h1m2 0h2m3 0h5m1 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h7m1 0h1m2 0h5m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1"/></svg></div>
-        <div style="display:grid;gap:12px">
-          <ol class="pc-steps"><li id="appS1"></li><li id="appS2"></li><li id="appS3"></li></ol>
-          <div class="pc-row"><a class="pc-btn" id="bPlay2" rel="noopener" target="_blank"></a><button class="pc-btn b2" id="bCopy2" type="button"></button></div>
+      <h2 id="spT"></h2>
+      <div class="pc-tierbar" id="tierBar"></div>
+      <div class="pc-tiers" id="tiers"></div>
+      <p class="pc-s" id="tierHint" aria-live="polite"></p>
+      <div id="appGet" style="display:grid;gap:12px">
+        <p class="pc-t" id="spApp" style="font-weight:700"></p>
+        <div class="pc-app">
+          <div class="pc-qr" id="qr" role="img"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33"><path stroke="#000" d="M0 0.5h7m1 0h3m7 0h4m1 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m2 0h1m4 0h1m5 0h2m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h3m7 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m5 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m2 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m4 0h1m2 0h1m1 0h6m2 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m7 0h3m1 0h1m1 0h2m-24 1h1m1 0h2m1 0h3m1 0h1m1 0h1m2 0h6m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m-32 1h4m2 0h1m2 0h3m3 0h5m2 0h2m1 0h2m1 0h4m-33 1h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h4m1 0h2m-33 1h1m1 0h4m2 0h3m2 0h1m1 0h2m1 0h1m1 0h1m6 0h1m1 0h1m1 0h1m-32 1h4m2 0h2m3 0h1m3 0h1m1 0h3m2 0h4m1 0h3m-28 1h2m3 0h3m4 0h3m2 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m-32 1h1m1 0h2m2 0h2m2 0h1m2 0h1m4 0h2m1 0h1m2 0h1m1 0h1m1 0h3m-31 1h1m1 0h1m1 0h2m3 0h1m1 0h1m2 0h2m4 0h4m1 0h2m3 0h1m-31 1h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h4m3 0h3m1 0h3m1 0h3m-31 1h1m1 0h2m4 0h1m1 0h4m1 0h1m1 0h1m4 0h3m1 0h1m1 0h2m2 0h1m-32 1h1m3 0h3m3 0h1m3 0h3m2 0h2m4 0h3m1 0h2m-29 1h3m1 0h1m2 0h2m1 0h5m4 0h2m1 0h2m1 0h1m3 0h1m-33 1h2m3 0h3m2 0h1m1 0h1m2 0h7m2 0h1m2 0h1m1 0h3m-32 1h2m2 0h2m1 0h1m1 0h2m3 0h1m1 0h5m1 0h3m1 0h1m2 0h1m2 0h1m-30 1h1m2 0h4m1 0h1m2 0h1m3 0h1m1 0h5m1 0h2m2 0h3m-32 1h1m1 0h1m5 0h2m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m-30 1h1m1 0h1m1 0h1m1 0h3m1 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h2m2 0h3m1 0h2m3 0h2m3 0h2m1 0h1m-32 1h7m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h2m5 0h2m3 0h2m1 0h2m3 0h4m-32 1h1m1 0h3m1 0h1m2 0h1m2 0h2m4 0h11m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m11 0h1m1 0h1m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m3 0h2m2 0h2m2 0h1m-31 1h1m5 0h1m2 0h2m3 0h5m1 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h7m1 0h1m2 0h5m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1"/></svg></div>
+          <div style="display:grid;gap:12px;align-content:start">
+            <p class="pc-s" id="spGet"></p>
+            <div class="pc-row"><a class="pc-btn" id="bPlay2" rel="noopener" target="_blank"></a><button class="pc-btn b2" id="bCopy2" type="button"></button></div>
+          </div>
         </div>
+        <div class="pc-shots" id="appShots"></div>
       </div>
-      <div class="pc-shots" id="appShots"></div>
     </div>
     <div class="pc-e" id="err" hidden></div>
-    <p class="pc-s" id="privacyNote"></p>
   </section>
 
   <aside class="pc-card pc-side" id="right" aria-live="polite">
@@ -234,11 +240,15 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   <p class="pc-s" id="mapHint"></p>
 </section>
 <!-- Устройства — под картой, левая половина (20.11.2026, Андрей): с каких устройств что пришло и через какой компьютер -->
-<div class="pc-under">
+<div class="pc-under idle" id="under">
 <section class="pc-card pc-route" id="devBox" hidden>
   <h2 id="hDevs"></h2>
-  <p class="pc-s" id="devMerge"></p>
   <div class="pc-devs" id="devList"></div>
+</section>
+<!-- Вопросы и ответы — справа от устройств (20.11.2026, Андрей): подробности о работе страницы, свёрнутые -->
+<section class="pc-card pc-route" id="faqBox">
+  <h2 id="hFaq"></h2>
+  <div id="faqList"></div>
 </section>
 </div>
 <!-- «Начать заново» — в конце страницы, кнопкой, с окном подтверждения (20.11.2026, Андрей) -->
@@ -275,7 +285,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "getCode": {"en": "Get a code", "ru": "Получить код", "cs": "Získat kód", "de": "Code anfordern", "fr": "Recevoir un code", "es": "Recibir un código", "it": "Ricevi il codice", "pt": "Receber código", "ja": "コードを受け取る", "ko": "코드 받기"},
     "codePh": {"en": "Code from the email", "ru": "Код из письма", "cs": "Kód z e-mailu", "de": "Code aus der E-Mail", "fr": "Code reçu par e-mail", "es": "Código del correo", "it": "Codice dall’e-mail", "pt": "Código do e-mail", "ja": "メールのコード", "ko": "이메일로 받은 코드"},
     "verify": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "who": {"en": "Signed in as {m}", "ru": "Вы вошли: {m}", "cs": "Přihlášeno: {m}", "de": "Angemeldet als {m}", "fr": "Connecté : {m}", "es": "Sesión iniciada: {m}", "it": "Accesso eseguito: {m}", "pt": "Conectado como {m}", "ja": "ログイン中：{m}", "ko": "로그인됨: {m}"},
     "folder": {"en": "Choose a folder", "ru": "Выбрать папку", "cs": "Vybrat složku", "de": "Ordner wählen", "fr": "Choisir un dossier", "es": "Elegir una carpeta", "it": "Scegli una cartella", "pt": "Escolher pasta", "ja": "フォルダを選ぶ", "ko": "폴더 선택"},
     "files": {"en": "Choose files", "ru": "Выбрать файлы", "cs": "Vybrat soubory", "de": "Dateien wählen", "fr": "Choisir des fichiers", "es": "Elegir archivos", "it": "Scegli i file", "pt": "Escolher arquivos", "ja": "ファイルを選ぶ", "ko": "파일 선택"},
     "reading": {"ru": "Прочитано {a} из {b} · с местом съёмки: {n}", "en": "Read {a} of {b} · with a shooting location: {n}", "cs": "Přečteno {a} z {b} · s místem pořízení: {n}", "de": "Gelesen {a} von {b} · mit Aufnahmeort: {n}", "fr": "Lus {a} sur {b} · avec lieu de prise de vue : {n}", "es": "Leídos {a} de {b} · con lugar de captura: {n}", "it": "Letti {a} di {b} · con luogo di scatto: {n}", "pt": "Lidos {a} de {b} · com local da captura: {n}", "ja": "{b} 件中 {a} 件を読み込み · 撮影場所あり：{n}", "ko": "{b}개 중 {a}개 읽음 · 촬영 장소 있음: {n}"},
@@ -284,7 +293,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
     "drop": {"en": "Or drag folders and files here — several at once.", "ru": "Или перетащите сюда папки и файлы — можно несколько сразу.", "cs": "Nebo sem přetáhněte složky a soubory — i několik najednou.", "de": "Oder ziehen Sie Ordner und Dateien hierher – auch mehrere auf einmal.", "fr": "Ou faites glisser ici des dossiers et des fichiers, même plusieurs à la fois.", "es": "O arrastra aquí carpetas y archivos, también varios a la vez.", "it": "Oppure trascini qui cartelle e file, anche più di uno alla volta.", "pt": "Ou arraste pastas e arquivos para cá — vários de uma vez.", "ja": "またはフォルダやファイルをここにドラッグしてください。複数まとめてでもかまいません。", "ko": "또는 폴더와 파일을 여기로 끌어다 놓으세요. 여러 개를 한 번에 놓을 수도 있습니다."},
     "dropHere": {"en": "Drop to add", "ru": "Отпустите, чтобы добавить", "cs": "Pusťte a soubory se přidají", "de": "Loslassen zum Hinzufügen", "fr": "Relâchez pour ajouter", "es": "Suelta para añadir", "it": "Rilasci per aggiungere", "pt": "Solte para adicionar", "ja": "ドロップして追加", "ko": "놓아서 추가"},
-    "whole": {"ru": "Выбирайте папки с фотографиями и видео, а не весь диск: список всех файлов диска браузер собирает очень долго. Папки можно добавлять по очереди — найденное складывается.", "en": "Choose folders with photos and videos rather than the whole drive: the browser takes a very long time to list every file on a drive. You can add folders one after another — the results add up.", "cs": "Vybírejte složky s fotkami a videi, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho. Složky můžete přidávat postupně — nálezy se sčítají.", "de": "Wählen Sie Ordner mit Fotos und Videos statt des ganzen Laufwerks: Die Liste aller Dateien eines Laufwerks erstellt der Browser sehr lange. Ordner lassen sich nacheinander hinzufügen — die Ergebnisse summieren sich.", "fr": "Choisissez des dossiers de photos et de vidéos plutôt que le disque entier : le navigateur met très longtemps à lister tous les fichiers d’un disque. Vous pouvez ajouter les dossiers l’un après l’autre — les résultats s’additionnent.", "es": "Elija carpetas con fotos y vídeos en lugar de todo el disco: el navegador tarda mucho en listar todos los archivos de un disco. Puede añadir carpetas una tras otra: los resultados se suman.", "it": "Scelga cartelle con foto e video invece dell’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco. Può aggiungere le cartelle una dopo l’altra: i risultati si sommano.", "pt": "Escolha pastas com fotos e vídeos em vez do disco inteiro: o navegador demora muito para listar todos os arquivos de um disco. Você pode adicionar pastas uma após a outra — os resultados se somam.", "ja": "ドライブ全体ではなく、写真と動画のフォルダーを選んでください。ドライブ全体のファイル一覧の作成には、ブラウザーが非常に長い時間をかけます。フォルダーは順に追加でき、結果は合算されます。", "ko": "드라이브 전체가 아니라 사진과 동영상 폴더를 선택하세요. 브라우저가 드라이브의 모든 파일 목록을 만드는 데 매우 오래 걸립니다. 폴더는 차례로 추가할 수 있으며 결과는 합산됩니다."},
     "hCountries": {"en": "Countries and regions", "ru": "Страны и регионы", "cs": "Země a regiony", "de": "Länder und Regionen", "fr": "Pays et régions", "es": "Países y regiones", "it": "Paesi e regioni", "pt": "Países e regiões", "ja": "国と地域", "ko": "국가와 지역"},
     "hCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
     "hRoute": {"en": "Route", "ru": "Маршрут", "cs": "Trasa", "de": "Route", "fr": "Itinéraire", "es": "Ruta", "it": "Percorso", "pt": "Trajeto", "ja": "ルート", "ko": "경로"},
@@ -305,17 +313,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "lead": {"en": "Old trips are often kept on a computer. Choose a folder with photos and videos — Tabi will restore countries, cities and the route from them. No account is needed for this.", "ru": "Старые поездки часто хранятся на компьютере. Выберите папку с фотографиями и видео — Tabi восстановит по ним страны, города и маршрут. Учётная запись для этого не нужна.", "cs": "Staré cesty bývají uložené v počítači. Vyberte složku s fotkami a videi — Tabi z nich obnoví země, města a trasu. Účet k tomu není potřeba.", "de": "Alte Reisen liegen oft auf dem Computer. Wählen Sie einen Ordner mit Fotos und Videos — Tabi stellt daraus Länder, Städte und die Route wieder her. Ein Konto ist dafür nicht nötig.", "fr": "Les anciens voyages sont souvent gardés sur l’ordinateur. Choisissez un dossier de photos et de vidéos : Tabi en retrouvera les pays, les villes et l’itinéraire. Aucun compte n’est nécessaire.", "es": "Los viajes antiguos suelen guardarse en el ordenador. Elige una carpeta con fotos y vídeos: Tabi recuperará con ellos países, ciudades y la ruta. No necesitas una cuenta para ello.", "it": "I viaggi passati sono spesso conservati sul computer. Scelga una cartella con foto e video: Tabi ne ricaverà paesi, città e percorso. Non serve un account.", "pt": "Viagens antigas costumam ficar guardadas no computador. Escolha uma pasta com fotos e vídeos — o Tabi restaurará a partir deles os países, as cidades e o trajeto. Não é preciso ter uma conta.", "ja": "昔の旅はパソコンに保存されていることがよくあります。写真と動画のフォルダを選んでください。Tabiが国、都市、ルートを復元します。アカウントは必要ありません。", "ko": "지난 여행은 컴퓨터에 보관되어 있는 경우가 많습니다. 사진과 동영상이 있는 폴더를 선택하세요. Tabi가 이를 바탕으로 국가, 도시와 경로를 복원합니다. 계정은 필요하지 않습니다."},
     "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
     "saving": {"en": "Saving the result…", "ru": "Сохраняем итог…", "cs": "Ukládáme výsledek…", "de": "Das Ergebnis wird gespeichert …", "fr": "Enregistrement du résultat…", "es": "Guardando el resultado…", "it": "Salvataggio del risultato…", "pt": "Salvando o resultado…", "ja": "結果を保存しています…", "ko": "결과를 저장하는 중…"},
-    "saved": {"en": "The result is saved to the account {m}. To come back to it from another computer, open this page and sign in with this email.", "ru": "Итог сохранён в учётной записи {m}. Чтобы вернуться к нему с другого компьютера, откройте эту страницу и войдите с этой почтой.", "cs": "Výsledek je uložen v účtu {m}. Chcete-li se k němu vrátit z jiného počítače, otevřete tuto stránku a přihlaste se tímto e-mailem.", "de": "Das Ergebnis ist im Konto {m} gespeichert. Um von einem anderen Computer darauf zurückzugreifen, öffnen Sie diese Seite und melden Sie sich mit dieser E-Mail-Adresse an.", "fr": "Le résultat est enregistré dans le compte {m}. Pour le retrouver depuis un autre ordinateur, ouvrez cette page et connectez-vous avec cette adresse e-mail.", "es": "El resultado está guardado en la cuenta {m}. Para volver a él desde otro ordenador, abre esta página e inicia sesión con este correo.", "it": "Il risultato è salvato nell’account {m}. Per ritrovarlo da un altro computer, apra questa pagina e acceda con questo indirizzo e-mail.", "pt": "O resultado está salvo na conta {m}. Para voltar a ele de outro computador, abra esta página e entre com este e-mail.", "ja": "結果をアカウント {m} に保存しました。別のパソコンから見るには、このページを開き、このメールアドレスでログインしてください。", "ko": "결과를 계정 {m}에 저장했습니다. 다른 컴퓨터에서 다시 보려면 이 페이지를 열고 이 이메일로 로그인하세요."},
-    "savedNone": {"en": "This result is already saved to the account {m}.", "ru": "Этот итог уже сохранён в учётной записи {m}.", "cs": "Tento výsledek už je uložen v účtu {m}.", "de": "Dieses Ergebnis ist bereits im Konto {m} gespeichert.", "fr": "Ce résultat est déjà enregistré dans le compte {m}.", "es": "Este resultado ya está guardado en la cuenta {m}.", "it": "Questo risultato è già salvato nell’account {m}.", "pt": "Este resultado já está salvo na conta {m}.", "ja": "この結果はすでにアカウント {m} に保存されています。", "ko": "이 결과는 이미 계정 {m}에 저장되어 있습니다."},
+    "saved": {"en": "The result is saved.", "ru": "Итог сохранён.", "cs": "Výsledek je uložen.", "de": "Das Ergebnis ist gespeichert.", "fr": "Le résultat est enregistré.", "es": "El resultado está guardado.", "it": "Il risultato è salvato.", "pt": "O resultado está salvo.", "ja": "結果を保存しました。", "ko": "결과를 저장했습니다."},
     "mailed": {"en": "We have sent the result and the picture of your route to {m}.", "ru": "Итог и картинка маршрута отправлены на {m}.", "cs": "Výsledek a obrázek trasy jsme poslali na {m}.", "de": "Wir haben das Ergebnis und das Bild Ihrer Route an {m} gesendet.", "fr": "Nous avons envoyé le résultat et l’image de votre itinéraire à {m}.", "es": "Hemos enviado el resultado y la imagen de tu ruta a {m}.", "it": "Abbiamo inviato il risultato e l’immagine del Suo percorso a {m}.", "pt": "Enviamos o resultado e a imagem do seu trajeto para {m}.", "ja": "結果とルートの画像を{m}に送信しました。", "ko": "결과와 경로 이미지를 {m}(으)로 보냈습니다."},
-    "special": {"en": "Your photos will add special places to your collection: {n}. The app will show which ones.", "ru": "По вашим снимкам в коллекцию попадут особые места: {n}. Какие именно, покажет приложение.", "cs": "Díky vašim snímkům přibudou ve sbírce výjimečná místa: {n}. Která to jsou, ukáže aplikace.", "de": "Durch Ihre Fotos kommen besondere Orte in Ihre Sammlung: {n}. Welche das sind, zeigt die App.", "fr": "Vos photos ajouteront des lieux d’exception à votre collection : {n}. L’application vous montrera lesquels.", "es": "Tus fotos añadirán lugares especiales a tu colección: {n}. La aplicación te mostrará cuáles.", "it": "Le Sue foto aggiungeranno luoghi speciali alla collezione: {n}. Quali siano, lo mostrerà l’app.", "pt": "Suas fotos vão adicionar lugares especiais à sua coleção: {n}. O aplicativo mostrará quais são.", "ja": "写真から、特別な場所がコレクションに加わります：{n}か所。どの場所かはアプリでわかります。", "ko": "사진으로 특별한 장소가 컬렉션에 더해집니다: {n}곳. 어떤 장소인지는 앱에서 볼 수 있습니다."},
-    "specialMin": {"en": "Your photos will add special places to your collection: at least {n}. The app will show which ones.", "ru": "По вашим снимкам в коллекцию попадут особые места: не меньше {n}. Какие именно, покажет приложение.", "cs": "Díky vašim snímkům přibudou ve sbírce výjimečná místa: nejméně {n}. Která to jsou, ukáže aplikace.", "de": "Durch Ihre Fotos kommen besondere Orte in Ihre Sammlung: mindestens {n}. Welche das sind, zeigt die App.", "fr": "Vos photos ajouteront des lieux d’exception à votre collection : au moins {n}. L’application vous montrera lesquels.", "es": "Tus fotos añadirán lugares especiales a tu colección: al menos {n}. La aplicación te mostrará cuáles.", "it": "Le Sue foto aggiungeranno luoghi speciali alla collezione: almeno {n}. Quali siano, lo mostrerà l’app.", "pt": "Suas fotos vão adicionar lugares especiais à sua coleção: pelo menos {n}. O aplicativo mostrará quais são.", "ja": "写真から、特別な場所がコレクションに加わります：{n}か所以上。どの場所かはアプリでわかります。", "ko": "사진으로 특별한 장소가 컬렉션에 더해집니다: {n}곳 이상. 어떤 장소인지는 앱에서 볼 수 있습니다."},
     "install": {"en": "Install the app", "ru": "Установить приложение", "cs": "Nainstalovat aplikaci", "de": "App installieren", "fr": "Installer l’application", "es": "Instalar la aplicación", "it": "Installa l’app", "pt": "Instalar o aplicativo", "ja": "アプリをインストール", "ko": "앱 설치"},
     "saveT": {"en": "Save the result", "ru": "Сохраните итог", "cs": "Uložte si výsledek", "de": "Ergebnis speichern", "fr": "Enregistrez le résultat", "es": "Guarda el resultado", "it": "Salvi il risultato", "pt": "Salve o resultado", "ja": "結果を保存", "ko": "결과 저장"},
-    "saveX": {"en": "Right now the result is stored only in this browser. Save it to come back to it from any computer, or move it to your phone, where it becomes your collection.", "ru": "Сейчас итог хранится только в этом браузере. Сохраните его, чтобы вернуться к нему с любого компьютера, или перенесите на телефон, где он станет вашей коллекцией.", "cs": "Teď je výsledek uložen jen v tomto prohlížeči. Uložte si ho, abyste se k němu mohli vrátit z kteréhokoli počítače, nebo ho přeneste do telefonu, kde se z něj stane vaše sbírka.", "de": "Im Moment ist das Ergebnis nur in diesem Browser gespeichert. Speichern Sie es, um von jedem Computer darauf zurückzugreifen, oder übertragen Sie es auf Ihr Telefon, wo es zu Ihrer Sammlung wird.", "fr": "Pour l’instant, le résultat n’est conservé que dans ce navigateur. Enregistrez-le pour le retrouver depuis n’importe quel ordinateur, ou transférez-le sur votre téléphone, où il deviendra votre collection.", "es": "Ahora el resultado solo está guardado en este navegador. Guárdalo para volver a él desde cualquier ordenador o pásalo a tu teléfono, donde se convertirá en tu colección.", "it": "Per ora il risultato è conservato solo in questo browser. Lo salvi per ritrovarlo da qualsiasi computer, oppure lo trasferisca sul telefono, dove diventerà la Sua collezione.", "pt": "Por enquanto, o resultado está guardado só neste navegador. Salve-o para voltar a ele de qualquer computador ou passe-o para o seu celular, onde ele se tornará a sua coleção.", "ja": "今のところ、結果はこのブラウザーにだけ保存されています。保存すればどのパソコンからでも見られます。スマートフォンに移せば、あなたのコレクションになります。", "ko": "지금은 결과가 이 브라우저에만 보관되어 있습니다. 저장하면 어느 컴퓨터에서나 다시 볼 수 있고, 휴대폰으로 옮기면 여러분의 컬렉션이 됩니다."},
-    "devNote": {"en": "Together with the points we save the camera model and the folder names: in the app they help to set apart other people’s devices.", "ru": "Вместе с точками сохраняются модель камеры и названия папок: по ним в приложении можно отделить чужие устройства.", "cs": "Spolu s body se ukládá model fotoaparátu a názvy složek: podle nich lze v aplikaci oddělit cizí zařízení.", "de": "Zusammen mit den Punkten werden das Kameramodell und die Ordnernamen gespeichert: Damit lassen sich in der App fremde Geräte abtrennen.", "fr": "Avec les points, nous enregistrons le modèle de l’appareil photo et le nom des dossiers : ils permettent de séparer dans l’application les appareils des autres personnes.", "es": "Junto con los puntos se guardan el modelo de la cámara y los nombres de las carpetas: con ellos, en la aplicación puedes separar los dispositivos de otras personas.", "it": "Insieme ai punti vengono salvati il modello della fotocamera e i nomi delle cartelle: nell’app permettono di separare i dispositivi di altre persone.", "pt": "Junto com os pontos, salvamos o modelo da câmera e os nomes das pastas: com eles, no aplicativo é possível separar os dispositivos de outras pessoas.", "ja": "地点と一緒にカメラの機種とフォルダ名も保存します。アプリでは、これを使ってほかの人の機器を分けられます。", "ko": "지점과 함께 카메라 모델과 폴더 이름도 저장합니다. 앱에서는 이를 이용해 다른 사람의 기기를 구분할 수 있습니다."},
-    "news": {"en": "Send me news about Tabi", "ru": "Присылать мне новости Tabi", "cs": "Posílejte mi novinky o Tabi", "de": "Neuigkeiten über Tabi per E-Mail erhalten", "fr": "M’envoyer les nouveautés de Tabi", "es": "Enviarme novedades de Tabi", "it": "Inviatemi le novità di Tabi", "pt": "Enviar-me novidades do Tabi", "ja": "Tabiのお知らせを受け取る", "ko": "Tabi 소식 받기"},
-    "note": {"en": "Your files never leave the computer: the page reads only the shooting location and time and the camera model. We respect your privacy.", "ru": "Файлы не покидают компьютер: страница читает в них только место и время съёмки и модель камеры. Мы уважаем вашу конфиденциальность.", "cs": "Soubory neopouštějí počítač: stránka v nich čte jen místo a čas pořízení a model fotoaparátu. Respektujeme vaše soukromí.", "de": "Ihre Dateien verlassen den Computer nicht: Die Seite liest nur Aufnahmeort, Aufnahmezeit und Kameramodell. Wir respektieren Ihre Privatsphäre.", "fr": "Vos fichiers ne quittent pas l’ordinateur : la page n’y lit que le lieu et l’heure de prise de vue et le modèle de l’appareil. Nous respectons votre vie privée.", "es": "Tus archivos no salen del ordenador: la página solo lee el lugar y la hora de captura y el modelo de la cámara. Respetamos tu privacidad.", "it": "I file non lasciano il computer: la pagina legge solo luogo e ora dello scatto e il modello della fotocamera. Rispettiamo la Sua privacy.", "pt": "Os arquivos não saem do computador: a página lê neles apenas o local e a hora da captura e o modelo da câmera. Respeitamos a sua privacidade.", "ja": "ファイルはパソコンの外に出ません。ページが読むのは撮影場所、撮影時刻、カメラの機種だけです。私たちはあなたのプライバシーを尊重します。", "ko": "파일은 컴퓨터를 벗어나지 않습니다. 페이지는 촬영 장소와 시간, 카메라 모델만 읽습니다. 우리는 여러분의 개인정보를 존중합니다."},
+    "saveX": {"en": "The result is stored only in this browser. Save it or move it to your phone.", "ru": "Итог хранится только в этом браузере. Сохраните его или перенесите на телефон.", "cs": "Výsledek je uložen jen v tomto prohlížeči. Uložte si ho, nebo ho přeneste do telefonu.", "de": "Das Ergebnis ist nur in diesem Browser gespeichert. Speichern Sie es oder übertragen Sie es auf Ihr Telefon.", "fr": "Le résultat n’est conservé que dans ce navigateur. Enregistrez-le ou transférez-le sur votre téléphone.", "es": "El resultado solo está guardado en este navegador. Guárdalo o pásalo a tu teléfono.", "it": "Il risultato è conservato solo in questo browser. Lo salvi o lo trasferisca sul telefono.", "pt": "O resultado está guardado só neste navegador. Salve-o ou passe-o para o celular.", "ja": "結果はこのブラウザーにだけ保存されています。保存するか、スマートフォンに移してください。", "ko": "결과는 이 브라우저에만 보관되어 있습니다. 저장하거나 휴대폰으로 옮기세요."},
     "eLimit": {"en": "Enough points have been saved today. The rest can be saved tomorrow.", "ru": "На сегодня сохранено достаточно точек. Остальное можно сохранить завтра.", "cs": "Pro dnešek je uloženo dost bodů. Zbytek můžete uložit zítra.", "de": "Für heute sind genug Punkte gespeichert. Den Rest können Sie morgen speichern.", "fr": "Assez de points ont été enregistrés aujourd’hui. Le reste pourra l’être demain.", "es": "Por hoy se han guardado suficientes puntos. El resto puedes guardarlo mañana.", "it": "Per oggi sono stati salvati abbastanza punti. Il resto potrà salvarlo domani.", "pt": "Por hoje, já foram salvos pontos suficientes. O restante pode ser salvo amanhã.", "ja": "今日はこれ以上保存できません。残りは明日保存できます。", "ko": "오늘은 충분한 지점이 저장되었습니다. 나머지는 내일 저장할 수 있습니다."},
     "eFull": {"en": "Your Tabi account already holds the maximum number of points waiting to be checked. Open Tabi on your phone to check them.", "ru": "В вашей учётной записи Tabi уже ждёт проверки наибольшее число точек. Откройте Tabi на телефоне, чтобы проверить их.", "cs": "Ve vašem účtu Tabi už čeká na kontrolu nejvyšší možný počet bodů. Otevřete Tabi v telefonu, aby je zkontrolovalo.", "de": "In Ihrem Tabi-Konto warten bereits so viele Punkte auf die Prüfung, wie möglich ist. Öffnen Sie Tabi auf dem Telefon, um sie zu prüfen.", "fr": "Votre compte Tabi contient déjà le nombre maximal de points en attente de vérification. Ouvrez Tabi sur votre téléphone pour les vérifier.", "es": "Tu cuenta de Tabi ya tiene el número máximo de puntos pendientes de comprobar. Abre Tabi en el teléfono para comprobarlos.", "it": "Nel Suo account Tabi è già in attesa di verifica il numero massimo di punti. Apra Tabi sul telefono per verificarli.", "pt": "Sua conta do Tabi já tem o número máximo de pontos aguardando verificação. Abra o Tabi no telefone para verificá-los.", "ja": "Tabiのアカウントには、確認待ちの地点がすでに上限まであります。スマートフォンでTabiを開いて確認してください。", "ko": "Tabi 계정에 확인을 기다리는 지점이 이미 최대치입니다. 휴대전화에서 Tabi를 열어 확인하세요."},
     "none": {"en": "None of the chosen files contains a shooting location. Choose another folder.", "ru": "Ни в одном из выбранных файлов нет места съёмки. Выберите другую папку.", "cs": "V žádném z vybraných souborů není místo pořízení. Vyberte jinou složku.", "de": "Keine der gewählten Dateien enthält einen Aufnahmeort. Wählen Sie einen anderen Ordner.", "fr": "Aucun des fichiers choisis ne contient de lieu de prise de vue. Choisissez un autre dossier.", "es": "Ninguno de los archivos elegidos contiene el lugar de captura. Elige otra carpeta.", "it": "Nessuno dei file scelti contiene il luogo di scatto. Scelga un’altra cartella.", "pt": "Nenhum dos arquivos escolhidos contém o local da captura. Escolha outra pasta.", "ja": "選んだファイルのどれにも撮影場所がありません。別のフォルダを選んでください。", "ko": "선택한 파일 중 촬영 장소가 있는 파일이 없습니다. 다른 폴더를 선택하세요."},
@@ -334,11 +336,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "zIn": {"en": "Zoom in", "ru": "Приблизить", "cs": "Přiblížit", "de": "Vergrößern", "fr": "Zoomer", "es": "Acercar", "it": "Ingrandisci", "pt": "Aproximar", "ja": "拡大", "ko": "확대"},
     "zOut": {"en": "Zoom out", "ru": "Отдалить", "cs": "Oddálit", "de": "Verkleinern", "fr": "Dézoomer", "es": "Alejar", "it": "Riduci", "pt": "Afastar", "ja": "縮小", "ko": "축소"},
     "zAll": {"en": "Whole route", "ru": "Весь маршрут", "cs": "Celá trasa", "de": "Ganze Route", "fr": "Tout l’itinéraire", "es": "Toda la ruta", "it": "Tutto il percorso", "pt": "Todo o trajeto", "ja": "ルート全体", "ko": "전체 경로"},
-    "viewBtn": {"en": "Show the saved result", "ru": "Показать сохранённый итог", "cs": "Zobrazit uložený výsledek", "de": "Gespeichertes Ergebnis anzeigen", "fr": "Afficher le résultat enregistré", "es": "Mostrar el resultado guardado", "it": "Mostra il risultato salvato", "pt": "Mostrar o resultado salvo", "ja": "保存した結果を表示", "ko": "저장한 결과 보기"},
-    "viewT": {"en": "Saved result", "ru": "Сохранённый итог", "cs": "Uložený výsledek", "de": "Gespeichertes Ergebnis", "fr": "Résultat enregistré", "es": "Resultado guardado", "it": "Risultato salvato", "pt": "Resultado salvo", "ja": "保存した結果", "ko": "저장한 결과"},
-    "viewX": {"en": "Sign in to the Tabi account where you saved the result: the page will show it without a new scan.", "ru": "Войдите в учётную запись Tabi, в которой сохраняли итог, — страница покажет его без нового разбора.", "cs": "Přihlaste se k účtu Tabi, do kterého jste výsledek uložili — stránka ho ukáže bez nového procházení.", "de": "Melden Sie sich in dem Tabi-Konto an, in dem Sie das Ergebnis gespeichert haben — die Seite zeigt es ohne neue Auswertung.", "fr": "Connectez-vous au compte Tabi dans lequel vous avez enregistré le résultat : la page l’affichera sans nouvelle analyse.", "es": "Inicia sesión en la cuenta de Tabi en la que guardaste el resultado: la página lo mostrará sin un nuevo análisis.", "it": "Acceda all’account Tabi in cui ha salvato il risultato: la pagina lo mostrerà senza una nuova analisi.", "pt": "Entre na conta do Tabi em que você salvou o resultado — a página vai mostrá-lo sem uma nova análise.", "ja": "結果を保存したTabiのアカウントにログインしてください。新たに分析しなくても、ページに表示されます。", "ko": "결과를 저장한 Tabi 계정에 로그인하세요. 다시 분석하지 않아도 페이지에 표시됩니다."},
-    "viewNone": {"en": "This account has no saved result.", "ru": "В этой учётной записи сохранённого итога нет.", "cs": "V tomto účtu není uložený žádný výsledek.", "de": "In diesem Konto ist kein Ergebnis gespeichert.", "fr": "Ce compte ne contient aucun résultat enregistré.", "es": "Esta cuenta no tiene ningún resultado guardado.", "it": "In questo account non c’è alcun risultato salvato.", "pt": "Esta conta não tem nenhum resultado salvo.", "ja": "このアカウントには保存した結果がありません。", "ko": "이 계정에는 저장한 결과가 없습니다."},
-    "viewed": {"en": "This is the result saved to the account {m}.", "ru": "Это итог, сохранённый в учётной записи {m}.", "cs": "Toto je výsledek uložený v účtu {m}.", "de": "Das ist das im Konto {m} gespeicherte Ergebnis.", "fr": "Voici le résultat enregistré dans le compte {m}.", "es": "Este es el resultado guardado en la cuenta {m}.", "it": "Questo è il risultato salvato nell’account {m}.", "pt": "Este é o resultado salvo na conta {m}.", "ja": "アカウント {m} に保存された結果です。", "ko": "계정 {m}에 저장된 결과입니다."},
     "listing": {"en": "The browser is collecting the list of files…", "ru": "Браузер собирает список файлов…", "cs": "Prohlížeč sestavuje seznam souborů…", "de": "Der Browser stellt die Dateiliste zusammen …", "fr": "Le navigateur rassemble la liste des fichiers…", "es": "El navegador está reuniendo la lista de archivos…", "it": "Il browser sta raccogliendo l’elenco dei file…", "pt": "O navegador está reunindo a lista de arquivos…", "ja": "ブラウザーがファイルの一覧を集めています…", "ko": "브라우저가 파일 목록을 모으는 중…"},
     "collecting": {"en": "Collecting files: {n}", "ru": "Собираем файлы: {n}", "cs": "Shromažďujeme soubory: {n}", "de": "Dateien werden gesammelt: {n}", "fr": "Collecte des fichiers : {n}", "es": "Reuniendo archivos: {n}", "it": "Raccolta dei file: {n}", "pt": "Reunindo arquivos: {n}", "ja": "ファイルを集めています：{n}", "ko": "파일을 모으는 중: {n}"},
     "eta": {"en": "About {t} left", "ru": "Осталось около {t}", "cs": "Zbývá asi {t}", "de": "Noch etwa {t}", "fr": "Environ {t} restantes", "es": "Quedan unos {t}", "it": "Mancano circa {t}", "pt": "Faltam cerca de {t}", "ja": "残り約{t}", "ko": "약 {t} 남음"},
@@ -352,48 +349,65 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "whyVideo": {"en": "Videos without a place: {n}. Many phones and cameras do not record the place in videos.", "ru": "Видео без места — {n}: многие телефоны и камеры не записывают место в видео.", "cs": "Videa bez místa — {n}: mnoho telefonů a fotoaparátů místo do videí nezapisuje.", "de": "Videos ohne Ort: {n}. Viele Telefone und Kameras speichern in Videos keinen Ort.", "fr": "Vidéos sans lieu : {n}. Beaucoup de téléphones et d’appareils n’enregistrent pas le lieu dans les vidéos.", "es": "Vídeos sin lugar: {n}. Muchos teléfonos y cámaras no registran el lugar en los vídeos.", "it": "Video senza luogo: {n}. Molti telefoni e fotocamere non registrano il luogo nei video.", "pt": "Vídeos sem local: {n}. Muitos telefones e câmeras não registram o local nos vídeos.", "ja": "撮影場所のない動画：{n}。多くのスマートフォンやカメラは動画に撮影場所を記録しません。", "ko": "장소가 없는 동영상: {n}. 많은 휴대전화와 카메라는 동영상에 장소를 기록하지 않습니다."},
     "whyFmt": {"en": "Formats that hold no place or that this page does not read: {n} ({list}).", "ru": "Форматы, в которых места не бывает или которые страница не читает, — {n} ({list}).", "cs": "Formáty, ve kterých místo nebývá nebo které stránka nečte — {n} ({list}).", "de": "Formate ohne Ort oder solche, die diese Seite nicht liest: {n} ({list}).", "fr": "Formats sans lieu ou que cette page ne lit pas : {n} ({list}).", "es": "Formatos sin lugar o que esta página no lee: {n} ({list}).", "it": "Formati senza luogo o che questa pagina non legge: {n} ({list}).", "pt": "Formatos sem local ou que esta página não lê: {n} ({list}).", "ja": "撮影場所を持たない形式、またはこのページが読めない形式：{n}（{list}）。", "ko": "장소가 없거나 이 페이지가 읽지 못하는 형식: {n}({list})."},
     "whySide": {"en": "Place taken from Google Photos descriptions (.json files next to the photos): {n}.", "ru": "Место из описаний Google Фото (файлы .json рядом со снимками): {n}.", "cs": "Místo z popisů Fotek Google (soubory .json vedle snímků): {n}.", "de": "Ort aus den Beschreibungen von Google Fotos übernommen (.json-Dateien neben den Fotos): {n}.", "fr": "Lieu repris des descriptions de Google Photos (fichiers .json à côté des photos) : {n}.", "es": "Lugar tomado de las descripciones de Google Fotos (archivos .json junto a las fotos): {n}.", "it": "Luogo preso dalle descrizioni di Google Foto (file .json accanto alle foto): {n}.", "pt": "Local tirado das descrições do Google Fotos (arquivos .json ao lado das fotos): {n}.", "ja": "Googleフォトの説明（写真の横の.jsonファイル）から撮影場所を取得：{n}。", "ko": "Google 포토 설명(사진 옆의 .json 파일)에서 가져온 장소: {n}."},
-    "keepHint": {"en": "The result is kept in this browser. To have it on other devices and in the Tabi app, save it in your account.", "ru": "Итог хранится в этом браузере. Чтобы он был на других устройствах и в приложении Tabi, сохраните его в учётной записи.", "cs": "Výsledek se uchovává v tomto prohlížeči. Aby byl i na jiných zařízeních a v aplikaci Tabi, uložte ho do účtu.", "de": "Das Ergebnis bleibt in diesem Browser. Damit es auch auf anderen Geräten und in der Tabi-App verfügbar ist, speichern Sie es in Ihrem Konto.", "fr": "Le résultat est conservé dans ce navigateur. Pour l’avoir sur d’autres appareils et dans l’application Tabi, enregistrez-le dans votre compte.", "es": "El resultado se guarda en este navegador. Para tenerlo en otros dispositivos y en la aplicación Tabi, guárdalo en tu cuenta.", "it": "Il risultato resta in questo browser. Per averlo su altri dispositivi e nell’app Tabi, lo salvi nel Suo account.", "pt": "O resultado fica guardado neste navegador. Para tê-lo em outros dispositivos e no aplicativo Tabi, salve-o na sua conta.", "ja": "結果はこのブラウザーに保存されます。ほかの機器やTabiアプリでも見るには、アカウントに保存してください。", "ko": "결과는 이 브라우저에 보관됩니다. 다른 기기와 Tabi 앱에서도 보려면 계정에 저장하세요."},
     "clearBtn": {"en": "Start over", "ru": "Начать заново", "cs": "Začít znovu", "de": "Neu beginnen", "fr": "Recommencer", "es": "Empezar de nuevo", "it": "Ricominciare", "pt": "Começar de novo", "ja": "最初からやり直す", "ko": "처음부터 다시"},
     "tlReading": {"en": "Reading the Google location history…", "ru": "Читаем историю местоположений Google…", "cs": "Čteme historii polohy Google…", "de": "Der Google-Standortverlauf wird gelesen …", "fr": "Lecture de l’historique des positions Google…", "es": "Leyendo el historial de ubicaciones de Google…", "it": "Lettura della cronologia delle posizioni di Google…", "pt": "Lendo o histórico de localização do Google…", "ja": "Googleのロケーション履歴を読み込んでいます…", "ko": "Google 위치 기록을 읽는 중…"},
     "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
     "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "anonNote": {"en": "Right after the scan, the place and time from the files are stored on the Tabi server without an account, under a random key of this browser. If you sign in to your Tabi account, the result moves to it; without sign-in it is erased after 30 days, and “Start over” erases it at once.", "ru": "Сразу после разбора место и время из файлов сохраняются на сервере Tabi без учётной записи, под случайным ключом этого браузера. Если вы войдёте в учётную запись Tabi, итог перейдёт в неё; без входа итог будет стёрт через 30 дней, а «Начать заново» стирает его сразу.", "cs": "Hned po rozboru se místo a čas ze souborů uloží na server Tabi bez účtu, pod náhodným klíčem tohoto prohlížeče. Pokud se přihlásíte do účtu Tabi, výsledek se do něj přesune; bez přihlášení bude za 30 dní smazán a „Začít znovu“ ho smaže hned.", "de": "Gleich nach der Auswertung werden Ort und Zeit aus den Dateien ohne Konto auf dem Tabi-Server gespeichert, unter einem zufälligen Schlüssel dieses Browsers. Wenn Sie sich bei Ihrem Tabi-Konto anmelden, geht das Ergebnis in das Konto über; ohne Anmeldung wird es nach 30 Tagen gelöscht, und „Neu beginnen“ löscht es sofort.", "fr": "Juste après l’analyse, le lieu et l’heure tirés des fichiers sont enregistrés sur le serveur Tabi sans compte, sous une clé aléatoire de ce navigateur. Si vous vous connectez à votre compte Tabi, le résultat y est transféré ; sans connexion, il est effacé au bout de 30 jours, et « Recommencer » l’efface aussitôt.", "es": "Justo después del análisis, el lugar y la hora de los archivos se guardan en el servidor de Tabi sin cuenta, con una clave aleatoria de este navegador. Si inicias sesión en tu cuenta de Tabi, el resultado pasa a ella; sin iniciar sesión se borra a los 30 días, y «Empezar de nuevo» lo borra al instante.", "it": "Subito dopo l’analisi, il luogo e l’ora dei file vengono salvati sul server di Tabi senza account, con una chiave casuale di questo browser. Se accede al Suo account Tabi, il risultato vi viene trasferito; senza accesso viene cancellato dopo 30 giorni, e «Ricominciare» lo cancella subito.", "pt": "Logo após a análise, o local e a hora dos arquivos são salvos no servidor do Tabi sem conta, com uma chave aleatória deste navegador. Se você entrar na sua conta Tabi, o resultado passa para ela; sem entrar, ele é apagado após 30 dias, e “Começar de novo” o apaga na hora.", "ja": "分析の直後、ファイルの場所と時刻はアカウントなしで、このブラウザーのランダムな鍵のもとにTabiのサーバーへ保存されます。Tabiアカウントにログインすると結果はアカウントに移ります。ログインしない場合は30日後に削除され、「最初からやり直す」ですぐに削除できます。", "ko": "분석 직후 파일의 장소와 시간은 계정 없이 이 브라우저의 임의 키로 Tabi 서버에 저장됩니다. Tabi 계정에 로그인하면 결과가 계정으로 옮겨지고, 로그인하지 않으면 30일 후 삭제되며 ‘처음부터 다시’를 누르면 즉시 삭제됩니다."},
     "wholeX": {"ru": "Выбран весь диск. Системные папки и папки программ тоже читаются — последними, после ваших папок.", "en": "The whole drive is selected. System and program folders are read too — last, after your own folders.", "cs": "Vybrán celý disk. Systémové složky a složky programů se také čtou — jako poslední, po vašich složkách.", "de": "Das ganze Laufwerk ist ausgewählt. System- und Programmordner werden ebenfalls gelesen — zuletzt, nach Ihren eigenen Ordnern.", "fr": "Le disque entier est sélectionné. Les dossiers système et de programmes sont aussi lus — en dernier, après vos propres dossiers.", "es": "Está seleccionado todo el disco. Las carpetas del sistema y de programas también se leen, al final, después de sus propias carpetas.", "it": "È selezionato l’intero disco. Anche le cartelle di sistema e dei programmi vengono lette, per ultime, dopo le Sue cartelle.", "pt": "O disco inteiro está selecionado. As pastas do sistema e de programas também são lidas — por último, depois das suas pastas.", "ja": "ドライブ全体が選択されています。システムフォルダーとプログラムフォルダーも、ご自身のフォルダーの後に読み込みます。", "ko": "드라이브 전체가 선택되었습니다. 시스템 폴더와 프로그램 폴더도 사용자 폴더 다음에 마지막으로 읽습니다."},
     "hDevs": {"ru": "Устройства", "en": "Devices", "cs": "Zařízení", "de": "Geräte", "fr": "Appareils", "es": "Dispositivos", "it": "Dispositivi", "pt": "Dispositivos", "ja": "デバイス", "ko": "기기"},
     "devPts": {"ru": "Точек: {n}", "en": "Points: {n}", "cs": "Bodů: {n}", "de": "Punkte: {n}", "fr": "Points : {n}", "es": "Puntos: {n}", "it": "Punti: {n}", "pt": "Pontos: {n}", "ja": "地点：{n}", "ko": "지점: {n}"},
-    "devThis": {"ru": "Через этот компьютер", "en": "Through this computer", "cs": "Přes tento počítač", "de": "Über diesen Computer", "fr": "Par cet ordinateur", "es": "A través de este ordenador", "it": "Tramite questo computer", "pt": "Por este computador", "ja": "このパソコン経由", "ko": "이 컴퓨터 경유"},
-    "devOther": {"ru": "Через компьютер {pc}", "en": "Through the computer {pc}", "cs": "Přes počítač {pc}", "de": "Über den Computer {pc}", "fr": "Par l’ordinateur {pc}", "es": "A través del ordenador {pc}", "it": "Tramite il computer {pc}", "pt": "Pelo computador {pc}", "ja": "パソコン {pc} 経由", "ko": "컴퓨터 {pc} 경유"},
-    "devOtherNone": {"ru": "Через другой компьютер", "en": "Through another computer", "cs": "Přes jiný počítač", "de": "Über einen anderen Computer", "fr": "Par un autre ordinateur", "es": "A través de otro ordenador", "it": "Tramite un altro computer", "pt": "Por outro computador", "ja": "別のパソコン経由", "ko": "다른 컴퓨터 경유"},
     "devNone": {"ru": "Устройство не определено", "en": "Device not identified", "cs": "Zařízení neurčeno", "de": "Gerät nicht bestimmt", "fr": "Appareil non déterminé", "es": "Dispositivo no identificado", "it": "Dispositivo non identificato", "pt": "Dispositivo não identificado", "ja": "デバイス不明", "ko": "기기 확인 불가"},
     "sysRead": {"ru": "Системные папки и папки программ: прочитано файлов — {a}, с местом съёмки — {b}.", "en": "System and program folders: files read — {a}, with a shooting location — {b}.", "cs": "Systémové složky a složky programů: přečteno souborů — {a}, s místem pořízení — {b}.", "de": "System- und Programmordner: gelesene Dateien — {a}, mit Aufnahmeort — {b}.", "fr": "Dossiers système et de programmes : fichiers lus — {a}, avec lieu de prise de vue — {b}.", "es": "Carpetas del sistema y de programas: archivos leídos — {a}, con lugar de captura — {b}.", "it": "Cartelle di sistema e dei programmi: file letti — {a}, con luogo di scatto — {b}.", "pt": "Pastas do sistema e de programas: arquivos lidos — {a}, com local da captura — {b}.", "ja": "システムフォルダーとプログラムフォルダー：読み込んだファイル {a}、撮影場所あり {b}", "ko": "시스템 폴더와 프로그램 폴더: 읽은 파일 {a}, 촬영 장소 있음 {b}"},
-    "moreFolder": {"ru": "Добавить папку", "en": "Add a folder", "cs": "Přidat složku", "de": "Ordner hinzufügen", "fr": "Ajouter un dossier", "es": "Añadir una carpeta", "it": "Aggiungi una cartella", "pt": "Adicionar uma pasta", "ja": "フォルダーを追加", "ko": "폴더 추가"},
-    "moreFiles": {"ru": "Добавить файлы", "en": "Add files", "cs": "Přidat soubory", "de": "Dateien hinzufügen", "fr": "Ajouter des fichiers", "es": "Añadir archivos", "it": "Aggiungi file", "pt": "Adicionar arquivos", "ja": "ファイルを追加", "ko": "파일 추가"},
+    "moreFolder": {"en": "Add a whole folder", "ru": "Добавить папку целиком", "cs": "Přidat celou složku", "de": "Ganzen Ordner hinzufügen", "fr": "Ajouter un dossier entier", "es": "Añadir una carpeta entera", "it": "Aggiungi una cartella intera", "pt": "Adicionar uma pasta inteira", "ja": "フォルダーごと追加", "ko": "폴더 전체 추가"},
+    "moreFiles": {"en": "Add separate files", "ru": "Добавить отдельные файлы", "cs": "Přidat jednotlivé soubory", "de": "Einzelne Dateien hinzufügen", "fr": "Ajouter des fichiers séparés", "es": "Añadir archivos sueltos", "it": "Aggiungi singoli file", "pt": "Adicionar arquivos avulsos", "ja": "ファイルを個別に追加", "ko": "파일 따로 추가"},
     "runDir": {"ru": "Папка «{name}»: прочитано файлов — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Folder “{name}”: files read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Složka „{name}“: přečteno souborů — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ordner „{name}“: gelesene Dateien — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Dossier « {name} » : fichiers lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Carpeta «{name}»: archivos leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "Cartella «{name}»: file letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Pasta “{name}”: arquivos lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "フォルダー「{name}」：読み込んだファイル {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "폴더 “{name}”: 읽은 파일 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
     "runFiles": {"ru": "Выбранные файлы: прочитано — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Chosen files: read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Vybrané soubory: přečteno — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ausgewählte Dateien: gelesen — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Fichiers choisis : lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Archivos elegidos: leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "File scelti: letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Arquivos escolhidos: lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "選んだファイル：読み込み {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "선택한 파일: 읽음 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
     "runNoPlace": {"ru": "В этих файлах нет места съёмки: камера его не записала.", "en": "These files contain no shooting location: the camera did not record it.", "cs": "Tyto soubory neobsahují místo pořízení: fotoaparát ho nezaznamenal.", "de": "Diese Dateien enthalten keinen Aufnahmeort: Die Kamera hat ihn nicht gespeichert.", "fr": "Ces fichiers ne contiennent pas de lieu de prise de vue : l’appareil ne l’a pas enregistré.", "es": "Estos archivos no contienen lugar de captura: la cámara no lo registró.", "it": "Questi file non contengono il luogo di scatto: la fotocamera non lo ha registrato.", "pt": "Estes arquivos não contêm local da captura: a câmera não o registrou.", "ja": "これらのファイルには撮影場所がありません。カメラが記録していません。", "ko": "이 파일에는 촬영 장소가 없습니다. 카메라가 기록하지 않았습니다."},
     "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже были в итоге.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
-    "devMerge": {"ru": "Снимки одного устройства, сделанные в пределах 150 м и 20 минут, считаются одной точкой.", "en": "Shots from one device taken within 150 m and 20 minutes of each other count as one point.", "cs": "Snímky jednoho zařízení pořízené do 150 m a 20 minut od sebe se počítají jako jeden bod.", "de": "Aufnahmen eines Geräts innerhalb von 150 m und 20 Minuten zählen als ein Punkt.", "fr": "Les prises d’un même appareil faites à moins de 150 m et de 20 minutes d’intervalle comptent pour un seul point.", "es": "Las fotos de un mismo dispositivo tomadas a menos de 150 m y 20 minutos entre sí cuentan como un solo punto.", "it": "Gli scatti di uno stesso dispositivo fatti entro 150 m e 20 minuti l’uno dall’altro contano come un solo punto.", "pt": "As fotos de um mesmo dispositivo feitas a menos de 150 m e 20 minutos umas das outras contam como um único ponto.", "ja": "同じデバイスで150 m・20分以内に撮影された写真は1地点として数えます。", "ko": "같은 기기로 150 m, 20분 이내에 찍은 사진은 한 지점으로 셉니다."},
     "saveAcc": {"en": "Save the result", "ru": "Сохранить итог", "cs": "Uložit výsledek", "de": "Ergebnis speichern", "fr": "Enregistrer le résultat", "es": "Guardar el resultado", "it": "Salva il risultato", "pt": "Salvar o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "savePhone": {"en": "Move to my phone", "ru": "Перенести на телефон", "cs": "Přenést do telefonu", "de": "Aufs Telefon übertragen", "fr": "Transférer sur mon téléphone", "es": "Pasar a mi teléfono", "it": "Trasferisci sul telefono", "pt": "Passar para o celular", "ja": "スマートフォンに移す", "ko": "휴대폰으로 옮기기"},
-    "inX": {"en": "Sign in with Google or with a code sent to your email, and the result will be saved to your account. If you don’t have an account yet, it is created automatically.", "ru": "Войдите через Google или по коду на почту, и итог сохранится в вашей учётной записи. Если её ещё нет, она создастся сама.", "cs": "Přihlaste se přes Google nebo kódem z e-mailu a výsledek se uloží do vašeho účtu. Pokud účet ještě nemáte, vytvoří se sám.", "de": "Melden Sie sich mit Google oder mit einem Code per E-Mail an, dann wird das Ergebnis in Ihrem Konto gespeichert. Falls Sie noch kein Konto haben, wird es automatisch angelegt.", "fr": "Connectez-vous avec Google ou avec un code reçu par e-mail, et le résultat sera enregistré dans votre compte. Si vous n’avez pas encore de compte, il sera créé automatiquement.", "es": "Inicia sesión con Google o con un código enviado a tu correo y el resultado se guardará en tu cuenta. Si aún no tienes cuenta, se creará automáticamente.", "it": "Acceda con Google o con un codice ricevuto per e-mail e il risultato verrà salvato nel Suo account. Se non ha ancora un account, verrà creato automaticamente.", "pt": "Entre com o Google ou com um código enviado ao seu e-mail, e o resultado será salvo na sua conta. Se você ainda não tem uma conta, ela será criada automaticamente.", "ja": "Googleまたはメールに届くコードでログインすると、結果がアカウントに保存されます。アカウントがまだなければ、自動で作成されます。", "ko": "Google 또는 이메일로 받은 코드로 로그인하면 결과가 계정에 저장됩니다. 아직 계정이 없으면 자동으로 만들어집니다."},
-    "inXp": {"en": "Sign in with Google or with a code sent to your email: the result will be saved to your account, and the app on your phone will take it from there. If you don’t have an account yet, it is created automatically.", "ru": "Войдите через Google или по коду на почту: итог сохранится в вашей учётной записи, и приложение на телефоне возьмёт его оттуда. Если учётной записи ещё нет, она создастся сама.", "cs": "Přihlaste se přes Google nebo kódem z e-mailu: výsledek se uloží do vašeho účtu a aplikace v telefonu si ho odtud vezme. Pokud účet ještě nemáte, vytvoří se sám.", "de": "Melden Sie sich mit Google oder mit einem Code per E-Mail an: Das Ergebnis wird in Ihrem Konto gespeichert, und die App auf Ihrem Telefon holt es von dort. Falls Sie noch kein Konto haben, wird es automatisch angelegt.", "fr": "Connectez-vous avec Google ou avec un code reçu par e-mail : le résultat sera enregistré dans votre compte, et l’application de votre téléphone le récupérera. Si vous n’avez pas encore de compte, il sera créé automatiquement.", "es": "Inicia sesión con Google o con un código enviado a tu correo: el resultado se guardará en tu cuenta y la aplicación del teléfono lo tomará de ahí. Si aún no tienes cuenta, se creará automáticamente.", "it": "Acceda con Google o con un codice ricevuto per e-mail: il risultato verrà salvato nel Suo account e l’app sul telefono lo prenderà da lì. Se non ha ancora un account, verrà creato automaticamente.", "pt": "Entre com o Google ou com um código enviado ao seu e-mail: o resultado será salvo na sua conta, e o aplicativo no celular vai buscá-lo de lá. Se você ainda não tem uma conta, ela será criada automaticamente.", "ja": "Googleまたはメールに届くコードでログインしてください。結果がアカウントに保存され、スマートフォンのアプリがそこから受け取ります。アカウントがまだなければ、自動で作成されます。", "ko": "Google 또는 이메일로 받은 코드로 로그인하세요. 결과가 계정에 저장되고, 휴대폰의 앱이 그곳에서 가져갑니다. 아직 계정이 없으면 자동으로 만들어집니다."},
     "openPlay": {"en": "Open in Google Play", "ru": "Открыть в Google Play", "cs": "Otevřít v Google Play", "de": "In Google Play öffnen", "fr": "Ouvrir dans Google Play", "es": "Abrir en Google Play", "it": "Apri in Google Play", "pt": "Abrir no Google Play", "ja": "Google Playで開く", "ko": "Google Play에서 열기"},
-    "appT": {"en": "Keep building your collection on your phone", "ru": "Продолжите собирать коллекцию на телефоне", "cs": "Pokračujte ve sbírce v telefonu", "de": "Sammeln Sie auf dem Telefon weiter", "fr": "Continuez votre collection sur votre téléphone", "es": "Sigue completando tu colección en el teléfono", "it": "Continui la Sua collezione sul telefono", "pt": "Continue a sua coleção no celular", "ja": "スマートフォンでコレクションを続けましょう", "ko": "휴대폰에서 컬렉션을 이어 가세요"},
-    "appX": {"en": "The Tabi app marks the countries, cities and places you visit by itself, and it will add this result to your collection.", "ru": "Приложение Tabi само отмечает страны, города и места, где вы бываете, а этот итог добавит в вашу коллекцию.", "cs": "Aplikace Tabi sama zaznamenává země, města a místa, kde jste byli, a tento výsledek přidá do vaší sbírky.", "de": "Die Tabi-App hält Länder, Städte und Orte, an denen Sie sind, selbst fest und fügt dieses Ergebnis Ihrer Sammlung hinzu.", "fr": "L’application Tabi note d’elle-même les pays, les villes et les lieux où vous passez, et elle ajoutera ce résultat à votre collection.", "es": "La aplicación Tabi registra por sí sola los países, ciudades y lugares donde estás, y añadirá este resultado a tu colección.", "it": "L’app Tabi registra da sola i Paesi, le città e i luoghi in cui si trova e aggiungerà questo risultato alla Sua collezione.", "pt": "O aplicativo Tabi registra sozinho os países, cidades e lugares por onde você passa, e vai adicionar este resultado à sua coleção.", "ja": "Tabiアプリは、訪れた国・都市・場所を自動で記録し、この結果もコレクションに加えます。", "ko": "Tabi 앱은 방문한 나라와 도시, 장소를 스스로 기록하고, 이 결과도 컬렉션에 더합니다."},
-    "appHas": {"en": "The Tabi app is already on your phone {model}. Open it, and it will offer to add this result to your collection.", "ru": "Приложение Tabi уже стоит на вашем телефоне {model}. Откройте его, и оно предложит добавить этот итог в коллекцию.", "cs": "Aplikaci Tabi už máte v telefonu {model}. Otevřete ji a nabídne vám přidat tento výsledek do sbírky.", "de": "Die Tabi-App ist bereits auf Ihrem Telefon {model}. Öffnen Sie sie, dann bietet sie an, dieses Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "L’application Tabi est déjà sur votre téléphone {model}. Ouvrez-la : elle vous proposera d’ajouter ce résultat à votre collection.", "es": "La aplicación Tabi ya está en tu teléfono {model}. Ábrela y te ofrecerá añadir este resultado a tu colección.", "it": "L’app Tabi è già sul Suo telefono {model}. La apra e Le proporrà di aggiungere questo risultato alla collezione.", "pt": "O aplicativo Tabi já está no seu celular {model}. Abra-o, e ele vai oferecer adicionar este resultado à sua coleção.", "ja": "Tabiアプリはすでにお使いのスマートフォン（{model}）に入っています。開くと、この結果をコレクションに加えるよう案内されます。", "ko": "Tabi 앱이 이미 휴대폰({model})에 설치되어 있습니다. 앱을 열면 이 결과를 컬렉션에 추가하도록 안내합니다."},
-    "appHas0": {"en": "The Tabi app is already on your phone. Open it, and it will offer to add this result to your collection.", "ru": "Приложение Tabi уже стоит на вашем телефоне. Откройте его, и оно предложит добавить этот итог в коллекцию.", "cs": "Aplikaci Tabi už máte v telefonu. Otevřete ji a nabídne vám přidat tento výsledek do sbírky.", "de": "Die Tabi-App ist bereits auf Ihrem Telefon. Öffnen Sie sie, dann bietet sie an, dieses Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "L’application Tabi est déjà sur votre téléphone. Ouvrez-la : elle vous proposera d’ajouter ce résultat à votre collection.", "es": "La aplicación Tabi ya está en tu teléfono. Ábrela y te ofrecerá añadir este resultado a tu colección.", "it": "L’app Tabi è già sul Suo telefono. La apra e Le proporrà di aggiungere questo risultato alla collezione.", "pt": "O aplicativo Tabi já está no seu celular. Abra-o, e ele vai oferecer adicionar este resultado à sua coleção.", "ja": "Tabiアプリはすでにお使いのスマートフォンに入っています。開くと、この結果をコレクションに加えるよう案内されます。", "ko": "Tabi 앱이 이미 휴대폰에 설치되어 있습니다. 앱을 열면 이 결과를 컬렉션에 추가하도록 안내합니다."},
-    "appS1": {"en": "Point your phone’s camera at the code, or open Google Play and install Tabi.", "ru": "Наведите камеру телефона на код или откройте Google Play и установите Tabi.", "cs": "Namiřte fotoaparát telefonu na kód, nebo otevřete Google Play a nainstalujte Tabi.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und installieren Sie Tabi.", "fr": "Pointez l’appareil photo de votre téléphone vers le code, ou ouvrez Google Play et installez Tabi.", "es": "Apunta la cámara del teléfono al código o abre Google Play e instala Tabi.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play e installi Tabi.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e instale o Tabi.", "ja": "スマートフォンのカメラでコードを読み取るか、Google PlayでTabiをインストールしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play에서 Tabi를 설치하세요."},
-    "appS2": {"en": "Sign in to the app with {m}.", "ru": "Войдите в приложении с почтой {m}.", "cs": "V aplikaci se přihlaste e-mailem {m}.", "de": "Melden Sie sich in der App mit {m} an.", "fr": "Connectez-vous à l’application avec {m}.", "es": "Inicia sesión en la aplicación con {m}.", "it": "Acceda all’app con {m}.", "pt": "Entre no aplicativo com {m}.", "ja": "アプリに {m} でログインしてください。", "ko": "앱에 {m}(으)로 로그인하세요."},
-    "appS3": {"en": "The app will offer to add this result to your collection.", "ru": "Приложение предложит добавить этот итог в коллекцию.", "cs": "Aplikace vám nabídne přidat tento výsledek do sbírky.", "de": "Die App bietet an, dieses Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "L’application vous proposera d’ajouter ce résultat à votre collection.", "es": "La aplicación te ofrecerá añadir este resultado a tu colección.", "it": "L’app Le proporrà di aggiungere questo risultato alla collezione.", "pt": "O aplicativo vai oferecer adicionar este resultado à sua coleção.", "ja": "アプリが、この結果をコレクションに加えるよう案内します。", "ko": "앱이 이 결과를 컬렉션에 추가하도록 안내합니다."},
     "shotA": {"en": "City map in the Tabi app", "ru": "Карта города в приложении Tabi", "cs": "Mapa města v aplikaci Tabi", "de": "Stadtkarte in der Tabi-App", "fr": "Carte d’une ville dans l’application Tabi", "es": "Mapa de una ciudad en la aplicación Tabi", "it": "Mappa di una città nell’app Tabi", "pt": "Mapa de uma cidade no aplicativo Tabi", "ja": "Tabiアプリの都市マップ", "ko": "Tabi 앱의 도시 지도"},
     "shotB": {"en": "A special place in the Tabi app", "ru": "Особое место в приложении Tabi", "cs": "Výjimečné místo v aplikaci Tabi", "de": "Ein besonderer Ort in der Tabi-App", "fr": "Un lieu d’exception dans l’application Tabi", "es": "Un lugar especial en la aplicación Tabi", "it": "Un luogo speciale nell’app Tabi", "pt": "Um lugar especial no aplicativo Tabi", "ja": "Tabiアプリの特別な場所", "ko": "Tabi 앱의 특별한 장소"},
     "shotC": {"en": "World map in the Tabi app", "ru": "Карта мира в приложении Tabi", "cs": "Mapa světa v aplikaci Tabi", "de": "Weltkarte in der Tabi-App", "fr": "Carte du monde dans l’application Tabi", "es": "Mapa del mundo en la aplicación Tabi", "it": "Mappa del mondo nell’app Tabi", "pt": "Mapa-múndi no aplicativo Tabi", "ja": "Tabiアプリの世界地図", "ko": "Tabi 앱의 세계 지도"},
     "qrLbl": {"en": "Code with a link to Tabi on Google Play", "ru": "Код со ссылкой на Tabi в Google Play", "cs": "Kód s odkazem na Tabi v Google Play", "de": "Code mit einem Link zu Tabi in Google Play", "fr": "Code avec un lien vers Tabi sur Google Play", "es": "Código con un enlace a Tabi en Google Play", "it": "Codice con il link a Tabi su Google Play", "pt": "Código com o link para o Tabi no Google Play", "ja": "Google PlayのTabiへのリンクのコード", "ko": "Google Play의 Tabi 링크 코드"},
     "dlgT": {"en": "Start over?", "ru": "Начать заново?", "cs": "Začít znovu?", "de": "Neu beginnen?", "fr": "Recommencer ?", "es": "¿Empezar de nuevo?", "it": "Ricominciare?", "pt": "Começar de novo?", "ja": "最初からやり直しますか？", "ko": "처음부터 다시 시작할까요?"},
     "dlgX": {"en": "The result of this analysis will disappear from the page and from this browser, and its copy from the Tabi server. It can’t be restored, only by analysing the files again.", "ru": "Итог этого разбора исчезнет со страницы и из этого браузера, а его копия — с сервера Tabi. Вернуть его будет нельзя, только разобрать файлы заново.", "cs": "Výsledek této analýzy zmizí ze stránky a z tohoto prohlížeče a jeho kopie ze serveru Tabi. Obnovit ho nepůjde, jen znovu projít soubory.", "de": "Das Ergebnis dieser Auswertung verschwindet von der Seite und aus diesem Browser, seine Kopie vom Tabi-Server. Es lässt sich nicht wiederherstellen, nur durch eine neue Auswertung der Dateien.", "fr": "Le résultat de cette analyse disparaîtra de la page et de ce navigateur, et sa copie du serveur Tabi. Il ne pourra pas être restauré, seulement refait en analysant à nouveau les fichiers.", "es": "El resultado de este análisis desaparecerá de la página y de este navegador, y su copia del servidor de Tabi. No se podrá recuperar, solo volver a analizar los archivos.", "it": "Il risultato di questa analisi sparirà dalla pagina e da questo browser, e la sua copia dal server di Tabi. Non si potrà recuperare, solo rifare analizzando di nuovo i file.", "pt": "O resultado desta análise vai desaparecer da página e deste navegador, e a cópia dele, do servidor do Tabi. Não será possível recuperá-lo, só analisar os arquivos de novo.", "ja": "この分析の結果は、ページとこのブラウザーから消え、Tabiのサーバー上のコピーも削除されます。元に戻すことはできず、ファイルをもう一度分析するしかありません。", "ko": "이 분석 결과가 페이지와 이 브라우저에서 사라지고, Tabi 서버의 사본도 삭제됩니다. 되돌릴 수 없으며, 파일을 다시 분석해야 합니다."},
-    "dlgXacc": {"en": "The result will disappear from this page and from this browser. What is saved to the account {m} stays: you can open it again with “Show the saved result”.", "ru": "Итог исчезнет с этой страницы и из этого браузера. Сохранённое в учётной записи {m} останется: его можно снова открыть кнопкой «Показать сохранённый итог».", "cs": "Výsledek zmizí z této stránky a z tohoto prohlížeče. Co je uloženo v účtu {m}, zůstane: znovu to otevřete tlačítkem „Zobrazit uložený výsledek“.", "de": "Das Ergebnis verschwindet von dieser Seite und aus diesem Browser. Was im Konto {m} gespeichert ist, bleibt erhalten: Sie öffnen es wieder mit „Gespeichertes Ergebnis anzeigen“.", "fr": "Le résultat disparaîtra de cette page et de ce navigateur. Ce qui est enregistré dans le compte {m} reste : vous pourrez le rouvrir avec « Afficher le résultat enregistré ».", "es": "El resultado desaparecerá de esta página y de este navegador. Lo guardado en la cuenta {m} se conserva: puedes volver a abrirlo con «Mostrar el resultado guardado».", "it": "Il risultato sparirà da questa pagina e da questo browser. Quanto salvato nell’account {m} resta: potrà riaprirlo con «Mostra il risultato salvato».", "pt": "O resultado vai desaparecer desta página e deste navegador. O que está salvo na conta {m} continua lá: você pode abri-lo de novo com “Mostrar o resultado salvo”.", "ja": "結果はこのページとこのブラウザーから消えます。アカウント {m} に保存した内容は残り、「保存した結果を表示」でもう一度開けます。", "ko": "결과가 이 페이지와 이 브라우저에서 사라집니다. 계정 {m}에 저장된 내용은 그대로 남으며, ‘저장한 결과 보기’로 다시 열 수 있습니다."},
-    "dlgNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"}
+    "dlgNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
+    "spT": {"en": "Special places in your photos: {n}", "ru": "Особые места на ваших снимках: {n}", "cs": "Výjimečná místa na vašich snímcích: {n}", "de": "Besondere Orte auf Ihren Fotos: {n}", "fr": "Lieux d’exception sur vos photos : {n}", "es": "Lugares especiales en tus fotos: {n}", "it": "Luoghi speciali nelle Sue foto: {n}", "pt": "Lugares especiais nas suas fotos: {n}", "ja": "写真に写った特別な場所：{n}か所", "ko": "사진 속 특별한 장소: {n}곳"},
+    "spTMin": {"en": "Special places in your photos: at least {n}", "ru": "Особые места на ваших снимках: не меньше {n}", "cs": "Výjimečná místa na vašich snímcích: nejméně {n}", "de": "Besondere Orte auf Ihren Fotos: mindestens {n}", "fr": "Lieux d’exception sur vos photos : au moins {n}", "es": "Lugares especiales en tus fotos: al menos {n}", "it": "Luoghi speciali nelle Sue foto: almeno {n}", "pt": "Lugares especiais nas suas fotos: pelo menos {n}", "ja": "写真に写った特別な場所：{n}か所以上", "ko": "사진 속 특별한 장소: {n}곳 이상"},
+    "tCommon": {"en": "Common", "ru": "Обычные", "cs": "Běžná", "de": "Gewöhnliche", "fr": "Communs", "es": "Comunes", "it": "Comuni", "pt": "Comuns", "ja": "定番", "ko": "일반"},
+    "tRare": {"en": "Rare", "ru": "Редкие", "cs": "Vzácná", "de": "Seltene", "fr": "Rares", "es": "Raros", "it": "Rari", "pt": "Raros", "ja": "名勝", "ko": "희귀"},
+    "tEpic": {"en": "Epic", "ru": "Эпические", "cs": "Epická", "de": "Epische", "fr": "Épiques", "es": "Épicos", "it": "Epici", "pt": "Épicos", "ja": "絶景", "ko": "에픽"},
+    "tLegendary": {"en": "Legendary", "ru": "Легендарные", "cs": "Legendární", "de": "Legendäre", "fr": "Légendaires", "es": "Legendarios", "it": "Leggendari", "pt": "Lendários", "ja": "秘境", "ko": "전설"},
+    "tMythic": {"en": "Unique", "ru": "Уникальные", "cs": "Unikátní", "de": "Einzigartige", "fr": "Uniques", "es": "Únicos", "it": "Unici", "pt": "Únicos", "ja": "唯一無二", "ko": "유일"},
+    "tDangerous": {"en": "Dangerous", "ru": "Опасные", "cs": "Nebezpečná", "de": "Gefährliche", "fr": "Dangereux", "es": "Peligrosos", "it": "Pericolosi", "pt": "Perigosos", "ja": "危険", "ko": "위험"},
+    "tierHint": {"en": "{tier}: you have {n} of {all} on the whole Tabi map.", "ru": "{tier}: у вас {n} из {all} на всей карте Tabi.", "cs": "{tier}: máte {n} z {all} na celé mapě Tabi.", "de": "{tier}: Sie haben {n} von {all} auf der ganzen Tabi-Karte.", "fr": "{tier} : vous en avez {n} sur {all} sur toute la carte Tabi.", "es": "{tier}: tienes {n} de {all} en todo el mapa de Tabi.", "it": "{tier}: ne ha {n} su {all} in tutta la mappa di Tabi.", "pt": "{tier}: você tem {n} de {all} em todo o mapa do Tabi.", "ja": "{tier}：Tabiの地図全体の{all}か所のうち{n}か所。", "ko": "{tier}: Tabi 지도 전체 {all}곳 중 {n}곳."},
+    "spApp": {"en": "The Tabi app will show which places these are.", "ru": "Какие это места, покажет приложение Tabi.", "cs": "Která místa to jsou, ukáže aplikace Tabi.", "de": "Welche Orte das sind, zeigt die Tabi-App.", "fr": "L’application Tabi vous montrera de quels lieux il s’agit.", "es": "La aplicación Tabi te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app Tabi.", "pt": "O aplicativo Tabi mostrará quais lugares são.", "ja": "どの場所かはTabiアプリでわかります。", "ko": "어떤 장소인지는 Tabi 앱에서 볼 수 있습니다."},
+    "spGet": {"en": "Point your phone’s camera at the code or open Google Play, then sign in to the app with the same Google account.", "ru": "Наведите камеру телефона на код или откройте Google Play, затем войдите в приложении с той же учётной записью Google.", "cs": "Namiřte fotoaparát telefonu na kód nebo otevřete Google Play a pak se v aplikaci přihlaste stejným účtem Google.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und melden Sie sich dann in der App mit demselben Google-Konto an.", "fr": "Pointez l’appareil photo de votre téléphone vers le code ou ouvrez Google Play, puis connectez-vous à l’application avec le même compte Google.", "es": "Apunta la cámara del teléfono al código o abre Google Play y luego inicia sesión en la aplicación con la misma cuenta de Google.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play, poi acceda all’app con lo stesso account Google.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e depois entre no aplicativo com a mesma conta do Google.", "ja": "スマートフォンのカメラでコードを読み取るかGoogle Playを開き、同じGoogleアカウントでアプリにログインしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play를 연 다음, 같은 Google 계정으로 앱에 로그인하세요."},
+    "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
+    "q1": {"en": "Are my photos uploaded anywhere?", "ru": "Снимки куда-нибудь загружаются?", "cs": "Nahrávají se moje snímky někam?", "de": "Werden meine Fotos irgendwohin hochgeladen?", "fr": "Mes photos sont-elles envoyées quelque part ?", "es": "¿Se suben mis fotos a algún sitio?", "it": "Le mie foto vengono caricate da qualche parte?", "pt": "Minhas fotos são enviadas para algum lugar?", "ja": "写真はどこかにアップロードされますか？", "ko": "사진이 어딘가에 업로드되나요?"},
+    "a1": {"en": "No. The page reads only the place and time of shooting and the camera model; the photos and videos themselves stay on your computer.", "ru": "Нет. Страница читает в файлах только место и время съёмки и модель камеры; сами снимки и видео остаются на компьютере.", "cs": "Ne. Stránka čte v souborech jen místo a čas pořízení a model fotoaparátu; samotné snímky a videa zůstávají v počítači.", "de": "Nein. Die Seite liest in den Dateien nur Aufnahmeort, Aufnahmezeit und Kameramodell; die Fotos und Videos selbst bleiben auf Ihrem Computer.", "fr": "Non. La page ne lit dans les fichiers que le lieu et l’heure de prise de vue et le modèle d’appareil ; les photos et vidéos restent sur votre ordinateur.", "es": "No. La página solo lee en los archivos el lugar y la hora de la toma y el modelo de cámara; las fotos y los vídeos se quedan en tu ordenador.", "it": "No. La pagina legge nei file solo il luogo e l’ora dello scatto e il modello della fotocamera; foto e video restano sul Suo computer.", "pt": "Não. A página lê nos arquivos só o local e a hora da foto e o modelo da câmera; as fotos e os vídeos ficam no seu computador.", "ja": "いいえ。ページがファイルから読むのは撮影場所・撮影時刻・カメラの機種だけで、写真や動画そのものはパソコンに残ります。", "ko": "아니요. 페이지는 파일에서 촬영 장소와 시간, 카메라 모델만 읽으며, 사진과 동영상은 컴퓨터에 그대로 남습니다."},
+    "q2": {"en": "Where is the result stored?", "ru": "Где хранится итог?", "cs": "Kde se výsledek ukládá?", "de": "Wo wird das Ergebnis gespeichert?", "fr": "Où le résultat est-il conservé ?", "es": "¿Dónde se guarda el resultado?", "it": "Dove viene conservato il risultato?", "pt": "Onde o resultado fica guardado?", "ja": "結果はどこに保存されますか？", "ko": "결과는 어디에 보관되나요?"},
+    "a2": {"en": "In this browser: it stays when you close the page. Right after the analysis, the places and times are also kept on the Tabi server without an account for 30 days. A saved result is kept in your account.", "ru": "В этом браузере: закроете страницу — он останется. Сразу после разбора место и время сохраняются и на сервере Tabi без учётной записи, на 30 дней. Сохранённый итог хранится в вашей учётной записи.", "cs": "V tomto prohlížeči: když stránku zavřete, zůstane. Hned po analýze se místa a časy uloží i na server Tabi bez účtu, na 30 dní. Uložený výsledek je ve vašem účtu.", "de": "In diesem Browser: Es bleibt erhalten, wenn Sie die Seite schließen. Gleich nach der Auswertung werden Orte und Zeiten auch ohne Konto für 30 Tage auf dem Tabi-Server gespeichert. Ein gespeichertes Ergebnis liegt in Ihrem Konto.", "fr": "Dans ce navigateur : il reste quand vous fermez la page. Juste après l’analyse, les lieux et les heures sont aussi conservés sur le serveur Tabi sans compte, pendant 30 jours. Un résultat enregistré est conservé dans votre compte.", "es": "En este navegador: se conserva aunque cierres la página. Justo después del análisis, los lugares y las horas también se guardan en el servidor de Tabi sin cuenta durante 30 días. Un resultado guardado se conserva en tu cuenta.", "it": "In questo browser: resta anche se chiude la pagina. Subito dopo l’analisi luoghi e orari vengono conservati anche sul server di Tabi senza account, per 30 giorni. Un risultato salvato resta nel Suo account.", "pt": "Neste navegador: ele continua lá quando você fecha a página. Logo após a análise, os locais e horários também ficam no servidor do Tabi sem conta, por 30 dias. Um resultado salvo fica na sua conta.", "ja": "このブラウザーです。ページを閉じても残ります。分析の直後には、場所と時刻がアカウントなしでTabiのサーバーにも30日間保存されます。保存した結果はアカウントに保管されます。", "ko": "이 브라우저에 보관되며, 페이지를 닫아도 남아 있습니다. 분석 직후에는 장소와 시간이 계정 없이 Tabi 서버에도 30일 동안 저장됩니다. 저장한 결과는 계정에 보관됩니다."},
+    "q3": {"en": "How do I move the result to my phone?", "ru": "Как перенести итог на телефон?", "cs": "Jak výsledek přenést do telefonu?", "de": "Wie übertrage ich das Ergebnis auf mein Telefon?", "fr": "Comment transférer le résultat sur mon téléphone ?", "es": "¿Cómo paso el resultado a mi teléfono?", "it": "Come trasferisco il risultato sul telefono?", "pt": "Como passo o resultado para o celular?", "ja": "結果をスマートフォンに移すには？", "ko": "결과를 휴대폰으로 옮기려면?"},
+    "a3": {"en": "Press “Move to my phone” and sign in with Google. Then install the Tabi app and sign in with the same Google account: the app will offer to add the result to your collection.", "ru": "Нажмите «Перенести на телефон» и войдите через Google. Затем установите приложение Tabi и войдите в нём с той же учётной записью Google: приложение предложит добавить итог в коллекцию.", "cs": "Stiskněte „Přenést do telefonu“ a přihlaste se přes Google. Pak nainstalujte aplikaci Tabi a přihlaste se v ní stejným účtem Google: aplikace nabídne přidat výsledek do sbírky.", "de": "Drücken Sie „Aufs Telefon übertragen“ und melden Sie sich mit Google an. Installieren Sie dann die Tabi-App und melden Sie sich dort mit demselben Google-Konto an: Die App bietet an, das Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "Appuyez sur « Transférer sur mon téléphone » et connectez-vous avec Google. Installez ensuite l’application Tabi et connectez-vous avec le même compte Google : l’application proposera d’ajouter le résultat à votre collection.", "es": "Pulsa «Pasar a mi teléfono» e inicia sesión con Google. Luego instala la aplicación Tabi e inicia sesión con la misma cuenta de Google: la aplicación te ofrecerá añadir el resultado a tu colección.", "it": "Prema «Trasferisci sul telefono» e acceda con Google. Poi installi l’app Tabi e acceda con lo stesso account Google: l’app Le proporrà di aggiungere il risultato alla collezione.", "pt": "Toque em “Passar para o celular” e entre com o Google. Depois instale o aplicativo Tabi e entre com a mesma conta do Google: o aplicativo vai oferecer adicionar o resultado à sua coleção.", "ja": "「スマートフォンに移す」を押してGoogleでログインします。次にTabiアプリをインストールし、同じGoogleアカウントでログインすると、結果をコレクションに加えるよう案内されます。", "ko": "‘휴대폰으로 옮기기’를 누르고 Google로 로그인하세요. 그런 다음 Tabi 앱을 설치하고 같은 Google 계정으로 로그인하면 앱이 결과를 컬렉션에 추가하도록 안내합니다."},
+    "q4": {"en": "What is the difference between “Add a whole folder” and “Add separate files”?", "ru": "Чем отличаются «Добавить папку целиком» и «Добавить отдельные файлы»?", "cs": "Jaký je rozdíl mezi „Přidat celou složku“ a „Přidat jednotlivé soubory“?", "de": "Was ist der Unterschied zwischen „Ganzen Ordner hinzufügen“ und „Einzelne Dateien hinzufügen“?", "fr": "Quelle est la différence entre « Ajouter un dossier entier » et « Ajouter des fichiers séparés » ?", "es": "¿En qué se diferencian «Añadir una carpeta entera» y «Añadir archivos sueltos»?", "it": "Che differenza c’è tra «Aggiungi una cartella intera» e «Aggiungi singoli file»?", "pt": "Qual é a diferença entre “Adicionar uma pasta inteira” e “Adicionar arquivos avulsos”?", "ja": "「フォルダーごと追加」と「ファイルを個別に追加」の違いは？", "ko": "‘폴더 전체 추가’와 ‘파일 따로 추가’는 어떻게 다른가요?"},
+    "a4": {"en": "A folder is added with all the files inside it, including subfolders. Separate files are chosen one by one or several from one folder. You can also drag folders and files onto the page.", "ru": "Папка добавляется со всеми файлами внутри, включая вложенные папки. Отдельные файлы выбираются по одному или по несколько из одной папки. Папки и файлы можно и перетащить на страницу.", "cs": "Složka se přidá se všemi soubory uvnitř včetně podsložek. Jednotlivé soubory se vybírají po jednom nebo po několika z jedné složky. Složky i soubory lze také přetáhnout na stránku.", "de": "Ein Ordner wird mit allen Dateien darin hinzugefügt, auch mit Unterordnern. Einzelne Dateien wählen Sie einzeln oder mehrere aus einem Ordner. Ordner und Dateien lassen sich auch auf die Seite ziehen.", "fr": "Un dossier est ajouté avec tous les fichiers qu’il contient, sous-dossiers compris. Les fichiers séparés se choisissent un par un ou à plusieurs dans un même dossier. Vous pouvez aussi glisser dossiers et fichiers sur la page.", "es": "Una carpeta se añade con todos los archivos que contiene, incluidas las subcarpetas. Los archivos sueltos se eligen de uno en uno o varios de una misma carpeta. También puedes arrastrar carpetas y archivos a la página.", "it": "Una cartella viene aggiunta con tutti i file che contiene, sottocartelle comprese. I singoli file si scelgono uno alla volta o più insieme da una stessa cartella. Cartelle e file si possono anche trascinare sulla pagina.", "pt": "A pasta é adicionada com todos os arquivos dentro dela, inclusive as subpastas. Os arquivos avulsos são escolhidos um a um ou vários de uma mesma pasta. Você também pode arrastar pastas e arquivos para a página.", "ja": "フォルダーは、サブフォルダーも含め中のファイルごと追加されます。個別のファイルは、1つずつ、または同じフォルダーから複数選べます。フォルダーやファイルはページにドラッグすることもできます。", "ko": "폴더는 하위 폴더를 포함해 안의 모든 파일과 함께 추가됩니다. 파일은 하나씩 또는 한 폴더에서 여러 개를 골라 추가합니다. 폴더와 파일은 페이지로 끌어다 놓을 수도 있습니다."},
+    "q5": {"en": "Why are there fewer points than photos?", "ru": "Почему точек меньше, чем снимков?", "cs": "Proč je bodů méně než snímků?", "de": "Warum gibt es weniger Punkte als Fotos?", "fr": "Pourquoi y a-t-il moins de points que de photos ?", "es": "¿Por qué hay menos puntos que fotos?", "it": "Perché ci sono meno punti che foto?", "pt": "Por que há menos pontos do que fotos?", "ja": "地点の数が写真より少ないのはなぜですか？", "ko": "왜 사진보다 지점이 적나요?"},
+    "a5": {"en": "A series of shots by one device within 150 m and 20 minutes counts as one point.", "ru": "Серия снимков одного устройства в пределах 150 м и 20 минут считается одной точкой.", "cs": "Série snímků jednoho zařízení v okruhu 150 m a během 20 minut se počítá jako jeden bod.", "de": "Eine Serie von Aufnahmen eines Geräts innerhalb von 150 m und 20 Minuten zählt als ein Punkt.", "fr": "Une série de prises de vue d’un même appareil dans un rayon de 150 m et en 20 minutes compte comme un seul point.", "es": "Una serie de fotos de un mismo dispositivo dentro de 150 m y 20 minutos cuenta como un solo punto.", "it": "Una serie di scatti dello stesso dispositivo entro 150 m e 20 minuti conta come un solo punto.", "pt": "Uma série de fotos de um mesmo aparelho dentro de 150 m e 20 minutos conta como um único ponto.", "ja": "同じ機器で150 m以内・20分以内に撮った一連の写真は、1つの地点として数えます。", "ko": "한 기기로 150 m 이내, 20분 이내에 찍은 연속 사진은 하나의 지점으로 셉니다."},
+    "q6": {"en": "Which files can I choose?", "ru": "Какие файлы подходят?", "cs": "Které soubory se hodí?", "de": "Welche Dateien eignen sich?", "fr": "Quels fichiers puis-je choisir ?", "es": "¿Qué archivos sirven?", "it": "Quali file posso scegliere?", "pt": "Quais arquivos servem?", "ja": "どのファイルが使えますか？", "ko": "어떤 파일을 고를 수 있나요?"},
+    "a6": {"en": "Photos and videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), a Google location history export and route files GPX, KML, TCX and GeoJSON. Choose folders rather than the whole disk: the browser takes a very long time to list every file on a disk.", "ru": "Фотографии и видео (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), выгрузка истории местоположений Google и файлы маршрута GPX, KML, TCX и GeoJSON. Выбирайте папки, а не весь диск: список всех файлов диска браузер собирает очень долго.", "cs": "Fotografie a videa (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), export historie polohy Google a soubory trasy GPX, KML, TCX a GeoJSON. Vybírejte složky, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho.", "de": "Fotos und Videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), ein Export des Google-Standortverlaufs und Routendateien GPX, KML, TCX und GeoJSON. Wählen Sie Ordner statt der ganzen Festplatte: Die Liste aller Dateien einer Festplatte stellt der Browser sehr lange zusammen.", "fr": "Photos et vidéos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un export de l’historique des positions Google et des fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Choisissez des dossiers plutôt que tout le disque : le navigateur met très longtemps à lister tous les fichiers d’un disque.", "es": "Fotos y vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), una exportación del historial de ubicaciones de Google y archivos de ruta GPX, KML, TCX y GeoJSON. Elige carpetas, no el disco entero: el navegador tarda mucho en listar todos los archivos de un disco.", "it": "Foto e video (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un’esportazione della cronologia delle posizioni di Google e file di percorso GPX, KML, TCX e GeoJSON. Scelga cartelle, non l’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco.", "pt": "Fotos e vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), uma exportação do histórico de localização do Google e arquivos de trajeto GPX, KML, TCX e GeoJSON. Escolha pastas, não o disco inteiro: o navegador demora muito para listar todos os arquivos de um disco.", "ja": "写真と動画（JPEG、HEIC、PNG、WebP、MP4、MOV、RAW）、Googleのロケーション履歴のエクスポート、ルートファイル（GPX、KML、TCX、GeoJSON）です。ディスク全体ではなくフォルダーを選んでください。ディスク全体のファイル一覧を作るにはブラウザーがとても時間をかけます。", "ko": "사진과 동영상(JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google 위치 기록 내보내기, 경로 파일 GPX, KML, TCX, GeoJSON입니다. 디스크 전체가 아니라 폴더를 고르세요. 디스크의 모든 파일 목록을 만드는 데 브라우저가 아주 오래 걸립니다."},
+    "q7": {"en": "What is saved together with the points?", "ru": "Что сохраняется вместе с точками?", "cs": "Co se ukládá spolu s body?", "de": "Was wird zusammen mit den Punkten gespeichert?", "fr": "Qu’est-ce qui est enregistré avec les points ?", "es": "¿Qué se guarda junto con los puntos?", "it": "Che cosa viene salvato insieme ai punti?", "pt": "O que é salvo junto com os pontos?", "ja": "地点と一緒に何が保存されますか？", "ko": "지점과 함께 무엇이 저장되나요?"},
+    "a7": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."},
+    "q8": {"en": "What are special places?", "ru": "Что такое особые места?", "cs": "Co jsou výjimečná místa?", "de": "Was sind besondere Orte?", "fr": "Que sont les lieux d’exception ?", "es": "¿Qué son los lugares especiales?", "it": "Che cosa sono i luoghi speciali?", "pt": "O que são lugares especiais?", "ja": "特別な場所とは？", "ko": "특별한 장소란?"},
+    "a8": {"en": "Places of the Tabi collection: sights, museums, parks, peaks and more. By rarity they are common, rare, epic, legendary and unique.", "ru": "Места коллекции Tabi: достопримечательности, музеи, парки, вершины и другие. По редкости они бывают обычными, редкими, эпическими, легендарными и уникальными.", "cs": "Místa sbírky Tabi: pamětihodnosti, muzea, parky, vrcholy a další. Podle vzácnosti jsou běžná, vzácná, epická, legendární a unikátní.", "de": "Orte der Tabi-Sammlung: Sehenswürdigkeiten, Museen, Parks, Gipfel und mehr. Nach Seltenheit sind sie gewöhnlich, selten, episch, legendär und einzigartig.", "fr": "Les lieux de la collection Tabi : monuments, musées, parcs, sommets et autres. Selon leur rareté, ils sont communs, rares, épiques, légendaires et uniques.", "es": "Los lugares de la colección de Tabi: monumentos, museos, parques, cumbres y más. Según su rareza son comunes, raros, épicos, legendarios y únicos.", "it": "I luoghi della collezione Tabi: monumenti, musei, parchi, vette e altro. Per rarità sono comuni, rari, epici, leggendari e unici.", "pt": "Os lugares da coleção do Tabi: pontos turísticos, museus, parques, picos e outros. Pela raridade, são comuns, raros, épicos, lendários e únicos.", "ja": "Tabiのコレクションの場所です。名所、博物館、公園、山頂などがあり、希少度によって定番・名勝・絶景・秘境・唯一無二に分かれます。", "ko": "Tabi 컬렉션의 장소로, 명소, 박물관, 공원, 봉우리 등이 있습니다. 희귀도에 따라 일반, 희귀, 에픽, 전설, 유일로 나뉩니다."},
+    "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
+    "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
+    "dlgDevX": {"en": "The points of {name} will disappear from this result. You can bring them back by choosing the folder with its photos again.", "ru": "Точки устройства {name} исчезнут из этого итога. Вернуть их можно, снова выбрав папку с его снимками.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Vrátit je můžete tak, že znovu vyberete složku s jeho snímky.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. Sie kommen zurück, wenn Sie den Ordner mit seinen Fotos erneut auswählen.", "fr": "Les points de {name} disparaîtront de ce résultat. Vous pourrez les récupérer en choisissant à nouveau le dossier avec ses photos.", "es": "Los puntos de {name} desaparecerán de este resultado. Puedes recuperarlos eligiendo de nuevo la carpeta con sus fotos.", "it": "I punti di {name} spariranno da questo risultato. Potrà recuperarli scegliendo di nuovo la cartella con le sue foto.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Você pode recuperá-los escolhendo de novo a pasta com as fotos dele.", "ja": "{name}の地点がこの結果から消えます。その機器の写真が入ったフォルダーをもう一度選べば元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 그 기기의 사진이 있는 폴더를 다시 고르면 되돌릴 수 있습니다."},
+    "eAnonLimit": {"en": "Today the server no longer accepts results without signing in. The result is kept in this browser; save it so that it is not lost.", "ru": "Сегодня сервер больше не принимает итоги без входа. Итог хранится в этом браузере — сохраните его, чтобы он не потерялся.", "cs": "Dnes už server nepřijímá výsledky bez přihlášení. Výsledek je uložen v tomto prohlížeči — uložte si ho, aby se neztratil.", "de": "Heute nimmt der Server keine Ergebnisse ohne Anmeldung mehr an. Das Ergebnis ist in diesem Browser gespeichert — speichern Sie es, damit es nicht verloren geht.", "fr": "Aujourd’hui, le serveur n’accepte plus de résultats sans connexion. Le résultat est conservé dans ce navigateur : enregistrez-le pour ne pas le perdre.", "es": "Hoy el servidor ya no acepta resultados sin iniciar sesión. El resultado está guardado en este navegador: guárdalo para no perderlo.", "it": "Oggi il server non accetta più risultati senza accesso. Il risultato è conservato in questo browser: lo salvi per non perderlo.", "pt": "Hoje o servidor não aceita mais resultados sem login. O resultado está guardado neste navegador: salve-o para não perdê-lo.", "ja": "本日はログインなしの結果をサーバーが受け付けられません。結果はこのブラウザーに保存されています。失わないように保存してください。", "ko": "오늘은 서버가 로그인 없는 결과를 더 받지 않습니다. 결과는 이 브라우저에 보관되어 있으니, 잃지 않도록 저장하세요."},
+    "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые итоги. Итог останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -459,19 +473,17 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     $("fHome").href = $("homeLink").href; $("fHome").textContent = "tabimobile.com";
     $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
     $("credits").textContent = t("credits");
-    var set = { title: "title", lead: "lead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", bFolder: "folder", bFiles: "files",
-      bMore: "moreFolder", bMoreF: "moreFiles", devMerge: "devMerge", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
-      bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
-      bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint",
-      bClear: "clearBtn", slow: "slow", anonNote: "anonNote", hDevs: "hDevs", bSaveAcc: "saveAcc", bSavePhone: "savePhone", appT: "appT",
-      appS1: "appS1", appS3: "appS3", dlgT: "dlgT", dlgNo: "dlgNo", dlgYes: "clearBtn" };
+    var set = { title: "title", lead: "lead", bGoogle: "google", bFolder: "folder", bFiles: "files", bMore: "moreFolder", bMoreF: "moreFiles",
+      drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", bRetry: "retry", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
+      bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", mapHint: "mapHint", bClear: "clearBtn", slow: "slow",
+      hDevs: "hDevs", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
     shotsLang = "";
+    renderFaq();
     $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
-    $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh");
     $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); TACC.repaint && TACC.repaint();
     $("over").textContent = t("dropHere");
     errKey && err(errKey, errArgs);
@@ -497,69 +509,19 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
     exchange(String(e.data.tabiCode)).then(function (s) { s && signedIn(); });
   });
-  $("bGoogle").onclick = function () { TACC.google(BACK + "?lang=" + L, stash); };
-  // Код на почту: и вход, и новая учётная запись — одно действие, как в приложении (капча — в общем сценарии входа).
-  $("bCode").onclick = function () {
-    var m = $("mail").value.trim();
-    if (!/^\S+@\S+\.\S+$/.test(m)) return;
-    $("bCode").disabled = true;
-    err(null);
-    TACC.otp(m, L).then(function (ok) {
-      $("bCode").disabled = false;
-      if (!ok) return err("eNet");
-      $("code").hidden = false; $("bVerify").hidden = false; $("code").focus();
-    }).catch(function () { $("bCode").disabled = false; err("eNet"); });
-  };
-  $("bVerify").onclick = function () {
-    var m = $("mail").value.trim(), c = $("code").value.replace(/\D/g, "");
-    if (c.length < 6) return;
-    err(null);
-    TACC.verify(m, c).then(function (s) {
-      if (!s) return err("eCode");
-      S = s;
-      signedIn();
-    }).catch(function () { err("eNet"); });
-  };
+  $("bGoogle").onclick = function () { ls.set("tabiPcWay", WAY); TACC.google(BACK + "?lang=" + L, stash); };
   function signedIn() {
     err(null);
     if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
+    WAY = WAY || ls.get("tabiPcWay") || "";
+    ls.set("tabiPcWay", "");
     renderSave();
-    A.pts.some(function (p) { return !p.sent; }) ? doSave() : loadSaved();
+    A.pts.some(function (p) { return !p.sent; }) && doSave();
   }
-  // Сохранённый итог учётной записи — без нового разбора (18.11.2026, Андрей): к нему можно вернуться в любой день.
-  // NA — после «Начать заново» сохранённый итог учётной записи сам не открывается (кнопка «Показать сохранённый итог»);
-  // WAY — путь сохранения: «acc» — сохранить итог, «phone» — перенести на телефон (20.11.2026, Андрей).
-  var VIEW = false, loadedOnce = false, LOOSE = new Set(), NA = "tabiPcNoAuto", NOAUTO = false, WAY = "", ME = null, meAsked = false;
+  // Сайт не показывает ничего из учётной записи (20.11.2026, Андрей): только разбор этого браузера и после сохранения —
+  // число особых мест на снимках. WAY — путь сохранения: «acc» — сохранить итог, «phone» — перенести на телефон.
+  var LOOSE = new Set(), WAY = "", ME = null, meAsked = false;
   var loose = function (p) { return Math.round(p[0] * 1e3) + ":" + Math.round(p[1] * 1e3) + ":" + Math.floor(p[2] / 60000); };
-  $("bView").onclick = function (e) { e.preventDefault(); VIEW = true; NOAUTO = false; ls.set(NA, ""); S ? loadSaved() : (renderSave(), $("vSave").scrollIntoView({ behavior: "smooth", block: "center" })); };
-  function loadSaved() {
-    if (loadedOnce) return;
-    loadedOnce = true;
-    fresh().then(function (s) {
-      if (!s) return null;
-      return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "mine" }) })
-        .then(function (r) { return r.ok ? r.json() : null; });
-    }).then(function (j) {
-      if (!j || !j.ok) { loadedOnce = false; return renderSave(); }
-      var add = [];
-      // Реестр устройств учётной записи и устройство каждой точки («pc:<устройство>.<папка>»): по нему блок «Устройства»
-      // называет устройство и компьютер, через который оно пришло (19.11.2026).
-      REG = {};
-      (j.devs || []).forEach(function (d) { REG[d.id] = d; });
-      var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)(?:\.(\d+))?$/.exec(String(d)); return m ? [+m[1], m[2] == null ? -1 : +m[2]] : [0, -1]; });
-      (j.p || []).forEach(function (q) {
-        var p = [q[0], q[1], q[2], -1, -1], k = loose(p), dd = dsOf[q[3]] || [0, -1];
-        p.rd = dd[0]; p.rf = dd[1];
-        if (LOOSE.has(k)) return;
-        // acc — точка из учётной записи: в браузере не хранится (чужой человек за этим компьютером её не увидит).
-        LOOSE.add(k); p.sent = true; p.acc = true; add.push(p);
-      });
-      if (!add.length) { A.pts.length || (saveSt.state = "none"); return renderSave(); }
-      saveSt.view = true;
-      show("vPick", false); show("vWork", true);
-      geo().then(function () { return reveal(add, A.shown ? 2500 : 4000); });
-    }).catch(function () { loadedOnce = false; err("eNet"); });
-  }
 
   // Пока браузер собирает список выбранной папки (на десятках тысяч файлов — полминуты и дольше), страница показывает, что
   // работа идёт (18.11.2026, Андрей: казалось, что сайт завис). Окно выбора закрылось — вернулся фокус: ждём список;
@@ -589,25 +551,23 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   $("bMoreF").onclick = function () { RUN.src = "files"; pick($("fFiles")); };
   $("fFolder").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
   $("fFiles").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
-  // «Начать заново» (20.11.2026, Андрей): кнопкой в конце страницы и только после подтверждения в окне. Вошедшему
-  // сохранённый итог учётной записи после этого сам не открывается — его возвращает «Показать сохранённый итог».
-  $("bClear").onclick = function () {
-    var acc = !!S && A.pts.some(function (p) { return p.sent || p.acc; });
-    $("dlgX").textContent = t(acc ? "dlgXacc" : "dlgX", { m: (S && S.mail) || "" });
-    $("dlgYes").disabled = false;
+  // Окно подтверждения (20.11.2026, Андрей): «Начать заново» и удаление устройства — только после него.
+  var DLG = null;
+  function ask(title, text, yes, fn) {
+    $("dlgT").textContent = title; $("dlgX").textContent = text; $("dlgYes").textContent = yes; $("dlgYes").disabled = false;
+    DLG = fn;
     var d = $("dlg");
     d.showModal ? d.showModal() : d.setAttribute("open", "");
+  }
+  $("dlgNo").onclick = function () { DLG = null; var d = $("dlg"); d.close ? d.close() : d.removeAttribute("open"); };
+  $("dlgYes").onclick = function () { $("dlgYes").disabled = true; DLG && DLG(); };
+  $("bClear").onclick = function () {
+    ask(t("dlgT"), t("dlgX"), t("clearBtn"), function () { keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); }); });
   };
-  $("dlgNo").onclick = function () { var d = $("dlg"); d.close ? d.close() : d.removeAttribute("open"); };
-  $("dlgYes").onclick = function () {
-    $("dlgYes").disabled = true;
-    S && ls.set(NA, uidOf(S) || "");
-    keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
-  };
-  // Два пути (20.11.2026, Андрей): «Сохранить итог» и «Перенести на телефон» — оба ко входу; после сохранения путь
-  // «на телефон» сразу показывает, как поставить приложение.
-  $("bSaveAcc").onclick = function () { WAY = "acc"; renderSave(); $("inBox").scrollIntoView({ behavior: "smooth", block: "nearest" }); };
-  $("bSavePhone").onclick = function () { WAY = "phone"; renderSave(); $("inBox").scrollIntoView({ behavior: "smooth", block: "nearest" }); };
+  // Два пути (20.11.2026, Андрей): «Сохранить итог» и «Перенести на телефон» — затем одна кнопка «Войти через Google»; после
+  // сохранения путь «на телефон» сразу показывает блок особых мест и приложения.
+  $("bSaveAcc").onclick = function () { WAY = "acc"; renderSave(); };
+  $("bSavePhone").onclick = function () { WAY = "phone"; renderSave(); };
   $("bCopy2").onclick = function () {
     var u = PLAY + "&hl=" + L;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy2").textContent = t("copied"); }).catch(function () { prompt("", u); });
@@ -1493,7 +1453,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     return next();
   }
   function camName(r) {
-    var mk = r.mk || "", md = r.md || "";
+    var mk = r.mk || "", md = r.nm || r.md || "";
     return md && mk && md.toLowerCase().indexOf(mk.toLowerCase()) === 0 ? md : [mk, md].filter(Boolean).join(" ");
   }
   function why(f, x, r) {
@@ -1513,7 +1473,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   function renderWhy() {
     var miss = WHY.files - WHY.place, ul = $("whyL");
     // Место из описаний Google Фото — не причина, а находка: отдельной строкой вне списка причин.
-    show("sideX", (WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0 || WHY.sysFiles > 0) && !!(A.shown || A.none));
+    show("sideX", WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0 || WHY.sysFiles > 0);
     $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : "",
       WHY.sysFiles ? t("sysRead", { a: num(WHY.sysFiles), b: num(WHY.sysPlace || 0) }) : ""].filter(Boolean).join(" ");
     show("why", miss > 0 && !!(A.shown || A.none));
@@ -1732,7 +1692,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       mapDirty = true; drawMap();
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
-      renderStats(); renderLegend(); shell(); renderDevs();
+      renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
       S ? doSave() : (renderSave(), anonPut());
     });
   }
@@ -1766,58 +1726,76 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 
   // ===== Сохранение итога (функция pc-media) =====
   function renderSave() {
-    var has = A.shown > 0 && !revealing, viewAsk = VIEW && !S && !A.shown;
-    show("vSave", ((has && saveSt.state !== "saved") || viewAsk) && !PHONE);
-    $("saveT").textContent = t(viewAsk ? "viewT" : "saveT");
-    $("saveX").textContent = t(viewAsk ? "viewX" : "saveX");
-    show("saveWays", !S && !viewAsk && !WAY);
-    show("inBox", !S && (viewAsk || !!WAY));
-    $("inX").textContent = t(WAY === "phone" ? "inXp" : "inX");
-    show("inX", !viewAsk);
-    show("newsBox", !viewAsk && (!!S || !!WAY)); show("devNote", !viewAsk && (!!S || !!WAY));
-    show("bView", !A.shown && !VIEW && (!S || NOAUTO));
-    show("who", !!S);
-    S && ($("who").textContent = t("who", { m: S.mail || "" }));
-    var st = saveSt.state, m = (S && S.mail) || "",
-      retry = st === "error" && !!saveSt.err && saveSt.err[0] !== "eAuth" && saveSt.err[0] !== "eLimit" && saveSt.err[0] !== "eFull";
-    // Ошибка сохранения — с кнопкой «Сохранить ещё раз» (прежде её блок в этом состоянии был скрыт вместе с кнопкой).
-    show("vSaved", (has && (st === "saved" || st === "saving")) || st === "none" || retry);
+    var has = A.shown > 0 && !revealing, st = saveSt.state;
+    show("vSave", has && st !== "saved" && st !== "saving" && !PHONE);
+    show("saveWays", !S && !WAY);
+    show("bGoogle", !S && !!WAY);
+    var retry = st === "error" && !!saveSt.err && saveSt.err[0] !== "eAuth" && saveSt.err[0] !== "eLimit" && saveSt.err[0] !== "eFull" && saveSt.err[0] !== "eLimitAll";
+    show("vSaved", (has && (st === "saved" || st === "saving")) || retry);
     show("savedX", st !== "error");
     if (st === "saving") $("savedX").textContent = t("saving");
-    if (st === "none") $("savedX").textContent = t("viewNone");
-    if (st === "saved") $("savedX").textContent = t(saveSt.view ? "viewed" : saveSt.n > 0 ? "saved" : "savedNone", { m: m });
+    if (st === "saved") $("savedX").textContent = t("saved");
     $("mailedX").hidden = !(st === "saved" && saveSt.mailed);
     saveSt.mailed && ($("mailedX").textContent = t("mailed", { m: saveSt.mailed }));
     show("bRetry", retry);
     show("endBox", !PHONE && !revealing && (A.shown > 0 || A.none));
+    $("under").classList.toggle("idle", !(A.shown > 0) || PHONE);
     renderApp();
   }
-  // Приложение (20.11.2026, Андрей): не реклама, а следующий шаг после сохранения — продолжить коллекцию на телефоне. Есть у
-  // учётной записи телефон с приложением (site_me) — строка о нём; нет — код и ссылка Google Play, три шага и экраны
-  // приложения (кадры витрины сайта на языке страницы, где их нет — английские).
-  var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "";
+  // Особые места на снимках (20.11.2026, Андрей: показать, сколько мест нашлось и какой они редкости; какие именно — в
+  // приложении). Приложения у учётной записи нет (site_me) — код и ссылка Google Play и экраны приложения; есть — без них.
+  var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "", TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#c2410e", "tLegendary"],
+    ["epic", "#7c3aed", "tEpic"], ["rare", "#2563eb", "tRare"], ["common", "#15803d", "tCommon"], ["dangerous", "#111111", "tDangerous"]], tierSel = "";
   function renderApp() {
-    var on = !!S && saveSt.state === "saved" && !PHONE && !revealing;
+    var sp = saveSt.special, on = !!S && saveSt.state === "saved" && !PHONE && !revealing && !!(sp && sp.n > 0);
     show("vApp", on);
     if (!on) return;
     if (!meAsked) { meAsked = true; TACC.me().then(function (v) { ME = v || null; renderApp(); }).catch(function () {}); }
-    var sp = saveSt.special, phones = ME && Array.isArray(ME.phones) ? ME.phones.slice() : [];
-    phones.sort(function (x, y) { return String(y.seen || "").localeCompare(String(x.seen || "")); });
-    var ph = phones[0], model = ph ? String(ph.model || "").trim() : "";
-    $("appX").textContent = ph ? t(model ? "appHas" : "appHas0", { model: model }) : t("appX");
-    $("appS2").textContent = t("appS2", { m: S.mail || "" });
-    $("specialX").hidden = !(sp && sp.n > 0);
-    sp && sp.n > 0 && ($("specialX").textContent = t(sp.partial ? "specialMin" : "special", { n: num(sp.n) }));
-    show("appGet", !ph); show("appShots", !ph);
-    if (!ph && shotsLang !== L) {
+    var hasApp = !!(ME && Array.isArray(ME.phones) && ME.phones.length);
+    $("spT").textContent = t(sp.partial ? "spTMin" : "spT", { n: num(sp.n) });
+    var tiers = sp.tiers || {}, all = sp.all || {}, sum = 0, bar = $("tierBar"), box = $("tiers");
+    TIERS.forEach(function (x) { sum += Number(tiers[x[0]]) || 0; });
+    bar.innerHTML = ""; box.innerHTML = "";
+    TIERS.forEach(function (x) {
+      var n = Number(tiers[x[0]]) || 0;
+      if (x[0] === "dangerous" && !n) return;
+      var seg = document.createElement("i");
+      seg.style.background = x[1];
+      bar.appendChild(seg);
+      requestAnimationFrame(function () { seg.style.width = sum ? (100 * n / sum) + "%" : "0"; });
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "pc-tier" + (n ? "" : " zero"); b.style.setProperty("--tc", x[1]);
+      b.innerHTML = "<b></b><span></span>";
+      b.children[0].textContent = num(n); b.children[1].textContent = t(x[2]);
+      b.setAttribute("aria-pressed", tierSel === x[0] ? "true" : "false");
+      b.onclick = function () { tierSel = tierSel === x[0] ? "" : x[0]; renderApp(); };
+      box.appendChild(b);
+    });
+    var sel = TIERS.filter(function (x) { return x[0] === tierSel; })[0];
+    $("tierHint").textContent = sel ? t("tierHint", { tier: t(sel[2]), n: num(Number(tiers[sel[0]]) || 0), all: num(Number(all[sel[0]]) || 0) }) : "";
+    show("tierHint", !!sel);
+    show("appGet", !hasApp);
+    if (!hasApp && shotsLang !== L) {
       shotsLang = L;
-      var sl = SHOTS[L] ? L : "en", box = $("appShots");
-      box.innerHTML = "";
+      var sl = SHOTS[L] ? L : "en", shots = $("appShots");
+      shots.innerHTML = "";
       [[1, "shotA"], [4, "shotB"], [7, "shotC"]].forEach(function (x) {
         var im = document.createElement("img"), u = "/assets/img/" + sl + "/frame-" + x[0] + "-";
         im.src = u + "360.webp"; im.srcset = u + "360.webp 1x, " + u + "720.webp 2x"; im.alt = t(x[1]); im.loading = "lazy"; im.decoding = "async";
-        box.appendChild(im);
+        shots.appendChild(im);
       });
+    }
+  }
+  // Вопросы и ответы: каждый — свёрнутым, раскрывается нажатием.
+  function renderFaq() {
+    var box = $("faqList"), open = {};
+    Array.prototype.forEach.call(box.children, function (d, i) { d.open && (open[i] = 1); });
+    box.innerHTML = "";
+    for (var i = 1; i <= 8; i++) {
+      var d = document.createElement("details"), sm = document.createElement("summary"), p = document.createElement("p");
+      d.className = "pc-faq"; sm.textContent = t("q" + i); p.textContent = t("a" + i);
+      d.appendChild(sm); d.appendChild(p); open[i - 1] && (d.open = true);
+      box.appendChild(d);
     }
   }
   function summary() {
@@ -1837,7 +1815,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     devHashes().then(function (dh) { DEVH = dh; return saveSt.mailed ? "" : cardB64(); }).then(function (png) { CARD = png; return fresh(); }).then(function (s) {
       if (!s) return { auth: true };
       // Папка — своя у каждого устройства: пары «устройство и папка» собирает функция pc-media; здесь папка — по номеру.
-      var body = { op: "put", pcl: pcLabel(), pk: PK || undefined, devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L, news: $("news").checked,
+      var body = { op: "put", pcl: pcLabel(), pk: PK || undefined, devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
         special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined, anon: AKS || undefined };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
@@ -1847,7 +1825,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       if (res.status !== 200 || !j || !j.ok) {
         var why = j && j.reason;
         saveSt.state = "error";
-        saveSt.err = why === "day limit" ? ["eLimit"] : ["eSrv", { c: why || res.status }];
+        saveSt.err = why === "day limit" ? ["eLimit"] : why === "server day limit" ? ["eLimitAll"] : ["eSrv", { c: why || res.status }];
         err(saveSt.err[0], saveSt.err[1]);
         return renderSave();
       }
@@ -1862,11 +1840,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
       statSend({ k: "save", n: j.n || 0, letter: j.letter || "" });
       j.full && err("eFull");
-      NOAUTO = false; ls.set(NA, "");
       renderSave(); renderStats(); keepPut();
-      WAY === "phone" && setTimeout(function () { $("vApp").scrollIntoView({ behavior: "smooth", block: "start" }); }, 80);
-      // После сохранения — и прежде сохранённое в этой учётной записи: страница показывает весь итог.
-      loadSaved();
+      WAY === "phone" && setTimeout(function () { ($("vApp").hidden ? $("vSaved") : $("vApp")).scrollIntoView({ behavior: "smooth", block: "start" }); }, 80);
     }).catch(function () { saveSt.state = "error"; saveSt.err = ["eNet"]; err("eNet"); renderSave(); });
   }
   $("bRetry").onclick = function () { doSave(); };
@@ -1902,7 +1877,10 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }) };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }); })
-        .then(function (j) { j && j.ok && ls.set(AK + "N", String(todo.length)); });
+        .then(function (j) {
+          if (j && j.ok) return void ls.set(AK + "N", String(todo.length));
+          j && (j.reason === "limit" || j.reason === "full") && err("eAnonLimit");
+        });
     }).catch(function () {});
   }
   function anonDrop() {
@@ -1931,75 +1909,32 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // ===== Устройства (19.11.2026, слово Андрея): с каких устройств что пришло и через какой компьютер =====
   // Строка — устройство: название, число точек, годы, страны и компьютер. Точки этого разбора пришли через этот
   // компьютер; точки из учётной записи — через компьютер папки в реестре (знак k совпал с этим — «этот компьютер»).
-  var REG = {};
-  // Устройство точки без марки и модели (20.11.2026, Андрей: «Устройство не определено» с 448 точками — снимки его Redmi Note 12
-  // Pro, сохранённые страницей до 19.11.2026 без устройства): сначала папка, которую снимало ровно одно устройство (то же
-  // правило, что у реестра, pc_dev_reg); затем день — устройство, одно снимавшее в тот же день; затем срок — единственное
-  // устройство, чей срок съёмки накрывает время точки. Иначе — «Устройство не определено». Когда показан сохранённый итог
-  // учётной записи, точка этого браузера, уже сохранённая в неё, в числе не повторяется, если у учётной записи есть точка
-  // в пределах получаса и 1,5 км (телефон сводит точки медиафайлов к одной на полчаса и около километра): это тот же снимок,
-  // и его устройство переходит к точке учётной записи без устройства. Сохранённые точки без такой пары (их телефон нашёл
-  // сам в своей галерее, и в итог учётной записи с компьютера они не вошли) считаются как точки этого браузера.
+  // Устройства этого разбора (20.11.2026, Андрей: сайт не показывает ничего из учётной записи). Точка без марки и модели —
+  // сначала по папке, которую снимало ровно одно устройство (то же правило, что у реестра, pc_dev_reg); затем по дню —
+  // устройство, одно снимавшее в тот же день; затем по сроку — единственное устройство, чей срок съёмки накрывает её время.
+  // Иначе — «Устройство не определено». У каждого устройства — «Удалить» с окном подтверждения.
   function renderDevs() {
     var box = $("devBox"), list = $("devList");
     if (!box) return;
     if (revealing || !A.shown || !A.pts.length) return void (box.hidden = true);
-    var rows = {}, order = [], me = pcLabel();
-    var known = function (rg) { return !!(rg && (rg.mk || rg.md || rg.name)); }, regBy = {};
-    Object.keys(REG).forEach(function (id) {
-      var rg = REG[id];
-      known(rg) && (rg.dirs || []).forEach(function (x) { var k = (x.d || "") + "|" + (x.pc || ""); (regBy[k] = regBy[k] || {})[id] = 1; });
-    });
-    var ownBy = {};
+    var rows = {}, order = [], ownBy = {};
     A.pts.forEach(function (p) {
-      var d = p.acc ? null : DEV.list[p[3]];
+      var d = DEV.list[p[3]];
       if (!d || !(d.mk || d.md)) return;
-      (ownBy[p[4]] = ownBy[p[4]] || {})[d.rid ? "r" + d.rid : "l" + p[3]] = p[3];
+      (ownBy[p[4]] = ownBy[p[4]] || {})[devKey(d, p[3])] = p[3];
     });
-    var accShown = A.pts.some(function (p) { return p.acc; });
     var dayOf = function (ms) { var x = new Date(ms); return x.getFullYear() * 10000 + (x.getMonth() + 1) * 100 + x.getDate(); };
-    // Первый проход: устройство по реестру и папкам.
+    // Первый проход: устройство по марке и модели и по папке.
     A.pts.forEach(function (p) {
-      var key = "x", name = "", via = "";
-      if (p.acc) {
-        var rg = p.rd > 0 ? REG[p.rd] : null, dir = rg && Array.isArray(rg.dirs) ? rg.dirs[p.rf] : null;
-        if (rg && !known(rg) && dir) {
-          var only = Object.keys(regBy[(dir.d || "") + "|" + (dir.pc || "")] || {});
-          only.length === 1 && (rg = REG[only[0]], p.rd = +only[0]);
-        }
-        known(rg) && (key = "r" + p.rd, name = rg.name || camName({ mk: rg.mk, md: rg.md }));
-        via = !dir ? "" : dir.k && dir.k === PK ? "me" : dir.k ? "k" + dir.k + "|" + (dir.pc || "") : "l|" + (dir.pc || "");
-      } else {
-        var d = DEV.list[p[3]], li = p[3];
-        if (d && !(d.mk || d.md)) {
-          var ks = Object.keys(ownBy[p[4]] || {});
-          ks.length === 1 && (li = ownBy[p[4]][ks[0]], d = DEV.list[li]);
-        }
-        if (d && (d.mk || d.md)) {
-          var rg0 = d.rid ? REG[d.rid] : null;
-          key = d.rid ? "r" + d.rid : "l" + li;
-          // Название из реестра: там код модели уже сведён к названию (24040RN64Y → Redmi 13).
-          name = rg0 ? rg0.name || camName({ mk: rg0.mk, md: rg0.md }) : camName(d);
-        }
-        via = "me";
+      var d = DEV.list[p[3]], li = p[3], key = "x", name = "";
+      if (d && !(d.mk || d.md)) {
+        var ks = Object.keys(ownBy[p[4]] || {});
+        ks.length === 1 && (li = ownBy[p[4]][ks[0]], d = DEV.list[li]);
       }
-      p._k = key; p._n = name; p._v = via; p._skip = false; p._v2 = "";
+      d && (d.mk || d.md) && (key = devKey(d, li), name = camName(d));
+      p._k = key; p._n = name;
     });
-    if (accShown) {
-      var HB = 1800000, byB = {};
-      A.pts.forEach(function (p) { if (p.acc) { var bk = Math.floor(p[2] / HB); (byB[bk] = byB[bk] || []).push(p); } });
-      A.pts.forEach(function (p) {
-        if (p.acc || !p.sent) return;
-        var bk = Math.floor(p[2] / HB), best = null, bd = 1500;
-        for (var j = bk - 1; j <= bk + 1; j++)
-          (byB[j] || []).forEach(function (q) { if (Math.abs(q[2] - p[2]) <= HB) { var dd = dist(p[0], p[1], q[0], q[1]); dd < bd && (bd = dd, best = q); } });
-        if (!best) return;
-        p._skip = true;
-        best._k === "x" && p._k !== "x" && (best._k = p._k, best._n = p._n);
-        p._v && (best._v2 = p._v);
-      });
-    }
-    // Второй проход: дни и сроки съёмки известных устройств.
+    // Второй проход: дни и сроки съёмки известных устройств; третий — точки без устройства по дню и сроку.
     var byDay = {}, span = {}, names = {};
     A.pts.forEach(function (p) {
       if (p._k === "x") return;
@@ -2017,41 +1952,66 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       ks.length === 1 && (p._k = ks[0], p._n = names[ks[0]] || "");
     });
     A.pts.forEach(function (p) {
-      if (p._skip) return;
       var key = p._k, r = rows[key];
-      if (!r) { r = rows[key] = { name: p._n, n: 0, y0: 9999, y1: 0, cc: {}, via: {} }; order.push(key); }
+      if (!r) { r = rows[key] = { name: p._n, n: 0, y0: 9999, y1: 0, cc: {} }; order.push(key); }
       p._n && !r.name && (r.name = p._n);
       r.n++;
       var y = new Date(p[2]).getFullYear();
       y < r.y0 && (r.y0 = y); y > r.y1 && (r.y1 = y);
       p.cc && (r.cc[p.cc] = (r.cc[p.cc] || 0) + 1);
-      p._v && (r.via[p._v] = 1);
-      p._v2 && (r.via[p._v2] = 1);
     });
     order.sort(function (a, b) { return a === "x" ? 1 : b === "x" ? -1 : rows[b].n - rows[a].n; });
     list.innerHTML = "";
     order.forEach(function (key) {
-      var r = rows[key], it = document.createElement("div");
+      var r = rows[key], it = document.createElement("div"), nm = r.name || t("devNone");
       it.className = "pc-dev";
-      it.innerHTML = '<div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div><div class="ln"></div>';
-      it.children[0].children[0].textContent = r.name || t("devNone");
+      it.innerHTML = '<div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div>' +
+        '<button class="pc-btn b2 sm" type="button"></button>';
+      it.children[0].children[0].textContent = nm;
       it.children[0].children[1].textContent = t("devPts", { n: num(r.n) });
       var ccs = Object.keys(r.cc).sort(function (a, b) { return r.cc[b] - r.cc[a]; }).map(countryName),
         cl = ccs.length > 6 ? ccs.slice(0, 6).join(", ") + " +" + num(ccs.length - 6) : ccs.join(", ");
       it.children[1].textContent = [r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1, cl].filter(Boolean).join(" · ");
-      var via = [];
-      r.via.me && via.push(t("devThis") + (me ? " · " + me : ""));
-      Object.keys(r.via).forEach(function (v) {
-        if (v === "me") return;
-        var lb = v.slice(v.indexOf("|") + 1);
-        via.push(lb ? t("devOther", { pc: lb }) : t("devOtherNone"));
-      });
-      via = via.filter(function (x, i) { return via.indexOf(x) === i; });
-      it.children[2].textContent = via.join("; ");
-      it.children[2].hidden = !via.length;
+      var del = it.children[2];
+      del.textContent = t("delDev"); del.style.justifySelf = "start"; del.style.marginTop = "6px";
+      del.onclick = function () { ask(t("dlgDevT"), t("dlgDevX", { name: nm }), t("delDev"), function () { devDrop(key); }); };
       list.appendChild(it);
     });
     box.hidden = !order.length;
+  }
+  // Ключ устройства: номер в реестре учётной записи, если итог сохранён, иначе — марка, модель и отпечаток номера.
+  function devKey(d, i) { return d.rid ? "r" + d.rid : "l" + (d.mk + "|" + (d.nm || d.md) + "|" + d.sn).toLowerCase(); }
+  // Удаление устройства (20.11.2026, Андрей: одна кнопка и окно подтверждения; вернуть — снова выбрать папку): его точки
+  // уходят из итога этого браузера и из копии до входа; у сохранённого итога — и из точек учётной записи, которые телефон
+  // ещё не проверил (pc-media op forget). Затем страница открывается заново с оставшимся.
+  function devDrop(key) {
+    var left = A.pts.filter(function (p) { return p._k !== key; }), gone = A.pts.length - left.length;
+    if (!gone) return void $("dlgNo").onclick();
+    var rid = /^r(\d+)$/.exec(key), sentGone = A.pts.some(function (p) { return p._k === key && p.sent; });
+    A.pts = left;
+    var jobs = [keepPut()];
+    if (rid && sentGone && S) jobs.push(fresh().then(function (s) {
+      return s && fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "forget", dev: "pc:" + rid[1] }) }).catch(function () {});
+    }));
+    // Копия до входа перезапишется оставшимся при открытии (anonPut), а без оставшегося — стирается.
+    left.length ? ls.set(AK + "N", "") : anonDrop();
+    Promise.all(jobs).then(function () { location.replace(location.pathname + "?lang=" + L); });
+  }
+  // Названия моделей (20.11.2026): код из снимка (2209116AG) сайт сводит к названию (Redmi Note 12 Pro) по списку Google Play
+  // на сервере — без входа и без сведений учётной записи.
+  var namesAsked = {};
+  function loadNames() {
+    var want = DEV.list.filter(function (d) { return d.md && !d.nm && !/\s/.test(d.md) && !namesAsked[d.md]; }).slice(0, 50);
+    if (!want.length) return;
+    want.forEach(function (d) { namesAsked[d.md] = 1; });
+    fetch(FN, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ op: "names", md: want.map(function (d) { return d.md; }) }) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) {
+        if (!j || !Array.isArray(j.names)) return;
+        var ch = false;
+        want.forEach(function (d, i) { var n = String(j.names[i] || ""); n && n !== d.md && ((d.nm = n), (ch = true)); });
+        ch && (renderDevs(), keepPut());
+      }).catch(function () {});
   }
 
   // Компьютер — подписью системы и браузера: по ней в приложении видно, откуда папка.
@@ -2073,7 +2033,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     return idb().then(function (db) {
       return new Promise(function (ok) {
         var tx = db.transaction("st", "readwrite");
-        tx.objectStore("st").put({ at: Date.now(), pts: A.pts.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), devs: DEV.list, dirs: DIR.list, news: $("news").checked }, "last");
+        tx.objectStore("st").put({ at: Date.now(), pts: A.pts.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), devs: DEV.list, dirs: DIR.list }, "last");
         tx.oncomplete = ok; tx.onerror = ok;
       });
     }).catch(function () {});
@@ -2096,7 +2056,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         var tx = db.transaction("st", "readwrite");
         var own = A.pts.filter(function (p) { return !p.acc; });
         tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
-          saved: saveSt.state === "saved", owner: own.some(function (p) { return p.sent; }) ? uidOf(S) : KEEP_OWNER || null }, "result");
+          saved: saveSt.state === "saved", special: saveSt.special || null, owner: own.some(function (p) { return p.sent; }) ? uidOf(S) : KEEP_OWNER || null }, "result");
         tx.oncomplete = ok; tx.onerror = ok;
       });
     }).catch(function () {});
@@ -2126,7 +2086,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
     var pts = (st.pts || []).map(function (p) { var q = p.slice(0, 5); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     if (!pts.length) return Promise.resolve(false);
-    st.saved && (saveSt.state = "saved", saveSt.view = true);
+    st.saved && (saveSt.state = "saved");
+    st.special && st.special.n != null && (saveSt.special = st.special);
     show("vPick", false); show("vWork", true);
     return geo().then(function () { return reveal(pts, quick); }).then(function () { return true; });
   }
@@ -2221,7 +2182,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 
   // ===== Начало =====
   applyTexts();
-  if (PHONE) { show("vPhone", true); show("bPlay", ANDROID); $("privacyNote").hidden = true; statSend({ k: "phone", ios: IOS }); }
+  if (PHONE) { show("vPhone", true); show("bPlay", ANDROID); statSend({ k: "phone", ios: IOS }); }
   else {
     show("vPick", true);
     geo();
@@ -2233,7 +2194,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
           if (st && st.owner && S && st.owner !== uidOf(S)) return keepDrop().then(function () { return false; });
           return st ? restore(st, 1500) : false;
         })
-        .then(function () { NOAUTO = !!S && ls.get(NA) === uidOf(S); S && !NOAUTO && loadSaved(); renderSave(); });
+        .then(function () { renderSave(); });
     if (code && q.get("w") !== "1") {
       history.replaceState(null, "", location.pathname + "?lang=" + L);
       Promise.all([exchange(code), unstash()]).then(function (res) {
@@ -2242,7 +2203,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         DEV.list = st.devs || []; DIR.list = st.dirs || [];
         DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
         DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
-        $("news").checked = !!st.news;
         var pts = st.pts.map(function (p) { seenPt.add(p[0] + "," + p[1] + "," + p[2]); LOOSE.add(loose(p)); return p.slice(0, 5); });
         show("vPick", false); show("vWork", true);
         geo().then(function () { return reveal(pts, 2500); });
