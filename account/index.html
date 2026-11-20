@@ -42,9 +42,11 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac-nick{margin:0;font-size:24px;font-weight:800}
 .ac-plan{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px}
 .ac-plan.plus{background:linear-gradient(135deg,#f6d36b,#e9b949);color:#5a3c00}
-.ac-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.ac-tile{background:var(--bg);border-radius:18px;padding:16px}
-.ac-tile b{display:block;font-size:28px}
+/* Плитки чисел (21.11.2026, план Андрея: число никогда не выходит за плитку): равны, пока числа помещаются; длинному
+   числу его плитка шире ровно настолько, насколько ему нужно; не помещается строка — плитки переходят на следующую. */
+.ac-tiles{display:flex;flex-wrap:wrap;gap:12px}
+.ac-tile{flex:1 1 0;min-width:min-content;background:var(--bg);border-radius:18px;padding:16px}
+.ac-tile b{display:block;font-size:28px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .ac-tile span{color:var(--sub);font-weight:600;font-size:14px}
 .ac-list{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px}
 .ac-list li{background:var(--bg);border-radius:14px;padding:12px 14px;font-weight:600}
@@ -52,7 +54,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .ac-foot{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 18px}
 .ac-foot a{color:var(--sub);font-weight:600;text-decoration:none}.ac-foot a:hover{color:var(--ink)}
-@media (max-width:520px){.ac-tiles{grid-template-columns:1fr 1fr 1fr}.ac-tile b{font-size:22px}.ac-card{padding:20px}}
+@media (max-width:520px){.ac-tile{padding:12px}.ac-tile b{font-size:22px}.ac-card{padding:20px}}
 .ac-btn.del{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
 dialog.ac-dlg{border:1px solid var(--line);border-radius:24px;padding:26px;width:min(460px,calc(100vw - 32px));box-sizing:border-box;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
 dialog.ac-dlg::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}

@@ -62,9 +62,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 dialog.pc-res{width:min(600px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow-y:auto}
 dialog.pc-res[open]{display:grid;gap:16px}
 dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
-.pc-res-tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
-.pc-res-tl div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:center}
-.pc-res-tl b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+/* Плитки чисел окна итога, особых мест и строки итога (21.11.2026, план Андрея: число никогда не выходит за плитку): число
+   не переносится; плитка не уже своего числа и подписи; не помещается строка — плитки переходят на следующую. */
+.pc-res-tl{display:flex;flex-wrap:wrap;gap:8px}
+.pc-res-tl div{flex:1 1 104px;min-width:min-content;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:center}
+.pc-res-tl b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
 .pc-res-tl span{font-size:12.5px;color:var(--sub)}
 .pc-res-tl .new{border-color:var(--accent)}.pc-res-tl .new b{color:var(--accent)}
 .pc-res-cc{display:flex;flex-wrap:wrap;gap:8px}
@@ -106,10 +108,15 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 .pc-why ul{margin:8px 0 0;padding:0 0 0 18px;display:grid;gap:6px;font-size:14px;color:var(--sub);line-height:1.45}
 .pc-why li b{color:var(--ink);font-weight:650}
 .pc-when{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;min-height:1.1em}
-.pc-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.pc-stat{background:var(--bg);border-radius:14px;padding:10px 12px;border:1px solid var(--line);text-align:center}
-.pc-stat b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
-.pc-stat span{font-size:12.5px;color:var(--sub);line-height:1.25;display:block}
+/* Строка итога: плитки равны, пока числа помещаются; длинному числу (километры) его плитка шире ровно настолько, насколько
+   ему нужно, соседние — уже, до своей подписи. Во время счёта ширину держит невидимое конечное число (.sz), и плитка не
+   растёт рывком с каждой новой цифрой. */
+.pc-stats{display:flex;flex-wrap:wrap;gap:10px}
+.pc-stat{flex:1 1 0;min-width:min-content;background:var(--bg);border-radius:14px;padding:10px 12px;border:1px solid var(--line);text-align:center}
+.pc-stat>b{display:grid;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
+.pc-stat>b>span{grid-area:1/1}
+.pc-stat>b>.sz{visibility:hidden}
+.pc-stat>span{font-size:12.5px;color:var(--sub);line-height:1.25;display:block}
 .pc-list{display:grid;gap:8px}
 .pc-item{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:14px;background:var(--bg);border:1px solid var(--line);animation:pcIn .45s ease both}
 .pc-item img{width:34px;height:24px;object-fit:cover;border-radius:5px;flex:none;box-shadow:0 0 0 1px var(--line)}
@@ -125,10 +132,10 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 .pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
 .pc-under.idle{grid-template-columns:minmax(0,600px);justify-content:center}
 /* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
-.pc-tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
-.pc-tier{border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
+.pc-tiers{display:flex;flex-wrap:wrap;gap:8px}
+.pc-tier{flex:1 1 96px;min-width:min-content;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
 .pc-tier::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--tc)}
-.pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap}
 .pc-tier span{font-size:12.5px;color:var(--sub)}
 /* Вопросы и ответы — справа от устройств: подробности, которые не нужны на главном месте (20.11.2026, Андрей). */
 .pc-faq{border-top:1px solid var(--line);padding:13px 0}
@@ -160,8 +167,8 @@ main.pc.pc-load,main.pc.pc-load~.pc-foot{display:none}
 main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
-@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (max-width:520px){.pc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
+@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
+@media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
 [hidden]{display:none!important}
 </style></head>
 <body>
@@ -1188,13 +1195,26 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     cb.children.length > 400 && cb.removeChild(cb.lastChild);
     $("nCities").textContent = num(found.cities.length);
   }
+  // Строка итога (21.11.2026, план Андрея: число никогда не выходит за плитку, плитке километров — больше места): ширина
+  // плитки — по её числу; пока идёт показ, ширину держит невидимое конечное число (statGoal), и плитка не растёт рывком с
+  // каждой новой цифрой. Плитки строятся заново, только когда меняется их набор или язык, — иначе меняются только числа.
+  var statGoal = null;
   function renderStats(v) {
-    var st = $("stats");
+    var st = $("stats"), keys = ["sCountries", "sRegions", "sCities", "sDays", "sKm"], on = [], i;
     st.hidden = !(revealing || A.shown);
     v = v || statNums();
-    var rows = [["sCountries", v[0]], ["sRegions", v[1]], ["sCities", v[2]], ["sDays", v[3]], ["sKm", v[4]]];
     // Нулей не показываем (20.11.2026, Андрей: зачем показывать то, чего нет).
-    st.innerHTML = rows.filter(function (r) { return r[1] > 0; }).map(function (r) { return '<div class="pc-stat"><b>' + num(r[1]) + "</b><span>" + t(r[0]) + "</span></div>"; }).join("");
+    for (i = 0; i < keys.length; i++) v[i] > 0 && on.push(i);
+    var sig = on.join() + ":" + L;
+    if (st.dataset.sig !== sig) {
+      st.dataset.sig = sig;
+      st.innerHTML = on.map(function (k) { return '<div class="pc-stat"><b><span class="sz" aria-hidden="true"></span><span></span></b><span>' + t(keys[k]) + "</span></div>"; }).join("");
+    }
+    on.forEach(function (k, j) {
+      var b = st.children[j].firstChild, cur = num(v[k]), goal = num(statGoal ? Math.max(statGoal[k], v[k]) : v[k]);
+      b.children[1].textContent !== cur && (b.children[1].textContent = cur);
+      b.children[0].textContent !== goal && (b.children[0].textContent = goal);
+    });
   }
 
   // ===== Карта маршрута: приближение колесом, кнопками и пальцами, сдвиг мышью; цвет точки — время снимка =====
@@ -1900,7 +1920,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     A.pts = all;
     T0 = all.length ? all[0][2] : 0; T1 = all.length ? all[all.length - 1][2] : 1;
     MV = null; mapDirty = true;
-    revealing = true;
+    revealing = true; statGoal = null;
     shell(); renderStats();
     $("prog").textContent = t("tracing");
     var ev = [], ccs = {}, i;
@@ -1910,6 +1930,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       var regBy = {};
       pairs.forEach(function (p) { regBy[p[0]] = p[1]; });
       var byKeep = new Set(keep);
+      // Конечные числа показа — для ширины плиток (statGoal): те же правила, что у счёта по кадрам ниже.
+      var gDays = new Set(found.days), gCc = {}, gReg = {}, gCity = {};
       for (i = 0; i < all.length; i++) {
         var p = all[i];
         if (!byKeep.has(p) || !G) { ev.push({ i: i }); continue; }
@@ -1919,7 +1941,13 @@ main.pc.pc-show{animation:pcFade .35s ease both}
         p.ct = ct;
         ct >= 0 && (e.ct = ct);
         ev.push(e);
+        gDays.add(new Date(p[2]).toDateString());
+        p.cc && !found.byCc[p.cc] && (gCc[p.cc] = 1);
+        e.rg && !(found.byCc[p.cc] && found.byCc[p.cc].rset[e.rg.id]) && (gReg[p.cc + ":" + e.rg.id] = 1);
+        e.ct != null && !found.byCity[e.ct] && (gCity[e.ct] = 1);
       }
+      statGoal = [found.countries.length + Object.keys(gCc).length, found.regions + Object.keys(gReg).length,
+        found.cities.length + Object.keys(gCity).length, gDays.size, Math.round(kmTo / 1000)];
       resort = false;
       var newC = Object.keys(ccs).filter(function (cc) { return !found.byCc[cc]; }).length,
         D = quickMs || Math.min(28000, Math.max(10000, 8000 + newC * 900)),
@@ -1969,7 +1997,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
         requestAnimationFrame(frame);
       });
     }).then(function () {
-      revealing = false;
+      revealing = false; statGoal = null;
       A.shown = all.length;
       resort && renderLists();
       mapDirty = true; drawMap();
@@ -2293,6 +2321,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   function statNums() { return [found.countries.length, found.regions, found.cities.length, found.days.size, Math.round(found.km / 1000)]; }
   function rebuild() {
     var from = statNums();
+    statGoal = null;
     found = { countries: [], byCc: {}, cities: [], byCity: {}, regions: 0, days: new Set(), km: 0 };
     A.pts.sort(function (x, y) { return x[2] - y[2]; });
     A.pts.forEach(function (p) {
