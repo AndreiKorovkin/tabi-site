@@ -152,14 +152,16 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     <!-- Итог -->
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
+      <p class="pc-t" id="runX" hidden></p>
       <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul></details>
       <p class="pc-s" id="sideX" hidden></p>
       <p class="pc-s" id="restored" hidden><span id="restoredX"></span> <a href="#" class="pc-link" id="bClear"></a></p>
-      <button class="pc-btn b2" id="bMore"></button>
+      <div class="pc-row"><button class="pc-btn b2" id="bMore"></button><button class="pc-btn b2" id="bMoreF"></button></div>
     </div>
     <!-- Устройства: с каких устройств что пришло и через какой компьютер (19.11.2026) -->
     <div id="devBox" hidden class="pc-box">
       <h2 id="hDevs"></h2>
+      <p class="pc-s" id="devMerge"></p>
       <div class="pc-devs" id="devList"></div>
     </div>
     <!-- Сохранение итога: вход после разбора -->
@@ -244,8 +246,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "who": {"en": "Signed in as {m}", "ru": "Вы вошли: {m}", "cs": "Přihlášeno: {m}", "de": "Angemeldet als {m}", "fr": "Connecté : {m}", "es": "Sesión iniciada: {m}", "it": "Accesso eseguito: {m}", "pt": "Conectado como {m}", "ja": "ログイン中：{m}", "ko": "로그인됨: {m}"},
     "folder": {"en": "Choose a folder", "ru": "Выбрать папку", "cs": "Vybrat složku", "de": "Ordner wählen", "fr": "Choisir un dossier", "es": "Elegir una carpeta", "it": "Scegli una cartella", "pt": "Escolher pasta", "ja": "フォルダを選ぶ", "ko": "폴더 선택"},
     "files": {"en": "Choose files", "ru": "Выбрать файлы", "cs": "Vybrat soubory", "de": "Dateien wählen", "fr": "Choisir des fichiers", "es": "Elegir archivos", "it": "Scegli i file", "pt": "Escolher arquivos", "ja": "ファイルを選ぶ", "ko": "파일 선택"},
-    "reading": {"en": "Read {a} of {b} · points: {n}", "ru": "Прочитано {a} из {b} · точек: {n}", "cs": "Přečteno {a} z {b} · bodů: {n}", "de": "Gelesen {a} von {b} · Punkte: {n}", "fr": "Lus {a} sur {b} · points : {n}", "es": "Leídos {a} de {b} · puntos: {n}", "it": "Letti {a} di {b} · punti: {n}", "pt": "Lidos {a} de {b} · pontos: {n}", "ja": "{b}件中{a}件を読み込み · 地点：{n}", "ko": "{b}개 중 {a}개 읽음 · 지점: {n}"},
-    "more": {"en": "Choose more", "ru": "Выбрать ещё", "cs": "Vybrat další", "de": "Weitere wählen", "fr": "En choisir d’autres", "es": "Elegir más", "it": "Scegli altri", "pt": "Escolher mais", "ja": "さらに選ぶ", "ko": "더 선택"},
+    "reading": {"ru": "Прочитано {a} из {b} · с местом съёмки: {n}", "en": "Read {a} of {b} · with a shooting location: {n}", "cs": "Přečteno {a} z {b} · s místem pořízení: {n}", "de": "Gelesen {a} von {b} · mit Aufnahmeort: {n}", "fr": "Lus {a} sur {b} · avec lieu de prise de vue : {n}", "es": "Leídos {a} de {b} · con lugar de captura: {n}", "it": "Letti {a} di {b} · con luogo di scatto: {n}", "pt": "Lidos {a} de {b} · com local da captura: {n}", "ja": "{b} 件中 {a} 件を読み込み · 撮影場所あり：{n}", "ko": "{b}개 중 {a}개 읽음 · 촬영 장소 있음: {n}"},
     "pol": {"en": "Privacy policy", "ru": "Политика конфиденциальности", "cs": "Zásady ochrany soukromí", "de": "Datenschutzerklärung", "fr": "Politique de confidentialité", "es": "Política de privacidad", "it": "Informativa sulla privacy", "pt": "Política de privacidade", "ja": "プライバシーポリシー", "ko": "개인정보처리방침"},
     "eNet": {"en": "No connection to Tabi. Check the internet and try again.", "ru": "Нет связи с Tabi. Проверьте интернет и попробуйте ещё раз.", "cs": "Spojení s Tabi chybí. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zu Tabi. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion à Tabi. Vérifiez internet et réessayez.", "es": "No hay conexión con Tabi. Comprueba internet y vuelve a intentarlo.", "it": "Nessuna connessione con Tabi. Controlli la connessione a Internet e riprovi.", "pt": "Sem conexão com o Tabi. Verifique a internet e tente novamente.", "ja": "Tabiに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "Tabi에 연결할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요."},
     "eCode": {"en": "The code is wrong or out of date.", "ru": "Код неверен или устарел.", "cs": "Kód je chybný nebo neplatný.", "de": "Der Code ist falsch oder abgelaufen.", "fr": "Le code est faux ou périmé.", "es": "El código es incorrecto o ha caducado.", "it": "Il codice è errato o scaduto.", "pt": "O código está incorreto ou expirou.", "ja": "コードが違うか、期限切れです。", "ko": "코드가 올바르지 않거나 만료되었습니다."},
@@ -335,7 +336,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "devOther": {"ru": "Через компьютер {pc}", "en": "Through the computer {pc}", "cs": "Přes počítač {pc}", "de": "Über den Computer {pc}", "fr": "Par l’ordinateur {pc}", "es": "A través del ordenador {pc}", "it": "Tramite il computer {pc}", "pt": "Pelo computador {pc}", "ja": "パソコン {pc} 経由", "ko": "컴퓨터 {pc} 경유"},
     "devOtherNone": {"ru": "Через другой компьютер", "en": "Through another computer", "cs": "Přes jiný počítač", "de": "Über einen anderen Computer", "fr": "Par un autre ordinateur", "es": "A través de otro ordenador", "it": "Tramite un altro computer", "pt": "Por outro computador", "ja": "別のパソコン経由", "ko": "다른 컴퓨터 경유"},
     "devNone": {"ru": "Устройство не определено", "en": "Device not identified", "cs": "Zařízení neurčeno", "de": "Gerät nicht bestimmt", "fr": "Appareil non déterminé", "es": "Dispositivo no identificado", "it": "Dispositivo non identificato", "pt": "Dispositivo não identificado", "ja": "デバイス不明", "ko": "기기 확인 불가"},
-    "sysRead": {"ru": "Системные папки и папки программ: прочитано файлов — {a}, с местом съёмки — {b}.", "en": "System and program folders: files read — {a}, with a shooting location — {b}.", "cs": "Systémové složky a složky programů: přečteno souborů — {a}, s místem pořízení — {b}.", "de": "System- und Programmordner: gelesene Dateien — {a}, mit Aufnahmeort — {b}.", "fr": "Dossiers système et de programmes : fichiers lus — {a}, avec lieu de prise de vue — {b}.", "es": "Carpetas del sistema y de programas: archivos leídos — {a}, con lugar de captura — {b}.", "it": "Cartelle di sistema e dei programmi: file letti — {a}, con luogo di scatto — {b}.", "pt": "Pastas do sistema e de programas: arquivos lidos — {a}, com local da captura — {b}.", "ja": "システムフォルダーとプログラムフォルダー：読み込んだファイル {a}、撮影場所あり {b}", "ko": "시스템 폴더와 프로그램 폴더: 읽은 파일 {a}, 촬영 장소 있음 {b}"}
+    "sysRead": {"ru": "Системные папки и папки программ: прочитано файлов — {a}, с местом съёмки — {b}.", "en": "System and program folders: files read — {a}, with a shooting location — {b}.", "cs": "Systémové složky a složky programů: přečteno souborů — {a}, s místem pořízení — {b}.", "de": "System- und Programmordner: gelesene Dateien — {a}, mit Aufnahmeort — {b}.", "fr": "Dossiers système et de programmes : fichiers lus — {a}, avec lieu de prise de vue — {b}.", "es": "Carpetas del sistema y de programas: archivos leídos — {a}, con lugar de captura — {b}.", "it": "Cartelle di sistema e dei programmi: file letti — {a}, con luogo di scatto — {b}.", "pt": "Pastas do sistema e de programas: arquivos lidos — {a}, com local da captura — {b}.", "ja": "システムフォルダーとプログラムフォルダー：読み込んだファイル {a}、撮影場所あり {b}", "ko": "시스템 폴더와 프로그램 폴더: 읽은 파일 {a}, 촬영 장소 있음 {b}"},
+    "moreFolder": {"ru": "Добавить папку", "en": "Add a folder", "cs": "Přidat složku", "de": "Ordner hinzufügen", "fr": "Ajouter un dossier", "es": "Añadir una carpeta", "it": "Aggiungi una cartella", "pt": "Adicionar uma pasta", "ja": "フォルダーを追加", "ko": "폴더 추가"},
+    "moreFiles": {"ru": "Добавить файлы", "en": "Add files", "cs": "Přidat soubory", "de": "Dateien hinzufügen", "fr": "Ajouter des fichiers", "es": "Añadir archivos", "it": "Aggiungi file", "pt": "Adicionar arquivos", "ja": "ファイルを追加", "ko": "파일 추가"},
+    "runDir": {"ru": "Папка «{name}»: прочитано файлов — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Folder “{name}”: files read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Složka „{name}“: přečteno souborů — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ordner „{name}“: gelesene Dateien — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Dossier « {name} » : fichiers lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Carpeta «{name}»: archivos leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "Cartella «{name}»: file letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Pasta “{name}”: arquivos lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "フォルダー「{name}」：読み込んだファイル {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "폴더 “{name}”: 읽은 파일 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
+    "runFiles": {"ru": "Выбранные файлы: прочитано — {a}, с местом съёмки — {b}, новых точек — {c}.", "en": "Chosen files: read — {a}, with a shooting location — {b}, new points — {c}.", "cs": "Vybrané soubory: přečteno — {a}, s místem pořízení — {b}, nových bodů — {c}.", "de": "Ausgewählte Dateien: gelesen — {a}, mit Aufnahmeort — {b}, neue Punkte — {c}.", "fr": "Fichiers choisis : lus — {a}, avec lieu de prise de vue — {b}, nouveaux points — {c}.", "es": "Archivos elegidos: leídos — {a}, con lugar de captura — {b}, puntos nuevos — {c}.", "it": "File scelti: letti — {a}, con luogo di scatto — {b}, punti nuovi — {c}.", "pt": "Arquivos escolhidos: lidos — {a}, com local da captura — {b}, pontos novos — {c}.", "ja": "選んだファイル：読み込み {a}、撮影場所あり {b}、新しい地点 {c}", "ko": "선택한 파일: 읽음 {a}, 촬영 장소 있음 {b}, 새 지점 {c}"},
+    "runNoPlace": {"ru": "В этих файлах нет места съёмки: камера его не записала.", "en": "These files contain no shooting location: the camera did not record it.", "cs": "Tyto soubory neobsahují místo pořízení: fotoaparát ho nezaznamenal.", "de": "Diese Dateien enthalten keinen Aufnahmeort: Die Kamera hat ihn nicht gespeichert.", "fr": "Ces fichiers ne contiennent pas de lieu de prise de vue : l’appareil ne l’a pas enregistré.", "es": "Estos archivos no contienen lugar de captura: la cámara no lo registró.", "it": "Questi file non contengono il luogo di scatto: la fotocamera non lo ha registrato.", "pt": "Estes arquivos não contêm local da captura: a câmera não o registrou.", "ja": "これらのファイルには撮影場所がありません。カメラが記録していません。", "ko": "이 파일에는 촬영 장소가 없습니다. 카메라가 기록하지 않았습니다."},
+    "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже были в итоге.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
+    "devMerge": {"ru": "Снимки одного устройства, сделанные в пределах 150 м и 20 минут, считаются одной точкой.", "en": "Shots from one device taken within 150 m and 20 minutes of each other count as one point.", "cs": "Snímky jednoho zařízení pořízené do 150 m a 20 minut od sebe se počítají jako jeden bod.", "de": "Aufnahmen eines Geräts innerhalb von 150 m und 20 Minuten zählen als ein Punkt.", "fr": "Les prises d’un même appareil faites à moins de 150 m et de 20 minutes d’intervalle comptent pour un seul point.", "es": "Las fotos de un mismo dispositivo tomadas a menos de 150 m y 20 minutos entre sí cuentan como un solo punto.", "it": "Gli scatti di uno stesso dispositivo fatti entro 150 m e 20 minuti l’uno dall’altro contano come un solo punto.", "pt": "As fotos de um mesmo dispositivo feitas a menos de 150 m e 20 minutos umas das outras contam como um único ponto.", "ja": "同じデバイスで150 m・20分以内に撮影された写真は1地点として数えます。", "ko": "같은 기기로 150 m, 20분 이내에 찍은 사진은 한 지점으로 셉니다."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -402,7 +410,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
     $("credits").textContent = t("credits");
     var set = { title: "title", lead: "lead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", bFolder: "folder", bFiles: "files",
-      bMore: "more", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
+      bMore: "moreFolder", bMoreF: "moreFiles", devMerge: "devMerge", privacyNote: "note", drop: "drop", whole: "whole", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute",
       placesNote: "placesNote", bRetry: "retry", saveT: "saveT", saveX: "saveX", newsL: "news", devNote: "devNote", phoneT: "phoneT",
       bPlay: "install", bPlay2: "install", bCopy: "copyLink", mapHint: "mapHint", bView: "viewBtn", keepHint: "keepHint", bClear: "clearBtn",
       restoredX: "restored", slow: "slow", anonNote: "anonNote", hDevs: "hDevs" };
@@ -523,6 +531,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   $("bFolder").onclick = function () { RUN.src = "folder"; pick($("fFolder")); };
   $("bFiles").onclick = function () { RUN.src = "files"; pick($("fFiles")); };
   $("bMore").onclick = function () { RUN.src = "folder"; pick($("fFolder")); };
+  $("bMoreF").onclick = function () { RUN.src = "files"; pick($("fFiles")); };
   $("fFolder").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
   $("fFiles").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
   $("bClear").onclick = function (e) { e.preventDefault(); keepDrop().then(function () { location.reload(); }); };
@@ -980,7 +989,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("nCities").textContent = found.cities.length ? num(found.cities.length) : "";
     var box = $("countries");
     box.innerHTML = "";
-    found.countries.forEach(function (c) { c.el = null; addCountry(c, true); c.regs.forEach(function (rg) { addRegion(c, rg); }); });
+    // Новые сверху, старые снизу (20.11.2026, Андрей): массив идёт по времени, список — в обратном порядке.
+    found.countries.slice().reverse().forEach(function (c) { c.el = null; addCountry(c, true); c.regs.forEach(function (rg) { addRegion(c, rg); }); });
     var cb = $("cities");
     cb.innerHTML = "";
     found.cities.slice(-400).forEach(function (c) { addCity(c); });
@@ -994,12 +1004,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     body.children[0].textContent = countryName(c.cc);
     body.children[1].textContent = monthYear(c.at);
     it.appendChild(body);
-    box.insertBefore(it, idx == null ? null : box.children[idx] || null);
+    // Место в списке «новые сверху»: idx — место в массиве по времени.
+    var pos = idx == null ? null : found.countries.length - 1 - idx;
+    box.insertBefore(it, pos == null ? null : box.children[pos] || null);
     c.el = body.children[2];
     $("nCountries").textContent = num(found.countries.length);
-    quiet || idx == null || idx < found.countries.length - 1 || (box.parentNode.scrollTop = box.parentNode.scrollHeight);
+    quiet || pos !== 0 || (box.parentNode.scrollTop = 0);
   }
-  function addRegion(c, rg) { if (!c.el) return; var sp = document.createElement("span"); sp.textContent = regionName(rg); c.el.appendChild(sp); }
+  function addRegion(c, rg) { if (!c.el) return; var sp = document.createElement("span"); sp.textContent = regionName(rg); c.el.insertBefore(sp, c.el.firstChild); }
   function addCity(c, idx) {
     var cb = $("cities"), it = document.createElement("div");
     it.className = "pc-city";
@@ -1455,8 +1467,25 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     }
     return null;
   }
+  // Итог последнего выбора (20.11.2026, Андрей: после «Выбрать ещё» непонятно, прошло или нет): папка или файлы,
+  // сколько прочитано, у скольких есть место съёмки и сколько новых точек; ноль — почему.
+  function runSay(name, a, b, c) {
+    var x = t(name ? "runDir" : "runFiles", { name: name, a: num(a), b: num(b), c: num(c) });
+    if (!c) x += " " + t(b ? "runNoNew" : "runNoPlace");
+    $("runX").textContent = x; show("runX", true);
+  }
+  function runName(list) {
+    var first = null, same = true;
+    list.forEach(function (f) {
+      var p = String(f.webkitRelativePath || f.tabiPath || "").replace(/^\/+/, "").split("/");
+      if (p.length < 2) return void (same = false);
+      first === null ? (first = p[0]) : first !== p[0] && (same = false);
+    });
+    return same && first ? first : "";
+  }
   function run(list) {
     RUN.t0 = performance.now(); RUN.err = 0;
+    var rname = runName(list);
     var rootWin = false, rootPf = false;
     list.forEach(function (f) {
       var g = sysSeg(f);
@@ -1472,7 +1501,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     // Папки человека — первыми, системные — последними (порядок внутри каждой части прежний).
     files = files.filter(function (f) { return !f.tabiSys; }).concat(files.filter(function (f) { return f.tabiSys; }));
     err(null);
-    if (!files.length && !tlFiles.length && !trkFiles.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); return; }
+    if (!files.length && !tlFiles.length && !trkFiles.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); runSay(rname, list.length, 0, 0); show("vDone", true); return; }
     show("vPick", false); show("vDone", false); show("vWork", true);
     $("barIn").style.width = "0%";
     $("when").textContent = "";
@@ -1531,6 +1560,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       // Уже показанное — точка этого разбора или сохранённая в учётной записи (там время до секунды или минуты) — второй раз
       // не добавляется.
       kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
+      runSay(rname, files.length + tlFiles.length + trkFiles.length, pts.length, kept.length);
       show("vWork", false);
       if (!kept.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); show("vPick", !A.pts.length); renderWhy(); statScan(); return; }
       A.none = false; show("done", false);
