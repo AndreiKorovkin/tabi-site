@@ -92,6 +92,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-city .nm{font-weight:650;min-width:0;overflow-wrap:anywhere}
 .pc-city .cc{color:var(--sub);font-size:12.5px;white-space:nowrap;flex:none}
 .pc-route{margin-top:20px;display:grid;gap:12px}
+/* Под картой — две половины (20.11.2026, Андрей: устройства — левая половина, правая пока пуста). */
+.pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
 .pc-map{position:relative;border-radius:16px;overflow:hidden;background:var(--bg)}
 .pc-map canvas{width:100%;height:clamp(420px,62vh,720px);display:block;touch-action:none;cursor:grab}
 .pc-map canvas.drag{cursor:grabbing}
@@ -108,7 +110,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-over{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(6px);font-size:24px;font-weight:800;color:var(--accent);pointer-events:none}
 @keyframes pcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
-@media (max-width:1100px){.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:520px){.pc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
 [hidden]{display:none!important}
 </style></head>
@@ -231,12 +233,14 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   <div class="pc-legend" id="legend" hidden><span id="lgA"></span><i id="lgBar"></i><span id="lgB"></span></div>
   <p class="pc-s" id="mapHint"></p>
 </section>
-<!-- Устройства — под картой (20.11.2026, Андрей): с каких устройств что пришло и через какой компьютер -->
+<!-- Устройства — под картой, левая половина (20.11.2026, Андрей): с каких устройств что пришло и через какой компьютер -->
+<div class="pc-under">
 <section class="pc-card pc-route" id="devBox" hidden>
   <h2 id="hDevs"></h2>
   <p class="pc-s" id="devMerge"></p>
   <div class="pc-devs" id="devList"></div>
 </section>
+</div>
 <!-- «Начать заново» — в конце страницы, кнопкой, с окном подтверждения (20.11.2026, Андрей) -->
 <div class="pc-end" id="endBox" hidden><button class="pc-btn b2 sm" id="bClear" type="button"></button></div>
 </main>
