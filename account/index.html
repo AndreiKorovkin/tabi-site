@@ -15,7 +15,7 @@ body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 1
 /* Навигация сайта (20.11.2026, Андрей): две вкладки — главная и медиафайлы с компьютера; на узком экране — меню. */
 nav.sections+.ac-tools{margin-left:22px}
 details.menu{display:none}
-@media (max-width:760px){nav.sections+.ac-tools{margin-left:auto}details.menu{display:block}}
+@media (max-width:1100px){nav.sections+.ac-tools{margin-left:auto}details.menu{display:block}}
 @media (max-width:560px){#menuLbl,#langCur{display:none}.ac-tools{gap:8px}}
 .ac-theme{appearance:none;border:0;cursor:pointer;width:40px;height:40px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
 .ac-theme .ic{width:19px;height:19px}
@@ -161,6 +161,9 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
     "navHome": {"en": "Home", "ru": "Главная", "cs": "Domů", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
+    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
+    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
+    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
     "navPc": {"en": "Media files from my computer", "ru": "Медиафайлы с моего компьютера", "cs": "Mediální soubory z mého počítače", "de": "Mediendateien von meinem Computer", "fr": "Fichiers multimédias de mon ordinateur", "es": "Archivos multimedia de mi ordenador", "it": "File multimediali dal mio computer", "pt": "Arquivos de mídia do meu computador", "ja": "自分のパソコンのメディアファイル", "ko": "내 컴퓨터의 미디어 파일"},
     "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
     "accTitle": {"en": "Tabi account", "ru": "Учётная запись Tabi", "cs": "Účet Tabi", "de": "Tabi-Konto", "fr": "Compte Tabi", "es": "Cuenta de Tabi", "it": "Account Tabi", "pt": "Conta Tabi", "ja": "Tabiアカウント", "ko": "Tabi 계정"},
@@ -228,7 +231,8 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
 
   // Вкладки сайта (20.11.2026, Андрей): две на всех страницах — главная и медиафайлы с компьютера.
   function renderNav() {
-    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], ["/computer/?lang=" + L, t("navPc")]];
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], [base + "how-it-works/", t("navHow")],
+      [base + "collection/", t("navColl")], [base + "faq/", t("navFaq")], ["/computer/?lang=" + L, t("navPc")]];
     var nav = $("nav"), ml = $("menuList");
     nav.innerHTML = ""; ml.innerHTML = "";
     items.forEach(function (it) {

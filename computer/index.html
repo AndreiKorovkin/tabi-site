@@ -15,7 +15,7 @@ body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 1
 /* Навигация сайта (20.11.2026, Андрей): две вкладки — главная и эта страница; на узком экране — меню. */
 nav.sections+.pc-tools{margin-left:22px}
 details.menu{display:none}
-@media (max-width:760px){nav.sections+.pc-tools{margin-left:auto}details.menu{display:block}}
+@media (max-width:1100px){nav.sections+.pc-tools{margin-left:auto}details.menu{display:block}}
 /* Узкий экран: у меню и языка — только значки, шапка в одну строку без прокрутки вбок. */
 @media (max-width:560px){#menuLbl,#langCur{display:none}.pc-tools{gap:8px}}
 /* Итог выбора — плитками (20.11.2026, Андрей: строка была технической). */
@@ -153,6 +153,12 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 .pc-foot a{color:var(--sub);font-weight:600;text-decoration:none}.pc-foot a:hover{color:var(--ink)}
 .pc-over{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(6px);font-size:24px;font-weight:800;color:var(--accent);pointer-events:none}
 @keyframes pcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* Открытие (20.11.2026, Андрей: сначала мелькал вид «до разбора» с вопросами): пока идут итог браузера и учётная запись —
+   только тонкая полоса посередине, затем страница появляется сразу в своём виде. */
+.pc-loader{max-width:320px;margin:22vh auto 0;padding:0 20px}
+main.pc.pc-load{display:none}
+main.pc.pc-show{animation:pcFade .35s ease both}
+@keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
 @media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:520px){.pc-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
@@ -170,7 +176,8 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 </div>
 </div></header>
 
-<main class="pc">
+<div class="pc-loader" id="loader" hidden><div class="pc-bar wait"><div></div></div></div>
+<main class="pc" id="pcMain">
 <div class="pc-grid idle" id="grid">
   <aside class="pc-card pc-side" id="left" aria-live="polite">
     <h2><span id="hCountries"></span><span class="pc-count" id="nCountries"></span></h2>
@@ -432,7 +439,10 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
     "resNewH": {"en": "New in your result", "ru": "Новое в итоге", "cs": "Nové ve výsledku", "de": "Neu im Ergebnis", "fr": "Nouveau dans votre bilan", "es": "Nuevo en tu resultado", "it": "Novità nel risultato", "pt": "Novo no seu resultado", "ja": "新しく加わったもの", "ko": "새로 추가된 항목"},
     "resChkH": {"en": "Checked", "ru": "Проверено", "cs": "Zkontrolováno", "de": "Geprüft", "fr": "Vérifié", "es": "Comprobado", "it": "Controllato", "pt": "Verificado", "ja": "確認したファイル", "ko": "확인한 파일"},
     "resCcH": {"en": "New countries", "ru": "Новые страны", "cs": "Nové země", "de": "Neue Länder", "fr": "Nouveaux pays", "es": "Países nuevos", "it": "Nuovi paesi", "pt": "Novos países", "ja": "新しい国", "ko": "새 국가"},
-    "resOk": {"en": "Done", "ru": "Готово", "cs": "Hotovo", "de": "Fertig", "fr": "Terminé", "es": "Listo", "it": "Fatto", "pt": "Pronto", "ja": "完了", "ko": "완료"}
+    "resOk": {"en": "Done", "ru": "Готово", "cs": "Hotovo", "de": "Fertig", "fr": "Terminé", "es": "Listo", "it": "Fatto", "pt": "Pronto", "ja": "完了", "ko": "완료"},
+    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
+    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
+    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -521,7 +531,8 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 
   // Вкладки сайта (20.11.2026, Андрей): две на всех страницах — главная и эта страница; отмечена та, где человек сейчас.
   function renderNav() {
-    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], ["/computer/?lang=" + L, t("navPc"), 1]];
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], [base + "how-it-works/", t("navHow")],
+      [base + "collection/", t("navColl")], [base + "faq/", t("navFaq")], ["/computer/?lang=" + L, t("navPc"), 1]];
     var nav = $("nav"), ml = $("menuList");
     nav.innerHTML = ""; ml.innerHTML = "";
     items.forEach(function (it) {
@@ -682,7 +693,7 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 
   // Перетаскивание папок и файлов — можно несколько сразу; у файла запоминается путь — папка точки (18.11.2026).
   var dragN = 0;
-  var canDrop = function () { return !PHONE && $("vWork").hidden; };
+  var canDrop = function () { return !PHONE && $("vWork").hidden && !$("pcMain").classList.contains("pc-load"); };
   document.addEventListener("dragenter", function (e) { if (!canDrop()) return; e.preventDefault(); dragN++; $("over").hidden = false; });
   document.addEventListener("dragleave", function () { if (--dragN <= 0) { dragN = 0; $("over").hidden = true; } });
   document.addEventListener("dragover", function (e) { canDrop() && e.preventDefault(); });
@@ -1177,17 +1188,17 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
     cb.children.length > 400 && cb.removeChild(cb.lastChild);
     $("nCities").textContent = num(found.cities.length);
   }
-  function renderStats() {
+  function renderStats(v) {
     var st = $("stats");
     st.hidden = !(revealing || A.shown);
-    var rows = [["sCountries", found.countries.length], ["sRegions", found.regions], ["sCities", found.cities.length], ["sDays", found.days.size], ["sKm", Math.round(found.km / 1000)]];
+    v = v || statNums();
+    var rows = [["sCountries", v[0]], ["sRegions", v[1]], ["sCities", v[2]], ["sDays", v[3]], ["sKm", v[4]]];
     // Нулей не показываем (20.11.2026, Андрей: зачем показывать то, чего нет).
     st.innerHTML = rows.filter(function (r) { return r[1] > 0; }).map(function (r) { return '<div class="pc-stat"><b>' + num(r[1]) + "</b><span>" + t(r[0]) + "</span></div>"; }).join("");
   }
 
   // ===== Карта маршрута: приближение колесом, кнопками и пальцами, сдвиг мышью; цвет точки — время снимка =====
-  // Проекция (20.11.2026, Андрей: мир был растянут — Гренландия, Россия, Африка, затем сплющен): вид мира — цилиндрическая
-  // Паттерсона, прямоугольная карта мира без крайностей Меркатора; при приближении она плавно переходит
+  // Проекция (20.11.2026, Андрей): вид мира — Меркатор, как карты приложения; при приближении она плавно переходит
   // в местную равноугольную вокруг центра вида — город и маршрут без искажений. MV — центр вида в градусах (lng, lat),
   // s — точек экрана на единицу проекции, t — доля местной проекции (0 на виде мира, 1 с приближения в 16 раз).
   // Подложка — границы стран и, при приближении, регионов посещённых стран из тех же данных; чужих карт страница не
@@ -1196,13 +1207,13 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
     land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
   var D2R = Math.PI / 180;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-  // Цилиндрическая проекция Паттерсона (Patterson, Šavrič, Jenny, 2015; та же, что d3.geoPatterson): прямоугольная, как
-  // привычные карты мира, параллели и меридианы прямые; Гренландия и Россия не раздуты, как у Меркатора, и мир не сплющен,
-  // как у Natural Earth (20.11.2026, Андрей). Радианы → [x, y] (y — на север) и вертикальный масштаб ∂y/∂φ.
-  var PT1 = 1.0148, PT2 = 0.23185, PT3 = -0.14499, PT4 = 0.02406, NORTH = 84, SOUTH = -80;
-  function ne(l, f) { var f4 = f * f * f * f; return [l, f * (PT1 + f4 * (PT2 + f4 * (PT3 + f4 * PT4)))]; }
-  function neKy(f) { var f4 = f * f * f * f; return PT1 + f4 * (5 * PT2 + f4 * (9 * PT3 + f4 * 13 * PT4)); }
-  // Масштаб, при котором виден весь мир (84° с. ш. — 80° ю. ш.), — от него считается доля местной проекции.
+  // Проекция Меркатора — та же, что у карт приложения (20.11.2026, Андрей: в Natural Earth и Паттерсоне Россия и Европа
+  // сплющены): формы стран верные, северные страны крупнее, чем в жизни, как в приложении. Широта ограничена 85°, как у
+  // веб-карт. Радианы → [x, y] (y — на север) и вертикальный масштаб ∂y/∂φ.
+  var MAXF = 85.05 * Math.PI / 180, NORTH = 82, SOUTH = -60;
+  function ne(l, f) { f = Math.max(-MAXF, Math.min(MAXF, f)); return [l, Math.log(Math.tan(Math.PI / 4 + f / 2))]; }
+  function neKy(f) { return 1 / Math.cos(Math.max(-MAXF, Math.min(MAXF, f))); }
+  // Масштаб, при котором виден весь мир (82° с. ш. — 60° ю. ш.), — от него считается доля местной проекции.
   function worldS() { var h = ne(0, NORTH * D2R)[1] - ne(0, SOUTH * D2R)[1]; return Math.min(CW / (2 * Math.PI), CH / h) * 0.98; }
   function prep() {
     var l = MV.lng * D2R, f = MV.lat * D2R;
@@ -1903,7 +1914,7 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
         var p = all[i];
         if (!byKeep.has(p) || !G) { ev.push({ i: i }); continue; }
         var e = { i: i, p: p };
-        if (p.cc) { var rg = p.pv ? p.rg : regionAt(regBy[p.cc] || [], p[0], p[1]); rg && (e.rg = rg); }
+        if (p.cc) { var rg = p.pv ? p.rg : regionAt(regBy[p.cc] || [], p[0], p[1]); p.rg = rg || null; rg && (e.rg = rg); }
         var ct = p.pv ? p.ct : cityAt(p[0], p[1]);
         p.ct = ct;
         ct >= 0 && (e.ct = ct);
@@ -2258,18 +2269,55 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
   // Удаление устройства (20.11.2026, Андрей: одна кнопка и окно подтверждения; вернуть — снова выбрать папку): его точки
   // уходят из итога этого браузера и из копии до входа; у сохранённого итога — и из точек учётной записи, которые телефон
   // ещё не проверил (pc-media op forget). Затем страница открывается заново с оставшимся.
+  // Удаление (20.11.2026, план Андрея: «Устройство не определено» возвращалось, страница перезагружалась): строка исчезает
+  // сразу, числа плавно пересчитываются без перезагрузки. Устройство из реестра — «не брать» (forget); точки без устройства
+  // в реестре — скрыть на сервере по ключам точек (hide), чтобы они не вернулись из учётной записи.
   function devDrop(key) {
-    var left = A.pts.filter(function (p) { return p._k !== key; }), gone = A.pts.length - left.length;
-    if (!gone) return void $("dlgNo").onclick();
-    var rid = /^r(\d+)$/.exec(key), sentGone = A.pts.some(function (p) { return p._k === key && (p.sent || p.acc); });
+    var gone = A.pts.filter(function (p) { return p._k === key; }), left = A.pts.filter(function (p) { return p._k !== key; });
+    $("dlgNo").onclick();
+    if (!gone.length) return;
+    var rid = /^r(\d+)$/.exec(key), sent = gone.filter(function (p) { return p.sent || p.acc; });
     A.pts = left;
-    var jobs = [keepPut()];
-    if (rid && sentGone && S) jobs.push(fresh().then(function (s) {
-      return s && fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "forget", dev: "pc:" + rid[1] }) }).catch(function () {});
-    }));
+    if (S && sent.length) fresh().then(function (s) {
+      if (!s) return;
+      var call = function (b) { return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(b) }).catch(function () {}); };
+      // Особые места — заново, когда сервер уже убрал точки.
+      (rid ? call({ op: "forget", dev: "pc:" + rid[1] }) : call({ op: "hide", k: sent.map(function (p) { return accKey(p[0], p[1], p[2]); }) })).then(loadSpecial);
+    });
     // Копия до входа перезапишется оставшимся при открытии (anonPut), а без оставшегося — стирается.
     left.length ? ls.set(AK + "N", "") : anonDrop();
-    Promise.all(jobs).then(function () { location.replace(location.pathname + "?lang=" + L); });
+    keepPut();
+    rebuild();
+  }
+  // Итог заново по оставшимся точкам (страна, регион и город у точки уже известны) — числа плавно от прежних к новым.
+  function statNums() { return [found.countries.length, found.regions, found.cities.length, found.days.size, Math.round(found.km / 1000)]; }
+  function rebuild() {
+    var from = statNums();
+    found = { countries: [], byCc: {}, cities: [], byCity: {}, regions: 0, days: new Set(), km: 0 };
+    A.pts.sort(function (x, y) { return x[2] - y[2]; });
+    A.pts.forEach(function (p) {
+      found.days.add(new Date(p[2]).toDateString());
+      if (p.cc) {
+        var c = found.byCc[p.cc];
+        c || ((c = found.byCc[p.cc] = { cc: p.cc, at: p[2], regs: [], rset: {}, ys: {} }), found.countries.push(c));
+        c.ys[new Date(p[2]).getFullYear()] = 1;
+        if (p.rg && !c.rset[p.rg.id]) { c.rset[p.rg.id] = p[2]; c.regs.push(p.rg); found.regions++; }
+      }
+      p.ct >= 0 && !found.byCity[p.ct] && found.cities.push((found.byCity[p.ct] = { i: p.ct, name: townName(p.ct), at: p[2] }));
+    });
+    found.km = kmOf(A.pts);
+    A.shown = A.pts.length;
+    T0 = A.pts.length ? A.pts[0][2] : 0; T1 = A.pts.length ? A.pts[A.pts.length - 1][2] : 1;
+    renderLists(); renderDevs(); renderLegend(); renderSave();
+    mapDirty = true; drawMap();
+    if (!A.pts.length) { show("vDone", false); show("vPick", true); show("routeBox", false); }
+    var to = statNums(), t0 = performance.now();
+    var step = function (now) {
+      var f = Math.min(1, (now - t0) / 700), e = 1 - Math.pow(1 - f, 3);
+      renderStats(to.map(function (v, i) { return Math.round(from[i] + (v - from[i]) * e); }));
+      f < 1 && requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
   // Названия моделей (20.11.2026): код из снимка (2209116AG) сайт сводит к названию (Redmi Note 12 Pro) по списку Google Play
   // на сервере — без входа и без сведений учётной записи.
@@ -2353,6 +2401,11 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
     try { var p = s.at.split(".")[1]; return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((p.length + 3) % 4))).sub || null; } catch (e) { return null; }
   }
   // Открытие страницы: итог этого браузера (st) и сохранённое в учётной записи (j) — одним коротким показом.
+  function unload() {
+    var m = $("pcMain");
+    if (!m.classList.contains("pc-load")) return;
+    show("loader", false); m.classList.remove("pc-load"); m.classList.add("pc-show");
+  }
   function restore(st, j) {
     st = st || {};
     KEEP_OWNER = st.owner || null;
@@ -2371,7 +2424,7 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
       var ccs = {};
       pts.forEach(function (p) { var c = countryAt(p[0], p[1]); c && (ccs[c] = 1); });
       return Promise.all(Object.keys(ccs).map(regions));
-    }).then(function () { show("vWork", false); return reveal(pts, 600); }).then(function () { return true; });
+    }).then(function () { show("vWork", false); unload(); return reveal(pts, 600); }).then(function () { return true; });
   }
 
   // ===== Картинка «Поделиться» =====
@@ -2474,6 +2527,8 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
     // записи приходят вместе и показываются один раз, коротко; пока ждём учётную запись — тонкая полоса ожидания.
     if (!code) {
       show("vPick", false);
+      $("pcMain").classList.add("pc-load");
+      setTimeout(function () { $("pcMain").classList.contains("pc-load") && show("loader", true); }, 150);
       var accP = S ? accFetch() : Promise.resolve(null);
       keepGet()
         .then(function (st) {
@@ -2481,13 +2536,12 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
           return st;
         })
         .then(function (st) {
-          if (S || (st && st.pts && st.pts.length)) { show("vWork", true); $("prog").textContent = ""; $("when").textContent = ""; $("bar").classList.add("wait"); }
           return accP.then(function (j) { return restore(st, j); });
         })
         .then(function (shown) {
           // Пока открытие ждало учётную запись, человек мог уже выбрать файлы — тогда его разбор не трогаем.
           if (RUN.on) return;
-          $("bar").classList.remove("wait"); shown || (show("vWork", false), show("vPick", true)); renderSave();
+          unload(); shown || (show("vWork", false), show("vPick", true)); renderSave();
         });
     }
     if (code && q.get("w") !== "1") {

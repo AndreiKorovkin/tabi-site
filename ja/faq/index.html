@@ -68,7 +68,8 @@ nav.sections+.tools{margin-left:22px}
 header.top .tacc{flex:none}
 .thm{appearance:none;border:0;cursor:pointer;width:40px;height:40px;flex:none;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
 .thm .ic{width:19px;height:19px}
-@media (max-width:760px){nav.sections{display:none}nav.sections+.tools{margin-left:auto}}
+details.menu{display:none}
+@media (max-width:1100px){nav.sections{display:none}nav.sections+.tools{margin-left:auto}details.menu{display:block}}
 @media (max-width:560px){header.top .lang .cur{display:none}header.top .tools{gap:8px}}
 .tacc{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
 details.lang{position:relative}
@@ -189,8 +190,9 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <a class="skip" href="#main">本文へ移動</a>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/ja/" aria-label="Tabi">Tabi</a>
-<nav class="sections" aria-label="Tabi"><a href="/ja/" aria-current="page">ホーム</a><a href="/computer/?lang=ja">自分のパソコンのメディアファイル</a></nav>
+<nav class="sections" aria-label="Tabi"><a href="/ja/">ホーム</a><a href="/ja/how-it-works/">しくみ</a><a href="/ja/collection/">コレクション</a><a href="/ja/faq/" aria-current="page">よくある質問</a><a href="/computer/?lang=ja">自分のパソコンのメディアファイル</a></nav>
 <div class="tools">
+<details class="lang menu"><summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span class="cur">メニュー</span></summary><ul><li><a href="/ja/">ホーム</a></li><li><a href="/ja/how-it-works/">しくみ</a></li><li><a href="/ja/collection/">コレクション</a></li><li><a href="/ja/faq/" aria-current="page">よくある質問</a></li><li><a href="/computer/?lang=ja">自分のパソコンのメディアファイル</a></li></ul></details>
 <details class="lang"><summary><span class="sr">言語: </span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span class="cur">日本語</span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul><li><a href="/faq/" hreflang="en" lang="en">English</a></li><li><a href="/cs/faq/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/de/faq/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/es/faq/" hreflang="es" lang="es">Español</a></li><li><a href="/fr/faq/" hreflang="fr" lang="fr">Français</a></li><li><a href="/ja/faq/" hreflang="ja" lang="ja" aria-current="page">日本語</a></li><li><a href="/ru/faq/" hreflang="ru" lang="ru">Русский</a></li></ul></details>
 <button class="thm" id="thm" type="button" data-l="ライトテーマ" data-d="ダークテーマ"></button><script>(function(){var b=document.getElementById("thm"),r=document.documentElement,S="<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4\"/>",M="<path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\"/>",p=function(){var l=r.getAttribute("data-theme")==="light";b.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(l?S:M)+"</svg>";var n=b.getAttribute(l?"data-l":"data-d");b.setAttribute("aria-label",n);b.title=n};b.onclick=function(){var l=r.getAttribute("data-theme")!=="light";l?r.setAttribute("data-theme","light"):r.removeAttribute("data-theme");try{localStorage.setItem("tabiTheme",l?"light":"dark")}catch(e){}p()};p()})()</script>
 <a data-tabi-acc data-lang="ja" data-in="ログイン" class="tacc in" href="/account/?lang=ja">ログイン</a>
