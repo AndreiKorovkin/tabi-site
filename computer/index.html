@@ -2272,8 +2272,13 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     if (!pts.length) return Promise.resolve(false);
     st.saved && (saveSt.state = "saved");
     st.special && st.special.n != null && (saveSt.special = st.special);
-    show("vPick", false); show("vWork", false);
-    return geo().then(function () { return reveal(pts, 600); }).then(function () { return true; });
+    show("vPick", false);
+    // Границы и регионы найденных стран — до показа: пустых рамок до прихода данных не видно, итог появляется сразу.
+    return geo().then(function () {
+      var ccs = {};
+      pts.forEach(function (p) { var c = countryAt(p[0], p[1]); c && (ccs[c] = 1); });
+      return Promise.all(Object.keys(ccs).map(regions));
+    }).then(function () { show("vWork", false); return reveal(pts, 600); }).then(function () { return true; });
   }
 
   // ===== Картинка «Поделиться» =====
