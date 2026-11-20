@@ -59,6 +59,17 @@ dialog.pc-dlg{border:1px solid var(--line);border-radius:24px;padding:26px;width
 dialog.pc-dlg::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
 dialog.pc-dlg h2{font-size:20px;margin:0 0 10px;letter-spacing:-.01em}
 dialog.pc-dlg .pc-row{margin-top:20px}
+dialog.pc-res{width:min(600px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow-y:auto}
+dialog.pc-res[open]{display:grid;gap:16px}
+dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
+.pc-res-tl{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
+.pc-res-tl div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:center}
+.pc-res-tl b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.pc-res-tl span{font-size:12.5px;color:var(--sub)}
+.pc-res-tl .new{border-color:var(--accent)}.pc-res-tl .new b{color:var(--accent)}
+.pc-res-cc{display:flex;flex-wrap:wrap;gap:8px}
+.pc-res-cc span{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:650;font-size:14.5px}
+.pc-res-cc img{width:26px;height:18px;object-fit:cover;border-radius:4px}
 .pc-app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
 .pc-qr{width:128px;height:128px;padding:10px;background:#fff;border-radius:14px}
 .pc-qr svg{width:100%;height:100%;display:block}
@@ -195,8 +206,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     <!-- Итог -->
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
-      <div class="pc-run" id="runX" hidden><div class="hd" id="runT"></div><div class="tl" id="runTl"></div><p class="why0" id="runW" hidden></p></div>
-      <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul><p class="pc-s" id="sideX" hidden style="margin-top:8px"></p></details>
       <button class="pc-btn b2" id="bMore"></button>
     </div>
     <!-- Сохранение (20.11.2026, Андрей): «Сохранить итог» или «Перенести на телефон», затем только «Войти через Google» -->
@@ -244,7 +253,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     <div class="pc-tip" id="tip" hidden></div>
   </div>
   <div class="pc-legend" id="legend" hidden><span id="lgA"></span><i id="lgBar"></i><span id="lgB"></span></div>
-  <p class="pc-s" id="mapHint"></p>
 </section>
 <!-- Устройства — под картой, левая половина (20.11.2026, Андрей): с каких устройств что пришло и через какой компьютер -->
 <div class="pc-under idle" id="under">
@@ -261,6 +269,18 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 <!-- «Начать заново» — в конце страницы, кнопкой, с окном подтверждения (20.11.2026, Андрей) -->
 <div class="pc-end" id="endBox" hidden><button class="pc-btn b2 sm" id="bClear" type="button"></button></div>
 </main>
+<!-- Итог проверки (20.11.2026, Андрей): всё, что дала выбранная папка, — только здесь; после «Готово» числа на странице
+     растут плавно. -->
+<dialog class="pc-dlg pc-res" id="resDlg" aria-labelledby="resT">
+  <h2 id="resT"></h2>
+  <div id="resNewBox"><h3 id="resNewH"></h3><div class="pc-res-tl" id="resNew"></div></div>
+  <div id="resCcBox"><h3 id="resCcH"></h3><div class="pc-res-cc" id="resCc"></div></div>
+  <p class="pc-t" id="resNone" hidden></p>
+  <div><h3 id="resChkH"></h3><div class="pc-res-tl" id="resChk"></div></div>
+  <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul></details>
+  <p class="pc-s" id="sideX" hidden></p>
+  <button class="pc-btn" id="resOk" type="button"></button>
+</dialog>
 <dialog class="pc-dlg" id="dlg" aria-labelledby="dlgT"><h2 id="dlgT"></h2><p class="pc-t" id="dlgX"></p><div class="pc-row"><button class="pc-btn b2" id="dlgNo" type="button"></button><button class="pc-btn" id="dlgYes" type="button"></button></div></dialog>
 <footer class="pc-foot"><a href="/" id="fHome"></a><a href="/privacy.html" id="pol"></a><span id="credits"></span></footer>
 <div class="pc-over" id="over" hidden></div>
@@ -332,7 +352,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "phoneI": {"en": "Open tabimobile.com/computer on a computer to scan the media files kept on it.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer, um die dort gespeicherten Mediendateien auszuwerten.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur pour analyser les fichiers multimédias qui s’y trouvent.", "es": "Abre tabimobile.com/computer en un ordenador para analizar los archivos multimedia que guarda.", "it": "Apra tabimobile.com/computer su un computer per analizzare i file multimediali che vi sono conservati.", "pt": "Abra tabimobile.com/computer em um computador para analisar os arquivos de mídia guardados nele.", "ja": "パソコンでtabimobile.com/computerを開くと、パソコンに保存されたメディアファイルを分析できます。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 컴퓨터에 저장된 미디어 파일을 분석할 수 있습니다."},
     "copyLink": {"en": "Copy the link", "ru": "Скопировать ссылку", "cs": "Zkopírovat odkaz", "de": "Link kopieren", "fr": "Copier le lien", "es": "Copiar el enlace", "it": "Copia il link", "pt": "Copiar o link", "ja": "リンクをコピー", "ko": "링크 복사"},
     "copied": {"en": "The link is copied", "ru": "Ссылка скопирована", "cs": "Odkaz je zkopírován", "de": "Link kopiert", "fr": "Lien copié", "es": "Enlace copiado", "it": "Link copiato", "pt": "Link copiado", "ja": "リンクをコピーしました", "ko": "링크를 복사했습니다"},
-    "mapHint": {"en": "Zoom with the mouse wheel or the buttons and drag the map with the mouse. Colour shows time: from early photos to recent ones.", "ru": "Приближайте колесом мыши или кнопками, перетаскивайте карту мышью. Цвет показывает время: от ранних снимков к недавним.", "cs": "Přibližujte kolečkem myši nebo tlačítky a mapu posouvejte myší. Barva ukazuje čas: od nejstarších snímků k nejnovějším.", "de": "Zoomen Sie mit dem Mausrad oder den Schaltflächen und verschieben Sie die Karte mit der Maus. Die Farbe zeigt die Zeit: von frühen zu neuen Fotos.", "fr": "Zoomez avec la molette ou les boutons et déplacez la carte avec la souris. La couleur indique le temps : des premières photos aux plus récentes.", "es": "Acerca con la rueda del ratón o los botones y arrastra el mapa con el ratón. El color muestra el tiempo: de las fotos más antiguas a las más recientes.", "it": "Ingrandisca con la rotellina del mouse o con i pulsanti e trascini la mappa con il mouse. Il colore indica il tempo: dalle foto più vecchie alle più recenti.", "pt": "Aproxime com a roda do mouse ou com os botões e arraste o mapa com o mouse. A cor mostra o tempo: das fotos mais antigas às mais recentes.", "ja": "マウスホイールかボタンで拡大し、マウスで地図を動かせます。色は時間を表します：古い写真から新しい写真へ。", "ko": "마우스 휠이나 버튼으로 확대하고 마우스로 지도를 움직이세요. 색은 시간을 나타냅니다: 오래된 사진에서 최근 사진까지."},
     "zIn": {"en": "Zoom in", "ru": "Приблизить", "cs": "Přiblížit", "de": "Vergrößern", "fr": "Zoomer", "es": "Acercar", "it": "Ingrandisci", "pt": "Aproximar", "ja": "拡大", "ko": "확대"},
     "zOut": {"en": "Zoom out", "ru": "Отдалить", "cs": "Oddálit", "de": "Verkleinern", "fr": "Dézoomer", "es": "Alejar", "it": "Riduci", "pt": "Afastar", "ja": "縮小", "ko": "축소"},
     "zAll": {"en": "Whole route", "ru": "Весь маршрут", "cs": "Celá trasa", "de": "Ganze Route", "fr": "Tout l’itinéraire", "es": "Toda la ruta", "it": "Tutto il percorso", "pt": "Todo o trajeto", "ja": "ルート全体", "ko": "전체 경로"},
@@ -409,7 +428,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "q6": {"en": "Which files can I choose?", "ru": "Какие файлы подходят?", "cs": "Které soubory se hodí?", "de": "Welche Dateien eignen sich?", "fr": "Quels fichiers puis-je choisir ?", "es": "¿Qué archivos sirven?", "it": "Quali file posso scegliere?", "pt": "Quais arquivos servem?", "ja": "どのファイルが使えますか？", "ko": "어떤 파일을 고를 수 있나요?"},
     "a6": {"en": "Photos and videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), a Google location history export and route files GPX, KML, TCX and GeoJSON. Choose folders rather than the whole disk: the browser takes a very long time to list every file on a disk.", "ru": "Фотографии и видео (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), выгрузка истории местоположений Google и файлы маршрута GPX, KML, TCX и GeoJSON. Выбирайте папки, а не весь диск: список всех файлов диска браузер собирает очень долго.", "cs": "Fotografie a videa (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), export historie polohy Google a soubory trasy GPX, KML, TCX a GeoJSON. Vybírejte složky, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho.", "de": "Fotos und Videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), ein Export des Google-Standortverlaufs und Routendateien GPX, KML, TCX und GeoJSON. Wählen Sie Ordner statt der ganzen Festplatte: Die Liste aller Dateien einer Festplatte stellt der Browser sehr lange zusammen.", "fr": "Photos et vidéos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un export de l’historique des positions Google et des fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Choisissez des dossiers plutôt que tout le disque : le navigateur met très longtemps à lister tous les fichiers d’un disque.", "es": "Fotos y vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), una exportación del historial de ubicaciones de Google y archivos de ruta GPX, KML, TCX y GeoJSON. Elige carpetas, no el disco entero: el navegador tarda mucho en listar todos los archivos de un disco.", "it": "Foto e video (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un’esportazione della cronologia delle posizioni di Google e file di percorso GPX, KML, TCX e GeoJSON. Scelga cartelle, non l’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco.", "pt": "Fotos e vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), uma exportação do histórico de localização do Google e arquivos de trajeto GPX, KML, TCX e GeoJSON. Escolha pastas, não o disco inteiro: o navegador demora muito para listar todos os arquivos de um disco.", "ja": "写真と動画（JPEG、HEIC、PNG、WebP、MP4、MOV、RAW）、Googleのロケーション履歴のエクスポート、ルートファイル（GPX、KML、TCX、GeoJSON）です。ディスク全体ではなくフォルダーを選んでください。ディスク全体のファイル一覧を作るにはブラウザーがとても時間をかけます。", "ko": "사진과 동영상(JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google 위치 기록 내보내기, 경로 파일 GPX, KML, TCX, GeoJSON입니다. 디스크 전체가 아니라 폴더를 고르세요. 디스크의 모든 파일 목록을 만드는 데 브라우저가 아주 오래 걸립니다."},
     "q7": {"en": "What is saved together with the points?", "ru": "Что сохраняется вместе с точками?", "cs": "Co se ukládá spolu s body?", "de": "Was wird zusammen mit den Punkten gespeichert?", "fr": "Qu’est-ce qui est enregistré avec les points ?", "es": "¿Qué se guarda junto con los puntos?", "it": "Che cosa viene salvato insieme ai punti?", "pt": "O que é salvo junto com os pontos?", "ja": "地点と一緒に何が保存されますか？", "ko": "지점과 함께 무엇이 저장되나요?"},
-    "a7": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."}
+    "a7": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."},
+    "resNewH": {"en": "New in your result", "ru": "Новое в итоге", "cs": "Nové ve výsledku", "de": "Neu im Ergebnis", "fr": "Nouveau dans votre bilan", "es": "Nuevo en tu resultado", "it": "Novità nel risultato", "pt": "Novo no seu resultado", "ja": "新しく加わったもの", "ko": "새로 추가된 항목"},
+    "resChkH": {"en": "Checked", "ru": "Проверено", "cs": "Zkontrolováno", "de": "Geprüft", "fr": "Vérifié", "es": "Comprobado", "it": "Controllato", "pt": "Verificado", "ja": "確認したファイル", "ko": "확인한 파일"},
+    "resCcH": {"en": "New countries", "ru": "Новые страны", "cs": "Nové země", "de": "Neue Länder", "fr": "Nouveaux pays", "es": "Países nuevos", "it": "Nuovi paesi", "pt": "Novos países", "ja": "新しい国", "ko": "새 국가"},
+    "resOk": {"en": "Done", "ru": "Готово", "cs": "Hotovo", "de": "Fertig", "fr": "Terminé", "es": "Listo", "it": "Fatto", "pt": "Pronto", "ja": "完了", "ko": "완료"}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -477,8 +500,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     $("credits").textContent = t("credits");
     var set = { title: "title", lead: "lead", bGoogle: "google", bFolder: "folder", bMore: "moreFolder",
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
-      bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", mapHint: "mapHint", bClear: "clearBtn", slow: "slow",
-      hDevs: "hDevs", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
+      bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
+      hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
     renderNav();
@@ -1124,7 +1147,9 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     if (fu) { var im = document.createElement("img"); im.src = fu; im.alt = ""; it.appendChild(im); }
     body.innerHTML = '<div class="nm"></div><div class="dt"></div><div class="pc-regs"></div>';
     body.children[0].textContent = countryName(c.cc);
-    body.children[1].textContent = monthYear(c.at);
+    // Годы, в которые человек был в стране (20.11.2026, Андрей: показывалась только первая поездка).
+    body.children[1].textContent = yearsOf(c);
+    c.yel = body.children[1];
     it.appendChild(body);
     // Место в списке «новые сверху»: idx — место в массиве по времени.
     var pos = idx == null ? null : found.countries.length - 1 - idx;
@@ -1133,6 +1158,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     $("nCountries").textContent = num(found.countries.length);
     quiet || pos !== 0 || (box.parentNode.scrollTop = 0);
   }
+  function yearsOf(c) { return Object.keys(c.ys || {}).sort().join(", "); }
   // idx — место региона в c.regs по времени; без него — новый сверху (пересборка идёт от старых к новым).
   function addRegion(c, rg, idx) {
     if (!c.el) return;
@@ -1646,7 +1672,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     show("sideX", WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0 || WHY.sysFiles > 0);
     $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : "",
       WHY.sysFiles ? t("sysRead", { a: num(WHY.sysFiles), b: num(WHY.sysPlace || 0) }) : ""].filter(Boolean).join(" ");
-    show("why", miss > 0 && !!(A.shown || A.none));
+    show("why", miss > 0);
     if (!(miss > 0)) return;
     $("whyS").textContent = t("whyS", { n: num(miss) });
     ul.innerHTML = "";
@@ -1686,19 +1712,73 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
   // Итог последнего выбора (20.11.2026, Андрей: после «Выбрать ещё» непонятно, прошло или нет): папка или файлы,
   // сколько прочитано, у скольких есть место съёмки и сколько новых точек; ноль — почему.
-  function runSay(name, a, b, c) {
-    $("runT").textContent = name ? t("runTitleDir", { name: name }) : t("runTitleFiles");
-    var tl = $("runTl");
-    tl.innerHTML = "";
-    [[a, "lblRead", ""], [b, "lblPlace", ""], [c, "lblNew", c ? "new" : ""]].filter(function (x) { return x[0] > 0; }).forEach(function (x) {
+  // Итог проверки окном (20.11.2026, Андрей: результат встраивался непонятно куда, не видно, что нового): новые страны,
+  // регионы, города, дни, километры и точки — до показа на странице; проверенные файлы и почему у части нет места.
+  // «Готово» закрывает окно, и только тогда на странице плавно растут числа и списки (done).
+  function tiles(box, rows, plus) {
+    box.innerHTML = "";
+    rows.filter(function (x) { return x[0] > 0; }).forEach(function (x) {
       var d = document.createElement("div");
-      d.className = x[2]; d.innerHTML = "<b></b><span></span>";
-      d.children[0].textContent = (x[2] ? "+" : "") + num(x[0]); d.children[1].textContent = t(x[1]);
-      tl.appendChild(d);
+      d.className = plus ? "new" : ""; d.innerHTML = "<b></b><span></span>";
+      d.children[0].textContent = (plus ? "+" : "") + num(x[0]); d.children[1].textContent = t(x[1]);
+      box.appendChild(d);
     });
-    $("runW").textContent = c ? "" : t(b ? "runNoNew" : "runNoPlace");
-    show("runW", !c);
-    show("runX", true);
+    return box.children.length;
+  }
+  function showResult(info, pv, done) {
+    $("resT").textContent = info.name ? t("runTitleDir", { name: info.name }) : t("runTitleFiles");
+    var nNew = tiles($("resNew"), pv ? [[pv.cc.length, "sCountries"], [pv.regs, "sRegions"], [pv.cities, "sCities"], [pv.days, "sDays"],
+      [Math.round(pv.km / 1000), "sKm"], [info.pts, "lblNew"]] : [], true);
+    show("resNewBox", nNew > 0);
+    var cc = $("resCc");
+    cc.innerHTML = "";
+    (pv ? pv.cc : []).forEach(function (code) {
+      var sp = document.createElement("span"), fu = flagUrl(code);
+      if (fu) { var im = document.createElement("img"); im.src = fu; im.alt = ""; sp.appendChild(im); }
+      sp.appendChild(document.createTextNode(countryName(code)));
+      cc.appendChild(sp);
+    });
+    show("resCcBox", !!(pv && pv.cc.length));
+    $("resNone").textContent = info.pts ? "" : t(info.place ? "runNoNew" : "runNoPlace");
+    show("resNone", !info.pts);
+    tiles($("resChk"), [[info.read, "lblRead"], [info.place, "lblPlace"]], false);
+    renderWhy();
+    var d = $("resDlg"), fin = function () { d.removeEventListener("close", fin); done && done(); };
+    d.addEventListener("close", fin);
+    d.showModal ? d.showModal() : d.setAttribute("open", "");
+  }
+  $("resOk").onclick = function () { var d = $("resDlg"); d.close ? d.close() : (d.removeAttribute("open"), d.dispatchEvent(new Event("close"))); };
+  // Что нового даст разбор — до показа: страны, регионы и города по тем же данным, что у показа (у точки остаются cc, rg,
+  // ct — показ их не пересчитывает), дни и километры всего итога.
+  function kmOf(list) {
+    var km = 0;
+    for (var i = 1; i < list.length; i++) { var a = list[i - 1], b = list[i]; b[2] - a[2] <= 36 * 3600000 && (km += dist(a[0], a[1], b[0], b[1])); }
+    return km;
+  }
+  function preview(keep) {
+    var ccs = {};
+    keep.forEach(function (p) { p.cc = G ? countryAt(p[0], p[1]) : null; p.cc && (ccs[p.cc] = 1); });
+    return Promise.all(Object.keys(ccs).map(function (cc) { return regions(cc).then(function (list) { regCache[cc] = list; return [cc, list]; }); })).then(function (pairs) {
+      var regBy = {}, nCc = {}, nReg = {}, nCity = {}, nDay = {};
+      pairs.forEach(function (x) { regBy[x[0]] = x[1]; });
+      keep.forEach(function (p) {
+        p.pv = 1;
+        if (p.cc) {
+          var co = found.byCc[p.cc];
+          co || (nCc[p.cc] = Math.min(nCc[p.cc] || Infinity, p[2]));
+          var rg = regionAt(regBy[p.cc] || [], p[0], p[1]);
+          p.rg = rg || null;
+          rg && !(co && co.rset[rg.id]) && (nReg[p.cc + ":" + rg.id] = 1);
+        }
+        p.ct = cityAt(p[0], p[1]);
+        p.ct >= 0 && !found.byCity[p.ct] && (nCity[p.ct] = 1);
+        var dd = new Date(p[2]).toDateString();
+        found.days.has(dd) || (nDay[dd] = 1);
+      });
+      var all = A.pts.concat(keep).sort(function (x, y) { return x[2] - y[2]; });
+      return { cc: Object.keys(nCc).sort(function (a, b) { return nCc[a] - nCc[b]; }), regs: Object.keys(nReg).length, cities: Object.keys(nCity).length,
+        days: Object.keys(nDay).length, km: Math.max(0, kmOf(all) - kmOf(A.pts)) };
+    });
   }
   function runName(list) {
     var first = null, same = true;
@@ -1711,6 +1791,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
   function run(list) {
     RUN.t0 = performance.now(); RUN.err = 0; RUN.on = true;
+    // Причины «без места» и числа — у каждой проверки свои: окно итога говорит о выбранной папке.
+    WHY = { cam: {}, camN: 0, shot: 0, msg: 0, gone: 0, edit: 0, video: 0, fmt: {}, side: 0, files: 0, place: 0 };
     var rname = runName(list);
     var rootWin = false, rootPf = false;
     list.forEach(function (f) {
@@ -1786,13 +1868,18 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       // Уже показанное — точка этого разбора или сохранённая в учётной записи (там время до секунды или минуты) — второй раз
       // не добавляется.
       kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
-      runSay(rname, files.length + tlFiles.length + trkFiles.length, pts.length, kept.length);
-      show("vWork", false);
-      if (!kept.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); show("vDone", true); show("vPick", !A.pts.length); renderWhy(); statScan(); return; }
+      var info = { name: rname, read: files.length + tlFiles.length + trkFiles.length, place: pts.length, pts: kept.length };
+      if (!kept.length) {
+        show("vWork", false);
+        statScan();
+        return showResult(info, null, function () { A.none = !A.pts.length; A.pts.length ? show("vDone", true) : show("vPick", true); });
+      }
       A.none = false; show("done", false);
-      show("vWork", true);
       $("prog").textContent = t("loadingMap");
-      geo().then(function () { return reveal(kept, 0); }).catch(function () { return reveal(kept, 0); });
+      geo().then(function () { return preview(kept); }).then(function (pv) {
+        show("vWork", false);
+        showResult(info, pv, function () { show("vDone", false); show("vWork", true); reveal(kept, 0); });
+      }).catch(function () { reveal(kept, 0); });
     });
   }
 
@@ -1806,7 +1893,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     shell(); renderStats();
     $("prog").textContent = t("tracing");
     var ev = [], ccs = {}, i;
-    if (G) for (i = 0; i < keep.length; i++) { var cc = countryAt(keep[i][0], keep[i][1]); keep[i].cc = cc; cc && (ccs[cc] = 1); }
+    if (G) for (i = 0; i < keep.length; i++) { var cc = keep[i].pv ? keep[i].cc : countryAt(keep[i][0], keep[i][1]); keep[i].cc = cc; cc && (ccs[cc] = 1); }
+    var kmFrom = found.km, kmTo = kmOf(all);
     return Promise.all(Object.keys(ccs).map(function (cc) { return regions(cc).then(function (list) { regCache[cc] = list; return [cc, list]; }); })).then(function (pairs) {
       var regBy = {};
       pairs.forEach(function (p) { regBy[p[0]] = p[1]; });
@@ -1815,8 +1903,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         var p = all[i];
         if (!byKeep.has(p) || !G) { ev.push({ i: i }); continue; }
         var e = { i: i, p: p };
-        if (p.cc) { var rg = regionAt(regBy[p.cc] || [], p[0], p[1]); rg && (e.rg = rg); }
-        var ct = cityAt(p[0], p[1]);
+        if (p.cc) { var rg = p.pv ? p.rg : regionAt(regBy[p.cc] || [], p[0], p[1]); rg && (e.rg = rg); }
+        var ct = p.pv ? p.ct : cityAt(p[0], p[1]);
         p.ct = ct;
         ct >= 0 && (e.ct = ct);
         ev.push(e);
@@ -1834,12 +1922,16 @@ dialog.pc-dlg .pc-row{margin-top:20px}
             if (!e.p) continue;
             var p = e.p;
             found.days.add(new Date(p[2]).toDateString());
-            var prev = e.i > 0 ? all[e.i - 1] : null;
-            prev && p[2] - prev[2] <= 36 * 3600000 && (found.km += dist(prev[0], prev[1], p[0], p[1]));
+            var yr = new Date(p[2]).getFullYear();
             if (p.cc && !found.byCc[p.cc]) {
-              var c = { cc: p.cc, at: p[2], regs: [], rset: {} }, ci = idxAsc(found.countries, c.at);
+              var c = { cc: p.cc, at: p[2], regs: [], rset: {}, ys: {} }, ci = idxAsc(found.countries, c.at);
+              c.ys[yr] = 1;
               found.byCc[p.cc] = c; found.countries.splice(ci, 0, c); addCountry(c, false, ci); mapDirty = true;
-            } else if (p.cc && p[2] < found.byCc[p.cc].at) { found.byCc[p.cc].at = p[2]; resort = true; }
+            } else if (p.cc) {
+              var co = found.byCc[p.cc];
+              if (!co.ys[yr]) { co.ys[yr] = 1; co.yel && (co.yel.textContent = yearsOf(co)); }
+              p[2] < co.at && ((co.at = p[2]), (resort = true));
+            }
             if (e.rg && p.cc) {
               var cobj = found.byCc[p.cc], rid = e.rg.id;
               if (!cobj.rset[rid]) {
@@ -1857,6 +1949,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
           var cur = ev[Math.min(ev.length - 1, Math.max(0, u - 1))];
           cur && ($("when").textContent = monthYear(all[cur.i][2]));
           $("barIn").style.width = Math.round(f * 100) + "%";
+          found.km = kmFrom + (kmTo - kmFrom) * f;
           A.shown = upto = Math.max(A.shown, u);
           renderStats();
           drawMap();
@@ -1917,7 +2010,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
   // Особые места на снимках (20.11.2026, Андрей: показать, сколько мест нашлось и какой они редкости; какие именно — в
   // приложении). Приложения у учётной записи нет (site_me) — код и ссылка Google Play и экраны приложения; есть — без них.
-  var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "", TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#c2410e", "tLegendary"],
+  var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "", TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#E8A317", "tLegendary"],
     ["epic", "#7c3aed", "tEpic"], ["rare", "#2563eb", "tRare"], ["common", "#15803d", "tCommon"], ["dangerous", "#111111", "tDangerous"]];
   function renderApp() {
     var sp = saveSt.special, on = !!S && saveSt.state === "saved" && !PHONE && !revealing && !!(sp && sp.n > 0);
