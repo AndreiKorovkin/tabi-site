@@ -1,6 +1,6 @@
 # Tabi
 
-> Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 60,000 places on every continent. For Android.
+> Tabi gathers the special places you have visited into one collection and finds new ones you are sure to love. More than 75,000 places on every continent. For Android.
 
 ## Key facts
 
@@ -9,7 +9,7 @@
 - Platform: Android 7 and newer; no iPhone version yet
 - Availability: on Google Play for Android, anyone can install it (open testing), https://play.google.com/store/apps/details?id=app.tabi.mobile
 - Past trips from a computer: https://tabimobile.com/computer/ reads the location and time of photos and videos in the browser; the files never leave the computer
-- Places: more than 60,000 special places on every continent (castles, monasteries, peaks, waterfalls, islands, caves, nature reserves, city landmarks), each with a photo and a Wikipedia introduction
+- Places: more than 75,000 special places on every continent (castles, monasteries, peaks, waterfalls, islands, caves, nature reserves, city landmarks), each with a photo and a Wikipedia introduction
 - How places are counted: automatically in the background when you are inside a place's zone, even with the app closed; places you only drive past are not counted
 - Cities and countries: a city opens with the first place in it or after half an hour within its boundary; a country opens as soon as you are on its territory
 - Past trips: restored from the location and date of your photos; the photos themselves never leave the phone
@@ -55,7 +55,7 @@ Tabi works in the background and marks special places by itself while you are bu
 
 ## Collection (https://tabimobile.com/collection/)
 
-More than 60,000 special places on every continent, and any of them can become yours.
+More than 75,000 special places on every continent, and any of them can become yours.
 
 - Special places: Castles and monasteries, peaks and waterfalls, islands and caves, nature reserves and the main sights of cities across Europe, Asia, Africa and the Americas.
 - Rarity: Places are divided into five levels, from common to unique. Only a handful are unique: the finest places of their kind.
@@ -70,7 +70,7 @@ Your collection is your personal story, and Tabi treats it with care.
 
 - Your route stays on your phone: Your route is kept on the device and sent to your account once a day.
 - Your photos never leave your phone: Only the location and date of each picture are read. The images themselves are never uploaded.
-- Export and deletion: You can export all your collection data as a file and delete your account in the app settings.
+- Export and deletion: You can export all your collection data as a file in the app settings, and delete your account there or on your account page on this site.
 - Details: What exactly is stored and why is described in the privacy policy.
 
 ## Questions and answers (https://tabimobile.com/faq/)
@@ -86,14 +86,8 @@ Yes. Travellers rate the places they have visited, and Tabi recommends what othe
 ### I have travelled a lot but forgotten much of it. How can I remember where I have been?
 Tabi recovers the places you have visited from your photos: from each picture it reads only the location and the date it was taken. After that your collection grows by itself, and every special place stays in it with the date of your visit. Trips used to be remembered through albums that had to be printed and labelled. Now the memory of them is always with you.
 
-### Can I add my own notes and photos to a place?
-Yes. You can add notes and your own photos to any place in your collection, and mark favourite places with a star to come back to them.
-
-### Can I add a place of my own that is not in Tabi?
-Yes. Mark a favourite place on the map and add a description and photos. Only you will see it, and you can share it with everyone if you wish.
-
 ### I collect places: lighthouses, monasteries, national parks. How can Tabi help?
-Tabi holds more than 60,000 special places on every continent. Choose what interests you, and the world map shows such places near you and in any country: mountains, deserts, lakes, waterfalls, islands, castles. Every place you reach is added to your collection.
+Tabi holds more than 75,000 special places on every continent. Choose what interests you, and the world map shows such places near you and in any country: mountains, deserts, lakes, waterfalls, islands, castles. Every place you reach is added to your collection.
 
 ### How do I tell others where I have been when a photo proves nothing?
 Say you have been to Everest, and you will most likely hear polite doubt. And how do you tell anyone about Point Nemo, the point of the ocean farthest from land? A photo of water explains nothing. Tabi counts a place only when you have really been there, and keeps where and when it happened. You can share the place card: it is both a story and a proof.
@@ -114,7 +108,7 @@ No. Tabi counts the places you have visited, not those that flashed past a car o
 There is nothing to check in: Tabi notices where you have been by itself. And it collects special places, not cafés and shops: castles, monasteries, national parks, islands, peaks.
 
 ### Is Tabi free?
-Yes, Tabi is free.
+Yes. Tabi is free to install and use. The optional Tabi Plus subscription adds extra features.
 
 ### Does Tabi use much battery?
 No. While your phone lies still, Tabi uses neither GPS nor network.
@@ -128,23 +122,23 @@ Your route is kept on your phone and sent to your account once a day. Tabi does 
 ### Is there a version for iPhone?
 Not yet: the first version is for Android.
 
-### When will Tabi be available?
-Tabi is already available on Google Play in early access: install it with the button on this site. The full public release is the next step.
+### Where can I get Tabi?
+Tabi is already on Google Play for Android. Install it, sign in with Google or your email, and your collection starts filling up by itself.
 
 ### Which languages does Tabi speak?
 English, Czech, German, French, Spanish, Italian, Portuguese, Japanese, Korean and Russian.
 
 ### How do I delete my account?
-In the app settings. What happens to your data after deletion is described in the privacy policy.
+In the app settings or on your account page on this site. What happens to your data after deletion is described in the privacy policy.
 
 ## Tabi — a free app for collecting special places (https://tabimobile.com/about/)
 
 Tabi gathers the special places you have visited into a personal collection and suggests new ones. An Android app in ten languages.
 
-- Special places: More than 60,000 places on every continent: castles and monasteries, national parks and islands, peaks, waterfalls, deserts and the main sights of cities. Not cafés or shops, but places worth setting out for.
-- Rarity: Every place has its own level of rarity: common, rare, epic, legendary or unique. There are only 51 unique places on Earth; among them is Point Nemo, the point of the ocean farthest from land. Travellers refine the levels of places with their own ratings.
+- Special places: More than 75,000 places on every continent: castles and monasteries, national parks and islands, peaks, waterfalls, deserts and the main sights of cities. Not cafés or shops, but places worth setting out for.
+- Rarity: Every place has its own level of rarity: common, rare, epic, legendary or unique. There are only 53 unique places on Earth; among them is Point Nemo, the point of the ocean farthest from land. Travellers refine the levels of places with their own ratings.
 - A collection that grows by itself: Tabi works in the background and counts a place as soon as you are there. A city opens with the first place in it, a country as soon as you are on its territory. Tabi recovers the places of past trips from your photos.
-- Your memory: You can add notes and your own photos to every place, mark favourite places with a star, and see every place you have visited on your personal map. A favourite place that is not in Tabi you can add yourself.
+- Your memory: Mark your favourite places with a star to come back to them. A personal map with only the places you have visited is coming soon.
 - New places: The world map shows places that match your interests, near you and in any country. The sights of every city are grouped into themes, and every place comes with a story from Wikipedia in your language.
 - Sharing: You can share the card of any place with friends: it is both a story and a proof that you were there.
 - Free and considerate: Tabi is free. While your phone lies still, the app does not drain the battery, and it does not take your photos.

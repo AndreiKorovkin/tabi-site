@@ -12,10 +12,10 @@
 <style>
 body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
 .ac-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
-/* Навигация сайта (20.11.2026, Андрей): разделы в шапке, на узком экране — меню. */
+/* Навигация сайта (20.11.2026, Андрей): две вкладки — главная и медиафайлы с компьютера; на узком экране — меню. */
 nav.sections+.ac-tools{margin-left:22px}
 details.menu{display:none}
-@media (max-width:1180px){nav.sections+.ac-tools{margin-left:auto}details.menu{display:block}}
+@media (max-width:760px){nav.sections+.ac-tools{margin-left:auto}details.menu{display:block}}
 @media (max-width:560px){#menuLbl,#langCur{display:none}.ac-tools{gap:8px}}
 .ac-theme{appearance:none;border:0;cursor:pointer;width:40px;height:40px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);color:var(--ink);display:inline-flex;align-items:center;justify-content:center}
 .ac-theme .ic{width:19px;height:19px}
@@ -53,6 +53,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac-foot{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 18px}
 .ac-foot a{color:var(--sub);font-weight:600;text-decoration:none}.ac-foot a:hover{color:var(--ink)}
 @media (max-width:520px){.ac-tiles{grid-template-columns:1fr 1fr 1fr}.ac-tile b{font-size:22px}.ac-card{padding:20px}}
+.ac-btn.del{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+dialog.ac-dlg{border:1px solid var(--line);border-radius:24px;padding:26px;width:min(460px,calc(100vw - 32px));box-sizing:border-box;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
+dialog.ac-dlg::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
+dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
 [hidden]{display:none!important}
 </style></head>
 <body>
@@ -61,9 +65,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 <nav class="sections" id="nav" aria-label="Tabi"></nav>
 <div class="ac-tools">
 <details class="lang menu" id="menuBox"><summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="menuLbl"></span></summary><ul id="menuList"></ul></details>
-<a data-tabi-acc id="accChip" href="/account/"></a>
 <details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
 <button class="ac-theme" id="themeBtn" type="button"></button>
+<a data-tabi-acc id="accChip" href="/account/"></a>
 </div>
 </div></header>
 
@@ -110,7 +114,22 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   </section>
   <p class="ac-s" id="wait" hidden></p>
   <div id="vOut" hidden><button class="ac-btn b2" id="bOut" type="button"></button></div>
+  <!-- Удаление учётной записи на сайте (20.11.2026, Андрей: ссылка «Удалить аккаунт» вела на политику) -->
+  <section class="ac-card" id="delete">
+    <h2 id="delH"></h2>
+    <p class="ac-t" id="delTxt"></p>
+    <div class="ac-row" id="delGo" hidden><button class="ac-btn del" id="bDel" type="button"></button></div>
+    <div class="ac-in" id="delAuthBox" hidden>
+      <button class="ac-btn" id="bDelGoogle" type="button"></button>
+      <button class="ac-btn b2" id="bDelCode" type="button" hidden></button>
+      <input class="ac-f" id="delCode" inputmode="numeric" autocomplete="one-time-code" hidden>
+      <button class="ac-btn" id="bDelVerify" type="button" hidden></button>
+    </div>
+    <p class="ac-e" id="delErr" hidden></p>
+  </section>
 </main>
+<dialog class="ac-dlg" id="delDlg" aria-labelledby="delDlgT"><h2 id="delDlgT"></h2><p class="ac-t" id="delDlgX"></p>
+<div class="ac-row"><button class="ac-btn b2" id="delNo" type="button"></button><button class="ac-btn" id="delYes" type="button"></button></div></dialog>
 <footer class="ac-foot"><a href="/" id="fHome"></a><a href="/privacy.html" id="pol"></a><a href="/terms.html" id="terms"></a></footer>
 <script>
 // Учётная запись Tabi на сайте tabimobile.com/account (18.11.2026, слово Андрея: полноценный вход на сайте; вход
@@ -141,10 +160,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
     "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
-    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
-    "navData": {"en": "Your data", "ru": "Данные", "cs": "Data", "de": "Deine Daten", "fr": "Tes données", "es": "Tus datos", "it": "I tuoi dati", "pt": "Seus dados", "ja": "データ", "ko": "내 데이터"},
-    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
+    "navHome": {"en": "Home", "ru": "Главная", "cs": "Domů", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
+    "navPc": {"en": "Media files from my computer", "ru": "Медиафайлы с моего компьютера", "cs": "Mediální soubory z mého počítače", "de": "Mediendateien von meinem Computer", "fr": "Fichiers multimédias de mon ordinateur", "es": "Archivos multimedia de mi ordenador", "it": "File multimediali dal mio computer", "pt": "Arquivos de mídia do meu computador", "ja": "自分のパソコンのメディアファイル", "ko": "내 컴퓨터의 미디어 파일"},
     "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
     "accTitle": {"en": "Tabi account", "ru": "Учётная запись Tabi", "cs": "Účet Tabi", "de": "Tabi-Konto", "fr": "Compte Tabi", "es": "Cuenta de Tabi", "it": "Account Tabi", "pt": "Conta Tabi", "ja": "Tabiアカウント", "ko": "Tabi 계정"},
     "accLead": {"en": "The account on the website is the same as in the Tabi app. Sign in to see your collection and the results of scanning media files from your computer.", "ru": "Учётная запись на сайте — та же, что в приложении Tabi. Войдите, чтобы видеть свою коллекцию и итоги разбора медиафайлов с компьютера.", "cs": "Účet na webu je stejný jako v aplikaci Tabi. Přihlaste se a uvidíte svou sbírku a výsledky rozboru mediálních souborů z počítače.", "de": "Das Konto auf der Website ist dasselbe wie in der Tabi-App. Melden Sie sich an, um Ihre Sammlung und die Ergebnisse der Auswertung von Mediendateien vom Computer zu sehen.", "fr": "Le compte du site est le même que dans l’application Tabi. Connectez-vous pour voir votre collection et les résultats de l’analyse des fichiers multimédias de votre ordinateur.", "es": "La cuenta del sitio web es la misma que en la aplicación Tabi. Inicia sesión para ver tu colección y los resultados del análisis de los archivos multimedia de tu ordenador.", "it": "L’account del sito è lo stesso dell’app Tabi. Acceda per vedere la Sua collezione e i risultati dell’analisi dei file multimediali del computer.", "pt": "A conta do site é a mesma do aplicativo Tabi. Entre para ver sua coleção e os resultados da análise dos arquivos de mídia do computador.", "ja": "サイトのアカウントはTabiアプリと同じです。ログインすると、コレクションとパソコンのメディアファイルの分析結果を見られます。", "ko": "사이트 계정은 Tabi 앱과 같습니다. 로그인하면 컬렉션과 컴퓨터 미디어 파일 분석 결과를 볼 수 있습니다."},
@@ -160,7 +177,20 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "planPlus": {"en": "Tabi Plus until {d}", "ru": "Tabi Plus до {d}", "cs": "Tabi Plus do {d}", "de": "Tabi Plus bis {d}", "fr": "Tabi Plus jusqu’au {d}", "es": "Tabi Plus hasta el {d}", "it": "Tabi Plus fino al {d}", "pt": "Tabi Plus até {d}", "ja": "Tabi Plus（{d}まで）", "ko": "Tabi Plus ({d}까지)"},
     "planPlusNow": {"en": "Tabi Plus", "ru": "Tabi Plus", "cs": "Tabi Plus", "de": "Tabi Plus", "fr": "Tabi Plus", "es": "Tabi Plus", "it": "Tabi Plus", "pt": "Tabi Plus", "ja": "Tabi Plus", "ko": "Tabi Plus"},
     "planFree": {"en": "Free version", "ru": "Бесплатная версия", "cs": "Bezplatná verze", "de": "Kostenlose Version", "fr": "Version gratuite", "es": "Versión gratuita", "it": "Versione gratuita", "pt": "Versão gratuita", "ja": "無料版", "ko": "무료 버전"},
-    "terms": {"en": "Terms of use", "ru": "Условия использования", "cs": "Podmínky používání", "de": "Nutzungsbedingungen", "fr": "Conditions d’utilisation", "es": "Condiciones de uso", "it": "Condizioni d’uso", "pt": "Termos de uso", "ja": "利用規約", "ko": "이용약관"}
+    "terms": {"en": "Terms of use", "ru": "Условия использования", "cs": "Podmínky používání", "de": "Nutzungsbedingungen", "fr": "Conditions d’utilisation", "es": "Condiciones de uso", "it": "Condizioni d’uso", "pt": "Termos de uso", "ja": "利用規約", "ko": "이용약관"},
+    "delH": {"en": "Delete account", "ru": "Удаление учётной записи", "cs": "Smazání účtu", "de": "Konto löschen", "fr": "Suppression du compte", "es": "Eliminar la cuenta", "it": "Eliminazione dell’account", "pt": "Excluir a conta", "ja": "アカウントの削除", "ko": "계정 삭제"},
+    "delX": {"en": "Your collection, route, coins, devices and the account itself will be deleted for good. This cannot be undone.", "ru": "Коллекция, маршрут, монеты, устройства и сама учётная запись будут удалены навсегда. Отменить это нельзя.", "cs": "Sbírka, trasa, mince, zařízení i samotný účet budou smazány natrvalo. Vrátit to nelze.", "de": "Ihre Sammlung, Route, Münzen, Geräte und das Konto selbst werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.", "fr": "Votre collection, votre itinéraire, vos pièces, vos appareils et le compte lui-même seront supprimés définitivement. C’est irréversible.", "es": "Tu colección, tu ruta, tus monedas, tus dispositivos y la propia cuenta se eliminarán para siempre. No se puede deshacer.", "it": "La collezione, il percorso, le monete, i dispositivi e l’account stesso verranno eliminati per sempre. Non è possibile annullare.", "pt": "Sua coleção, rota, moedas, dispositivos e a própria conta serão excluídos para sempre. Não é possível desfazer.", "ja": "コレクション、ルート、コイン、デバイス、そしてアカウント自体が完全に削除されます。元に戻すことはできません。", "ko": "컬렉션, 경로, 코인, 기기와 계정 자체가 영구히 삭제됩니다. 되돌릴 수 없습니다."},
+    "delOut": {"en": "To delete your account, first sign in above with that account. You can also delete it in the app settings.", "ru": "Чтобы удалить учётную запись, сначала войдите в неё выше. Удалить её можно и в настройках приложения.", "cs": "Chcete-li účet smazat, nejprve se do něj výše přihlaste. Smazat ho můžete i v nastavení aplikace.", "de": "Um Ihr Konto zu löschen, melden Sie sich oben zuerst mit diesem Konto an. Sie können es auch in den App-Einstellungen löschen.", "fr": "Pour supprimer votre compte, connectez-vous d’abord ci-dessus avec ce compte. Vous pouvez aussi le supprimer dans les réglages de l’application.", "es": "Para eliminar tu cuenta, primero inicia sesión arriba con ella. También puedes eliminarla en los ajustes de la aplicación.", "it": "Per eliminare l’account, acceda prima qui sopra con quell’account. Può eliminarlo anche nelle impostazioni dell’app.", "pt": "Para excluir sua conta, primeiro entre nela acima. Você também pode excluí-la nas configurações do aplicativo.", "ja": "アカウントを削除するには、まず上でそのアカウントにログインしてください。アプリの設定から削除することもできます。", "ko": "계정을 삭제하려면 먼저 위에서 그 계정으로 로그인하세요. 앱 설정에서도 삭제할 수 있습니다."},
+    "delBtn": {"en": "Delete account", "ru": "Удалить учётную запись", "cs": "Smazat účet", "de": "Konto löschen", "fr": "Supprimer le compte", "es": "Eliminar la cuenta", "it": "Elimina l’account", "pt": "Excluir a conta", "ja": "アカウントを削除", "ko": "계정 삭제"},
+    "delDlgT": {"en": "Delete your account?", "ru": "Удалить учётную запись?", "cs": "Smazat účet?", "de": "Konto löschen?", "fr": "Supprimer votre compte ?", "es": "¿Eliminar tu cuenta?", "it": "Eliminare l’account?", "pt": "Excluir sua conta?", "ja": "アカウントを削除しますか？", "ko": "계정을 삭제할까요?"},
+    "delDlgX": {"en": "Everything will be deleted: the special places in your collection, your route, countries, cities, coins, devices and the account itself. This cannot be undone.", "ru": "Будет удалено всё: особые места коллекции, маршрут, страны, города, монеты, устройства и сама учётная запись. Отменить это нельзя.", "cs": "Smaže se vše: výjimečná místa ve sbírce, trasa, země, města, mince, zařízení i samotný účet. Vrátit to nelze.", "de": "Alles wird gelöscht: die besonderen Orte Ihrer Sammlung, Ihre Route, Länder, Städte, Münzen, Geräte und das Konto selbst. Das lässt sich nicht rückgängig machen.", "fr": "Tout sera supprimé : les lieux d’exception de votre collection, votre itinéraire, les pays, les villes, les pièces, les appareils et le compte lui-même. C’est irréversible.", "es": "Se eliminará todo: los lugares especiales de tu colección, tu ruta, países, ciudades, monedas, dispositivos y la propia cuenta. No se puede deshacer.", "it": "Verrà eliminato tutto: i luoghi speciali della collezione, il percorso, i paesi, le città, le monete, i dispositivi e l’account stesso. Non è possibile annullare.", "pt": "Tudo será excluído: os lugares especiais da sua coleção, a rota, os países, as cidades, as moedas, os dispositivos e a própria conta. Não é possível desfazer.", "ja": "コレクションの特別な場所、ルート、国、都市、コイン、デバイス、そしてアカウント自体まで、すべてが削除されます。元に戻すことはできません。", "ko": "컬렉션의 특별한 장소, 경로, 국가, 도시, 코인, 기기와 계정 자체까지 모두 삭제됩니다. 되돌릴 수 없습니다."},
+    "delNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
+    "delYes": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
+    "delAuth": {"en": "To confirm the deletion, sign in again with the same account.", "ru": "Чтобы подтвердить удаление, войдите ещё раз в ту же учётную запись.", "cs": "Pro potvrzení smazání se znovu přihlaste do stejného účtu.", "de": "Um das Löschen zu bestätigen, melden Sie sich erneut mit demselben Konto an.", "fr": "Pour confirmer la suppression, reconnectez-vous avec le même compte.", "es": "Para confirmar la eliminación, vuelve a iniciar sesión con la misma cuenta.", "it": "Per confermare l’eliminazione, acceda di nuovo con lo stesso account.", "pt": "Para confirmar a exclusão, entre novamente na mesma conta.", "ja": "削除を確定するには、同じアカウントでもう一度ログインしてください。", "ko": "삭제를 확인하려면 같은 계정으로 다시 로그인하세요."},
+    "delDone": {"en": "Your account has been deleted.", "ru": "Учётная запись удалена.", "cs": "Účet byl smazán.", "de": "Ihr Konto wurde gelöscht.", "fr": "Votre compte a été supprimé.", "es": "Tu cuenta se ha eliminado.", "it": "L’account è stato eliminato.", "pt": "Sua conta foi excluída.", "ja": "アカウントを削除しました。", "ko": "계정이 삭제되었습니다."},
+    "delOwner": {"en": "This account cannot be deleted from the website.", "ru": "Эту учётную запись нельзя удалить с сайта.", "cs": "Tento účet nelze smazat z webu.", "de": "Dieses Konto lässt sich nicht über die Website löschen.", "fr": "Ce compte ne peut pas être supprimé depuis le site.", "es": "Esta cuenta no se puede eliminar desde el sitio web.", "it": "Questo account non può essere eliminato dal sito.", "pt": "Esta conta não pode ser excluída pelo site.", "ja": "このアカウントはサイトから削除できません。", "ko": "이 계정은 웹사이트에서 삭제할 수 없습니다."},
+    "delOther": {"en": "You signed in to a different account, so nothing was deleted.", "ru": "Вы вошли в другую учётную запись, поэтому ничего не удалено.", "cs": "Přihlásili jste se do jiného účtu, proto se nic nesmazalo.", "de": "Sie haben sich mit einem anderen Konto angemeldet, daher wurde nichts gelöscht.", "fr": "Vous vous êtes connecté à un autre compte : rien n’a été supprimé.", "es": "Has iniciado sesión en otra cuenta, así que no se ha eliminado nada.", "it": "Ha effettuato l’accesso a un altro account, quindi non è stato eliminato nulla.", "pt": "Você entrou em outra conta, por isso nada foi excluído.", "ja": "別のアカウントにログインしたため、何も削除されていません。", "ko": "다른 계정으로 로그인했기 때문에 아무것도 삭제되지 않았습니다."},
+    "delErr": {"en": "The account could not be deleted. Check your connection and try again.", "ru": "Не удалось удалить учётную запись. Проверьте связь и попробуйте ещё раз.", "cs": "Účet se nepodařilo smazat. Zkontrolujte připojení a zkuste to znovu.", "de": "Das Konto konnte nicht gelöscht werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le compte n’a pas pu être supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo eliminar la cuenta. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile eliminare l’account. Controlli la connessione e riprovi.", "pt": "Não foi possível excluir a conta. Verifique a conexão e tente novamente.", "ja": "アカウントを削除できませんでした。接続を確認して、もう一度お試しください。", "ko": "계정을 삭제하지 못했습니다. 연결을 확인하고 다시 시도하세요."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -186,25 +216,24 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     light: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'
   };
-  var theme = ls.get("tabiTheme");
-  theme = theme === "light" || theme === "dark" ? theme : "auto";
+  // Тема по умолчанию тёмная (20.11.2026, Андрей); переключатель — светлая или тёмная, выбор помнится.
+  var theme = ls.get("tabiTheme") === "light" ? "light" : "dark";
   function applyTheme() {
-    theme === "auto" ? document.documentElement.removeAttribute("data-theme") : document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
     $("themeBtn").innerHTML = ICON[theme];
-    var lbl = t(theme === "auto" ? "thAuto" : theme === "light" ? "thLight" : "thDark");
+    var lbl = t(theme === "light" ? "thLight" : "thDark");
     $("themeBtn").setAttribute("aria-label", lbl); $("themeBtn").title = lbl;
   }
-  $("themeBtn").onclick = function () { theme = theme === "auto" ? "light" : theme === "light" ? "dark" : "auto"; ls.set("tabiTheme", theme === "auto" ? "" : theme); applyTheme(); };
+  $("themeBtn").onclick = function () { theme = theme === "light" ? "dark" : "light"; ls.set("tabiTheme", theme); applyTheme(); };
 
-  // Разделы сайта (20.11.2026, Андрей: по сайту нельзя было перемещаться) — как в шапке главной, разбор медиафайлов первым.
+  // Вкладки сайта (20.11.2026, Андрей): две на всех страницах — главная и медиафайлы с компьютера.
   function renderNav() {
-    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [["/computer/?lang=" + L, t("title"), "hl"], [base + "how-it-works/", t("navHow")],
-      [base + "collection/", t("navColl")], [base + "your-data/", t("navData")], [base + "faq/", t("navFaq")]];
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], ["/computer/?lang=" + L, t("navPc")]];
     var nav = $("nav"), ml = $("menuList");
     nav.innerHTML = ""; ml.innerHTML = "";
     items.forEach(function (it) {
       var a = document.createElement("a");
-      a.href = it[0]; a.textContent = it[1]; it[2] && (a.className = it[2]);
+      a.href = it[0]; a.textContent = it[1];
       nav.appendChild(a);
       var li = document.createElement("li"), b = document.createElement("a");
       b.href = it[0]; b.textContent = it[1];
@@ -232,9 +261,10 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("terms").href = L === "en" ? "/terms.html" : "/terms." + L + ".html"; $("terms").textContent = t("terms");
     var set = { title: "accTitle", lead: "accLead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", hColl: "hColl",
       sCountries: "sCountries", sCities: "sCities", sPlaces: "sPlaces", hApp: "hApp", appNone: "appNone", bPlay: "install", hPc: "title",
-      pcX: "pcX", bPc: "pcBtn", bOut: "out", wait: "wait" };
+      pcX: "pcX", bPc: "pcBtn", bOut: "out", wait: "wait", delH: "delH", bDel: "delBtn", delDlgT: "delDlgT", delDlgX: "delDlgX",
+      delNo: "delNo", delYes: "delYes", bDelGoogle: "google", bDelVerify: "verify" };
     for (var id in set) $(id).textContent = t(set[id]);
-    $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh");
+    $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh"); $("delCode").placeholder = t("codePh");
     $("bPlay").href = PLAY + "&hl=" + L;
     $("bPc").href = "/computer/?lang=" + L;
     $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); ACC.repaint && ACC.repaint();
@@ -246,6 +276,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   // ===== Вид страницы =====
   function render() {
     var S = ACC.get();
+    renderDel();
     $("vIn").hidden = !!S;
     ["vMe", "vColl", "vApp", "vPc", "vOut"].forEach(function (id) { $(id).hidden = !S || !ME; });
     $("wait").hidden = !(S && !ME);
@@ -286,7 +317,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   // ===== Вход =====
   window.addEventListener("message", function (e) {
     if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
-    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? load(true) : err("eCode"); });
+    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? (afterAuth(), load(true)) : err("eCode"); });
   });
   $("bGoogle").onclick = function () { err(null); ACC.google(BACK + "?lang=" + L); };
   $("bCode").onclick = function () {
@@ -307,13 +338,89 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   };
   $("bOut").onclick = function () { ACC.out(); ME = null; render(); };
 
+  // ===== Удаление учётной записи (20.11.2026, Андрей: ссылка «Удалить аккаунт» в подвале должна работать) =====
+  // Сервер (delete_my_account) удаляет, только если вход кодом или через Google был не раньше десяти минут назад. Окно
+  // подтверждения; вход свежий — удаление сразу; иначе — войти ещё раз в ту же учётную запись (Google или код на почту),
+  // и удаление идёт без второго вопроса. Вошли в другую учётную запись — ничего не удаляется.
+  var DEL = { step: "", msg: "", done: false };
+  var PEND = "tabiDelPend";
+  function jwt(s) { try { var p = s.at.split(".")[1]; return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((p.length + 3) % 4))); } catch (e) { return {}; } }
+  function freshAuth(s) {
+    var now = Date.now() / 1000;
+    return (jwt(s).amr || []).some(function (a) { return (a.method === "otp" || a.method === "oauth") && +a.timestamp >= now - 540; });
+  }
+  function pendGet() { try { var v = JSON.parse(sessionStorage.getItem(PEND) || "null"); return v && Date.now() - v.t < 900000 ? v : null; } catch (e) { return null; } }
+  function pendSet(v) { try { v ? sessionStorage.setItem(PEND, JSON.stringify(v)) : sessionStorage.removeItem(PEND); } catch (e) {} }
+  function renderDel() {
+    var S = ACC.get();
+    $("delTxt").textContent = DEL.done ? t("delDone") : S ? (DEL.step === "auth" ? t("delAuth") : t("delX")) : t("delOut");
+    $("delGo").hidden = !S || DEL.done || DEL.step === "auth";
+    $("delAuthBox").hidden = !S || DEL.done || DEL.step !== "auth";
+    $("bDelCode").hidden = !(S && S.mail);
+    $("bDelCode").textContent = S && S.mail ? t("getCode") + " · " + S.mail : "";
+    $("delErr").hidden = !DEL.msg; $("delErr").textContent = DEL.msg ? t(DEL.msg) : "";
+  }
+  function delNow() {
+    var S0 = ACC.get();
+    if (!S0) return;
+    $("bDel").disabled = true;
+    ACC.fresh().then(function (s) {
+      if (!s) throw new Error("net");
+      if (!freshAuth(s)) { pendSet({ u: ACC.uid(), t: Date.now() }); DEL.step = "auth"; DEL.msg = ""; renderDel(); return null; }
+      return fetch("https://ogrdnhwfgasbgcespsou.supabase.co/rest/v1/rpc/delete_my_account", { method: "POST",
+        headers: { apikey: "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5", Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: "{}" })
+        .then(function (r) { return r.text().then(function (x) { return { ok: r.ok, x: x }; }); })
+        .then(function (r) {
+          if (r.ok) return delDone();
+          if (/recent_code_required/.test(r.x)) { pendSet({ u: ACC.uid(), t: Date.now() }); DEL.step = "auth"; DEL.msg = ""; return renderDel(); }
+          DEL.msg = /owner account/.test(r.x) ? "delOwner" : "delErr"; DEL.step = ""; pendSet(null); renderDel();
+        });
+    }).catch(function () { DEL.msg = "delErr"; renderDel(); }).then(function () { $("bDel").disabled = false; });
+  }
+  // Удалено: выход, сведения учётной записи и итог страницы компьютера в этом браузере стираются.
+  function delDone() {
+    pendSet(null);
+    DEL = { step: "", msg: "", done: true };
+    try { localStorage.removeItem("tabiAccMe"); indexedDB.deleteDatabase("tabiPc"); } catch (e) {}
+    try { ACC.out(); } catch (e) {}
+    ME = null; render();
+  }
+  // После повторного входа: та же учётная запись — удаление; другая — ничего.
+  function afterAuth() {
+    var p = pendGet();
+    if (!p) return false;
+    if (ACC.uid() !== p.u) { pendSet(null); DEL.step = ""; DEL.msg = "delOther"; renderDel(); return true; }
+    delNow();
+    return true;
+  }
+  $("bDel").onclick = function () { DEL.msg = ""; renderDel(); var d = $("delDlg"); d.showModal ? d.showModal() : d.setAttribute("open", ""); };
+  $("delNo").onclick = function () { var d = $("delDlg"); d.close ? d.close() : d.removeAttribute("open"); };
+  $("delYes").onclick = function () { $("delNo").onclick(); delNow(); };
+  $("bDelGoogle").onclick = function () { DEL.msg = ""; renderDel(); ACC.google(BACK + "?lang=" + L); };
+  $("bDelCode").onclick = function () {
+    var S = ACC.get();
+    if (!S || !S.mail) return;
+    $("bDelCode").disabled = true; DEL.msg = ""; renderDel();
+    ACC.otp(S.mail, L).then(function (ok) {
+      $("bDelCode").disabled = false;
+      if (!ok) { DEL.msg = "delErr"; return renderDel(); }
+      $("delCode").hidden = false; $("bDelVerify").hidden = false; $("delCode").focus();
+    }).catch(function () { $("bDelCode").disabled = false; DEL.msg = "delErr"; renderDel(); });
+  };
+  $("bDelVerify").onclick = function () {
+    var S = ACC.get(), c = $("delCode").value.replace(/\D/g, "");
+    if (!S || c.length < 6) return;
+    ACC.verify(S.mail, c).then(function (s) { s ? afterAuth() : ((DEL.msg = "eCode"), renderDel()); }).catch(function () { DEL.msg = "delErr"; renderDel(); });
+  };
+
   // Возврат из Google переходом (окно не открылось): код в адресе.
   var q = new URLSearchParams(location.search), code = q.get("code");
   applyTexts();
   if (code && q.get("w") !== "1") {
     history.replaceState(null, "", location.pathname + "?lang=" + L);
-    ACC.exchange(code).then(function (s) { s ? load(true) : err("eCode"); });
+    ACC.exchange(code).then(function (s) { s ? (afterAuth(), load(true)) : err("eCode"); });
   } else if (!code) load(false);
+  location.hash === "#delete" && setTimeout(function () { $("delete").scrollIntoView({ block: "start" }); }, 60);
 })();
 </script>
 </body></html>

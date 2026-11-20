@@ -12,10 +12,10 @@
 <style>
 body{min-height:100vh;background:var(--glow),radial-gradient(800px 520px at 0% 100%,var(--accent-soft) 0%,transparent 70%),var(--bg);background-attachment:fixed}
 .pc-tools{margin-left:auto;display:flex;align-items:center;gap:10px}
-/* Навигация сайта (20.11.2026, Андрей): разделы в шапке, на узком экране — меню. */
+/* Навигация сайта (20.11.2026, Андрей): две вкладки — главная и эта страница; на узком экране — меню. */
 nav.sections+.pc-tools{margin-left:22px}
 details.menu{display:none}
-@media (max-width:1180px){nav.sections+.pc-tools{margin-left:auto}details.menu{display:block}}
+@media (max-width:760px){nav.sections+.pc-tools{margin-left:auto}details.menu{display:block}}
 /* Узкий экран: у меню и языка — только значки, шапка в одну строку без прокрутки вбок. */
 @media (max-width:560px){#menuLbl,#langCur{display:none}.pc-tools{gap:8px}}
 /* Итог выбора — плитками (20.11.2026, Андрей: строка была технической). */
@@ -74,7 +74,9 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-chk input{width:18px;height:18px;accent-color:var(--accent)}
 .pc-box{display:grid;gap:10px;padding:18px;border-radius:18px;background:var(--bg);border:1px solid var(--line)}
 .pc-devs{display:grid;gap:12px}
-.pc-dev{display:grid;gap:3px;padding-top:12px;border-top:1px solid var(--line)}
+.pc-dev{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;align-items:center;padding-top:10px;border-top:1px solid var(--line)}
+.pc-dev .bd{display:grid;gap:2px;min-width:0}
+.pc-dev .pc-btn.sm{padding:7px 14px;font-size:13.5px}
 .pc-dev:first-child{padding-top:0;border-top:0}
 .pc-dev .hd{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .pc-dev .nm{font-weight:700;overflow-wrap:anywhere}
@@ -94,7 +96,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-why li b{color:var(--ink);font-weight:650}
 .pc-when{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;min-height:1.1em}
 .pc-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
-.pc-stat{background:var(--bg);border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
+.pc-stat{background:var(--bg);border-radius:14px;padding:10px 12px;border:1px solid var(--line);text-align:center}
 .pc-stat b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
 .pc-stat span{font-size:12.5px;color:var(--sub);line-height:1.25;display:block}
 .pc-list{display:grid;gap:8px}
@@ -118,13 +120,13 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
 .pc-tier span{font-size:12.5px;color:var(--sub)}
 /* Вопросы и ответы — справа от устройств: подробности, которые не нужны на главном месте (20.11.2026, Андрей). */
-.pc-faq{border-top:1px solid var(--line);padding:11px 0}
+.pc-faq{border-top:1px solid var(--line);padding:13px 0}
 .pc-faq:first-of-type{border-top:0;padding-top:0}
-.pc-faq summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none;line-height:1.4}
+.pc-faq summary{cursor:pointer;font-weight:700;font-size:17px;list-style:none;line-height:1.4}
 .pc-faq summary::-webkit-details-marker{display:none}
 .pc-faq summary::after{content:" ›";color:var(--sub)}
 .pc-faq[open] summary::after{content:" ⌄"}
-.pc-faq p{margin:8px 0 0;color:var(--sub);font-size:14.5px;line-height:1.5}
+.pc-faq p{margin:8px 0 0;color:var(--sub);font-size:16px;line-height:1.55}
 .pc-map{position:relative;border-radius:16px;overflow:hidden;background:var(--bg)}
 .pc-map canvas{width:100%;height:clamp(420px,62vh,720px);display:block;touch-action:none;cursor:grab}
 .pc-map canvas.drag{cursor:grabbing}
@@ -151,9 +153,9 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 <nav class="sections" id="nav" aria-label="Tabi"></nav>
 <div class="pc-tools">
 <details class="lang menu" id="menuBox"><summary><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="menuLbl"></span></summary><ul id="menuList"></ul></details>
-<a data-tabi-acc id="accChip" href="/account/"></a>
 <details class="lang" id="langBox"><summary><span class="sr" id="langLbl"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span id="langCur"></span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><ul id="langList"></ul></details>
 <button class="pc-theme" id="themeBtn" type="button"></button>
+<a data-tabi-acc id="accChip" href="/account/"></a>
 </div>
 </div></header>
 
@@ -290,7 +292,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "getCode": {"en": "Get a code", "ru": "Получить код", "cs": "Získat kód", "de": "Code anfordern", "fr": "Recevoir un code", "es": "Recibir un código", "it": "Ricevi il codice", "pt": "Receber código", "ja": "コードを受け取る", "ko": "코드 받기"},
     "codePh": {"en": "Code from the email", "ru": "Код из письма", "cs": "Kód z e-mailu", "de": "Code aus der E-Mail", "fr": "Code reçu par e-mail", "es": "Código del correo", "it": "Codice dall’e-mail", "pt": "Código do e-mail", "ja": "メールのコード", "ko": "이메일로 받은 코드"},
     "verify": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "folder": {"en": "Choose a folder", "ru": "Выбрать папку", "cs": "Vybrat složku", "de": "Ordner wählen", "fr": "Choisir un dossier", "es": "Elegir una carpeta", "it": "Scegli una cartella", "pt": "Escolher pasta", "ja": "フォルダを選ぶ", "ko": "폴더 선택"},
+    "folder": {"en": "Check files", "ru": "Проверить файлы", "cs": "Zkontrolovat soubory", "de": "Dateien prüfen", "fr": "Vérifier les fichiers", "es": "Comprobar archivos", "it": "Controlla i file", "pt": "Verificar arquivos", "ja": "ファイルを確認", "ko": "파일 확인"},
     "reading": {"ru": "Прочитано {a} из {b} · с местом съёмки: {n}", "en": "Read {a} of {b} · with a shooting location: {n}", "cs": "Přečteno {a} z {b} · s místem pořízení: {n}", "de": "Gelesen {a} von {b} · mit Aufnahmeort: {n}", "fr": "Lus {a} sur {b} · avec lieu de prise de vue : {n}", "es": "Leídos {a} de {b} · con lugar de captura: {n}", "it": "Letti {a} di {b} · con luogo di scatto: {n}", "pt": "Lidos {a} de {b} · com local da captura: {n}", "ja": "{b} 件中 {a} 件を読み込み · 撮影場所あり：{n}", "ko": "{b}개 중 {a}개 읽음 · 촬영 장소 있음: {n}"},
     "pol": {"en": "Privacy policy", "ru": "Политика конфиденциальности", "cs": "Zásady ochrany soukromí", "de": "Datenschutzerklärung", "fr": "Politique de confidentialité", "es": "Política de privacidad", "it": "Informativa sulla privacy", "pt": "Política de privacidade", "ja": "プライバシーポリシー", "ko": "개인정보처리방침"},
     "eNet": {"en": "No connection to the server. Check the internet and try again.", "ru": "Нет связи с сервером. Проверьте интернет и попробуйте ещё раз.", "cs": "Není spojení se serverem. Zkontrolujte internet a zkuste to znovu.", "de": "Keine Verbindung zum Server. Prüfen Sie das Internet und versuchen Sie es erneut.", "fr": "Pas de connexion au serveur. Vérifiez Internet et réessayez.", "es": "No hay conexión con el servidor. Comprueba internet e inténtalo de nuevo.", "it": "Nessuna connessione al server. Controlli internet e riprovi.", "pt": "Sem conexão com o servidor. Verifique a internet e tente de novo.", "ja": "サーバーに接続できません。インターネットを確認して、もう一度お試しください。", "ko": "서버에 연결할 수 없습니다. 인터넷을 확인하고 다시 시도하세요."},
@@ -357,7 +359,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "devPts": {"ru": "Точек: {n}", "en": "Points: {n}", "cs": "Bodů: {n}", "de": "Punkte: {n}", "fr": "Points : {n}", "es": "Puntos: {n}", "it": "Punti: {n}", "pt": "Pontos: {n}", "ja": "地点：{n}", "ko": "지점: {n}"},
     "devNone": {"ru": "Устройство не определено", "en": "Device not identified", "cs": "Zařízení neurčeno", "de": "Gerät nicht bestimmt", "fr": "Appareil non déterminé", "es": "Dispositivo no identificado", "it": "Dispositivo non identificato", "pt": "Dispositivo não identificado", "ja": "デバイス不明", "ko": "기기 확인 불가"},
     "sysRead": {"ru": "Системные папки и папки программ: прочитано файлов — {a}, с местом съёмки — {b}.", "en": "System and program folders: files read — {a}, with a shooting location — {b}.", "cs": "Systémové složky a složky programů: přečteno souborů — {a}, s místem pořízení — {b}.", "de": "System- und Programmordner: gelesene Dateien — {a}, mit Aufnahmeort — {b}.", "fr": "Dossiers système et de programmes : fichiers lus — {a}, avec lieu de prise de vue — {b}.", "es": "Carpetas del sistema y de programas: archivos leídos — {a}, con lugar de captura — {b}.", "it": "Cartelle di sistema e dei programmi: file letti — {a}, con luogo di scatto — {b}.", "pt": "Pastas do sistema e de programas: arquivos lidos — {a}, com local da captura — {b}.", "ja": "システムフォルダーとプログラムフォルダー：読み込んだファイル {a}、撮影場所あり {b}", "ko": "시스템 폴더와 프로그램 폴더: 읽은 파일 {a}, 촬영 장소 있음 {b}"},
-    "moreFolder": {"en": "Add a folder", "ru": "Добавить папку", "cs": "Přidat složku", "de": "Ordner hinzufügen", "fr": "Ajouter un dossier", "es": "Añadir una carpeta", "it": "Aggiungi una cartella", "pt": "Adicionar uma pasta", "ja": "フォルダーを追加", "ko": "폴더 추가"},
+    "moreFolder": {"en": "Check files", "ru": "Проверить файлы", "cs": "Zkontrolovat soubory", "de": "Dateien prüfen", "fr": "Vérifier les fichiers", "es": "Comprobar archivos", "it": "Controlla i file", "pt": "Verificar arquivos", "ja": "ファイルを確認", "ko": "파일 확인"},
     "runNoPlace": {"ru": "В этих файлах нет места съёмки: камера его не записала.", "en": "These files contain no shooting location: the camera did not record it.", "cs": "Tyto soubory neobsahují místo pořízení: fotoaparát ho nezaznamenal.", "de": "Diese Dateien enthalten keinen Aufnahmeort: Die Kamera hat ihn nicht gespeichert.", "fr": "Ces fichiers ne contiennent pas de lieu de prise de vue : l’appareil ne l’a pas enregistré.", "es": "Estos archivos no contienen lugar de captura: la cámara no lo registró.", "it": "Questi file non contengono il luogo di scatto: la fotocamera non lo ha registrato.", "pt": "Estes arquivos não contêm local da captura: a câmera não o registrou.", "ja": "これらのファイルには撮影場所がありません。カメラが記録していません。", "ko": "이 파일에는 촬영 장소가 없습니다. 카메라가 기록하지 않았습니다."},
     "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже были в итоге.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
     "saveAcc": {"en": "Save the result", "ru": "Сохранить итог", "cs": "Uložit výsledek", "de": "Ergebnis speichern", "fr": "Enregistrer le résultat", "es": "Guardar el resultado", "it": "Salva il risultato", "pt": "Salvar o resultado", "ja": "結果を保存", "ko": "결과 저장"},
@@ -381,35 +383,33 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "spApp": {"en": "The app will show which places these are.", "ru": "Какие это места, покажет приложение.", "cs": "Která místa to jsou, ukáže aplikace.", "de": "Welche Orte das sind, zeigt die App.", "fr": "L’application vous montrera de quels lieux il s’agit.", "es": "La aplicación te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app.", "pt": "O aplicativo mostrará quais lugares são.", "ja": "どの場所かはアプリでわかります。", "ko": "어떤 장소인지는 앱에서 볼 수 있습니다."},
     "spGet": {"en": "Point your phone’s camera at the code or open Google Play, then sign in to the app with the same Google account.", "ru": "Наведите камеру телефона на код или откройте Google Play, затем войдите в приложении с той же учётной записью Google.", "cs": "Namiřte fotoaparát telefonu na kód nebo otevřete Google Play a pak se v aplikaci přihlaste stejným účtem Google.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und melden Sie sich dann in der App mit demselben Google-Konto an.", "fr": "Pointez l’appareil photo de votre téléphone vers le code ou ouvrez Google Play, puis connectez-vous à l’application avec le même compte Google.", "es": "Apunta la cámara del teléfono al código o abre Google Play y luego inicia sesión en la aplicación con la misma cuenta de Google.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play, poi acceda all’app con lo stesso account Google.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e depois entre no aplicativo com a mesma conta do Google.", "ja": "スマートフォンのカメラでコードを読み取るかGoogle Playを開き、同じGoogleアカウントでアプリにログインしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play를 연 다음, 같은 Google 계정으로 앱에 로그인하세요."},
     "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
-    "q1": {"en": "Are my photos uploaded anywhere?", "ru": "Снимки куда-нибудь загружаются?", "cs": "Nahrávají se moje snímky někam?", "de": "Werden meine Fotos irgendwohin hochgeladen?", "fr": "Mes photos sont-elles envoyées quelque part ?", "es": "¿Se suben mis fotos a algún sitio?", "it": "Le mie foto vengono caricate da qualche parte?", "pt": "Minhas fotos são enviadas para algum lugar?", "ja": "写真はどこかにアップロードされますか？", "ko": "사진이 어딘가에 업로드되나요?"},
-    "a1": {"en": "No. The page reads only the place and time of shooting and the camera model; the photos and videos themselves stay on your computer.", "ru": "Нет. Страница читает в файлах только место и время съёмки и модель камеры; сами снимки и видео остаются на компьютере.", "cs": "Ne. Stránka čte v souborech jen místo a čas pořízení a model fotoaparátu; samotné snímky a videa zůstávají v počítači.", "de": "Nein. Die Seite liest in den Dateien nur Aufnahmeort, Aufnahmezeit und Kameramodell; die Fotos und Videos selbst bleiben auf Ihrem Computer.", "fr": "Non. La page ne lit dans les fichiers que le lieu et l’heure de prise de vue et le modèle d’appareil ; les photos et vidéos restent sur votre ordinateur.", "es": "No. La página solo lee en los archivos el lugar y la hora de la toma y el modelo de cámara; las fotos y los vídeos se quedan en tu ordenador.", "it": "No. La pagina legge nei file solo il luogo e l’ora dello scatto e il modello della fotocamera; foto e video restano sul Suo computer.", "pt": "Não. A página lê nos arquivos só o local e a hora da foto e o modelo da câmera; as fotos e os vídeos ficam no seu computador.", "ja": "いいえ。ページがファイルから読むのは撮影場所・撮影時刻・カメラの機種だけで、写真や動画そのものはパソコンに残ります。", "ko": "아니요. 페이지는 파일에서 촬영 장소와 시간, 카메라 모델만 읽으며, 사진과 동영상은 컴퓨터에 그대로 남습니다."},
-    "q2": {"en": "Where is the result stored?", "ru": "Где хранится итог?", "cs": "Kde se výsledek ukládá?", "de": "Wo wird das Ergebnis gespeichert?", "fr": "Où le résultat est-il conservé ?", "es": "¿Dónde se guarda el resultado?", "it": "Dove viene conservato il risultato?", "pt": "Onde o resultado fica guardado?", "ja": "結果はどこに保存されますか？", "ko": "결과는 어디에 보관되나요?"},
-    "a2": {"en": "In this browser: it stays when you close the page. Right after the analysis, the places and times are also kept on our server without an account for 30 days. A saved result is kept in your account.", "ru": "В этом браузере: закроете страницу — он останется. Сразу после разбора место и время сохраняются и на нашем сервере без учётной записи, на 30 дней. Сохранённый итог хранится в вашей учётной записи.", "cs": "V tomto prohlížeči: když stránku zavřete, zůstane. Hned po analýze se místa a časy uloží i na náš server bez účtu, na 30 dní. Uložený výsledek je ve vašem účtu.", "de": "In diesem Browser: Es bleibt erhalten, wenn Sie die Seite schließen. Gleich nach der Auswertung werden Orte und Zeiten auch ohne Konto für 30 Tage auf unserem Server gespeichert. Ein gespeichertes Ergebnis liegt in Ihrem Konto.", "fr": "Dans ce navigateur : il reste quand vous fermez la page. Juste après l’analyse, les lieux et les heures sont aussi conservés sur notre serveur sans compte, pendant 30 jours. Un résultat enregistré est conservé dans votre compte.", "es": "En este navegador: se conserva aunque cierres la página. Justo después del análisis, los lugares y las horas también se guardan en nuestro servidor sin cuenta durante 30 días. Un resultado guardado se conserva en tu cuenta.", "it": "In questo browser: resta anche se chiude la pagina. Subito dopo l’analisi luoghi e orari vengono conservati anche sul nostro server senza account, per 30 giorni. Un risultato salvato resta nel Suo account.", "pt": "Neste navegador: ele continua lá quando você fecha a página. Logo após a análise, os locais e horários também ficam no nosso servidor sem conta, por 30 dias. Um resultado salvo fica na sua conta.", "ja": "このブラウザーです。ページを閉じても残ります。分析の直後には、場所と時刻がアカウントなしで当社のサーバーにも30日間保存されます。保存した結果はアカウントに保管されます。", "ko": "이 브라우저에 보관되며, 페이지를 닫아도 남아 있습니다. 분석 직후에는 장소와 시간이 계정 없이 저희 서버에도 30일 동안 저장됩니다. 저장한 결과는 계정에 보관됩니다."},
-    "q3": {"en": "How do I move the result to my phone?", "ru": "Как перенести итог на телефон?", "cs": "Jak výsledek přenést do telefonu?", "de": "Wie übertrage ich das Ergebnis auf mein Telefon?", "fr": "Comment transférer le résultat sur mon téléphone ?", "es": "¿Cómo paso el resultado a mi teléfono?", "it": "Come trasferisco il risultato sul telefono?", "pt": "Como passo o resultado para o celular?", "ja": "結果をスマートフォンに移すには？", "ko": "결과를 휴대폰으로 옮기려면?"},
-    "a3": {"en": "Press “Move to my phone” and sign in with Google. Then install the app and sign in with the same Google account: the app will offer to add the result to your collection.", "ru": "Нажмите «Перенести на телефон» и войдите через Google. Затем установите приложение и войдите в нём с той же учётной записью Google: приложение предложит добавить итог в коллекцию.", "cs": "Stiskněte „Přenést do telefonu“ a přihlaste se přes Google. Pak nainstalujte aplikaci a přihlaste se v ní stejným účtem Google: aplikace nabídne přidat výsledek do sbírky.", "de": "Drücken Sie „Aufs Telefon übertragen“ und melden Sie sich mit Google an. Installieren Sie dann die App und melden Sie sich dort mit demselben Google-Konto an: Die App bietet an, das Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "Appuyez sur « Transférer sur mon téléphone » et connectez-vous avec Google. Installez ensuite l’application et connectez-vous avec le même compte Google : elle proposera d’ajouter le résultat à votre collection.", "es": "Pulsa «Pasar a mi teléfono» e inicia sesión con Google. Luego instala la aplicación e inicia sesión con la misma cuenta de Google: la aplicación te ofrecerá añadir el resultado a tu colección.", "it": "Prema «Trasferisci sul telefono» e acceda con Google. Poi installi l’app e acceda con lo stesso account Google: l’app Le proporrà di aggiungere il risultato alla collezione.", "pt": "Toque em “Passar para o celular” e entre com o Google. Depois instale o aplicativo e entre com a mesma conta do Google: o aplicativo vai oferecer adicionar o resultado à sua coleção.", "ja": "「スマートフォンに移す」を押してGoogleでログインします。次にアプリをインストールし、同じGoogleアカウントでログインすると、結果をコレクションに加えるよう案内されます。", "ko": "‘휴대폰으로 옮기기’를 누르고 Google로 로그인하세요. 그런 다음 앱을 설치하고 같은 Google 계정으로 로그인하면 앱이 결과를 컬렉션에 추가하도록 안내합니다."},
     "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
     "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
     "dlgDevX": {"en": "The points of {name} will disappear from this result. You can bring them back by choosing the folder with its photos again.", "ru": "Точки устройства {name} исчезнут из этого итога. Вернуть их можно, снова выбрав папку с его снимками.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Vrátit je můžete tak, že znovu vyberete složku s jeho snímky.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. Sie kommen zurück, wenn Sie den Ordner mit seinen Fotos erneut auswählen.", "fr": "Les points de {name} disparaîtront de ce résultat. Vous pourrez les récupérer en choisissant à nouveau le dossier avec ses photos.", "es": "Los puntos de {name} desaparecerán de este resultado. Puedes recuperarlos eligiendo de nuevo la carpeta con sus fotos.", "it": "I punti di {name} spariranno da questo risultato. Potrà recuperarli scegliendo di nuovo la cartella con le sue foto.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Você pode recuperá-los escolhendo de novo a pasta com as fotos dele.", "ja": "{name}の地点がこの結果から消えます。その機器の写真が入ったフォルダーをもう一度選べば元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 그 기기의 사진이 있는 폴더를 다시 고르면 되돌릴 수 있습니다."},
     "eAnonLimit": {"en": "Today the server no longer accepts results without signing in. The result is kept in this browser; save it so that it is not lost.", "ru": "Сегодня сервер больше не принимает итоги без входа. Итог хранится в этом браузере — сохраните его, чтобы он не потерялся.", "cs": "Dnes už server nepřijímá výsledky bez přihlášení. Výsledek je uložen v tomto prohlížeči — uložte si ho, aby se neztratil.", "de": "Heute nimmt der Server keine Ergebnisse ohne Anmeldung mehr an. Das Ergebnis ist in diesem Browser gespeichert — speichern Sie es, damit es nicht verloren geht.", "fr": "Aujourd’hui, le serveur n’accepte plus de résultats sans connexion. Le résultat est conservé dans ce navigateur : enregistrez-le pour ne pas le perdre.", "es": "Hoy el servidor ya no acepta resultados sin iniciar sesión. El resultado está guardado en este navegador: guárdalo para no perderlo.", "it": "Oggi il server non accetta più risultati senza accesso. Il risultato è conservato in questo browser: lo salvi per non perderlo.", "pt": "Hoje o servidor não aceita mais resultados sem login. O resultado está guardado neste navegador: salve-o para não perdê-lo.", "ja": "本日はログインなしの結果をサーバーが受け付けられません。結果はこのブラウザーに保存されています。失わないように保存してください。", "ko": "오늘은 서버가 로그인 없는 결과를 더 받지 않습니다. 결과는 이 브라우저에 보관되어 있으니, 잃지 않도록 저장하세요."},
     "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые итоги. Итог останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."},
-    "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
-    "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
-    "navData": {"en": "Your data", "ru": "Данные", "cs": "Data", "de": "Deine Daten", "fr": "Tes données", "es": "Tus datos", "it": "I tuoi dati", "pt": "Seus dados", "ja": "データ", "ko": "내 데이터"},
-    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
     "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
     "runTitleDir": {"en": "Folder “{name}”", "ru": "Папка «{name}»", "cs": "Složka „{name}“", "de": "Ordner „{name}“", "fr": "Dossier « {name} »", "es": "Carpeta «{name}»", "it": "Cartella «{name}»", "pt": "Pasta “{name}”", "ja": "フォルダー「{name}」", "ko": "폴더 ‘{name}’"},
     "runTitleFiles": {"en": "Chosen files", "ru": "Выбранные файлы", "cs": "Vybrané soubory", "de": "Ausgewählte Dateien", "fr": "Fichiers choisis", "es": "Archivos elegidos", "it": "File scelti", "pt": "Arquivos escolhidos", "ja": "選んだファイル", "ko": "선택한 파일"},
     "lblRead": {"en": "files read", "ru": "файлов прочитано", "cs": "souborů přečteno", "de": "Dateien gelesen", "fr": "fichiers lus", "es": "archivos leídos", "it": "file letti", "pt": "arquivos lidos", "ja": "読み込んだファイル", "ko": "읽은 파일"},
     "lblPlace": {"en": "with a location", "ru": "с местом съёмки", "cs": "s místem pořízení", "de": "mit Aufnahmeort", "fr": "avec un lieu", "es": "con lugar", "it": "con luogo", "pt": "com local", "ja": "撮影場所あり", "ko": "촬영 장소 있음"},
     "lblNew": {"en": "new points", "ru": "новых точек", "cs": "nových bodů", "de": "neue Punkte", "fr": "nouveaux points", "es": "puntos nuevos", "it": "nuovi punti", "pt": "pontos novos", "ja": "新しい地点", "ko": "새 지점"},
-    "q4": {"en": "Why are there fewer points than photos?", "ru": "Почему точек меньше, чем снимков?", "cs": "Proč je bodů méně než snímků?", "de": "Warum gibt es weniger Punkte als Fotos?", "fr": "Pourquoi y a-t-il moins de points que de photos ?", "es": "¿Por qué hay menos puntos que fotos?", "it": "Perché ci sono meno punti che foto?", "pt": "Por que há menos pontos do que fotos?", "ja": "地点の数が写真より少ないのはなぜですか？", "ko": "왜 사진보다 지점이 적나요?"},
-    "a4": {"en": "A series of shots by one device within 150 m and 20 minutes counts as one point.", "ru": "Серия снимков одного устройства в пределах 150 м и 20 минут считается одной точкой.", "cs": "Série snímků jednoho zařízení v okruhu 150 m a během 20 minut se počítá jako jeden bod.", "de": "Eine Serie von Aufnahmen eines Geräts innerhalb von 150 m und 20 Minuten zählt als ein Punkt.", "fr": "Une série de prises de vue d’un même appareil dans un rayon de 150 m et en 20 minutes compte comme un seul point.", "es": "Una serie de fotos de un mismo dispositivo dentro de 150 m y 20 minutos cuenta como un solo punto.", "it": "Una serie di scatti dello stesso dispositivo entro 150 m e 20 minuti conta come un solo punto.", "pt": "Uma série de fotos de um mesmo aparelho dentro de 150 m e 20 minutos conta como um único ponto.", "ja": "同じ機器で150 m以内・20分以内に撮った一連の写真は、1つの地点として数えます。", "ko": "한 기기로 150 m 이내, 20분 이내에 찍은 연속 사진은 하나의 지점으로 셉니다."},
-    "q5": {"en": "Which files can I choose?", "ru": "Какие файлы подходят?", "cs": "Které soubory se hodí?", "de": "Welche Dateien eignen sich?", "fr": "Quels fichiers puis-je choisir ?", "es": "¿Qué archivos sirven?", "it": "Quali file posso scegliere?", "pt": "Quais arquivos servem?", "ja": "どのファイルが使えますか？", "ko": "어떤 파일을 고를 수 있나요?"},
-    "a5": {"en": "Photos and videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), a Google location history export and route files GPX, KML, TCX and GeoJSON. Choose folders rather than the whole disk: the browser takes a very long time to list every file on a disk.", "ru": "Фотографии и видео (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), выгрузка истории местоположений Google и файлы маршрута GPX, KML, TCX и GeoJSON. Выбирайте папки, а не весь диск: список всех файлов диска браузер собирает очень долго.", "cs": "Fotografie a videa (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), export historie polohy Google a soubory trasy GPX, KML, TCX a GeoJSON. Vybírejte složky, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho.", "de": "Fotos und Videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), ein Export des Google-Standortverlaufs und Routendateien GPX, KML, TCX und GeoJSON. Wählen Sie Ordner statt der ganzen Festplatte: Die Liste aller Dateien einer Festplatte stellt der Browser sehr lange zusammen.", "fr": "Photos et vidéos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un export de l’historique des positions Google et des fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Choisissez des dossiers plutôt que tout le disque : le navigateur met très longtemps à lister tous les fichiers d’un disque.", "es": "Fotos y vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), una exportación del historial de ubicaciones de Google y archivos de ruta GPX, KML, TCX y GeoJSON. Elige carpetas, no el disco entero: el navegador tarda mucho en listar todos los archivos de un disco.", "it": "Foto e video (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un’esportazione della cronologia delle posizioni di Google e file di percorso GPX, KML, TCX e GeoJSON. Scelga cartelle, non l’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco.", "pt": "Fotos e vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), uma exportação do histórico de localização do Google e arquivos de trajeto GPX, KML, TCX e GeoJSON. Escolha pastas, não o disco inteiro: o navegador demora muito para listar todos os arquivos de um disco.", "ja": "写真と動画（JPEG、HEIC、PNG、WebP、MP4、MOV、RAW）、Googleのロケーション履歴のエクスポート、ルートファイル（GPX、KML、TCX、GeoJSON）です。ディスク全体ではなくフォルダーを選んでください。ディスク全体のファイル一覧を作るにはブラウザーがとても時間をかけます。", "ko": "사진과 동영상(JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google 위치 기록 내보내기, 경로 파일 GPX, KML, TCX, GeoJSON입니다. 디스크 전체가 아니라 폴더를 고르세요. 디스크의 모든 파일 목록을 만드는 데 브라우저가 아주 오래 걸립니다."},
-    "q6": {"en": "What is saved together with the points?", "ru": "Что сохраняется вместе с точками?", "cs": "Co se ukládá spolu s body?", "de": "Was wird zusammen mit den Punkten gespeichert?", "fr": "Qu’est-ce qui est enregistré avec les points ?", "es": "¿Qué se guarda junto con los puntos?", "it": "Che cosa viene salvato insieme ai punti?", "pt": "O que é salvo junto com os pontos?", "ja": "地点と一緒に何が保存されますか？", "ko": "지점과 함께 무엇이 저장되나요?"},
-    "a6": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."},
-    "q7": {"en": "What are special places?", "ru": "Что такое особые места?", "cs": "Co jsou výjimečná místa?", "de": "Was sind besondere Orte?", "fr": "Que sont les lieux d’exception ?", "es": "¿Qué son los lugares especiales?", "it": "Che cosa sono i luoghi speciali?", "pt": "O que são lugares especiais?", "ja": "特別な場所とは？", "ko": "특별한 장소란?"},
-    "a7": {"en": "Places of the collection: sights, museums, parks, peaks and more. By rarity they are common, rare, epic, legendary and unique.", "ru": "Места коллекции: достопримечательности, музеи, парки, вершины и другие. По редкости они бывают обычными, редкими, эпическими, легендарными и уникальными.", "cs": "Místa sbírky: pamětihodnosti, muzea, parky, vrcholy a další. Podle vzácnosti jsou běžná, vzácná, epická, legendární a unikátní.", "de": "Orte der Sammlung: Sehenswürdigkeiten, Museen, Parks, Gipfel und mehr. Nach Seltenheit sind sie gewöhnlich, selten, episch, legendär und einzigartig.", "fr": "Les lieux de la collection : monuments, musées, parcs, sommets et autres. Selon leur rareté, ils sont communs, rares, épiques, légendaires et uniques.", "es": "Los lugares de la colección: monumentos, museos, parques, cumbres y más. Según su rareza son comunes, raros, épicos, legendarios y únicos.", "it": "I luoghi della collezione: monumenti, musei, parchi, vette e altro. Per rarità sono comuni, rari, epici, leggendari e unici.", "pt": "Os lugares da coleção: pontos turísticos, museus, parques, picos e outros. Pela raridade, são comuns, raros, épicos, lendários e únicos.", "ja": "コレクションの場所です。名所、博物館、公園、山頂などがあり、希少度によって定番・名勝・絶景・秘境・唯一無二に分かれます。", "ko": "컬렉션의 장소로, 명소, 박물관, 공원, 봉우리 등이 있습니다. 희귀도에 따라 일반, 희귀, 에픽, 전설, 유일로 나뉩니다."}
+    "navHome": {"en": "Home", "ru": "Главная", "cs": "Domů", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
+    "navPc": {"en": "Media files from my computer", "ru": "Медиафайлы с моего компьютера", "cs": "Mediální soubory z mého počítače", "de": "Mediendateien von meinem Computer", "fr": "Fichiers multimédias de mon ordinateur", "es": "Archivos multimedia de mi ordenador", "it": "File multimediali dal mio computer", "pt": "Arquivos de mídia do meu computador", "ja": "自分のパソコンのメディアファイル", "ko": "내 컴퓨터의 미디어 파일"},
+    "q1": {"en": "Why do some files have no location?", "ru": "Почему у части файлов нет места съёмки?", "cs": "Proč některé soubory nemají místo pořízení?", "de": "Warum haben manche Dateien keinen Aufnahmeort?", "fr": "Pourquoi certains fichiers n’ont-ils pas de lieu de prise de vue ?", "es": "¿Por qué algunos archivos no tienen lugar de captura?", "it": "Perché alcuni file non hanno il luogo di scatto?", "pt": "Por que alguns arquivos não têm local de captura?", "ja": "撮影場所がないファイルがあるのはなぜですか？", "ko": "일부 파일에 촬영 위치가 없는 이유는 무엇인가요?"},
+    "a1": {"en": "The phone or camera records the location at the moment of shooting, and only if location is turned on. Often it is erased later: messengers and social networks remove it when files are sent, files saved from the internet or after an editor lose it, and some cloud services strip it when they pass files to other apps or share them by link. Google Photos, for example, does not give the location to other apps; a full Google Takeout export keeps it, and this page reads it from the .json files next to the photos. Screenshots and pictures never have a location.", "ru": "Место записывает телефон или фотоаппарат в момент съёмки, и только если у него включена геолокация. Часто оно стирается потом: мессенджеры и соцсети удаляют его при пересылке, его теряют файлы после редактора и сохранённые из интернета, а некоторые облачные сервисы вырезают его, когда передают файлы другим программам или по ссылке. Google Фото, например, не отдаёт место съёмки другим программам; полная выгрузка через Google Takeout его сохраняет, и страница читает место из файлов .json рядом со снимками. В снимках экрана и картинках места не бывает.", "cs": "Místo zapisuje telefon nebo fotoaparát v okamžiku pořízení, a jen když má zapnutou polohu. Často se pak smaže: messengery a sociální sítě ho při odesílání odstraní, soubory po úpravě v editoru nebo uložené z internetu ho ztrácejí a některé cloudové služby ho odstraňují, když soubory předávají jiným aplikacím nebo sdílejí odkazem. Například Fotky Google místo pořízení jiným aplikacím nepředávají; úplný export přes Google Takeout ho zachová a tato stránka ho čte ze souborů .json vedle snímků. Snímky obrazovky a obrázky místo nemají nikdy.", "de": "Den Aufnahmeort speichert das Telefon oder die Kamera beim Aufnehmen, und zwar nur, wenn die Standortfunktion eingeschaltet ist. Oft wird er danach gelöscht: Messenger und soziale Netzwerke entfernen ihn beim Versenden, bearbeitete oder aus dem Internet gespeicherte Dateien verlieren ihn, und manche Cloud-Dienste entfernen ihn, wenn sie Dateien an andere Apps weitergeben oder per Link teilen. Google Fotos zum Beispiel gibt den Aufnahmeort nicht an andere Apps weiter; ein vollständiger Export über Google Takeout behält ihn, und diese Seite liest ihn aus den .json-Dateien neben den Fotos. Bildschirmfotos und Grafiken haben nie einen Aufnahmeort.", "fr": "Le lieu est enregistré par le téléphone ou l’appareil photo au moment de la prise de vue, et seulement si la localisation est activée. Il est souvent effacé ensuite : les messageries et les réseaux sociaux le suppriment à l’envoi, les fichiers retouchés ou enregistrés depuis Internet le perdent, et certains services de cloud le retirent lorsqu’ils transmettent des fichiers à d’autres applications ou les partagent par lien. Google Photos, par exemple, ne transmet pas le lieu aux autres applications ; un export complet via Google Takeout le conserve, et cette page le lit dans les fichiers .json placés à côté des photos. Les captures d’écran et les images n’ont jamais de lieu.", "es": "El lugar lo graba el teléfono o la cámara en el momento de la foto, y solo si tiene la ubicación activada. A menudo se borra después: las aplicaciones de mensajería y las redes sociales lo eliminan al enviar los archivos, los archivos editados o guardados de internet lo pierden, y algunos servicios en la nube lo quitan cuando pasan archivos a otras aplicaciones o los comparten por enlace. Google Fotos, por ejemplo, no entrega el lugar a otras aplicaciones; una exportación completa con Google Takeout lo conserva, y esta página lo lee de los archivos .json que acompañan a las fotos. Las capturas de pantalla y las imágenes nunca tienen lugar.", "it": "Il luogo viene registrato dal telefono o dalla fotocamera al momento dello scatto, e solo se la localizzazione è attiva. Spesso poi viene cancellato: le app di messaggistica e i social network lo rimuovono durante l’invio, i file modificati o salvati da internet lo perdono e alcuni servizi cloud lo tolgono quando passano i file ad altre app o li condividono tramite link. Google Foto, ad esempio, non fornisce il luogo ad altre app; un’esportazione completa con Google Takeout lo conserva, e questa pagina lo legge dai file .json accanto alle foto. Gli screenshot e le immagini non hanno mai un luogo.", "pt": "O local é gravado pelo celular ou pela câmera no momento da foto, e só se a localização estiver ativada. Muitas vezes ele é apagado depois: os aplicativos de mensagens e as redes sociais o removem ao enviar os arquivos, arquivos editados ou salvos da internet o perdem, e alguns serviços de nuvem o retiram ao passar arquivos para outros aplicativos ou compartilhá-los por link. O Google Fotos, por exemplo, não entrega o local a outros aplicativos; uma exportação completa pelo Google Takeout o mantém, e esta página o lê nos arquivos .json ao lado das fotos. Capturas de tela e imagens nunca têm local.", "ja": "撮影場所は、撮影の瞬間にスマートフォンやカメラが記録します。位置情報がオンのときだけです。その後で消えることもよくあります。メッセージアプリやSNSは送信時に場所を削除し、編集したファイルやインターネットから保存したファイルでは場所が失われます。一部のクラウドサービスも、ファイルを他のアプリに渡すときやリンクで共有するときに場所を取り除きます。たとえばGoogleフォトは撮影場所を他のアプリに渡しません。Google Takeoutで全体を書き出すと場所は残り、このページは写真の横にある.jsonファイルから場所を読み取ります。スクリーンショットや画像には場所がありません。", "ko": "촬영 위치는 촬영하는 순간 휴대폰이나 카메라가 기록하며, 위치 기능이 켜져 있을 때만 기록됩니다. 그 뒤에 지워지는 경우도 많습니다. 메신저와 SNS는 파일을 보낼 때 위치를 지우고, 편집한 파일이나 인터넷에서 저장한 파일은 위치를 잃으며, 일부 클라우드 서비스는 파일을 다른 앱에 넘기거나 링크로 공유할 때 위치를 제거합니다. 예를 들어 Google 포토는 촬영 위치를 다른 앱에 넘기지 않습니다. Google 테이크아웃으로 전체를 내보내면 위치가 남아 있으며, 이 페이지는 사진 옆의 .json 파일에서 위치를 읽습니다. 스크린샷과 이미지에는 위치가 없습니다."},
+    "q2": {"en": "Are my photos uploaded anywhere?", "ru": "Снимки куда-нибудь загружаются?", "cs": "Nahrávají se moje snímky někam?", "de": "Werden meine Fotos irgendwohin hochgeladen?", "fr": "Mes photos sont-elles envoyées quelque part ?", "es": "¿Se suben mis fotos a algún sitio?", "it": "Le mie foto vengono caricate da qualche parte?", "pt": "Minhas fotos são enviadas para algum lugar?", "ja": "写真はどこかにアップロードされますか？", "ko": "사진이 어딘가에 업로드되나요?"},
+    "a2": {"en": "No. The page reads only the place and time of shooting and the camera model; the photos and videos themselves stay on your computer.", "ru": "Нет. Страница читает в файлах только место и время съёмки и модель камеры; сами снимки и видео остаются на компьютере.", "cs": "Ne. Stránka čte v souborech jen místo a čas pořízení a model fotoaparátu; samotné snímky a videa zůstávají v počítači.", "de": "Nein. Die Seite liest in den Dateien nur Aufnahmeort, Aufnahmezeit und Kameramodell; die Fotos und Videos selbst bleiben auf Ihrem Computer.", "fr": "Non. La page ne lit dans les fichiers que le lieu et l’heure de prise de vue et le modèle d’appareil ; les photos et vidéos restent sur votre ordinateur.", "es": "No. La página solo lee en los archivos el lugar y la hora de la toma y el modelo de cámara; las fotos y los vídeos se quedan en tu ordenador.", "it": "No. La pagina legge nei file solo il luogo e l’ora dello scatto e il modello della fotocamera; foto e video restano sul Suo computer.", "pt": "Não. A página lê nos arquivos só o local e a hora da foto e o modelo da câmera; as fotos e os vídeos ficam no seu computador.", "ja": "いいえ。ページがファイルから読むのは撮影場所・撮影時刻・カメラの機種だけで、写真や動画そのものはパソコンに残ります。", "ko": "아니요. 페이지는 파일에서 촬영 장소와 시간, 카메라 모델만 읽으며, 사진과 동영상은 컴퓨터에 그대로 남습니다."},
+    "q3": {"en": "Where is the result stored?", "ru": "Где хранится итог?", "cs": "Kde se výsledek ukládá?", "de": "Wo wird das Ergebnis gespeichert?", "fr": "Où le résultat est-il conservé ?", "es": "¿Dónde se guarda el resultado?", "it": "Dove viene conservato il risultato?", "pt": "Onde o resultado fica guardado?", "ja": "結果はどこに保存されますか？", "ko": "결과는 어디에 보관되나요?"},
+    "a3": {"en": "In this browser: it stays when you close the page. Right after the analysis, the places and times are also kept on our server without an account for 30 days. A saved result is kept in your account.", "ru": "В этом браузере: закроете страницу — он останется. Сразу после разбора место и время сохраняются и на нашем сервере без учётной записи, на 30 дней. Сохранённый итог хранится в вашей учётной записи.", "cs": "V tomto prohlížeči: když stránku zavřete, zůstane. Hned po analýze se místa a časy uloží i na náš server bez účtu, na 30 dní. Uložený výsledek je ve vašem účtu.", "de": "In diesem Browser: Es bleibt erhalten, wenn Sie die Seite schließen. Gleich nach der Auswertung werden Orte und Zeiten auch ohne Konto für 30 Tage auf unserem Server gespeichert. Ein gespeichertes Ergebnis liegt in Ihrem Konto.", "fr": "Dans ce navigateur : il reste quand vous fermez la page. Juste après l’analyse, les lieux et les heures sont aussi conservés sur notre serveur sans compte, pendant 30 jours. Un résultat enregistré est conservé dans votre compte.", "es": "En este navegador: se conserva aunque cierres la página. Justo después del análisis, los lugares y las horas también se guardan en nuestro servidor sin cuenta durante 30 días. Un resultado guardado se conserva en tu cuenta.", "it": "In questo browser: resta anche se chiude la pagina. Subito dopo l’analisi luoghi e orari vengono conservati anche sul nostro server senza account, per 30 giorni. Un risultato salvato resta nel Suo account.", "pt": "Neste navegador: ele continua lá quando você fecha a página. Logo após a análise, os locais e horários também ficam no nosso servidor sem conta, por 30 dias. Um resultado salvo fica na sua conta.", "ja": "このブラウザーです。ページを閉じても残ります。分析の直後には、場所と時刻がアカウントなしで当社のサーバーにも30日間保存されます。保存した結果はアカウントに保管されます。", "ko": "이 브라우저에 보관되며, 페이지를 닫아도 남아 있습니다. 분석 직후에는 장소와 시간이 계정 없이 저희 서버에도 30일 동안 저장됩니다. 저장한 결과는 계정에 보관됩니다."},
+    "q4": {"en": "How do I move the result to my phone?", "ru": "Как перенести итог на телефон?", "cs": "Jak výsledek přenést do telefonu?", "de": "Wie übertrage ich das Ergebnis auf mein Telefon?", "fr": "Comment transférer le résultat sur mon téléphone ?", "es": "¿Cómo paso el resultado a mi teléfono?", "it": "Come trasferisco il risultato sul telefono?", "pt": "Como passo o resultado para o celular?", "ja": "結果をスマートフォンに移すには？", "ko": "결과를 휴대폰으로 옮기려면?"},
+    "a4": {"en": "Press “Move to my phone” and sign in with Google. Then install the app and sign in with the same Google account: the app will offer to add the result to your collection.", "ru": "Нажмите «Перенести на телефон» и войдите через Google. Затем установите приложение и войдите в нём с той же учётной записью Google: приложение предложит добавить итог в коллекцию.", "cs": "Stiskněte „Přenést do telefonu“ a přihlaste se přes Google. Pak nainstalujte aplikaci a přihlaste se v ní stejným účtem Google: aplikace nabídne přidat výsledek do sbírky.", "de": "Drücken Sie „Aufs Telefon übertragen“ und melden Sie sich mit Google an. Installieren Sie dann die App und melden Sie sich dort mit demselben Google-Konto an: Die App bietet an, das Ergebnis Ihrer Sammlung hinzuzufügen.", "fr": "Appuyez sur « Transférer sur mon téléphone » et connectez-vous avec Google. Installez ensuite l’application et connectez-vous avec le même compte Google : elle proposera d’ajouter le résultat à votre collection.", "es": "Pulsa «Pasar a mi teléfono» e inicia sesión con Google. Luego instala la aplicación e inicia sesión con la misma cuenta de Google: la aplicación te ofrecerá añadir el resultado a tu colección.", "it": "Prema «Trasferisci sul telefono» e acceda con Google. Poi installi l’app e acceda con lo stesso account Google: l’app Le proporrà di aggiungere il risultato alla collezione.", "pt": "Toque em “Passar para o celular” e entre com o Google. Depois instale o aplicativo e entre com a mesma conta do Google: o aplicativo vai oferecer adicionar o resultado à sua coleção.", "ja": "「スマートフォンに移す」を押してGoogleでログインします。次にアプリをインストールし、同じGoogleアカウントでログインすると、結果をコレクションに加えるよう案内されます。", "ko": "‘휴대폰으로 옮기기’를 누르고 Google로 로그인하세요. 그런 다음 앱을 설치하고 같은 Google 계정으로 로그인하면 앱이 결과를 컬렉션에 추가하도록 안내합니다."},
+    "q5": {"en": "Why are there fewer points than photos?", "ru": "Почему точек меньше, чем снимков?", "cs": "Proč je bodů méně než snímků?", "de": "Warum gibt es weniger Punkte als Fotos?", "fr": "Pourquoi y a-t-il moins de points que de photos ?", "es": "¿Por qué hay menos puntos que fotos?", "it": "Perché ci sono meno punti che foto?", "pt": "Por que há menos pontos do que fotos?", "ja": "地点の数が写真より少ないのはなぜですか？", "ko": "왜 사진보다 지점이 적나요?"},
+    "a5": {"en": "A series of shots by one device within 150 m and 20 minutes counts as one point.", "ru": "Серия снимков одного устройства в пределах 150 м и 20 минут считается одной точкой.", "cs": "Série snímků jednoho zařízení v okruhu 150 m a během 20 minut se počítá jako jeden bod.", "de": "Eine Serie von Aufnahmen eines Geräts innerhalb von 150 m und 20 Minuten zählt als ein Punkt.", "fr": "Une série de prises de vue d’un même appareil dans un rayon de 150 m et en 20 minutes compte comme un seul point.", "es": "Una serie de fotos de un mismo dispositivo dentro de 150 m y 20 minutos cuenta como un solo punto.", "it": "Una serie di scatti dello stesso dispositivo entro 150 m e 20 minuti conta come un solo punto.", "pt": "Uma série de fotos de um mesmo aparelho dentro de 150 m e 20 minutos conta como um único ponto.", "ja": "同じ機器で150 m以内・20分以内に撮った一連の写真は、1つの地点として数えます。", "ko": "한 기기로 150 m 이내, 20분 이내에 찍은 연속 사진은 하나의 지점으로 셉니다."},
+    "q6": {"en": "Which files can I choose?", "ru": "Какие файлы подходят?", "cs": "Které soubory se hodí?", "de": "Welche Dateien eignen sich?", "fr": "Quels fichiers puis-je choisir ?", "es": "¿Qué archivos sirven?", "it": "Quali file posso scegliere?", "pt": "Quais arquivos servem?", "ja": "どのファイルが使えますか？", "ko": "어떤 파일을 고를 수 있나요?"},
+    "a6": {"en": "Photos and videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), a Google location history export and route files GPX, KML, TCX and GeoJSON. Choose folders rather than the whole disk: the browser takes a very long time to list every file on a disk.", "ru": "Фотографии и видео (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), выгрузка истории местоположений Google и файлы маршрута GPX, KML, TCX и GeoJSON. Выбирайте папки, а не весь диск: список всех файлов диска браузер собирает очень долго.", "cs": "Fotografie a videa (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), export historie polohy Google a soubory trasy GPX, KML, TCX a GeoJSON. Vybírejte složky, ne celý disk: seznam všech souborů disku prohlížeč sestavuje velmi dlouho.", "de": "Fotos und Videos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), ein Export des Google-Standortverlaufs und Routendateien GPX, KML, TCX und GeoJSON. Wählen Sie Ordner statt der ganzen Festplatte: Die Liste aller Dateien einer Festplatte stellt der Browser sehr lange zusammen.", "fr": "Photos et vidéos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un export de l’historique des positions Google et des fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Choisissez des dossiers plutôt que tout le disque : le navigateur met très longtemps à lister tous les fichiers d’un disque.", "es": "Fotos y vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), una exportación del historial de ubicaciones de Google y archivos de ruta GPX, KML, TCX y GeoJSON. Elige carpetas, no el disco entero: el navegador tarda mucho en listar todos los archivos de un disco.", "it": "Foto e video (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), un’esportazione della cronologia delle posizioni di Google e file di percorso GPX, KML, TCX e GeoJSON. Scelga cartelle, non l’intero disco: il browser impiega molto tempo a elencare tutti i file di un disco.", "pt": "Fotos e vídeos (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), uma exportação do histórico de localização do Google e arquivos de trajeto GPX, KML, TCX e GeoJSON. Escolha pastas, não o disco inteiro: o navegador demora muito para listar todos os arquivos de um disco.", "ja": "写真と動画（JPEG、HEIC、PNG、WebP、MP4、MOV、RAW）、Googleのロケーション履歴のエクスポート、ルートファイル（GPX、KML、TCX、GeoJSON）です。ディスク全体ではなくフォルダーを選んでください。ディスク全体のファイル一覧を作るにはブラウザーがとても時間をかけます。", "ko": "사진과 동영상(JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google 위치 기록 내보내기, 경로 파일 GPX, KML, TCX, GeoJSON입니다. 디스크 전체가 아니라 폴더를 고르세요. 디스크의 모든 파일 목록을 만드는 데 브라우저가 아주 오래 걸립니다."},
+    "q7": {"en": "What is saved together with the points?", "ru": "Что сохраняется вместе с точками?", "cs": "Co se ukládá spolu s body?", "de": "Was wird zusammen mit den Punkten gespeichert?", "fr": "Qu’est-ce qui est enregistré avec les points ?", "es": "¿Qué se guarda junto con los puntos?", "it": "Che cosa viene salvato insieme ai punti?", "pt": "O que é salvo junto com os pontos?", "ja": "地点と一緒に何が保存されますか？", "ko": "지점과 함께 무엇이 저장되나요?"},
+    "a7": {"en": "The camera model and folder names: they show which device took what, and any device can be deleted from the result.", "ru": "Модель камеры и названия папок: по ним видно, какое устройство что сняло, и любое устройство можно удалить из итога.", "cs": "Model fotoaparátu a názvy složek: je z nich vidět, co které zařízení nasnímalo, a kterékoli zařízení lze z výsledku odstranit.", "de": "Das Kameramodell und die Ordnernamen: Daran ist zu sehen, welches Gerät was aufgenommen hat, und jedes Gerät lässt sich aus dem Ergebnis löschen.", "fr": "Le modèle d’appareil et le nom des dossiers : on voit ainsi quel appareil a pris quoi, et chaque appareil peut être supprimé du résultat.", "es": "El modelo de cámara y los nombres de las carpetas: con ellos se ve qué dispositivo tomó qué, y cualquier dispositivo se puede eliminar del resultado.", "it": "Il modello della fotocamera e i nomi delle cartelle: mostrano quale dispositivo ha scattato cosa, e qualsiasi dispositivo si può eliminare dal risultato.", "pt": "O modelo da câmera e os nomes das pastas: por eles se vê qual aparelho fez o quê, e qualquer aparelho pode ser excluído do resultado.", "ja": "カメラの機種とフォルダー名です。どの機器で何を撮ったかがわかり、どの機器も結果から削除できます。", "ko": "카메라 모델과 폴더 이름입니다. 어느 기기가 무엇을 찍었는지 알 수 있고, 어떤 기기든 결과에서 삭제할 수 있습니다."}
   };
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
@@ -443,17 +443,17 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     light: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
     dark: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>'
   };
-  var theme = ls.get("tabiTheme");
-  theme = theme === "light" || theme === "dark" ? theme : "auto";
+  // Тема по умолчанию тёмная (20.11.2026, Андрей); переключатель — светлая или тёмная, выбор помнится.
+  var theme = ls.get("tabiTheme") === "light" ? "light" : "dark";
   function applyTheme() {
-    theme === "auto" ? document.documentElement.removeAttribute("data-theme") : document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
     $("themeBtn").innerHTML = ICON[theme];
-    var lbl = t(theme === "auto" ? "thAuto" : theme === "light" ? "thLight" : "thDark");
+    var lbl = t(theme === "light" ? "thLight" : "thDark");
     $("themeBtn").setAttribute("aria-label", lbl);
     $("themeBtn").title = lbl;
     mapDirty = true; schedule();
   }
-  $("themeBtn").onclick = function () { theme = theme === "auto" ? "light" : theme === "light" ? "dark" : "auto"; ls.set("tabiTheme", theme === "auto" ? "" : theme); applyTheme(); };
+  $("themeBtn").onclick = function () { theme = theme === "light" ? "dark" : "light"; ls.set("tabiTheme", theme); applyTheme(); };
   window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { mapDirty = true; schedule(); });
 
   function applyTexts() {
@@ -496,16 +496,15 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     renderWhy();
   }
 
-  // Разделы сайта (20.11.2026, Андрей: по сайту нельзя было перемещаться) — как в шапке главной: этот разбор первым и выделен.
+  // Вкладки сайта (20.11.2026, Андрей): две на всех страницах — главная и эта страница; отмечена та, где человек сейчас.
   function renderNav() {
-    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [["/computer/?lang=" + L, t("title"), 1], [base + "how-it-works/", t("navHow")],
-      [base + "collection/", t("navColl")], [base + "your-data/", t("navData")], [base + "faq/", t("navFaq")]];
+    var base = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/", items = [[base, t("navHome")], ["/computer/?lang=" + L, t("navPc"), 1]];
     var nav = $("nav"), ml = $("menuList");
     nav.innerHTML = ""; ml.innerHTML = "";
     items.forEach(function (it) {
       var a = document.createElement("a");
       a.href = it[0]; a.textContent = it[1];
-      it[2] && (a.className = "hl", a.setAttribute("aria-current", "page"));
+      it[2] && a.setAttribute("aria-current", "page");
       nav.appendChild(a);
       var li = document.createElement("li"), b = a.cloneNode(true);
       b.className = "";
@@ -535,37 +534,53 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // компьютера и уже переданные телефону, которых нет в этом браузере. В браузере они не хранятся (acc).
   var REG = {}, accAsked = false;
   function accKey(lat, lng, ms) { return Math.floor(ms / 60000) + ":" + Math.round(lat * 1e3) + ":" + Math.round(lng * 1e3); }
+  // Сохранённое в учётной записи (pc-media op mine); не пришло за шесть секунд — null, страница не ждёт дольше.
+  function accFetch() {
+    return new Promise(function (ok) {
+      var done = false, fin = function (v) { done || ((done = true), ok(v)); };
+      setTimeout(function () { fin(null); }, 6000);
+      fresh().then(function (s) {
+        return s ? fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "mine" }) })
+          .then(function (r) { return r.ok ? r.json() : null; }) : null;
+      }).then(fin, function () { fin(null); });
+    });
+  }
+  // Точки учётной записи, которых нет среди base (та же минута и соседние клетки 0,001°).
+  function accMerge(j, base) {
+    if (!j || !j.ok) return [];
+    accAsked = true;
+    loadSpecial();
+    REG = {};
+    (j.devs || []).forEach(function (d) { REG[d.id] = d; });
+    var have = new Set();
+    base.forEach(function (p) { have.add(accKey(p[0], p[1], p[2])); });
+    var near = function (q) {
+      var m = Math.floor(q[2] / 60000), a = Math.round(q[0] * 1e3), b = Math.round(q[1] * 1e3);
+      for (var i = -1; i <= 1; i++) for (var k = -1; k <= 1; k++) if (have.has(m + ":" + (a + i) + ":" + (b + k))) return true;
+      return false;
+    };
+    var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)/.exec(String(d)); return m ? +m[1] : 0; }), add = [];
+    (j.p || []).forEach(function (q) {
+      if (near(q)) return;
+      var p = [q[0], q[1], q[2], -1, -1];
+      p.rd = dsOf[q[3]] || 0; p.sent = true; p.acc = true;
+      have.add(accKey(q[0], q[1], q[2]));
+      add.push(p);
+    });
+    return add;
+  }
+  // После входа и после разбора — добрать сохранённое в учётной записи тихо, без второго показа хода (20.11.2026, Андрей:
+  // страница грузила итог дважды).
   function loadSaved() {
     if (accAsked || !S) return;
     accAsked = true;
-    fresh().then(function (s) {
-      if (!s) return null;
-      return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "mine" }) })
-        .then(function (r) { return r.ok ? r.json() : null; });
-    }).then(function (j) {
+    accFetch().then(function (j) {
       if (!j || !j.ok) return void (accAsked = false);
-      loadSpecial();
-      REG = {};
-      (j.devs || []).forEach(function (d) { REG[d.id] = d; });
-      var have = new Set();
-      A.pts.forEach(function (p) { have.add(accKey(p[0], p[1], p[2])); });
-      var near = function (q) {
-        var m = Math.floor(q[2] / 60000), a = Math.round(q[0] * 1e3), b = Math.round(q[1] * 1e3);
-        for (var i = -1; i <= 1; i++) for (var k = -1; k <= 1; k++) if (have.has(m + ":" + (a + i) + ":" + (b + k))) return true;
-        return false;
-      };
-      var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)/.exec(String(d)); return m ? +m[1] : 0; }), add = [];
-      (j.p || []).forEach(function (q) {
-        if (near(q)) return;
-        var p = [q[0], q[1], q[2], -1, -1];
-        p.rd = dsOf[q[3]] || 0; p.sent = true; p.acc = true;
-        have.add(accKey(q[0], q[1], q[2]));
-        add.push(p);
-      });
+      var add = accMerge(j, A.pts);
       if (!add.length) return;
-      show("vPick", false); show("vWork", true);
-      geo().then(function () { return reveal(add, A.shown ? 1500 : 3000); });
-    }).catch(function () { accAsked = false; });
+      A.pts.length || show("vPick", false);
+      geo().then(function () { return reveal(add, 500); });
+    });
   }
   // Число особых мест — по всем точкам учётной записи при каждом открытии (pc-media op special), а не только при сохранении.
   function loadSpecial() {
@@ -1145,8 +1160,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   }
 
   // ===== Карта маршрута: приближение колесом, кнопками и пальцами, сдвиг мышью; цвет точки — время снимка =====
-  // Проекция (20.11.2026, Андрей: мир был растянут — Гренландия, Россия, Африка): вид мира — Natural Earth, классическая
-  // проекция атласов (Šavrič, Patterson, Jenny, 2011; та же, что d3.geoNaturalEarth1); при приближении она плавно переходит
+  // Проекция (20.11.2026, Андрей: мир был растянут — Гренландия, Россия, Африка, затем сплющен): вид мира — цилиндрическая
+  // Паттерсона, прямоугольная карта мира без крайностей Меркатора; при приближении она плавно переходит
   // в местную равноугольную вокруг центра вида — город и маршрут без искажений. MV — центр вида в градусах (lng, lat),
   // s — точек экрана на единицу проекции, t — доля местной проекции (0 на виде мира, 1 с приближения в 16 раз).
   // Подложка — границы стран и, при приближении, регионов посещённых стран из тех же данных; чужих карт страница не
@@ -1155,18 +1170,14 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
   var D2R = Math.PI / 180;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-  // Natural Earth: радианы → [x, y] (y — на север) и вертикальный масштаб ∂y/∂φ.
-  function ne(l, f) {
-    var f2 = f * f, f4 = f2 * f2, f6 = f4 * f2, f8 = f4 * f4, f10 = f8 * f2, f12 = f6 * f6;
-    return [l * (0.8707 - 0.131979 * f2 - 0.013791 * f4 + 0.003971 * f10 - 0.001529 * f12),
-      f * (1.007226 + 0.015085 * f2 - 0.044475 * f6 + 0.028874 * f8 - 0.005916 * f10)];
-  }
-  function neKy(f) {
-    var f2 = f * f, f6 = f2 * f2 * f2, f8 = f6 * f2, f10 = f8 * f2;
-    return 1.007226 + 3 * 0.015085 * f2 - 7 * 0.044475 * f6 + 9 * 0.028874 * f8 - 11 * 0.005916 * f10;
-  }
-  // Масштаб, при котором виден весь мир с Антарктидой, — от него считается доля местной проекции.
-  function worldS() { var h = ne(0, 84 * D2R)[1] - ne(0, -90 * D2R)[1]; return Math.min(CW / (2 * Math.PI * 0.8707), CH / h) * 0.98; }
+  // Цилиндрическая проекция Паттерсона (Patterson, Šavrič, Jenny, 2015; та же, что d3.geoPatterson): прямоугольная, как
+  // привычные карты мира, параллели и меридианы прямые; Гренландия и Россия не раздуты, как у Меркатора, и мир не сплющен,
+  // как у Natural Earth (20.11.2026, Андрей). Радианы → [x, y] (y — на север) и вертикальный масштаб ∂y/∂φ.
+  var PT1 = 1.0148, PT2 = 0.23185, PT3 = -0.14499, PT4 = 0.02406, NORTH = 84, SOUTH = -80;
+  function ne(l, f) { var f4 = f * f * f * f; return [l, f * (PT1 + f4 * (PT2 + f4 * (PT3 + f4 * PT4)))]; }
+  function neKy(f) { var f4 = f * f * f * f; return PT1 + f4 * (5 * PT2 + f4 * (9 * PT3 + f4 * 13 * PT4)); }
+  // Масштаб, при котором виден весь мир (84° с. ш. — 80° ю. ш.), — от него считается доля местной проекции.
+  function worldS() { var h = ne(0, NORTH * D2R)[1] - ne(0, SOUTH * D2R)[1]; return Math.min(CW / (2 * Math.PI), CH / h) * 0.98; }
   function prep() {
     var l = MV.lng * D2R, f = MV.lat * D2R;
     MV.t = Math.max(0, Math.min(1, (Math.log(MV.s / worldS()) / Math.LN2 - 1.5) / 2.5));
@@ -1183,7 +1194,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // Точка карты → точка экрана (y вниз).
   function scr(lng, lat) { var p = proj(lng, lat); return [(p[0] - PC.c[0]) * MV.s + CW / 2, -(p[1] - PC.c[1]) * MV.s + CH / 2]; }
   // Точек экрана на градус у центра вида — пороги регионов и подписей.
-  function ppd() { return MV.s * D2R * PC.ky * (MV.t * PC.cf + (1 - MV.t) * 0.87); }
+  function ppd() { return MV.s * D2R * (MV.t * PC.cf * PC.ky + (1 - MV.t)); }
   function setView(lng, lat, s) {
     MV = { lng: ((lng + 540) % 360) - 180, lat: Math.max(-80, Math.min(82, lat)), s: s, t: 0 };
     clampView();
@@ -1210,7 +1221,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     var cl = (so + n) / 2, f = cl * D2R, ky = neKy(f),
       dw = Math.max(0.01, (e - w) * D2R * Math.cos(f) * ky) * 1.15, dh = Math.max(0.006, (n - so) * D2R * ky) * 1.15;
     setView((w + e) / 2, cl, Math.min(CW / dw, CH / dh));
-    // Широкий охват (страны и материки) — доля Natural Earth больше, и масштаб уточняется по краям охвата.
+    // Широкий охват (страны и материки) — доля проекции мира больше, и масштаб уточняется по краям охвата.
     for (var k = 0; k < 3; k++) {
       var a = scr(w, n), b = scr(e, so), c = scr(w, so), d = scr(e, n),
         bw = Math.max(a[0], b[0], c[0], d[0]) - Math.min(a[0], b[0], c[0], d[0]), bh = Math.max(a[1], b[1], c[1], d[1]) - Math.min(a[1], b[1], c[1], d[1]);
@@ -1226,7 +1237,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     prep();
     // Вид мира не уезжает за край карты: мир уже окна — по середине, шире — край карты у края окна.
     if (MV.t > 0) return;
-    var top = ne(0, 84 * D2R)[1], bot = ne(0, -90 * D2R)[1], hw = Math.PI * 0.8707, c = PC.c, hh = CH / 2 / MV.s, ww = CW / 2 / MV.s,
+    var top = ne(0, NORTH * D2R)[1], bot = ne(0, SOUTH * D2R)[1], hw = Math.PI, c = PC.c, hh = CH / 2 / MV.s, ww = CW / 2 / MV.s,
       cy = top - bot <= 2 * hh ? (top + bot) / 2 : Math.max(bot + hh, Math.min(top - hh, c[1])),
       cxp = hw <= ww ? 0 : Math.max(-hw + ww, Math.min(hw - ww, c[0]));
     if (Math.abs(cy - c[1]) < 1e-9 && Math.abs(cxp - c[0]) < 1e-9) return;
@@ -1699,7 +1710,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     return same && first ? first : "";
   }
   function run(list) {
-    RUN.t0 = performance.now(); RUN.err = 0;
+    RUN.t0 = performance.now(); RUN.err = 0; RUN.on = true;
     var rname = runName(list);
     var rootWin = false, rootPf = false;
     list.forEach(function (f) {
@@ -2134,15 +2145,16 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     order.forEach(function (key) {
       var r = rows[key], it = document.createElement("div"), nm = r.name || t("devNone");
       it.className = "pc-dev";
-      it.innerHTML = '<div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div>' +
+      it.innerHTML = '<div class="bd"><div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div></div>' +
         '<button class="pc-btn b2 sm" type="button"></button>';
-      it.children[0].children[0].textContent = nm;
-      it.children[0].children[1].textContent = t("devPts", { n: num(r.n) });
+      var bd = it.children[0];
+      bd.children[0].children[0].textContent = nm;
+      bd.children[0].children[1].textContent = t("devPts", { n: num(r.n) });
       var ccs = Object.keys(r.cc).sort(function (a, b) { return r.cc[b] - r.cc[a]; }).map(countryName),
         cl = ccs.length > 6 ? ccs.slice(0, 6).join(", ") + " +" + num(ccs.length - 6) : ccs.join(", ");
-      it.children[1].textContent = [r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1, cl].filter(Boolean).join(" · ");
-      var del = it.children[2];
-      del.textContent = t("delDev"); del.style.justifySelf = "start"; del.style.marginTop = "6px";
+      bd.children[1].textContent = [r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1, cl].filter(Boolean).join(" · ");
+      var del = it.children[1];
+      del.textContent = t("delDev");
       del.onclick = function () { ask(t("dlgDevT"), t("dlgDevX", { name: nm }), t("delDev"), function () { devDrop(key); }); };
       list.appendChild(it);
     });
@@ -2247,18 +2259,21 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     if (!s) return null;
     try { var p = s.at.split(".")[1]; return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((p.length + 3) % 4))).sub || null; } catch (e) { return null; }
   }
-  function restore(st, quick) {
+  // Открытие страницы: итог этого браузера (st) и сохранённое в учётной записи (j) — одним коротким показом.
+  function restore(st, j) {
+    st = st || {};
     KEEP_OWNER = st.owner || null;
     DEV.list = st.devs || []; DIR.list = st.dirs || [];
     DEV.by = {}; DIR.by = {};
     DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
     DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
     var pts = (st.pts || []).map(function (p) { var q = p.slice(0, 5); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
+    pts = pts.concat(accMerge(j, pts));
     if (!pts.length) return Promise.resolve(false);
     st.saved && (saveSt.state = "saved");
     st.special && st.special.n != null && (saveSt.special = st.special);
-    show("vPick", false); show("vWork", true);
-    return geo().then(function () { return reveal(pts, quick); }).then(function () { return true; });
+    show("vPick", false); show("vWork", false);
+    return geo().then(function () { return reveal(pts, 600); }).then(function () { return true; });
   }
 
   // ===== Картинка «Поделиться» =====
@@ -2357,14 +2372,26 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     show("vPick", true);
     geo();
     var q = new URLSearchParams(location.search), code = q.get("code");
-    // Итог прошлого разбора в этом браузере — сразу; вошедший в этой вкладке получает к нему и сохранённое в учётной записи.
-    if (!code)
+    // Открытие (20.11.2026, Андрей: итог грузился дважды и нарочно медленно): итог этого браузера и сохранённое в учётной
+    // записи приходят вместе и показываются один раз, коротко; пока ждём учётную запись — тонкая полоса ожидания.
+    if (!code) {
+      show("vPick", false);
+      var accP = S ? accFetch() : Promise.resolve(null);
       keepGet()
         .then(function (st) {
-          if (st && st.owner && S && st.owner !== uidOf(S)) return keepDrop().then(function () { return false; });
-          return st ? restore(st, 1500) : false;
+          if (st && st.owner && S && st.owner !== uidOf(S)) return keepDrop().then(function () { return null; });
+          return st;
         })
-        .then(function () { renderSave(); });
+        .then(function (st) {
+          if (S || (st && st.pts && st.pts.length)) { show("vWork", true); $("prog").textContent = ""; $("when").textContent = ""; $("bar").classList.add("wait"); }
+          return accP.then(function (j) { return restore(st, j); });
+        })
+        .then(function (shown) {
+          // Пока открытие ждало учётную запись, человек мог уже выбрать файлы — тогда его разбор не трогаем.
+          if (RUN.on) return;
+          $("bar").classList.remove("wait"); shown || (show("vWork", false), show("vPick", true)); renderSave();
+        });
+    }
     if (code && q.get("w") !== "1") {
       history.replaceState(null, "", location.pathname + "?lang=" + L);
       Promise.all([exchange(code), unstash()]).then(function (res) {
