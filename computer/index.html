@@ -990,7 +990,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var box = $("countries");
     box.innerHTML = "";
     // Новые сверху, старые снизу (20.11.2026, Андрей): массив идёт по времени, список — в обратном порядке.
-    found.countries.slice().reverse().forEach(function (c) { c.el = null; addCountry(c, true); c.regs.forEach(function (rg) { addRegion(c, rg); }); });
+    // Регионы страны — тоже по времени первого снимка (rset — время), на экране новые сверху.
+    found.countries.slice().reverse().forEach(function (c) {
+      c.el = null; addCountry(c, true);
+      c.regs.sort(function (a, b) { return c.rset[a.id] - c.rset[b.id]; });
+      c.regs.forEach(function (rg) { addRegion(c, rg); });
+    });
     var cb = $("cities");
     cb.innerHTML = "";
     found.cities.slice(-400).forEach(function (c) { addCity(c); });
@@ -1011,7 +1016,13 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("nCountries").textContent = num(found.countries.length);
     quiet || pos !== 0 || (box.parentNode.scrollTop = 0);
   }
-  function addRegion(c, rg) { if (!c.el) return; var sp = document.createElement("span"); sp.textContent = regionName(rg); c.el.insertBefore(sp, c.el.firstChild); }
+  // idx — место региона в c.regs по времени; без него — новый сверху (пересборка идёт от старых к новым).
+  function addRegion(c, rg, idx) {
+    if (!c.el) return;
+    var sp = document.createElement("span"), pos = idx == null ? 0 : c.regs.length - 1 - idx;
+    sp.textContent = regionName(rg);
+    c.el.insertBefore(sp, c.el.children[pos] || null);
+  }
   function addCity(c, idx) {
     var cb = $("cities"), it = document.createElement("div");
     it.className = "pc-city";
@@ -1614,7 +1625,15 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
               var c = { cc: p.cc, at: p[2], regs: [], rset: {} }, ci = idxAsc(found.countries, c.at);
               found.byCc[p.cc] = c; found.countries.splice(ci, 0, c); addCountry(c, false, ci); mapDirty = true;
             } else if (p.cc && p[2] < found.byCc[p.cc].at) { found.byCc[p.cc].at = p[2]; resort = true; }
-            if (e.rg && p.cc) { var cobj = found.byCc[p.cc]; if (!cobj.rset[e.rg.id]) { cobj.rset[e.rg.id] = 1; cobj.regs.push(e.rg); found.regions++; addRegion(cobj, e.rg); } }
+            if (e.rg && p.cc) {
+              var cobj = found.byCc[p.cc], rid = e.rg.id;
+              if (!cobj.rset[rid]) {
+                cobj.rset[rid] = p[2];
+                var ri = 0;
+                while (ri < cobj.regs.length && cobj.rset[cobj.regs[ri].id] <= p[2]) ri++;
+                cobj.regs.splice(ri, 0, e.rg); found.regions++; addRegion(cobj, e.rg, ri);
+              } else if (p[2] < cobj.rset[rid]) { cobj.rset[rid] = p[2]; resort = true; }
+            }
             if (e.ct != null && !found.byCity[e.ct]) {
               var city = { i: e.ct, name: townName(e.ct), at: p[2] }, ti = idxAsc(found.cities, city.at);
               found.byCity[e.ct] = city; found.cities.splice(ti, 0, city); addCity(city, found.cities.length - 1 - ti);
