@@ -112,16 +112,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
 .pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
 .pc-under.idle{grid-template-columns:minmax(0,600px);justify-content:center}
 /* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
-.pc-tierbar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--bg2)}
-.pc-tierbar i{display:block;height:100%;width:0;transition:width .9s ease}
 .pc-tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
-.pc-tier{appearance:none;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer;text-align:left;display:grid;gap:2px;position:relative;overflow:hidden;transition:transform .15s ease,box-shadow .15s ease}
+.pc-tier{border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
 .pc-tier::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--tc)}
 .pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
 .pc-tier span{font-size:12.5px;color:var(--sub)}
-.pc-tier:hover{transform:translateY(-2px)}
-.pc-tier[aria-pressed="true"]{box-shadow:0 0 0 2px var(--tc)}
-.pc-tier.zero{opacity:.45}
 /* Вопросы и ответы — справа от устройств: подробности, которые не нужны на главном месте (20.11.2026, Андрей). */
 .pc-faq{border-top:1px solid var(--line);padding:11px 0}
 .pc-faq:first-of-type{border-top:0;padding-top:0}
@@ -209,17 +204,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       <div class="pc-row" id="saveWays"><button class="pc-btn" id="bSaveAcc" type="button"></button><button class="pc-btn b2" id="bSavePhone" type="button"></button></div>
       <button class="pc-btn" id="bGoogle" type="button" hidden></button>
     </div>
-    <div id="vSaved" hidden class="pc-box">
-      <p class="pc-t" id="savedX"></p>
-      <button class="pc-btn" id="bRetry" hidden></button>
-    </div>
     <!-- Особые места на снимках по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
          приложение: код и ссылка Google Play, экраны приложения; приложение уже есть — без строк о нём -->
     <div id="vApp" hidden class="pc-box">
       <h2 id="spT"></h2>
-      <div class="pc-tierbar" id="tierBar"></div>
       <div class="pc-tiers" id="tiers"></div>
-      <p class="pc-s" id="tierHint" aria-live="polite"></p>
       <div id="appGet" style="display:grid;gap:12px">
         <p class="pc-t" id="spApp" style="font-weight:700"></p>
         <div class="pc-app">
@@ -318,7 +307,6 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "sKm": {"en": "Kilometres", "ru": "Километры", "cs": "Kilometry", "de": "Kilometer", "fr": "Kilomètres", "es": "Kilómetros", "it": "Chilometri", "pt": "Quilômetros", "ja": "キロメートル", "ko": "킬로미터"},
     "tracing": {"en": "Restoring your trips…", "ru": "Восстанавливаем ваши поездки…", "cs": "Obnovujeme vaše cesty…", "de": "Ihre Reisen werden wiederhergestellt …", "fr": "Nous retrouvons vos voyages…", "es": "Recuperando tus viajes…", "it": "Ricostruiamo i Suoi viaggi…", "pt": "Restaurando suas viagens…", "ja": "旅を復元しています…", "ko": "여행을 복원하는 중…"},
     "loadingMap": {"en": "Preparing the world map…", "ru": "Готовим карту мира…", "cs": "Připravujeme mapu světa…", "de": "Die Weltkarte wird vorbereitet …", "fr": "Préparation de la carte du monde…", "es": "Preparando el mapa del mundo…", "it": "Prepariamo la mappa del mondo…", "pt": "Preparando o mapa-múndi…", "ja": "世界地図を準備しています…", "ko": "세계 지도를 준비하는 중…"},
-    "eAuth": {"en": "The sign-in has expired. Please sign in again.", "ru": "Вход устарел. Войдите ещё раз.", "cs": "Přihlášení vypršelo. Přihlaste se znovu.", "de": "Die Anmeldung ist abgelaufen. Bitte melden Sie sich erneut an.", "fr": "La connexion a expiré. Veuillez vous reconnecter.", "es": "La sesión ha caducado. Vuelve a iniciar sesión.", "it": "L’accesso è scaduto. Acceda di nuovo.", "pt": "O acesso expirou. Entre novamente.", "ja": "ログインの有効期限が切れました。もう一度ログインしてください。", "ko": "로그인이 만료되었습니다. 다시 로그인하세요."},
     "thAuto": {"en": "System theme", "ru": "Тема системы", "cs": "Motiv systému", "de": "Systemdesign", "fr": "Thème du système", "es": "Tema del sistema", "it": "Tema di sistema", "pt": "Tema do sistema", "ja": "システムのテーマ", "ko": "시스템 테마"},
     "thLight": {"en": "Light theme", "ru": "Светлая тема", "cs": "Světlý motiv", "de": "Helles Design", "fr": "Thème clair", "es": "Tema claro", "it": "Tema chiaro", "pt": "Tema claro", "ja": "ライトテーマ", "ko": "밝은 테마"},
     "thDark": {"en": "Dark theme", "ru": "Тёмная тема", "cs": "Tmavý motiv", "de": "Dunkles Design", "fr": "Thème sombre", "es": "Tema oscuro", "it": "Tema scuro", "pt": "Tema escuro", "ja": "ダークテーマ", "ko": "어두운 테마"},
@@ -327,15 +315,12 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "home": {"en": "Home", "ru": "Главная", "cs": "Úvod", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
     "lead": {"en": "Old trips are often kept on a computer. Choose a folder with photos and videos, and we will restore the countries and cities you have visited and your route.", "ru": "Старые поездки часто хранятся на компьютере. Выберите папку с фотографиями и видео — мы восстановим по ним страны и города, в которых вы побывали, и ваш маршрут.", "cs": "Staré cesty bývají uložené v počítači. Vyberte složku s fotografiemi a videi a my podle nich obnovíme země a města, kde jste byli, i vaši trasu.", "de": "Alte Reisen liegen oft auf dem Computer. Wählen Sie einen Ordner mit Fotos und Videos, und wir stellen daraus die Länder und Städte, in denen Sie waren, und Ihre Route wieder her.", "fr": "Les anciens voyages sont souvent conservés sur l’ordinateur. Choisissez un dossier de photos et de vidéos : nous retrouverons les pays et les villes où vous êtes allé et votre itinéraire.", "es": "Los viajes antiguos suelen guardarse en el ordenador. Elige una carpeta con fotos y vídeos y recuperaremos los países y las ciudades que visitaste y tu ruta.", "it": "I vecchi viaggi spesso restano sul computer. Scelga una cartella di foto e video: ricostruiremo i Paesi e le città in cui è stato e il Suo percorso.", "pt": "Viagens antigas costumam ficar guardadas no computador. Escolha uma pasta com fotos e vídeos, e vamos recuperar os países e as cidades por onde você passou e o seu trajeto.", "ja": "昔の旅の記録はパソコンに残っていることがよくあります。写真と動画のフォルダーを選ぶと、訪れた国と都市、そしてルートを復元します。", "ko": "예전 여행은 컴퓨터에 남아 있는 경우가 많습니다. 사진과 동영상 폴더를 고르면 다녀온 나라와 도시, 그리고 경로를 되살려 드립니다."},
     "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
-    "saving": {"en": "Saving the result…", "ru": "Сохраняем итог…", "cs": "Ukládáme výsledek…", "de": "Das Ergebnis wird gespeichert …", "fr": "Enregistrement du résultat…", "es": "Guardando el resultado…", "it": "Salvataggio del risultato…", "pt": "Salvando o resultado…", "ja": "結果を保存しています…", "ko": "결과를 저장하는 중…"},
     "install": {"en": "Install the app", "ru": "Установить приложение", "cs": "Nainstalovat aplikaci", "de": "App installieren", "fr": "Installer l’application", "es": "Instalar la aplicación", "it": "Installa l’app", "pt": "Instalar o aplicativo", "ja": "アプリをインストール", "ko": "앱 설치"},
     "saveT": {"en": "Save the result", "ru": "Сохраните итог", "cs": "Uložte si výsledek", "de": "Ergebnis speichern", "fr": "Enregistrez le résultat", "es": "Guarda el resultado", "it": "Salvi il risultato", "pt": "Salve o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "saveX": {"en": "The result is stored only in this browser. Save it or move it to your phone.", "ru": "Итог хранится только в этом браузере. Сохраните его или перенесите на телефон.", "cs": "Výsledek je uložen jen v tomto prohlížeči. Uložte si ho, nebo ho přeneste do telefonu.", "de": "Das Ergebnis ist nur in diesem Browser gespeichert. Speichern Sie es oder übertragen Sie es auf Ihr Telefon.", "fr": "Le résultat n’est conservé que dans ce navigateur. Enregistrez-le ou transférez-le sur votre téléphone.", "es": "El resultado solo está guardado en este navegador. Guárdalo o pásalo a tu teléfono.", "it": "Il risultato è conservato solo in questo browser. Lo salvi o lo trasferisca sul telefono.", "pt": "O resultado está guardado só neste navegador. Salve-o ou passe-o para o celular.", "ja": "結果はこのブラウザーにだけ保存されています。保存するか、スマートフォンに移してください。", "ko": "결과는 이 브라우저에만 보관되어 있습니다. 저장하거나 휴대폰으로 옮기세요."},
     "eLimit": {"en": "Enough points have been saved today. The rest can be saved tomorrow.", "ru": "На сегодня сохранено достаточно точек. Остальное можно сохранить завтра.", "cs": "Pro dnešek je uloženo dost bodů. Zbytek můžete uložit zítra.", "de": "Für heute sind genug Punkte gespeichert. Den Rest können Sie morgen speichern.", "fr": "Assez de points ont été enregistrés aujourd’hui. Le reste pourra l’être demain.", "es": "Por hoy se han guardado suficientes puntos. El resto puedes guardarlo mañana.", "it": "Per oggi sono stati salvati abbastanza punti. Il resto potrà salvarlo domani.", "pt": "Por hoje, já foram salvos pontos suficientes. O restante pode ser salvo amanhã.", "ja": "今日はこれ以上保存できません。残りは明日保存できます。", "ko": "오늘은 충분한 지점이 저장되었습니다. 나머지는 내일 저장할 수 있습니다."},
     "eFull": {"en": "The largest number of points is already waiting to be checked. Open the app on your phone to check them.", "ru": "Наибольшее число точек уже ждёт проверки. Откройте приложение на телефоне, чтобы проверить их.", "cs": "Na kontrolu už čeká největší možný počet bodů. Otevřete aplikaci v telefonu a zkontrolujte je.", "de": "Die größte Zahl an Punkten wartet bereits auf die Prüfung. Öffnen Sie die App auf Ihrem Telefon, um sie zu prüfen.", "fr": "Le nombre maximal de points attend déjà d’être vérifié. Ouvrez l’application sur votre téléphone pour les vérifier.", "es": "Ya hay el número máximo de puntos esperando revisión. Abre la aplicación en tu teléfono para revisarlos.", "it": "Il numero massimo di punti è già in attesa di verifica. Apra l’app sul telefono per verificarli.", "pt": "O número máximo de pontos já aguarda verificação. Abra o aplicativo no celular para verificá-los.", "ja": "確認待ちの地点がすでに上限に達しています。スマートフォンでアプリを開いて確認してください。", "ko": "확인을 기다리는 지점이 이미 최대입니다. 휴대폰에서 앱을 열어 확인하세요."},
     "none": {"en": "None of the chosen files contains a shooting location. Choose another folder.", "ru": "Ни в одном из выбранных файлов нет места съёмки. Выберите другую папку.", "cs": "V žádném z vybraných souborů není místo pořízení. Vyberte jinou složku.", "de": "Keine der gewählten Dateien enthält einen Aufnahmeort. Wählen Sie einen anderen Ordner.", "fr": "Aucun des fichiers choisis ne contient de lieu de prise de vue. Choisissez un autre dossier.", "es": "Ninguno de los archivos elegidos contiene el lugar de captura. Elige otra carpeta.", "it": "Nessuno dei file scelti contiene il luogo di scatto. Scelga un’altra cartella.", "pt": "Nenhum dos arquivos escolhidos contém o local da captura. Escolha outra pasta.", "ja": "選んだファイルのどれにも撮影場所がありません。別のフォルダを選んでください。", "ko": "선택한 파일 중 촬영 장소가 있는 파일이 없습니다. 다른 폴더를 선택하세요."},
-    "eSrv": {"en": "The server did not save the result (code {c}). Please try again.", "ru": "Сервер не сохранил итог (код {c}). Попробуйте ещё раз.", "cs": "Server výsledek neuložil (kód {c}). Zkuste to znovu.", "de": "Der Server hat das Ergebnis nicht gespeichert (Code {c}). Bitte versuchen Sie es erneut.", "fr": "Le serveur n’a pas enregistré le résultat (code {c}). Réessayez.", "es": "El servidor no guardó el resultado (código {c}). Inténtalo de nuevo.", "it": "Il server non ha salvato il risultato (codice {c}). Riprovi.", "pt": "O servidor não salvou o resultado (código {c}). Tente de novo.", "ja": "サーバーが結果を保存できませんでした（コード {c}）。もう一度お試しください。", "ko": "서버가 결과를 저장하지 못했습니다(코드 {c}). 다시 시도하세요."},
-    "retry": {"en": "Save again", "ru": "Сохранить ещё раз", "cs": "Uložit znovu", "de": "Erneut speichern", "fr": "Enregistrer à nouveau", "es": "Guardar de nuevo", "it": "Salva di nuovo", "pt": "Salvar novamente", "ja": "もう一度保存", "ko": "다시 저장"},
     "share": {"en": "Share", "ru": "Поделиться", "cs": "Sdílet", "de": "Teilen", "fr": "Partager", "es": "Compartir", "it": "Condividi", "pt": "Compartilhar", "ja": "共有", "ko": "공유"},
     "shareDl": {"en": "Download the picture", "ru": "Скачать картинку", "cs": "Stáhnout obrázek", "de": "Bild herunterladen", "fr": "Télécharger l’image", "es": "Descargar la imagen", "it": "Scarica l’immagine", "pt": "Baixar a imagem", "ja": "画像をダウンロード", "ko": "이미지 다운로드"},
     "cardT": {"en": "My travel history", "ru": "Моя история путешествий", "cs": "Moje historie cest", "de": "Meine Reisegeschichte", "fr": "Mon histoire de voyages", "es": "Mi historia de viajes", "it": "La mia storia di viaggi", "pt": "Minha história de viagens", "ja": "私の旅の記録", "ko": "나의 여행 기록"},
@@ -385,15 +370,14 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     "dlgT": {"en": "Start over?", "ru": "Начать заново?", "cs": "Začít znovu?", "de": "Neu beginnen?", "fr": "Recommencer ?", "es": "¿Empezar de nuevo?", "it": "Ricominciare?", "pt": "Começar de novo?", "ja": "最初からやり直しますか？", "ko": "처음부터 다시 시작할까요?"},
     "dlgX": {"en": "The result of this analysis will disappear from the page and from this browser, and its copy from our server. It can’t be restored, only by analysing the files again.", "ru": "Итог этого разбора исчезнет со страницы и из этого браузера, а его копия — с нашего сервера. Вернуть его будет нельзя, только разобрать файлы заново.", "cs": "Výsledek této analýzy zmizí ze stránky a z tohoto prohlížeče a jeho kopie z našeho serveru. Obnovit ho nepůjde, jen znovu projít soubory.", "de": "Das Ergebnis dieser Auswertung verschwindet von der Seite und aus diesem Browser, seine Kopie von unserem Server. Es lässt sich nicht wiederherstellen, nur durch eine neue Auswertung der Dateien.", "fr": "Le résultat de cette analyse disparaîtra de la page et de ce navigateur, et sa copie de notre serveur. Il ne pourra pas être restauré, seulement refait en analysant à nouveau les fichiers.", "es": "El resultado de este análisis desaparecerá de la página y de este navegador, y su copia de nuestro servidor. No se podrá recuperar, solo volver a analizar los archivos.", "it": "Il risultato di questa analisi sparirà dalla pagina e da questo browser, e la sua copia dal nostro server. Non si potrà recuperare, solo rifare analizzando di nuovo i file.", "pt": "O resultado desta análise vai desaparecer da página e deste navegador, e a cópia dele, do nosso servidor. Não será possível recuperá-lo, só analisar os arquivos de novo.", "ja": "この分析の結果は、ページとこのブラウザーから消え、サーバー上のコピーも削除されます。元に戻すことはできず、ファイルをもう一度分析するしかありません。", "ko": "이 분석 결과가 페이지와 이 브라우저에서 사라지고, 서버의 사본도 삭제됩니다. 되돌릴 수 없으며, 파일을 다시 분석해야 합니다."},
     "dlgNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
-    "spT": {"en": "Special places in your photos: {n}", "ru": "Особые места на ваших снимках: {n}", "cs": "Výjimečná místa na vašich snímcích: {n}", "de": "Besondere Orte auf Ihren Fotos: {n}", "fr": "Lieux d’exception sur vos photos : {n}", "es": "Lugares especiales en tus fotos: {n}", "it": "Luoghi speciali nelle Sue foto: {n}", "pt": "Lugares especiais nas suas fotos: {n}", "ja": "写真に写った特別な場所：{n}か所", "ko": "사진 속 특별한 장소: {n}곳"},
-    "spTMin": {"en": "Special places in your photos: at least {n}", "ru": "Особые места на ваших снимках: не меньше {n}", "cs": "Výjimečná místa na vašich snímcích: nejméně {n}", "de": "Besondere Orte auf Ihren Fotos: mindestens {n}", "fr": "Lieux d’exception sur vos photos : au moins {n}", "es": "Lugares especiales en tus fotos: al menos {n}", "it": "Luoghi speciali nelle Sue foto: almeno {n}", "pt": "Lugares especiais nas suas fotos: pelo menos {n}", "ja": "写真に写った特別な場所：{n}か所以上", "ko": "사진 속 특별한 장소: {n}곳 이상"},
+    "spT": {"en": "Special places: {n}", "ru": "Особые места: {n}", "cs": "Výjimečná místa: {n}", "de": "Besondere Orte: {n}", "fr": "Lieux d’exception : {n}", "es": "Lugares especiales: {n}", "it": "Luoghi speciali: {n}", "pt": "Lugares especiais: {n}", "ja": "特別な場所：{n}", "ko": "특별한 장소: {n}"},
+    "spTMin": {"en": "Special places: at least {n}", "ru": "Особые места: не меньше {n}", "cs": "Výjimečná místa: nejméně {n}", "de": "Besondere Orte: mindestens {n}", "fr": "Lieux d’exception : au moins {n}", "es": "Lugares especiales: al menos {n}", "it": "Luoghi speciali: almeno {n}", "pt": "Lugares especiais: pelo menos {n}", "ja": "特別な場所：{n}か所以上", "ko": "특별한 장소: {n}곳 이상"},
     "tCommon": {"en": "Common", "ru": "Обычные", "cs": "Běžná", "de": "Gewöhnliche", "fr": "Communs", "es": "Comunes", "it": "Comuni", "pt": "Comuns", "ja": "定番", "ko": "일반"},
     "tRare": {"en": "Rare", "ru": "Редкие", "cs": "Vzácná", "de": "Seltene", "fr": "Rares", "es": "Raros", "it": "Rari", "pt": "Raros", "ja": "名勝", "ko": "희귀"},
     "tEpic": {"en": "Epic", "ru": "Эпические", "cs": "Epická", "de": "Epische", "fr": "Épiques", "es": "Épicos", "it": "Epici", "pt": "Épicos", "ja": "絶景", "ko": "에픽"},
     "tLegendary": {"en": "Legendary", "ru": "Легендарные", "cs": "Legendární", "de": "Legendäre", "fr": "Légendaires", "es": "Legendarios", "it": "Leggendari", "pt": "Lendários", "ja": "秘境", "ko": "전설"},
     "tMythic": {"en": "Unique", "ru": "Уникальные", "cs": "Unikátní", "de": "Einzigartige", "fr": "Uniques", "es": "Únicos", "it": "Unici", "pt": "Únicos", "ja": "唯一無二", "ko": "유일"},
     "tDangerous": {"en": "Dangerous", "ru": "Опасные", "cs": "Nebezpečná", "de": "Gefährliche", "fr": "Dangereux", "es": "Peligrosos", "it": "Pericolosi", "pt": "Perigosos", "ja": "危険", "ko": "위험"},
-    "tierHint": {"en": "{tier}: you have {n} of {all} on the whole map.", "ru": "{tier}: у вас {n} из {all} на всей карте.", "cs": "{tier}: máte {n} z {all} na celé mapě.", "de": "{tier}: Sie haben {n} von {all} auf der ganzen Karte.", "fr": "{tier} : vous en avez {n} sur {all} sur toute la carte.", "es": "{tier}: tienes {n} de {all} en todo el mapa.", "it": "{tier}: ne ha {n} su {all} in tutta la mappa.", "pt": "{tier}: você tem {n} de {all} em todo o mapa.", "ja": "{tier}：地図全体の{all}か所のうち{n}か所。", "ko": "{tier}: 지도 전체 {all}곳 중 {n}곳."},
     "spApp": {"en": "The app will show which places these are.", "ru": "Какие это места, покажет приложение.", "cs": "Která místa to jsou, ukáže aplikace.", "de": "Welche Orte das sind, zeigt die App.", "fr": "L’application vous montrera de quels lieux il s’agit.", "es": "La aplicación te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app.", "pt": "O aplicativo mostrará quais lugares são.", "ja": "どの場所かはアプリでわかります。", "ko": "어떤 장소인지는 앱에서 볼 수 있습니다."},
     "spGet": {"en": "Point your phone’s camera at the code or open Google Play, then sign in to the app with the same Google account.", "ru": "Наведите камеру телефона на код или откройте Google Play, затем войдите в приложении с той же учётной записью Google.", "cs": "Namiřte fotoaparát telefonu na kód nebo otevřete Google Play a pak se v aplikaci přihlaste stejným účtem Google.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und melden Sie sich dann in der App mit demselben Google-Konto an.", "fr": "Pointez l’appareil photo de votre téléphone vers le code ou ouvrez Google Play, puis connectez-vous à l’application avec le même compte Google.", "es": "Apunta la cámara del teléfono al código o abre Google Play y luego inicia sesión en la aplicación con la misma cuenta de Google.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play, poi acceda all’app con lo stesso account Google.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e depois entre no aplicativo com a mesma conta do Google.", "ja": "スマートフォンのカメラでコードを読み取るかGoogle Playを開き、同じGoogleアカウントでアプリにログインしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play를 연 다음, 같은 Google 계정으로 앱에 로그인하세요."},
     "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
@@ -492,7 +476,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
     $("credits").textContent = t("credits");
     var set = { title: "title", lead: "lead", bGoogle: "google", bFolder: "folder", bMore: "moreFolder",
-      drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", bRetry: "retry", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
+      drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", mapHint: "mapHint", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
     for (var id in set) $(id).textContent = t(set[id]);
@@ -546,6 +530,54 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     exchange(String(e.data.tabiCode)).then(function (s) { s && signedIn(); });
   });
   $("bGoogle").onclick = function () { ls.set("tabiPcWay", WAY); TACC.google(BACK + "?lang=" + L, stash); };
+  // Точки учётной записи (20.11.2026, Андрей: «данные скачут» — 128 городов стали 110, когда страница перестала их
+  // показывать): после входа и после каждого разбора страница добирает точки, сохранённые в учётной записи с любого
+  // компьютера и уже переданные телефону, которых нет в этом браузере. В браузере они не хранятся (acc).
+  var REG = {}, accAsked = false;
+  function accKey(lat, lng, ms) { return Math.floor(ms / 60000) + ":" + Math.round(lat * 1e3) + ":" + Math.round(lng * 1e3); }
+  function loadSaved() {
+    if (accAsked || !S) return;
+    accAsked = true;
+    fresh().then(function (s) {
+      if (!s) return null;
+      return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "mine" }) })
+        .then(function (r) { return r.ok ? r.json() : null; });
+    }).then(function (j) {
+      if (!j || !j.ok) return void (accAsked = false);
+      loadSpecial();
+      REG = {};
+      (j.devs || []).forEach(function (d) { REG[d.id] = d; });
+      var have = new Set();
+      A.pts.forEach(function (p) { have.add(accKey(p[0], p[1], p[2])); });
+      var near = function (q) {
+        var m = Math.floor(q[2] / 60000), a = Math.round(q[0] * 1e3), b = Math.round(q[1] * 1e3);
+        for (var i = -1; i <= 1; i++) for (var k = -1; k <= 1; k++) if (have.has(m + ":" + (a + i) + ":" + (b + k))) return true;
+        return false;
+      };
+      var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)/.exec(String(d)); return m ? +m[1] : 0; }), add = [];
+      (j.p || []).forEach(function (q) {
+        if (near(q)) return;
+        var p = [q[0], q[1], q[2], -1, -1];
+        p.rd = dsOf[q[3]] || 0; p.sent = true; p.acc = true;
+        have.add(accKey(q[0], q[1], q[2]));
+        add.push(p);
+      });
+      if (!add.length) return;
+      show("vPick", false); show("vWork", true);
+      geo().then(function () { return reveal(add, A.shown ? 1500 : 3000); });
+    }).catch(function () { accAsked = false; });
+  }
+  // Число особых мест — по всем точкам учётной записи при каждом открытии (pc-media op special), а не только при сохранении.
+  function loadSpecial() {
+    fresh().then(function (s) {
+      return s && fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "special" }) })
+        .then(function (r) { return r.ok ? r.json() : null; });
+    }).then(function (j) {
+      var sp = j && j.ok && j.special;
+      if (!sp || sp.n == null) return;
+      saveSt.special = sp; renderApp(); keepPut();
+    }).catch(function () {});
+  }
   function signedIn() {
     err(null);
     if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
@@ -553,6 +585,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     ls.set("tabiPcWay", "");
     renderSave();
     A.pts.some(function (p) { return !p.sent; }) && doSave();
+    loadSaved();
   }
   // Сайт не показывает ничего из учётной записи (20.11.2026, Андрей): только разбор этого браузера и после сохранения —
   // число особых мест на снимках. WAY — путь сохранения: «acc» — сохранить итог, «phone» — перенести на телефон.
@@ -1107,7 +1140,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     var st = $("stats");
     st.hidden = !(revealing || A.shown);
     var rows = [["sCountries", found.countries.length], ["sRegions", found.regions], ["sCities", found.cities.length], ["sDays", found.days.size], ["sKm", Math.round(found.km / 1000)]];
-    st.innerHTML = rows.map(function (r) { return '<div class="pc-stat"><b>' + num(r[1]) + "</b><span>" + t(r[0]) + "</span></div>"; }).join("");
+    // Нулей не показываем (20.11.2026, Андрей: зачем показывать то, чего нет).
+    st.innerHTML = rows.filter(function (r) { return r[1] > 0; }).map(function (r) { return '<div class="pc-stat"><b>' + num(r[1]) + "</b><span>" + t(r[0]) + "</span></div>"; }).join("");
   }
 
   // ===== Карта маршрута: приближение колесом, кнопками и пальцами, сдвиг мышью; цвет точки — время снимка =====
@@ -1645,7 +1679,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     $("runT").textContent = name ? t("runTitleDir", { name: name }) : t("runTitleFiles");
     var tl = $("runTl");
     tl.innerHTML = "";
-    [[a, "lblRead", ""], [b, "lblPlace", ""], [c, "lblNew", c ? "new" : ""]].forEach(function (x) {
+    [[a, "lblRead", ""], [b, "lblPlace", ""], [c, "lblNew", c ? "new" : ""]].filter(function (x) { return x[0] > 0; }).forEach(function (x) {
       var d = document.createElement("div");
       d.className = x[2]; d.innerHTML = "<b></b><span></span>";
       d.children[0].textContent = (x[2] ? "+" : "") + num(x[0]); d.children[1].textContent = t(x[1]);
@@ -1827,7 +1861,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
-      S ? doSave() : (renderSave(), anonPut());
+      S ? (doSave(), loadSaved()) : (renderSave(), anonPut());
     });
   }
 
@@ -1861,23 +1895,19 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   // ===== Сохранение итога (функция pc-media) =====
   function renderSave() {
     var has = A.shown > 0 && !revealing, st = saveSt.state;
-    show("vSave", has && st !== "saved" && st !== "saving" && !PHONE);
+    show("vSave", has && !S && st !== "saved" && st !== "saving" && !PHONE);
     show("saveWays", !S && !WAY);
     show("bGoogle", !S && !!WAY);
-    var retry = st === "error" && !!saveSt.err && saveSt.err[0] !== "eAuth" && saveSt.err[0] !== "eLimit" && saveSt.err[0] !== "eFull" && saveSt.err[0] !== "eLimitAll";
-    // После сохранения строк-уведомлений нет (20.11.2026, Андрей): итог показывает блок особых мест.
-    show("vSaved", (has && st === "saving") || retry);
-    show("savedX", st === "saving");
-    $("savedX").textContent = t("saving");
-    show("bRetry", retry);
-    show("endBox", !PHONE && !revealing && (A.shown > 0 || A.none));
+    // Сохранение идёт само и молча (20.11.2026, Андрей): ни строки «Сохраняем», ни «Повторить»; сбой связи или сервера —
+    // повтор сам (saveLater), человеку сообщаются только пределы сервера.
+    show("endBox", !PHONE && !S && !revealing && (A.shown > 0 || A.none));
     $("under").classList.toggle("idle", !(A.shown > 0) || PHONE);
     renderApp();
   }
   // Особые места на снимках (20.11.2026, Андрей: показать, сколько мест нашлось и какой они редкости; какие именно — в
   // приложении). Приложения у учётной записи нет (site_me) — код и ссылка Google Play и экраны приложения; есть — без них.
   var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "", TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#c2410e", "tLegendary"],
-    ["epic", "#7c3aed", "tEpic"], ["rare", "#2563eb", "tRare"], ["common", "#15803d", "tCommon"], ["dangerous", "#111111", "tDangerous"]], tierSel = "";
+    ["epic", "#7c3aed", "tEpic"], ["rare", "#2563eb", "tRare"], ["common", "#15803d", "tCommon"], ["dangerous", "#111111", "tDangerous"]];
   function renderApp() {
     var sp = saveSt.special, on = !!S && saveSt.state === "saved" && !PHONE && !revealing && !!(sp && sp.n > 0);
     show("vApp", on);
@@ -1885,27 +1915,18 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     if (!meAsked) { meAsked = true; TACC.me().then(function (v) { ME = v || null; renderApp(); }).catch(function () {}); }
     var hasApp = !!(ME && Array.isArray(ME.phones) && ME.phones.length);
     $("spT").textContent = t(sp.partial ? "spTMin" : "spT", { n: num(sp.n) });
-    var tiers = sp.tiers || {}, all = sp.all || {}, sum = 0, bar = $("tierBar"), box = $("tiers");
-    TIERS.forEach(function (x) { sum += Number(tiers[x[0]]) || 0; });
-    bar.innerHTML = ""; box.innerHTML = "";
+    // Только редкости, которые у человека есть (20.11.2026, Андрей: нулей не показывать), без нажатий.
+    var tiers = sp.tiers || {}, box = $("tiers");
+    box.innerHTML = "";
     TIERS.forEach(function (x) {
       var n = Number(tiers[x[0]]) || 0;
-      if (x[0] === "dangerous" && !n) return;
-      var seg = document.createElement("i");
-      seg.style.background = x[1];
-      bar.appendChild(seg);
-      requestAnimationFrame(function () { seg.style.width = sum ? (100 * n / sum) + "%" : "0"; });
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "pc-tier" + (n ? "" : " zero"); b.style.setProperty("--tc", x[1]);
+      if (!n) return;
+      var b = document.createElement("div");
+      b.className = "pc-tier"; b.style.setProperty("--tc", x[1]);
       b.innerHTML = "<b></b><span></span>";
       b.children[0].textContent = num(n); b.children[1].textContent = t(x[2]);
-      b.setAttribute("aria-pressed", tierSel === x[0] ? "true" : "false");
-      b.onclick = function () { tierSel = tierSel === x[0] ? "" : x[0]; renderApp(); };
       box.appendChild(b);
     });
-    var sel = TIERS.filter(function (x) { return x[0] === tierSel; })[0];
-    $("tierHint").textContent = sel ? t("tierHint", { tier: t(sel[2]), n: num(Number(tiers[sel[0]]) || 0), all: num(Number(all[sel[0]]) || 0) }) : "";
-    show("tierHint", !!sel);
     show("appGet", !hasApp);
     if (!hasApp && shotsLang !== L) {
       shotsLang = L;
@@ -1940,7 +1961,8 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   function doSave() {
     var todo = A.pts.filter(function (p) { return !p.sent; });
     if (!todo.length) { saveSt.state = "saved"; return void renderSave(); }
-    saveSt.state = "saving"; err(null); renderSave();
+    if (saveSt.state === "saving") return;
+    saveSt.state = "saving"; renderSave();
     // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
     // две камеры одной модели, а восстановить по ним номер нельзя (одним шести знакам отвечают десятки тысяч номеров).
     var DEVH = [], CARD = "", AKS = anonKey(false);
@@ -1953,14 +1975,17 @@ dialog.pc-dlg .pc-row{margin-top:20px}
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
     }).then(function (res) {
       var j = res && res.j;
-      if (res.auth || res.status === 401) { keep(null); saveSt.state = "error"; saveSt.err = ["eAuth"]; err("eAuth"); return renderSave(); }
+      // Вход истёк — снова блок входа, без строки об ошибке.
+      if (res.auth || res.status === 401) { keep(null); saveSt.state = "idle"; saveSt.err = null; return renderSave(); }
       if (res.status !== 200 || !j || !j.ok) {
         var why = j && j.reason;
-        saveSt.state = "error";
-        saveSt.err = why === "day limit" ? ["eLimit"] : why === "server day limit" ? ["eLimitAll"] : ["eSrv", { c: why || res.status }];
-        err(saveSt.err[0], saveSt.err[1]);
-        return renderSave();
+        if (why === "day limit" || why === "server day limit") {
+          saveSt.state = "error"; saveSt.err = [why === "day limit" ? "eLimit" : "eLimitAll"]; err(saveSt.err[0]);
+          return renderSave();
+        }
+        return saveLater();
       }
+      saveTry = 0;
       todo.forEach(function (p) { p.sent = true; });
       // Номер каждого устройства в реестре учётной записи: блок «Устройства» сводит его со строками сохранённого итога.
       (j.rid || []).forEach(function (r, i) { r > 0 && DEV.list[i] && (DEV.list[i].rid = r); });
@@ -1973,10 +1998,17 @@ dialog.pc-dlg .pc-row{margin-top:20px}
       statSend({ k: "save", n: j.n || 0, letter: j.letter || "" });
       j.full && err("eFull");
       renderSave(); renderStats(); keepPut();
-      WAY === "phone" && setTimeout(function () { ($("vApp").hidden ? $("vSaved") : $("vApp")).scrollIntoView({ behavior: "smooth", block: "start" }); }, 80);
-    }).catch(function () { saveSt.state = "error"; saveSt.err = ["eNet"]; err("eNet"); renderSave(); });
+      WAY === "phone" && !$("vApp").hidden && setTimeout(function () { $("vApp").scrollIntoView({ behavior: "smooth", block: "start" }); }, 80);
+    }).catch(saveLater);
   }
-  $("bRetry").onclick = function () { doSave(); };
+  // Повтор сохранения сам: через 15 с, минуту, 5 и 15 минут; дальше — при следующем открытии страницы (точки помечены
+  // неотправленными в итоге браузера).
+  var saveTry = 0, saveTimer = 0;
+  function saveLater() {
+    saveSt.state = "idle"; saveSt.err = null; renderSave();
+    if (saveTimer || saveTry >= 4) return;
+    saveTimer = setTimeout(function () { saveTimer = 0; S && doSave(); }, [15, 60, 300, 900][saveTry++] * 1000);
+  }
   // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
   // две камеры одной модели, а восстановить по ним номер нельзя.
   function devHashes() {
@@ -2059,6 +2091,11 @@ dialog.pc-dlg .pc-row{margin-top:20px}
     // Первый проход: устройство по марке и модели и по папке.
     A.pts.forEach(function (p) {
       var d = DEV.list[p[3]], li = p[3], key = "x", name = "";
+      if (p.acc) {
+        var rg = REG[p.rd];
+        p._k = rg ? "r" + p.rd : "x"; p._n = rg ? rg.name || rg.md || "" : "";
+        return;
+      }
       if (d && !(d.mk || d.md)) {
         var ks = Object.keys(ownBy[p[4]] || {});
         ks.length === 1 && (li = ownBy[p[4]][ks[0]], d = DEV.list[li]);
@@ -2119,7 +2156,7 @@ dialog.pc-dlg .pc-row{margin-top:20px}
   function devDrop(key) {
     var left = A.pts.filter(function (p) { return p._k !== key; }), gone = A.pts.length - left.length;
     if (!gone) return void $("dlgNo").onclick();
-    var rid = /^r(\d+)$/.exec(key), sentGone = A.pts.some(function (p) { return p._k === key && p.sent; });
+    var rid = /^r(\d+)$/.exec(key), sentGone = A.pts.some(function (p) { return p._k === key && (p.sent || p.acc); });
     A.pts = left;
     var jobs = [keepPut()];
     if (rid && sentGone && S) jobs.push(fresh().then(function (s) {
