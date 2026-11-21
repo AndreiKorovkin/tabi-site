@@ -72,12 +72,15 @@
   // через Supabase, переходом в этой же вкладке (before — сохранить состояние страницы перед уходом).
   var GID = "533059625327-7e0mf9mc0u64i8vcmuv1aj76veo1pa8m.apps.googleusercontent.com",
     GLOC = { pt: "pt-BR" }, gisP = null, gisRaw = "", gisDone = null, gisEls = [];
+  // Библиотека Google — только как window.google: имя google в этом сценарии занято запасным входом (21.11.2026: из-за
+  // этого кнопка Google не появлялась, и страница показывала запасную).
+  var GA = function () { return window.google && window.google.accounts && window.google.accounts.id; };
   var hex = function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); };
   function gisLoad() {
     return gisP || (gisP = new Promise(function (ok, bad) {
       var sc = document.createElement("script");
       sc.src = "https://accounts.google.com/gsi/client"; sc.async = true;
-      sc.onload = function () { window.google && google.accounts && google.accounts.id ? ok() : bad(); };
+      sc.onload = function () { GA() ? ok() : bad(); };
       sc.onerror = bad;
       setTimeout(bad, 10000);
       document.head.appendChild(sc);
@@ -87,7 +90,7 @@
     var raw = b64u(crypto.getRandomValues(new Uint8Array(24)).buffer);
     return crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)).then(function (d) {
       gisRaw = raw;
-      google.accounts.id.initialize({ client_id: GID, nonce: hex(d), callback: gisCred, use_fedcm_for_button: true, auto_select: false, context: "signin", ux_mode: "popup" });
+      GA().initialize({ client_id: GID, nonce: hex(d), callback: gisCred, use_fedcm_for_button: true, auto_select: false, context: "signin", ux_mode: "popup" });
     });
   }
   function gisCred(r) {
@@ -108,12 +111,12 @@
   // языке страницы; перерисовывается, только если что-то из этого изменилось.
   function gisDraw(el) {
     var w = el.clientWidth;
-    if (!w || el._fb || !(window.google && google.accounts && google.accounts.id)) return;
+    if (!w || el._fb || !GA()) return;
     var th = gisLight() ? "outline" : "filled_black", lang = (document.documentElement.lang || "en").slice(0, 2),
       bw = Math.max(200, Math.min(400, w)), key = bw + th + lang;
     if (el._gis === key) return;
     el._gis = key; el.innerHTML = "";
-    google.accounts.id.renderButton(el, { type: "standard", theme: th, size: "large", text: "continue_with", shape: "pill", logo_alignment: "center", width: bw, locale: GLOC[lang] || lang });
+    GA().renderButton(el, { type: "standard", theme: th, size: "large", text: "continue_with", shape: "pill", logo_alignment: "center", width: bw, locale: GLOC[lang] || lang });
   }
   function gisFallback(el, o) {
     el.innerHTML = "";
