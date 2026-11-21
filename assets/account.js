@@ -246,6 +246,20 @@ function winShut(d) {
   setTimeout(done, 300);
 }
 window.TabiWin = { close: winShut };
+// Пока открыто хоть одно окно — страница за ним стоит (стили html.win-lock в site.css): прокрутка выключена, а место под
+// полосой прокрутки сохраняется, только если полоса была, — содержимое не сдвигается ни на точку.
+(function () {
+  var root = document.documentElement, locked = false;
+  function sync() {
+    var open = !!document.querySelector("dialog.win[open]");
+    if (open === locked) return;
+    locked = open;
+    if (open) root.classList.toggle("win-sb", window.innerWidth - root.clientWidth > 0);
+    root.classList.toggle("win-lock", open);
+  }
+  new MutationObserver(sync).observe(root, { subtree: true, attributes: true, attributeFilter: ["open"] });
+  sync();
+})();
 document.addEventListener("cancel", function (e) {
   var d = e.target;
   if (d && d.matches && d.matches("dialog.win")) { e.preventDefault(); winShut(d); }

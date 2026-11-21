@@ -163,8 +163,11 @@ dialog.win.wide{width:min(760px,calc(100vw - 32px))}
 @keyframes ltTwinkle{0%,100%{opacity:0;transform:scale(.7)}45%{opacity:.55;transform:scale(1)}60%{opacity:.45;transform:scale(1.06)}}
 :root[data-theme=light] .lights{opacity:.55}
 @media (prefers-reduced-motion:reduce){.lights i,.lights b{animation:none}.lights i{opacity:.45}.lights b{opacity:.35}}
-/* Пока окно открыто, страница за ним не прокручивается (21.11.2026, Андрей: колесо листало страницу за окном). */
-html:has(dialog.win[open]){overflow:hidden;scrollbar-gutter:stable}
+/* Пока окно открыто, страница за ним не прокручивается (21.11.2026, Андрей: колесо листало страницу за окном) и не
+   сдвигается: место под полосой прокрутки остаётся, только если полоса у страницы была (21.11.2026, Андрей: у страницы без
+   полосы окно добавляло пустую полосу, и сайт дёргался). Классы ставит общий сценарий окон (account.js). */
+html.win-lock{overflow:hidden}
+html.win-lock.win-sb{scrollbar-gutter:stable}
 dialog.win{overscroll-behavior:contain}
 /* Полоса прокрутки окна — в цветах сайта (18.11.2026, Андрей: белые полосы выглядели чужими). */
 dialog.win{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
