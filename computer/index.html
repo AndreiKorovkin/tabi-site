@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=a613ae88b3">
+<link rel="stylesheet" href="/assets/site.css?v=9e8df7ee81">
 <script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
@@ -120,6 +120,7 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-why ul{margin:8px 0 0;padding:0 0 0 18px;display:grid;gap:6px;font-size:14px;color:var(--sub);line-height:1.45}
 .pc-why li b{color:var(--ink);font-weight:650}
 .pc-when{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;min-height:1.1em}
+.pc-when:empty{display:none}
 /* Строка итога: плитки равны, пока числа помещаются; длинному числу (километры) его плитка шире ровно настолько, насколько
    ему нужно, соседние — уже, до своей подписи. Во время счёта ширину держит невидимое конечное число (.sz), и плитка не
    растёт рывком с каждой новой цифрой. */
@@ -175,6 +176,24 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
 @media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
 @media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
+/* Подсказки во время проверки (21.11.2026, Андрей): карточка въезжает справа, стоит, уходит влево. */
+.pc-hints{position:relative;overflow:hidden}
+.pc-hint{position:absolute;left:0;right:0;top:0;display:flex;gap:12px;align-items:flex-start;padding:15px 18px;border-radius:18px;background:var(--bg);border:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink);animation:hintIn .65s cubic-bezier(.2,.8,.2,1) both}
+.pc-hint.out{animation:hintOut .55s ease both}
+.pc-hint .ic{color:var(--accent);flex:none;width:22px;height:22px;margin-top:1px}
+@keyframes hintIn{from{opacity:0;transform:translateX(90px)}to{opacity:1;transform:none}}
+@keyframes hintOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-90px)}}
+/* Пример результата по бокам (21.11.2026, Андрей): место остаётся пустым, в нём живёт анимация. */
+main.pc{position:relative}
+.pc-demo{position:absolute;top:28px;width:300px;animation:pcFade .6s ease both}
+#demoL{right:calc(50% + 324px)}
+#demoR{left:calc(50% + 324px)}
+#demoMap{width:300px;height:380px;display:block}
+#demoList{min-height:380px;align-content:start}
+.pc-item.out{animation:pcOut .5s ease forwards}
+@keyframes pcOut{to{opacity:0;transform:translateY(-8px)}}
+@media (max-width:1359px){.pc-demo{display:none!important}}
+@media (prefers-reduced-motion:reduce){.pc-hint,.pc-hint.out,.pc-item.out{animation:none}}
 [hidden]{display:none!important}
 </style></head>
 <body>
@@ -191,6 +210,9 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 
 <div class="pc-loader" id="loader" hidden><div class="pc-bar wait"><div></div></div></div>
 <main class="pc" id="pcMain">
+<!-- Пример результата по бокам, пока проверки не было (21.11.2026, Андрей): слева маршрут, справа города -->
+<div class="pc-demo" id="demoL" hidden aria-hidden="true"><canvas id="demoMap"></canvas></div>
+<div class="pc-demo" id="demoR" hidden aria-hidden="true"><div class="pc-list" id="demoList"></div></div>
 <div class="pc-grid idle" id="grid">
   <aside class="pc-card pc-side" id="left" aria-live="polite">
     <h2><span id="hCountries"></span><span class="pc-count" id="nCountries"></span></h2>
@@ -200,6 +222,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   <section class="pc-card pc-main">
     <h1 id="title"></h1>
     <p class="pc-lead" id="lead"></p>
+    <!-- Подсказки на время проверки (21.11.2026, Андрей): на месте абзаца, въезжают справа и уходят влево -->
+    <div class="pc-hints" id="hints" hidden aria-live="polite"></div>
     <!-- Телефон: страница разбирает медиафайлы компьютера -->
     <div id="vPhone" hidden class="pc-box">
       <h2 id="phoneT"></h2>
@@ -737,7 +761,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     input.click();
   }
   function busy(text) {
-    show("vPick", false); show("vDone", false); show("vWork", true);
+    show("vPick", false); show("vDone", false); show("vWork", true); hintsOn(true);
     $("when").textContent = ""; $("prog").textContent = text;
     $("bar").classList.add("wait"); show("eta", false); show("slow", false);
   }
@@ -757,7 +781,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       ul.appendChild(li);
     }
   }
-  var unpick = function () { picking = false; unbusy(); show("vWork", false); A.shown ? show("vDone", true) : show("vPick", true); };
+  var unpick = function () { picking = false; unbusy(); hintsOn(false); show("vWork", false); A.shown ? show("vDone", true) : show("vPick", true); };
   $("fFolder").addEventListener("cancel", unpick);
   $("fFiles").addEventListener("cancel", unpick);
   $("bFolder").onclick = $("bMore").onclick = function () { winOpen("pickDlg"); statSend({ k: "pick" }); };
@@ -1086,6 +1110,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       tnRefresh || (tnRefresh = setTimeout(function () {
         tnRefresh = 0;
         [].forEach.call(document.querySelectorAll("#cities .pc-city"), function (el) { el.children[0].textContent = townName(+el.dataset.ti); });
+        [].forEach.call(document.querySelectorAll("#demoList .nm[data-ti]"), function (el) { el.textContent = townName(+el.dataset.ti); });
         mapDirty = true; schedule();
       }, 60));
     });
@@ -1236,6 +1261,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     var any = revealing || found.countries.length || found.cities.length;
     $("grid").classList.toggle("idle", !any);
     $("routeBox").hidden = !(revealing || A.shown);
+    typeof demoSync === "function" && G && demoSync();
   }
   // Порядок — по времени (18.11.2026, Андрей: после дозагрузки Златоуст 2020 года встал между городами 2026 и 2025):
   // страны — от первой поездки, города — новые сверху; место нового — среди уже найденных по своей дате.
@@ -1326,7 +1352,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   // грузит: адреса плиток выдали бы стороннему серверу, где сделаны снимки.
   var cv = $("map"), cx = cv.getContext("2d"), mapDirty = true, MV = null, PC = null, CW = 0, CH = 0, DPR = 1,
     land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
-  var D2R = Math.PI / 180;
+  var D2R = Math.PI / 180, userMoved = false;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
   // Проекция Меркатора — та же, что у карт приложения (20.11.2026, Андрей: в Natural Earth и Паттерсоне Россия и Европа
   // сплющены): формы стран верные, северные страны крупнее, чем в жизни, как в приложении. Широта ограничена 85°, как у
@@ -1409,7 +1435,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   function zoomAt(f, mx, my) {
     if (!MV) return;
     var g = invert(mx, my);
-    MV.s *= f; clampView();
+    MV.s *= f; clampView(); userMoved = true;
     // Точка под курсором остаётся под курсором: центр вида сдвигается, пока она не встанет на место.
     for (var k = 0; k < 5; k++) {
       var q = scr(g[0], g[1]), dx = q[0] - mx, dy = q[1] - my;
@@ -1421,6 +1447,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   }
   // Сдвиг мышью: точка, бывшая под курсором, остаётся под ним.
   function panBy(dx, dy) {
+    userMoved = true;
     var c = invert(CW / 2 - dx, CH / 2 - dy);
     MV.lng = ((c[0] + 540) % 360) - 180; MV.lat = c[1]; clampView();
   }
@@ -1442,34 +1469,98 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     }
     g.closePath();
   }
+  // Отрезок, обрезанный прямоугольником экрана с запасом (Лианг — Барски); целиком снаружи — null.
+  // Пунктир по отрезку длиной в миллионы точек за краем экрана (вблизи точек) тормозил карту (21.11.2026).
+  function clipSeg(x1, y1, x2, y2, m) {
+    var dx = x2 - x1, dy = y2 - y1, t0 = 0, t1 = 1, P = [-dx, dx, -dy, dy], Q = [x1 + m, CW + m - x1, y1 + m, CH + m - y1];
+    for (var i = 0; i < 4; i++) {
+      if (P[i] === 0) { if (Q[i] < 0) return null; continue; }
+      var r = Q[i] / P[i];
+      if (P[i] < 0) { if (r > t1) return null; r > t0 && (t0 = r); }
+      else { if (r < t0) return null; r < t1 && (t1 = r); }
+    }
+    return [x1 + t0 * dx, y1 + t0 * dy, x1 + t1 * dx, y1 + t1 * dy];
+  }
+  // Контур на экране — плоский массив [x, y, …] без шагов короче 0,8 точки; проекция считается один раз и служит и заливке,
+  // и границе.
+  function ringXY(pts) {
+    var out = [], lx = -1e9, ly = -1e9;
+    for (var i = 0; i < pts.length; i++) {
+      var q = scr(pts[i][0], pts[i][1]), x = q[0], y = q[1];
+      if (out.length && Math.abs(x - lx) < 0.8 && Math.abs(y - ly) < 0.8) continue;
+      out.push(x, y); lx = x; ly = y;
+    }
+    return out;
+  }
+  function fillXY(g, xy) {
+    if (xy.length < 6) return;
+    g.moveTo(xy[0], xy[1]);
+    for (var i = 2; i < xy.length; i += 2) g.lineTo(xy[i], xy[i + 1]);
+    g.closePath();
+  }
+  // Граница — только видимые куски: отрезок целиком на экране идёт как есть, уходящий за край обрезается (clipSeg).
+  function strokeXY(g, xy) {
+    var n = xy.length, m = 8 * DPR, ex = NaN, ey = NaN;
+    if (n < 4) return;
+    for (var i = 0; i < n; i += 2) {
+      var x1 = xy[i], y1 = xy[i + 1], x2 = xy[(i + 2) % n], y2 = xy[(i + 3) % n];
+      if (x1 >= -m && x1 <= CW + m && y1 >= -m && y1 <= CH + m && x2 >= -m && x2 <= CW + m && y2 >= -m && y2 <= CH + m) {
+        (x1 !== ex || y1 !== ey) && g.moveTo(x1, y1); g.lineTo(x2, y2); ex = x2; ey = y2; continue;
+      }
+      var c = clipSeg(x1, y1, x2, y2, m);
+      if (!c) continue;
+      (c[0] !== ex || c[1] !== ey) && g.moveTo(c[0], c[1]); g.lineTo(c[2], c[3]); ex = c[2]; ey = c[3];
+    }
+  }
+  // Цвета оформления — один раз на перерисовку подложки, а не на каждый кадр (getComputedStyle).
+  var COL = null;
+  function cols() {
+    COL = { bg: css("--bg"), bg2: css("--bg2"), line: css("--line"), acc: css("--accent"), sub: css("--sub"), ink: css("--ink") };
+    return COL;
+  }
   function drawLand() {
     land = land || document.createElement("canvas");
-    land.width = cv.width; land.height = cv.height;
-    var g = land.getContext("2d"), visited = {};
+    // Холст подложки пересоздаётся только при смене размера (прежде — каждый кадр приближения).
+    (land.width !== cv.width || land.height !== cv.height) && (land.width = cv.width, land.height = cv.height);
+    var g = land.getContext("2d"), visited = {}, C = cols();
     found.countries.forEach(function (c) { visited[c.cc] = 1; });
-    g.fillStyle = css("--bg"); g.fillRect(0, 0, land.width, land.height);
+    g.fillStyle = C.bg; g.fillRect(0, 0, land.width, land.height);
     if (!G || !MV) return;
-    var vb = viewBox(), pd = ppd();
-    var landC = css("--bg2"), lineC = css("--line"), accC = css("--accent"), subC = css("--sub");
+    var vb = viewBox(), pd = ppd(), shown = [];
     G.rings.forEach(function (r) {
       if (vb && (r.e < vb[0] || r.w > vb[1] || r.n < vb[2] || r.s > vb[3])) return;
       if ((r.e - r.w) * pd < 1.2 && (r.n - r.s) * pd < 1.2) return;
-      g.beginPath(); ringPath(g, r.p);
-      g.fillStyle = landC; g.fill();
-      if (visited[r.cc]) { g.globalAlpha = 0.22; g.fillStyle = accC; g.fill(); g.globalAlpha = 1; }
-      g.strokeStyle = lineC; g.lineWidth = 0.7 * DPR; g.stroke();
+      shown.push(r);
     });
-    // Регионы посещённых стран — когда градус шире 40 точек экрана.
+    // Сначала все заливки, затем все границы: заливка соседней страны больше не закрывает общую границу (21.11.2026,
+    // Андрей: между посещёнными странами не было видно границы). Контур проецируется один раз (ringXY).
+    var xys = shown.map(function (r) { return ringXY(r.p); });
+    shown.forEach(function (r, k) {
+      g.beginPath(); fillXY(g, xys[k]);
+      g.fillStyle = C.bg2; g.fill();
+      if (visited[r.cc]) { g.globalAlpha = 0.22; g.fillStyle = C.acc; g.fill(); g.globalAlpha = 1; }
+    });
+    g.lineJoin = "round";
+    g.strokeStyle = C.line; g.lineWidth = 0.8 * DPR; g.beginPath();
+    shown.forEach(function (r, k) { visited[r.cc] || strokeXY(g, xys[k]); });
+    g.stroke();
+    // Границы посещённых стран — цветом оформления, заметнее: видна и граница между двумя посещёнными.
+    g.strokeStyle = C.acc; g.globalAlpha = 0.75; g.lineWidth = 1.1 * DPR; g.beginPath();
+    shown.forEach(function (r, k) { visited[r.cc] && strokeXY(g, xys[k]); });
+    g.stroke(); g.globalAlpha = 1;
+    // Регионы посещённых стран — когда градус шире 40 точек экрана; пунктир — только по видимым кускам.
     if (pd > 40 * DPR) {
-      g.strokeStyle = subC; g.globalAlpha = 0.35; g.lineWidth = 0.6 * DPR; g.setLineDash([3 * DPR, 3 * DPR]);
+      g.strokeStyle = C.sub; g.globalAlpha = 0.35; g.lineWidth = 0.6 * DPR; g.setLineDash([3 * DPR, 3 * DPR]);
+      g.beginPath();
       Object.keys(visited).forEach(function (cc) {
         (regCache[cc] || []).forEach(function (rg) {
           rg.polys.forEach(function (pg) {
             if (vb && (pg.e < vb[0] || pg.w > vb[1] || pg.n < vb[2] || pg.s > vb[3])) return;
-            g.beginPath(); pg.rings.forEach(function (ring) { ringPath(g, ring); }); g.stroke();
+            pg.rings.forEach(function (ring) { strokeXY(g, ringXY(ring)); });
           });
         });
       });
+      g.stroke();
       g.setLineDash([]); g.globalAlpha = 1;
     }
   }
@@ -1497,9 +1588,11 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       var a = pts[i - 1], b = pts[i];
       if (b[2] - a[2] > 36 * 3600000) continue;
       var qa = scr(a[1], a[0]), qb = scr(b[1], b[0]), x1 = qa[0], y1 = qa[1], x2 = qb[0], y2 = qb[1];
-      if ((x1 < 0 && x2 < 0) || (y1 < 0 && y2 < 0) || (x1 > CW && x2 > CW) || (y1 > CH && y2 > CH)) continue;
       if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
-      (dist(a[0], a[1], b[0], b[1]) > 300000 ? far : near)[binOf(b[2])].push(x1, y1, x2, y2);
+      // Отрезок — только его видимая часть: вблизи длинные (пунктирные) отрезки уходили на миллионы точек за край.
+      var sg = clipSeg(x1, y1, x2, y2, 8 * DPR);
+      if (!sg) continue;
+      (dist(a[0], a[1], b[0], b[1]) > 300000 ? far : near)[binOf(b[2])].push(sg[0], sg[1], sg[2], sg[3]);
     }
     for (i = from; i < to && i < pts.length; i++) {
       var qp = scr(pts[i][1], pts[i][0]), x = qp[0], y = qp[1];
@@ -1529,7 +1622,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   // Названия найденных городов — при приближении, без наложения, по одной строке на город.
   function drawLabels() {
     if (!G || ppd() < 20 * DPR) return;
-    var boxes = [], fs = 12.5 * DPR, ink = css("--ink"), bg = css("--bg");
+    var boxes = [], fs = 12.5 * DPR, C = COL || cols(), ink = C.ink, bg = C.bg;
     cx.font = "600 " + fs + "px Onest, system-ui, sans-serif"; cx.textBaseline = "middle"; cx.lineJoin = "round";
     found.cities.slice().sort(function (a, b) { return G.t.pop[b.i] - G.t.pop[a.i]; }).slice(0, 300).forEach(function (c) {
       var qc = scr(G.t.ln[c.i] / 1e5, G.t.la[c.i] / 1e5), x = qc[0] + 7 * DPR, y = qc[1];
@@ -1578,7 +1671,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   cv.addEventListener("dblclick", function (e) { var r = cv.getBoundingClientRect(); zoomAt(2, (e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR); });
   $("zIn").onclick = function () { zoomAt(2, CW / 2, CH / 2); };
   $("zOut").onclick = function () { zoomAt(0.5, CW / 2, CH / 2); };
-  $("zAll").onclick = function () { fit(A.pts); mapDirty = true; schedule(); };
+  $("zAll").onclick = function () { userMoved = false; fit(A.pts); mapDirty = true; schedule(); };
   var ptrs = new Map(), pinch0 = 0;
   cv.addEventListener("pointerdown", function (e) {
     cv.setPointerCapture(e.pointerId);
@@ -1880,37 +1973,11 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     d.showModal ? d.showModal() : d.setAttribute("open", "");
   }
   $("resOk").onclick = function () { var d = $("resDlg"); d.close ? winClose("resDlg") : (d.removeAttribute("open"), d.dispatchEvent(new Event("close"))); };
-  // Что нового даст разбор — до показа: страны, регионы и города по тем же данным, что у показа (у точки остаются cc, rg,
-  // ct — показ их не пересчитывает), дни и километры всего итога.
+  // Километры маршрута: отрезки между снимками не дальше 36 часов друг от друга.
   function kmOf(list) {
     var km = 0;
     for (var i = 1; i < list.length; i++) { var a = list[i - 1], b = list[i]; b[2] - a[2] <= 36 * 3600000 && (km += dist(a[0], a[1], b[0], b[1])); }
     return km;
-  }
-  function preview(keep) {
-    var ccs = {};
-    keep.forEach(function (p) { p.cc = G ? countryAt(p[0], p[1]) : null; p.cc && (ccs[p.cc] = 1); });
-    return Promise.all(Object.keys(ccs).map(function (cc) { return regions(cc).then(function (list) { regCache[cc] = list; return [cc, list]; }); })).then(function (pairs) {
-      var regBy = {}, nCc = {}, nReg = {}, nCity = {}, nDay = {};
-      pairs.forEach(function (x) { regBy[x[0]] = x[1]; });
-      keep.forEach(function (p) {
-        p.pv = 1;
-        if (p.cc) {
-          var co = found.byCc[p.cc];
-          co || (nCc[p.cc] = Math.min(nCc[p.cc] || Infinity, p[2]));
-          var rg = regionAt(regBy[p.cc] || [], p[0], p[1]);
-          p.rg = rg || null;
-          rg && !(co && co.rset[rg.id]) && (nReg[p.cc + ":" + rg.id] = 1);
-        }
-        p.ct = cityAt(p[0], p[1]);
-        p.ct >= 0 && !found.byCity[p.ct] && (nCity[p.ct] = 1);
-        var dd = new Date(p[2]).toDateString();
-        found.days.has(dd) || (nDay[dd] = 1);
-      });
-      var all = A.pts.concat(keep).sort(function (x, y) { return x[2] - y[2]; });
-      return { cc: Object.keys(nCc).sort(function (a, b) { return nCc[a] - nCc[b]; }), regs: Object.keys(nReg).length, cities: Object.keys(nCity).length,
-        days: Object.keys(nDay).length, km: Math.max(0, kmOf(all) - kmOf(A.pts)) };
-    });
   }
   function runName(list) {
     var first = null, same = true;
@@ -1941,8 +2008,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     // Папки человека — первыми, системные — последними (порядок внутри каждой части прежний).
     files = files.filter(function (f) { return !f.tabiSys; }).concat(files.filter(function (f) { return f.tabiSys; }));
     err(null);
-    if (!files.length && !tlFiles.length && !trkFiles.length) { A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); runSay(rname, seenN || list.length, 0, 0); show("vDone", true); return; }
-    show("vPick", false); show("vDone", false); show("vWork", true);
+    if (!files.length && !tlFiles.length && !trkFiles.length) { hintsOn(false); A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); runSay(rname, seenN || list.length, 0, 0); show("vDone", true); return; }
+    show("vPick", false); show("vDone", false); show("vWork", true); hintsOn(true);
     $("barIn").style.width = "0%";
     $("when").textContent = "";
     var pts = [], done = 0, now = Date.now(), next = 0, t0 = performance.now(), slowShown = false;
@@ -1960,6 +2027,54 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       if (!slowShown && sec > 8 && rate < 40 && done < files.length) { slowShown = true; show("slow", true); }
     };
     prog();
+    // Результаты по ходу чтения (21.11.2026, Андрей: пока идёт чтение, человек уже видит находки): каждые полторы секунды
+    // прочитанные точки ложатся на страницу — страны слева, города справа, точки на карте, числа растут. Уже известные
+    // (сохранённые раньше) не показываются второй раз; в конце серия кадров одного устройства сводится в одну точку, и
+    // лишние точки уходят с карты. Окно итога считает новое от того, что было до проверки (snap).
+    var snap = { cc: new Set(Object.keys(found.byCc)), regions: found.regions, cities: found.cities.length, days: found.days.size, km: found.km },
+      liveI = 0, liveQ = Promise.resolve();
+    userMoved = false;
+    var liveTake = function (add) {
+      if (!add.length || !G) return Promise.resolve();
+      var ccs = {};
+      add.forEach(function (p) { p.cc = countryAt(p[0], p[1]); p.cc && (ccs[p.cc] = 1); });
+      return Promise.all(Object.keys(ccs).map(function (cc) { return regions(cc).then(function (l) { regCache[cc] = l; }); })).then(function () {
+        add.sort(function (x, y) { return x[2] - y[2]; });
+        add.forEach(function (p) {
+          p.rg = p.cc ? regionAt(regCache[p.cc] || [], p[0], p[1]) || null : null;
+          var ct = cityAt(p[0], p[1]);
+          p.ct = ct; p.live = 1;
+          takePoint(p, p.rg, ct >= 0 ? ct : null);
+        });
+        A.pts = A.pts.concat(add);
+      });
+    };
+    var liveShow = function () {
+      A.pts.sort(function (x, y) { return x[2] - y[2]; });
+      T0 = A.pts.length ? A.pts[0][2] : 0; T1 = A.pts.length ? A.pts[A.pts.length - 1][2] : 1;
+      found.km = kmOf(A.pts);
+      A.shown = upto = A.pts.length;
+      userMoved || (MV = null);
+      mapDirty = true; shell(); renderStats(); renderLegend(); schedule();
+    };
+    var liveFlush = function () {
+      liveQ = liveQ.then(function () { return geo(); }).then(function () {
+        var add = pts.slice(liveI).filter(function (p) { return !seenPt.has(p[0] + "," + p[1] + "," + p[2]) && !LOOSE.has(loose(p)); });
+        liveI = pts.length;
+        return liveTake(add).then(function () { add.length && liveShow(); });
+      }).catch(function () {});
+      return liveQ;
+    };
+    var liveT = setInterval(liveFlush, 1500);
+    var runEnd = function () {
+      revealing = false; statGoal = null;
+      A.shown = A.pts.length;
+      resort && renderLists();
+      mapDirty = true; drawMap();
+      show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
+      renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
+      S ? (doSave(), loadSaved()) : (renderSave(), anonPut());
+    };
     var worker = function () {
       if (next >= files.length) return Promise.resolve();
       var f = files[next++], x = extOf(f);
@@ -1992,6 +2107,9 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     }).then(function () {
       return trkRead(trkFiles, pts, now);
     }).then(function () {
+      clearInterval(liveT);
+      return liveQ;
+    }).then(function () {
       files.length && prog();
       // Серия кадров одного устройства — одна точка: ближе 150 м и 20 минут от его предыдущей точки.
       pts.sort(function (x, y) { return x[2] - y[2]; });
@@ -2001,20 +2119,57 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       // не добавляется.
       kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
       var info = { name: rname, read: files.length + tlFiles.length + trkFiles.length, place: pts.length, pts: kept.length };
+      hintsOn(false);
+      // Показанное по ходу, но не вошедшее в итог (серия кадров), уходит с карты; страны и города остаются — снимок там был.
+      var keptSet = new Set(kept);
+      A.pts = A.pts.filter(function (p) { return !p.live || keptSet.has(p); });
       if (!kept.length) {
+        A.shown = A.pts.length; mapDirty = true; shell(); renderStats(); schedule();
         show("vWork", false);
         statScan();
         return showResult(info, null, function () { A.none = !A.pts.length; A.pts.length ? show("vDone", true) : show("vPick", true); });
       }
       A.none = false; show("done", false);
       $("prog").textContent = t("loadingMap");
-      geo().then(function () { return preview(kept); }).then(function (pv) {
+      geo().then(function () { return liveTake(kept.filter(function (p) { return !p.live; })); }).then(function () {
+        kept.forEach(function (p) { delete p.live; });
+        liveShow();
+        var pv = { cc: found.countries.filter(function (c) { return !snap.cc.has(c.cc); }).sort(function (a, b) { return a.at - b.at; }).map(function (c) { return c.cc; }),
+          regs: Math.max(0, found.regions - snap.regions), cities: Math.max(0, found.cities.length - snap.cities),
+          days: Math.max(0, found.days.size - snap.days), km: Math.max(0, found.km - snap.km) };
         show("vWork", false);
-        showResult(info, pv, function () { show("vDone", false); show("vWork", true); reveal(kept, 0); });
-      }).catch(function () { reveal(kept, 0); });
+        showResult(info, pv, runEnd);
+      }).catch(runEnd);
     });
   }
 
+  // Точка в находки: дни, страна (годы), регион, город — одно правило у показа и у результатов по ходу чтения.
+  function takePoint(p, rg, ct) {
+    found.days.add(new Date(p[2]).toDateString());
+    var yr = new Date(p[2]).getFullYear();
+    if (p.cc && !found.byCc[p.cc]) {
+      var c = { cc: p.cc, at: p[2], regs: [], rset: {}, ys: {} }, ci = idxAsc(found.countries, c.at);
+      c.ys[yr] = 1;
+      found.byCc[p.cc] = c; found.countries.splice(ci, 0, c); addCountry(c, false, ci); mapDirty = true;
+    } else if (p.cc) {
+      var co = found.byCc[p.cc];
+      if (!co.ys[yr]) { co.ys[yr] = 1; co.yel && (co.yel.textContent = yearsOf(co)); }
+      p[2] < co.at && ((co.at = p[2]), (resort = true));
+    }
+    if (rg && p.cc) {
+      var cobj = found.byCc[p.cc], rid = rg.id;
+      if (!cobj.rset[rid]) {
+        cobj.rset[rid] = p[2];
+        var ri = 0;
+        while (ri < cobj.regs.length && cobj.rset[cobj.regs[ri].id] <= p[2]) ri++;
+        cobj.regs.splice(ri, 0, rg); found.regions++; addRegion(cobj, rg, ri);
+      } else if (p[2] < cobj.rset[rid]) { cobj.rset[rid] = p[2]; resort = true; }
+    }
+    if (ct != null && !found.byCity[ct]) {
+      var city = { i: ct, name: townName(ct), at: p[2] }, ti = idxAsc(found.cities, city.at);
+      found.byCity[ct] = city; found.cities.splice(ti, 0, city); addCity(city, found.cities.length - 1 - ti);
+    } else if (ct != null && p[2] < found.byCity[ct].at) { found.byCity[ct].at = p[2]; resort = true; }
+  }
   // Показ находок по ходу времени — не меньше десяти секунд (17.11.2026, Андрей); после возврата со входа — коротко.
   function reveal(keep, quickMs) {
     var all = A.pts.concat(keep).sort(function (x, y) { return x[2] - y[2]; });
@@ -2057,35 +2212,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       return new Promise(function (ok) {
         var frame = function (now) {
           var f = Math.min(1, (now - t0) / D), u = Math.round(f * ev.length);
-          for (; k < u; k++) {
-            var e = ev[k];
-            if (!e.p) continue;
-            var p = e.p;
-            found.days.add(new Date(p[2]).toDateString());
-            var yr = new Date(p[2]).getFullYear();
-            if (p.cc && !found.byCc[p.cc]) {
-              var c = { cc: p.cc, at: p[2], regs: [], rset: {}, ys: {} }, ci = idxAsc(found.countries, c.at);
-              c.ys[yr] = 1;
-              found.byCc[p.cc] = c; found.countries.splice(ci, 0, c); addCountry(c, false, ci); mapDirty = true;
-            } else if (p.cc) {
-              var co = found.byCc[p.cc];
-              if (!co.ys[yr]) { co.ys[yr] = 1; co.yel && (co.yel.textContent = yearsOf(co)); }
-              p[2] < co.at && ((co.at = p[2]), (resort = true));
-            }
-            if (e.rg && p.cc) {
-              var cobj = found.byCc[p.cc], rid = e.rg.id;
-              if (!cobj.rset[rid]) {
-                cobj.rset[rid] = p[2];
-                var ri = 0;
-                while (ri < cobj.regs.length && cobj.rset[cobj.regs[ri].id] <= p[2]) ri++;
-                cobj.regs.splice(ri, 0, e.rg); found.regions++; addRegion(cobj, e.rg, ri);
-              } else if (p[2] < cobj.rset[rid]) { cobj.rset[rid] = p[2]; resort = true; }
-            }
-            if (e.ct != null && !found.byCity[e.ct]) {
-              var city = { i: e.ct, name: townName(e.ct), at: p[2] }, ti = idxAsc(found.cities, city.at);
-              found.byCity[e.ct] = city; found.cities.splice(ti, 0, city); addCity(city, found.cities.length - 1 - ti);
-            } else if (e.ct != null && p[2] < found.byCity[e.ct].at) { found.byCity[e.ct].at = p[2]; resort = true; }
-          }
+          for (; k < u; k++) { var e = ev[k]; e.p && takePoint(e.p, e.rg, e.ct); }
           var cur = ev[Math.min(ev.length - 1, Math.max(0, u - 1))];
           cur && ($("when").textContent = monthYear(all[cur.i][2]));
           $("barIn").style.width = Math.round(f * 100) + "%";
@@ -2107,6 +2234,183 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
       S ? (doSave(), loadSaved()) : (renderSave(), anonPut());
     });
+  }
+
+  // ===== Подсказки во время проверки (21.11.2026, Андрей) =====
+  // На месте абзаца: карточка въезжает справа, стоит семь секунд и уходит влево, за ней следующая. Тексты — уже
+  // утверждённые: тезисы окна выбора, строка о разрешении браузера и короткие ответы. Высота — по самой длинной подсказке.
+  var HINTS = ["pk1", "pk2", "pk3", "pk4", "pk5", "pkNote", "a2", "a5"], hintT = 0, hintI = 0,
+    BULB = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>';
+  function hintEl(k) {
+    var d = document.createElement("div"), s = document.createElement("span");
+    d.className = "pc-hint"; d.innerHTML = BULB; s.textContent = t(k); d.appendChild(s);
+    return d;
+  }
+  function hintsOn(on) {
+    var lead = $("lead"), box = $("hints");
+    if (!on) { clearTimeout(hintT); hintT = 0; box.hidden = true; box.innerHTML = ""; lead.hidden = false; demoSync(); return; }
+    if (hintT) return;
+    var h = 0;
+    lead.hidden = true; box.hidden = false; box.innerHTML = ""; box.style.height = "";
+    HINTS.forEach(function (k) {
+      var c = hintEl(k);
+      c.style.position = "static"; c.style.visibility = "hidden"; c.style.animation = "none";
+      box.appendChild(c); h = Math.max(h, c.offsetHeight); box.removeChild(c);
+    });
+    box.style.height = h + "px";
+    var step = function () {
+      var old = box.querySelector(".pc-hint:not(.out)");
+      old && (old.classList.add("out"), setTimeout(function () { old.parentNode && old.parentNode.removeChild(old); }, 600));
+      box.appendChild(hintEl(HINTS[hintI++ % HINTS.length]));
+      hintT = setTimeout(step, 7000);
+    };
+    step();
+    demoSync();
+  }
+
+  // ===== Пример результата по бокам, пока проверки не было (21.11.2026, Андрей) =====
+  // Слева — маршрут: точки появляются по очереди, между ними тянется линия, у точек — названия городов; справа — города со
+  // странами, флагами и годами. Каждый пример исчезает и сменяется следующим. Только на широком экране и до проверки.
+  var DEMO_ROUTES = [
+    [[50.0875, 14.4213], [48.2082, 16.3738], [47.4979, 19.0402], [44.7866, 20.4489]],
+    [[45.4642, 9.19], [45.4408, 12.3155], [43.7696, 11.2558], [41.9028, 12.4964]],
+    [[41.3874, 2.1686], [40.4168, -3.7038], [37.3891, -5.9845], [38.7223, -9.1393]],
+    [[35.6762, 139.6503], [35.0116, 135.7681], [34.3853, 132.4553], [33.5902, 130.4017]],
+    [[52.52, 13.405], [52.3676, 4.9041], [50.8503, 4.3517], [48.8566, 2.3522]],
+    [[41.0082, 28.9784], [38.4237, 27.1428], [36.8969, 30.7133], [38.6244, 34.7144]]
+  ];
+  var DEMO_CITIES = [[50.0875, 14.4213, 2019], [41.9028, 12.4964, 2021], [35.6762, 139.6503, 2018], [41.3874, 2.1686, 2022],
+    [48.8566, 2.3522, 2017], [41.0082, 28.9784, 2023], [40.7128, -74.006, 2016], [52.52, 13.405, 2020], [37.5665, 126.978, 2024],
+    [38.7223, -9.1393, 2022], [48.2082, 16.3738, 2019], [37.9838, 23.7275, 2021], [55.7558, 37.6173, 2015], [59.3293, 18.0686, 2023],
+    [47.4979, 19.0402, 2020]];
+  var demo = { on: false, raf: 0, r: 0, c: 0, t0: 0, ct: 0, land: null, key: "" };
+  function demoWant() { return !PHONE && !!G && window.innerWidth >= 1360 && $("grid").classList.contains("idle") && !$("vPick").hidden; }
+  function demoSync() {
+    var on = demoWant();
+    $("demoL").hidden = $("demoR").hidden = !on;
+    if (on && !demo.on) {
+      DEMO_CITIES.forEach(function (q) { var ci = cityAt(q[0], q[1]); ci >= 0 && townName(ci); });
+      demo.on = true; demo.t0 = performance.now(); demoCities(); demo.raf = requestAnimationFrame(demoFrame);
+    }
+    if (!on && demo.on) { demo.on = false; cancelAnimationFrame(demo.raf); clearTimeout(demo.ct); $("demoList").innerHTML = ""; }
+  }
+  window.addEventListener("resize", demoSync);
+  // Выбор показан или скрыт, итог появился — пример включается и выключается сам.
+  window.MutationObserver && new MutationObserver(function () { demoSync(); }).observe($("vPick"), { attributes: true, attributeFilter: ["hidden"] });
+  // Маршрут примера: проекция Меркатора на свой квадрат, подложка — границы стран вокруг маршрута (рисуется раз на пример).
+  function demoBox(R, w, h) {
+    var xs = R.map(function (q) { return q[1] * D2R; }), ys = R.map(function (q) { return ne(0, q[0] * D2R)[1]; }),
+      x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys),
+      dx = Math.max(x1 - x0, 0.02), dy = Math.max(y1 - y0, 0.02), s = Math.min(w / (dx * 1.9), h / (dy * 1.9)), cx0 = (x0 + x1) / 2, cy0 = (y0 + y1) / 2;
+    return function (lat, lng) { return [w / 2 + (lng * D2R - cx0) * s, h / 2 - (ne(0, lat * D2R)[1] - cy0) * s]; };
+  }
+  function demoFrame(now) {
+    if (!demo.on) return;
+    demo.raf = requestAnimationFrame(demoFrame);
+    var cvs = $("demoMap"), dpr = window.devicePixelRatio || 1, w = cvs.clientWidth, h = cvs.clientHeight;
+    if (!w || !h) return;
+    (cvs.width !== Math.round(w * dpr) || cvs.height !== Math.round(h * dpr)) && (cvs.width = Math.round(w * dpr), cvs.height = Math.round(h * dpr), demo.key = "");
+    var R = DEMO_ROUTES[demo.r % DEMO_ROUTES.length], n = R.length, STEP = 1100, HOLD = 2800, FADE = 700, el = now - demo.t0;
+    if (el > n * STEP + HOLD + FADE) { demo.r++; demo.t0 = now; el = 0; R = DEMO_ROUTES[demo.r % DEMO_ROUTES.length]; n = R.length; }
+    var W = cvs.width, H = cvs.height, pj = demoBox(R, W, H), g = cvs.getContext("2d"), C = COL || cols();
+    // Подложка примера — один раз на маршрут и размер.
+    var key = demo.r + ":" + W + ":" + H + ":" + C.bg2;
+    if (demo.key !== key) {
+      demo.key = key;
+      demo.land = demo.land || document.createElement("canvas");
+      demo.land.width = W; demo.land.height = H;
+      var lg = demo.land.getContext("2d"), vis = {};
+      lg.clearRect(0, 0, W, H);
+      R.forEach(function (q) { var cc = countryAt(q[0], q[1]); cc && (vis[cc] = 1); });
+      var la = R.map(function (q) { return q[0]; }), lo = R.map(function (q) { return q[1]; }),
+        mw = 14, bw = Math.min.apply(null, lo) - mw, be = Math.max.apply(null, lo) + mw, bs = Math.min.apply(null, la) - mw, bn = Math.max.apply(null, la) + mw;
+      lg.lineJoin = "round";
+      G.rings.forEach(function (rr) {
+        if (rr.e < bw || rr.w > be || rr.n < bs || rr.s > bn) return;
+        lg.beginPath();
+        rr.p.forEach(function (pt, i) { var c = pj(pt[1], pt[0]); i ? lg.lineTo(c[0], c[1]) : lg.moveTo(c[0], c[1]); });
+        lg.closePath();
+        lg.fillStyle = C.bg2; lg.fill();
+        vis[rr.cc] && (lg.globalAlpha = 0.25, lg.fillStyle = C.acc, lg.fill(), lg.globalAlpha = 1);
+        lg.strokeStyle = vis[rr.cc] ? C.acc : C.line; lg.lineWidth = (vis[rr.cc] ? 1.2 : 0.8) * dpr; lg.stroke();
+      });
+      // Край подложки растворяется в фоне страницы (21.11.2026: прямоугольник карты выглядел обрезанным).
+      var gr = lg.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.28, W / 2, H / 2, Math.max(W, H) * 0.56);
+      gr.addColorStop(0, "rgba(0,0,0,1)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+      lg.globalCompositeOperation = "destination-in"; lg.fillStyle = gr; lg.fillRect(0, 0, W, H);
+      lg.globalCompositeOperation = "source-over";
+      // Названия городов примера — загрузка перевода на язык страницы.
+      R.forEach(function (q) { var ci = cityAt(q[0], q[1]); ci >= 0 && townName(ci); });
+    }
+    var fade = el > n * STEP + HOLD ? Math.max(0, 1 - (el - n * STEP - HOLD) / FADE) : Math.min(1, el / 500);
+    g.clearRect(0, 0, W, H);
+    g.globalAlpha = fade; g.drawImage(demo.land, 0, 0);
+    var P = R.map(function (q) { return pj(q[0], q[1]); }), ease = function (x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); };
+    // Линия: от точки к точке, каждая часть тянется за свой шаг.
+    g.lineCap = "round"; g.lineJoin = "round"; g.strokeStyle = C.acc; g.lineWidth = 3.2 * dpr;
+    g.beginPath(); g.moveTo(P[0][0], P[0][1]);
+    for (var i = 1; i < n; i++) {
+      var f = ease((el - (i - 1) * STEP - 350) / (STEP - 350));
+      if (f <= 0) break;
+      g.lineTo(P[i - 1][0] + (P[i][0] - P[i - 1][0]) * f, P[i - 1][1] + (P[i][1] - P[i - 1][1]) * f);
+    }
+    g.stroke();
+    // Точки и названия городов; подпись — справа или слева, выше или ниже точки: где не наезжает на другие и не уходит за край.
+    g.font = "700 " + 13 * dpr + "px Onest, system-ui, sans-serif"; g.textBaseline = "middle";
+    var boxes = P.map(function (q) { return [q[0] - 8 * dpr, q[1] - 8 * dpr, q[0] + 8 * dpr, q[1] + 8 * dpr]; });
+    for (i = 0; i < n; i++) {
+      var a = ease((el - i * STEP) / 300);
+      if (a <= 0) continue;
+      g.fillStyle = C.acc; g.beginPath(); g.arc(P[i][0], P[i][1], 6.5 * dpr * a, 0, 6.2832); g.fill();
+      g.strokeStyle = C.ink; g.lineWidth = 2 * dpr; g.stroke();
+      var ci = cityAt(R[i][0], R[i][1]), nm = ci >= 0 ? townName(ci) : "", la2 = ease((el - i * STEP - 200) / 400);
+      if (!nm || la2 <= 0) continue;
+      var tw = g.measureText(nm).width, th = 16 * dpr, pos = null,
+        cand = [[11, -12], [-11 - tw / dpr, -12], [11, 14], [-11 - tw / dpr, 14], [-tw / dpr / 2, -22], [-tw / dpr / 2, 24]];
+      for (var c = 0; c < cand.length && !pos; c++) {
+        var x = P[i][0] + cand[c][0] * dpr, y = P[i][1] + cand[c][1] * dpr, b = [x - 3, y - th / 2, x + tw + 3, y + th / 2];
+        if (b[0] < 2 || b[2] > W - 2 || b[1] < 2 || b[3] > H - 2) continue;
+        var hit = false;
+        for (var o = 0; o < boxes.length && !hit; o++) { var q = boxes[o]; hit = b[0] < q[2] && b[2] > q[0] && b[1] < q[3] && b[3] > q[1]; }
+        hit || (pos = [x, y, b]);
+      }
+      if (!pos) continue;
+      boxes.push(pos[2]);
+      g.globalAlpha = fade * la2;
+      g.lineWidth = 4 * dpr; g.strokeStyle = C.bg; g.strokeText(nm, pos[0], pos[1]);
+      g.fillStyle = C.ink; g.fillText(nm, pos[0], pos[1]);
+      g.globalAlpha = fade;
+    }
+    g.globalAlpha = 1;
+  }
+  // Справа: по одной строке «город — страна, год» с флагом, затем все уходят, приходит следующий набор.
+  function demoCities() {
+    if (!demo.on) return;
+    var box = $("demoList");
+    [].forEach.call(box.children, function (el) { el.classList.add("out"); });
+    demo.ct = setTimeout(function () {
+      if (!demo.on) return;
+      box.innerHTML = "";
+      var k = 0, set = [];
+      for (var i = 0; i < 5; i++) set.push(DEMO_CITIES[(demo.c + i) % DEMO_CITIES.length]);
+      demo.c += 5;
+      var add = function () {
+        if (!demo.on) return;
+        if (k >= set.length) { demo.ct = setTimeout(demoCities, 3200); return; }
+        var q = set[k++], cc = countryAt(q[0], q[1]), ci = cityAt(q[0], q[1]);
+        if (cc && ci >= 0) {
+          var it = document.createElement("div"), body = document.createElement("div"), fu = flagUrl(cc);
+          it.className = "pc-item";
+          if (fu) { var im = document.createElement("img"); im.src = fu; im.alt = ""; it.appendChild(im); }
+          body.innerHTML = '<div class="nm"></div><div class="dt"></div>';
+          body.children[0].textContent = townName(ci); body.children[0].dataset.ti = ci;
+          body.children[1].textContent = countryName(cc) + " · " + q[2];
+          it.appendChild(body); box.appendChild(it);
+        }
+        demo.ct = setTimeout(add, 650);
+      };
+      add();
+    }, box.children.length ? 520 : 0);
   }
 
   // ===== Файлы подходящих форматов (21.11.2026) =====
@@ -2783,7 +3087,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   }
   else {
     show("vPick", true);
-    geo();
+    geo().then(demoSync);
     var q = new URLSearchParams(location.search), code = q.get("code");
     // Открытие (20.11.2026, Андрей: итог грузился дважды и нарочно медленно): итог этого браузера и сохранённое в учётной
     // записи приходят вместе и показываются один раз, коротко; пока ждём учётную запись — тонкая полоса ожидания.
