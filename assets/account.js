@@ -176,11 +176,12 @@
       return s || null;
     });
   }
-  // Выход: ключ отзывается на сервере, в этом браузере ничего не остаётся.
+  // Выход — только из этого браузера (scope=local): без него сервер по умолчанию закрывает вход на всех устройствах
+  // учётной записи, и 21.11.2026 выход на сайте выкинул Андрея из приложения на телефоне. В браузере ничего не остаётся.
   function out() {
     var s = S;
     keep(null);
-    s && fetch(SB + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at } }).catch(function () {});
+    s && fetch(SB + "/auth/v1/logout?scope=local", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at } }).catch(function () {});
   }
   // Сведения учётной записи (site_me): один запрос на открытие страницы, копия — десять минут.
   function me(force) {
