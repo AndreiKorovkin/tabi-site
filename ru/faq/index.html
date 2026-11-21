@@ -122,7 +122,7 @@ a.pill{text-decoration:none}a.pill:hover{filter:brightness(1.08)}
 .phones .p2{right:2%;top:70px;transform:rotate(4deg)}
 section{padding:96px 0}
 section,.cta,footer{content-visibility:auto;contain-intrinsic-size:auto 900px}
-section.alt{background:var(--bg2)}
+section.alt{background:color-mix(in srgb,var(--bg2) 72%,transparent)}
 .feel{text-align:center}
 .feel h2{max-width:16em;margin:0 auto 22px}
 .feel p{font-size:clamp(19px,2vw,24px);line-height:1.55;color:var(--sub);max-width:30em;margin:0 auto}
@@ -165,12 +165,12 @@ dialog.win.wide{width:min(760px,calc(100vw - 32px))}
 .lights{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .lights i,.lights b{position:absolute;border-radius:50%;will-change:transform,opacity}
 .lights i{width:58vmax;height:58vmax;opacity:.5;animation:ltDrift 30s ease-in-out infinite alternate}
-.lights i:nth-child(1){left:-18vmax;top:-22vmax;background:radial-gradient(circle,rgba(124,58,237,.75) 0,rgba(124,58,237,0) 62%);animation-duration:34s}
-.lights i:nth-child(2){right:-20vmax;top:-12vmax;background:radial-gradient(circle,rgba(37,99,235,.7) 0,rgba(37,99,235,0) 62%);animation-duration:27s;animation-delay:-9s}
-.lights i:nth-child(3){left:18vw;bottom:-30vmax;background:radial-gradient(circle,rgba(249,115,22,.6) 0,rgba(249,115,22,0) 62%);animation-duration:38s;animation-delay:-4s}
-.lights i:nth-child(4){right:-14vmax;bottom:-24vmax;background:radial-gradient(circle,rgba(168,85,247,.65) 0,rgba(168,85,247,0) 62%);animation-duration:31s;animation-delay:-15s}
-.lights i:nth-child(5){left:-16vmax;bottom:-8vmax;width:44vmax;height:44vmax;background:radial-gradient(circle,rgba(59,130,246,.6) 0,rgba(59,130,246,0) 62%);animation-duration:25s;animation-delay:-6s}
-.lights i:nth-child(6){left:34vw;top:-26vmax;width:46vmax;height:46vmax;background:radial-gradient(circle,rgba(251,146,60,.55) 0,rgba(251,146,60,0) 62%);animation-duration:36s;animation-delay:-20s}
+.lights i:nth-child(1){left:-18vmax;top:-22vmax;background:radial-gradient(circle,rgba(124,58,237,.46) 0,rgba(124,58,237,0) 62%);animation-duration:34s}
+.lights i:nth-child(2){right:-20vmax;top:-12vmax;background:radial-gradient(circle,rgba(37,99,235,.42) 0,rgba(37,99,235,0) 62%);animation-duration:27s;animation-delay:-9s}
+.lights i:nth-child(3){left:18vw;bottom:-30vmax;background:radial-gradient(circle,rgba(249,115,22,.34) 0,rgba(249,115,22,0) 62%);animation-duration:38s;animation-delay:-4s}
+.lights i:nth-child(4){right:-14vmax;bottom:-24vmax;background:radial-gradient(circle,rgba(168,85,247,.38) 0,rgba(168,85,247,0) 62%);animation-duration:31s;animation-delay:-15s}
+.lights i:nth-child(5){left:-16vmax;bottom:-8vmax;width:44vmax;height:44vmax;background:radial-gradient(circle,rgba(59,130,246,.36) 0,rgba(59,130,246,0) 62%);animation-duration:25s;animation-delay:-6s}
+.lights i:nth-child(6){left:34vw;top:-26vmax;width:46vmax;height:46vmax;background:radial-gradient(circle,rgba(251,146,60,.32) 0,rgba(251,146,60,0) 62%);animation-duration:36s;animation-delay:-20s}
 .lights b{width:var(--z,70px);height:var(--z,70px);opacity:0;animation:ltTwinkle var(--d,7s) ease-in-out infinite;animation-delay:var(--w,0s)}
 .lights b:nth-child(7){left:6vw;top:18vh;--z:90px;--d:6s;--w:-1s;background:radial-gradient(circle,rgba(139,92,246,.8) 0,rgba(139,92,246,0) 68%)}
 .lights b:nth-child(8){left:14vw;top:62vh;--z:60px;--d:8s;--w:-3s;background:radial-gradient(circle,rgba(251,146,60,.8) 0,rgba(251,146,60,0) 68%)}
@@ -186,8 +186,8 @@ dialog.win.wide{width:min(760px,calc(100vw - 32px))}
 .lights b:nth-child(18){right:30vw;top:90vh;--z:96px;--d:9.5s;--w:-7s;background:radial-gradient(circle,rgba(37,99,235,.75) 0,rgba(37,99,235,0) 68%)}
 .lights b:nth-child(19){left:9vw;top:44vh;--z:34px;--d:4s;--w:-2s;background:radial-gradient(circle,rgba(249,115,22,.85) 0,rgba(249,115,22,0) 68%)}
 .lights b:nth-child(20){right:11vw;top:40vh;--z:38px;--d:5s;--w:-3s;background:radial-gradient(circle,rgba(168,85,247,.85) 0,rgba(168,85,247,0) 68%)}
-@keyframes ltDrift{0%{transform:translate(0,0) scale(1);opacity:.55}35%{transform:translate(7vw,5vh) scale(1.14);opacity:.95}70%{transform:translate(-5vw,9vh) scale(.92);opacity:.7}100%{transform:translate(4vw,-6vh) scale(1.08);opacity:.9}}
-@keyframes ltTwinkle{0%,100%{opacity:0;transform:scale(.7)}45%{opacity:.9;transform:scale(1)}60%{opacity:.75;transform:scale(1.06)}}
+@keyframes ltDrift{0%{transform:translate(0,0) scale(1);opacity:.4}35%{transform:translate(7vw,5vh) scale(1.14);opacity:.8}70%{transform:translate(-5vw,9vh) scale(.92);opacity:.55}100%{transform:translate(4vw,-6vh) scale(1.08);opacity:.72}}
+@keyframes ltTwinkle{0%,100%{opacity:0;transform:scale(.7)}45%{opacity:.55;transform:scale(1)}60%{opacity:.45;transform:scale(1.06)}}
 :root[data-theme=light] .lights{opacity:.55}
 @media (prefers-reduced-motion:reduce){.lights i,.lights b{animation:none}.lights i{opacity:.45}.lights b{opacity:.35}}
 /* Пока окно открыто, страница за ним не прокручивается (21.11.2026, Андрей: колесо листало страницу за окном). */
@@ -275,6 +275,7 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
 <script src="/assets/account.js?v=21fed789be" defer></script>
 </head>
 <body>
+<div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
 <a class="skip" href="#main">Перейти к содержанию</a>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/ru/" aria-label="Tabi">Tabi</a>

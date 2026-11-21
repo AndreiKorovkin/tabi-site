@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=d793ca43b8">
+<link rel="stylesheet" href="/assets/site.css?v=0e0b758844">
 <script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
@@ -2355,10 +2355,14 @@ main.pc{position:relative}
         vis[rr.cc] && (lg.globalAlpha = 0.25, lg.fillStyle = C.acc, lg.fill(), lg.globalAlpha = 1);
         lg.strokeStyle = vis[rr.cc] ? C.acc : C.line; lg.lineWidth = (vis[rr.cc] ? 1.2 : 0.8) * dpr; lg.stroke();
       });
-      // Край подложки растворяется в фоне страницы (21.11.2026: прямоугольник карты выглядел обрезанным).
-      var gr = lg.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.28, W / 2, H / 2, Math.max(W, H) * 0.56);
-      gr.addColorStop(0, "rgba(0,0,0,1)"); gr.addColorStop(1, "rgba(0,0,0,0)");
-      lg.globalCompositeOperation = "destination-in"; lg.fillStyle = gr; lg.fillRect(0, 0, W, H);
+      // Край подложки растворяется в фоне страницы до нуля у всех четырёх сторон (21.11.2026, Андрей: у прямоугольника
+      // были видны резкие края — круглое затухание оставляло заливку у краёв наполовину).
+      lg.globalCompositeOperation = "destination-in";
+      [[0, 0, W, 0], [0, 0, 0, H]].forEach(function (d) {
+        var gr = lg.createLinearGradient(d[0], d[1], d[2], d[3]);
+        gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(0.24, "rgba(0,0,0,1)"); gr.addColorStop(0.76, "rgba(0,0,0,1)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+        lg.fillStyle = gr; lg.fillRect(0, 0, W, H);
+      });
       lg.globalCompositeOperation = "source-over";
       // Названия городов примера — загрузка перевода на язык страницы.
       R.forEach(function (q) { var ci = cityAt(q[0], q[1]); ci >= 0 && townName(ci); });
