@@ -112,9 +112,13 @@
     });
   }
   // Код на почту: и вход, и новая учётная запись — одно действие, как в приложении.
-  function otp(mail, lang) {
+  // kind — вид письма (21.11.2026): «sitedelete» — «Код для удаления учётной записи» без кнопки приложения, только для
+  // существующей учётной записи.
+  function otp(mail, lang, kind) {
     return captcha().then(function (tk) {
-      return auth("otp", { email: mail, create_user: true, data: { lang: lang || "en" }, gotrue_meta_security: { captcha_token: tk } });
+      return kind
+        ? auth("otp?redirect_to=" + encodeURIComponent("https://tabimobile.com/auth?otp=" + kind), { email: mail, create_user: false, gotrue_meta_security: { captcha_token: tk } })
+        : auth("otp", { email: mail, create_user: true, data: { lang: lang || "en" }, gotrue_meta_security: { captcha_token: tk } });
     }).then(function (r) { return !!r.ok; });
   }
   function verify(mail, code) {

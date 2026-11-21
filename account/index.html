@@ -4,7 +4,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css">
-<script src="/assets/account.js?v=7c12076fcd"></script>
+<script src="/assets/account.js?v=24405b062e"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -52,10 +52,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac-list li{background:var(--bg);border-radius:14px;padding:12px 14px;font-weight:600}
 .ac-list li span{display:block;color:var(--sub);font-weight:500;font-size:13px;margin-top:2px}
 .ac-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-.ac-foot{max-width:760px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 18px}
-.ac-foot a{color:var(--sub);font-weight:600;text-decoration:none}.ac-foot a:hover{color:var(--ink)}
 @media (max-width:520px){.ac-tile{padding:12px}.ac-tile b{font-size:22px}.ac-card{padding:20px}}
 .ac-btn.del{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+/* Выход и удаление (21.11.2026, Андрей: такие действия не на виду, как на крупных сайтах): тихие ссылки в самом низу. */
+.ac-quiet{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 22px;margin:18px 0 0}
+.ac-quiet button{appearance:none;background:none;border:0;padding:4px 0;cursor:pointer;font:inherit;font-size:13.5px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--sub) 45%,transparent)}
+.ac-quiet button:hover{color:var(--ink)}
 dialog.ac-dlg{border:1px solid var(--line);border-radius:24px;padding:26px;width:min(460px,calc(100vw - 32px));box-sizing:border-box;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
 dialog.ac-dlg::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
 dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
@@ -115,24 +117,26 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     <div class="ac-row"><a class="ac-btn" id="bPc"></a></div>
   </section>
   <p class="ac-s" id="wait" hidden></p>
-  <div id="vOut" hidden><button class="ac-btn b2" id="bOut" type="button"></button></div>
-  <!-- Удаление учётной записи на сайте (20.11.2026, Андрей: ссылка «Удалить аккаунт» вела на политику) -->
-  <section class="ac-card" id="delete">
+  <!-- Удаление учётной записи (20.11.2026; 21.11.2026, план Андрея: только с кодом из письма, продление подписки
+       отменяется): открывается тихой ссылкой внизу или адресом #delete (ссылка подвала и карточки Google Play). -->
+  <section class="ac-card" id="delete" hidden>
     <h2 id="delH"></h2>
     <p class="ac-t" id="delTxt"></p>
-    <div class="ac-row" id="delGo" hidden><button class="ac-btn del" id="bDel" type="button"></button></div>
-    <div class="ac-in" id="delAuthBox" hidden>
-      <button class="ac-btn" id="bDelGoogle" type="button"></button>
-      <button class="ac-btn b2" id="bDelCode" type="button" hidden></button>
+    <p class="ac-t" id="delPlus" hidden></p>
+    <div class="ac-in" id="delCodeBox" hidden>
+      <button class="ac-btn b2" id="bDelCode" type="button"></button>
       <input class="ac-f" id="delCode" inputmode="numeric" autocomplete="one-time-code" hidden>
-      <button class="ac-btn" id="bDelVerify" type="button" hidden></button>
+      <button class="ac-btn del" id="bDel" type="button" hidden></button>
     </div>
     <p class="ac-e" id="delErr" hidden></p>
   </section>
+  <div class="ac-quiet" id="vOut" hidden><button id="bOut" type="button"></button><button id="bDelOpen" type="button"></button></div>
 </main>
 <dialog class="ac-dlg" id="delDlg" aria-labelledby="delDlgT"><h2 id="delDlgT"></h2><p class="ac-t" id="delDlgX"></p>
 <div class="ac-row"><button class="ac-btn b2" id="delNo" type="button"></button><button class="ac-btn" id="delYes" type="button"></button></div></dialog>
-<footer class="ac-foot"><a href="/" id="fHome"></a><a href="/privacy.html" id="pol"></a><a href="/terms.html" id="terms"></a></footer>
+<dialog class="ac-dlg" id="outDlg" aria-labelledby="outDlgT"><h2 id="outDlgT"></h2><p class="ac-t" id="outDlgX"></p>
+<div class="ac-row"><button class="ac-btn b2" id="outNo" type="button"></button><button class="ac-btn" id="outYes" type="button"></button></div></dialog>
+<div id="foot"></div>
 <script>
 // Учётная запись Tabi на сайте tabimobile.com/account (18.11.2026, слово Андрея: полноценный вход на сайте; вход
 // сохраняется после закрытия браузера; сайт знает, есть ли у человека приложение, его ник и итоги; подписчик Tabi Plus
@@ -157,7 +161,6 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     "thAuto": {"en": "System theme", "ru": "Тема системы", "cs": "Motiv systému", "de": "Systemdesign", "fr": "Thème du système", "es": "Tema del sistema", "it": "Tema di sistema", "pt": "Tema do sistema", "ja": "システムのテーマ", "ko": "시스템 테마"},
     "thLight": {"en": "Light theme", "ru": "Светлая тема", "cs": "Světlý motiv", "de": "Helles Design", "fr": "Thème clair", "es": "Tema claro", "it": "Tema chiaro", "pt": "Tema claro", "ja": "ライトテーマ", "ko": "밝은 테마"},
     "thDark": {"en": "Dark theme", "ru": "Тёмная тема", "cs": "Tmavý motiv", "de": "Dunkles Design", "fr": "Thème sombre", "es": "Tema oscuro", "it": "Tema scuro", "pt": "Tema escuro", "ja": "ダークテーマ", "ko": "어두운 테마"},
-    "pol": {"en": "Privacy policy", "ru": "Политика конфиденциальности", "cs": "Zásady ochrany soukromí", "de": "Datenschutzerklärung", "fr": "Politique de confidentialité", "es": "Política de privacidad", "it": "Informativa sulla privacy", "pt": "Política de privacidade", "ja": "プライバシーポリシー", "ko": "개인정보처리방침"},
     "sCountries": {"en": "Countries", "ru": "Страны", "cs": "Země", "de": "Länder", "fr": "Pays", "es": "Países", "it": "Paesi", "pt": "Países", "ja": "国", "ko": "국가"},
     "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
     "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
@@ -182,7 +185,6 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     "planPlus": {"en": "Tabi Plus until {d}", "ru": "Tabi Plus до {d}", "cs": "Tabi Plus do {d}", "de": "Tabi Plus bis {d}", "fr": "Tabi Plus jusqu’au {d}", "es": "Tabi Plus hasta el {d}", "it": "Tabi Plus fino al {d}", "pt": "Tabi Plus até {d}", "ja": "Tabi Plus（{d}まで）", "ko": "Tabi Plus ({d}까지)"},
     "planPlusNow": {"en": "Tabi Plus", "ru": "Tabi Plus", "cs": "Tabi Plus", "de": "Tabi Plus", "fr": "Tabi Plus", "es": "Tabi Plus", "it": "Tabi Plus", "pt": "Tabi Plus", "ja": "Tabi Plus", "ko": "Tabi Plus"},
     "planFree": {"en": "Free version", "ru": "Бесплатная версия", "cs": "Bezplatná verze", "de": "Kostenlose Version", "fr": "Version gratuite", "es": "Versión gratuita", "it": "Versione gratuita", "pt": "Versão gratuita", "ja": "無料版", "ko": "무료 버전"},
-    "terms": {"en": "Terms of use", "ru": "Условия использования", "cs": "Podmínky používání", "de": "Nutzungsbedingungen", "fr": "Conditions d’utilisation", "es": "Condiciones de uso", "it": "Condizioni d’uso", "pt": "Termos de uso", "ja": "利用規約", "ko": "이용약관"},
     "delH": {"en": "Delete account", "ru": "Удаление учётной записи", "cs": "Smazání účtu", "de": "Konto löschen", "fr": "Suppression du compte", "es": "Eliminar la cuenta", "it": "Eliminazione dell’account", "pt": "Excluir a conta", "ja": "アカウントの削除", "ko": "계정 삭제"},
     "delX": {"en": "Your collection, route, coins, devices and the account itself will be deleted for good. This cannot be undone.", "ru": "Коллекция, маршрут, монеты, устройства и сама учётная запись будут удалены навсегда. Отменить это нельзя.", "cs": "Sbírka, trasa, mince, zařízení i samotný účet budou smazány natrvalo. Vrátit to nelze.", "de": "Ihre Sammlung, Route, Münzen, Geräte und das Konto selbst werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.", "fr": "Votre collection, votre itinéraire, vos pièces, vos appareils et le compte lui-même seront supprimés définitivement. C’est irréversible.", "es": "Tu colección, tu ruta, tus monedas, tus dispositivos y la propia cuenta se eliminarán para siempre. No se puede deshacer.", "it": "La collezione, il percorso, le monete, i dispositivi e l’account stesso verranno eliminati per sempre. Non è possibile annullare.", "pt": "Sua coleção, rota, moedas, dispositivos e a própria conta serão excluídos para sempre. Não é possível desfazer.", "ja": "コレクション、ルート、コイン、デバイス、そしてアカウント自体が完全に削除されます。元に戻すことはできません。", "ko": "컬렉션, 경로, 코인, 기기와 계정 자체가 영구히 삭제됩니다. 되돌릴 수 없습니다."},
     "delOut": {"en": "To delete your account, first sign in above with that account. You can also delete it in the app settings.", "ru": "Чтобы удалить учётную запись, сначала войдите в неё выше. Удалить её можно и в настройках приложения.", "cs": "Chcete-li účet smazat, nejprve se do něj výše přihlaste. Smazat ho můžete i v nastavení aplikace.", "de": "Um Ihr Konto zu löschen, melden Sie sich oben zuerst mit diesem Konto an. Sie können es auch in den App-Einstellungen löschen.", "fr": "Pour supprimer votre compte, connectez-vous d’abord ci-dessus avec ce compte. Vous pouvez aussi le supprimer dans les réglages de l’application.", "es": "Para eliminar tu cuenta, primero inicia sesión arriba con ella. También puedes eliminarla en los ajustes de la aplicación.", "it": "Per eliminare l’account, acceda prima qui sopra con quell’account. Può eliminarlo anche nelle impostazioni dell’app.", "pt": "Para excluir sua conta, primeiro entre nela acima. Você também pode excluí-la nas configurações do aplicativo.", "ja": "アカウントを削除するには、まず上でそのアカウントにログインしてください。アプリの設定から削除することもできます。", "ko": "계정을 삭제하려면 먼저 위에서 그 계정으로 로그인하세요. 앱 설정에서도 삭제할 수 있습니다."},
@@ -191,12 +193,32 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     "delDlgX": {"en": "Everything will be deleted: the special places in your collection, your route, countries, cities, coins, devices and the account itself. This cannot be undone.", "ru": "Будет удалено всё: особые места коллекции, маршрут, страны, города, монеты, устройства и сама учётная запись. Отменить это нельзя.", "cs": "Smaže se vše: výjimečná místa ve sbírce, trasa, země, města, mince, zařízení i samotný účet. Vrátit to nelze.", "de": "Alles wird gelöscht: die besonderen Orte Ihrer Sammlung, Ihre Route, Länder, Städte, Münzen, Geräte und das Konto selbst. Das lässt sich nicht rückgängig machen.", "fr": "Tout sera supprimé : les lieux d’exception de votre collection, votre itinéraire, les pays, les villes, les pièces, les appareils et le compte lui-même. C’est irréversible.", "es": "Se eliminará todo: los lugares especiales de tu colección, tu ruta, países, ciudades, monedas, dispositivos y la propia cuenta. No se puede deshacer.", "it": "Verrà eliminato tutto: i luoghi speciali della collezione, il percorso, i paesi, le città, le monete, i dispositivi e l’account stesso. Non è possibile annullare.", "pt": "Tudo será excluído: os lugares especiais da sua coleção, a rota, os países, as cidades, as moedas, os dispositivos e a própria conta. Não é possível desfazer.", "ja": "コレクションの特別な場所、ルート、国、都市、コイン、デバイス、そしてアカウント自体まで、すべてが削除されます。元に戻すことはできません。", "ko": "컬렉션의 특별한 장소, 경로, 국가, 도시, 코인, 기기와 계정 자체까지 모두 삭제됩니다. 되돌릴 수 없습니다."},
     "delNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
     "delYes": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
-    "delAuth": {"en": "To confirm the deletion, sign in again with the same account.", "ru": "Чтобы подтвердить удаление, войдите ещё раз в ту же учётную запись.", "cs": "Pro potvrzení smazání se znovu přihlaste do stejného účtu.", "de": "Um das Löschen zu bestätigen, melden Sie sich erneut mit demselben Konto an.", "fr": "Pour confirmer la suppression, reconnectez-vous avec le même compte.", "es": "Para confirmar la eliminación, vuelve a iniciar sesión con la misma cuenta.", "it": "Per confermare l’eliminazione, acceda di nuovo con lo stesso account.", "pt": "Para confirmar a exclusão, entre novamente na mesma conta.", "ja": "削除を確定するには、同じアカウントでもう一度ログインしてください。", "ko": "삭제를 확인하려면 같은 계정으로 다시 로그인하세요."},
     "delDone": {"en": "Your account has been deleted.", "ru": "Учётная запись удалена.", "cs": "Účet byl smazán.", "de": "Ihr Konto wurde gelöscht.", "fr": "Votre compte a été supprimé.", "es": "Tu cuenta se ha eliminado.", "it": "L’account è stato eliminato.", "pt": "Sua conta foi excluída.", "ja": "アカウントを削除しました。", "ko": "계정이 삭제되었습니다."},
     "delOwner": {"en": "This account cannot be deleted from the website.", "ru": "Эту учётную запись нельзя удалить с сайта.", "cs": "Tento účet nelze smazat z webu.", "de": "Dieses Konto lässt sich nicht über die Website löschen.", "fr": "Ce compte ne peut pas être supprimé depuis le site.", "es": "Esta cuenta no se puede eliminar desde el sitio web.", "it": "Questo account non può essere eliminato dal sito.", "pt": "Esta conta não pode ser excluída pelo site.", "ja": "このアカウントはサイトから削除できません。", "ko": "이 계정은 웹사이트에서 삭제할 수 없습니다."},
-    "delOther": {"en": "You signed in to a different account, so nothing was deleted.", "ru": "Вы вошли в другую учётную запись, поэтому ничего не удалено.", "cs": "Přihlásili jste se do jiného účtu, proto se nic nesmazalo.", "de": "Sie haben sich mit einem anderen Konto angemeldet, daher wurde nichts gelöscht.", "fr": "Vous vous êtes connecté à un autre compte : rien n’a été supprimé.", "es": "Has iniciado sesión en otra cuenta, así que no se ha eliminado nada.", "it": "Ha effettuato l’accesso a un altro account, quindi non è stato eliminato nulla.", "pt": "Você entrou em outra conta, por isso nada foi excluído.", "ja": "別のアカウントにログインしたため、何も削除されていません。", "ko": "다른 계정으로 로그인했기 때문에 아무것도 삭제되지 않았습니다."},
-    "delErr": {"en": "The account could not be deleted. Check your connection and try again.", "ru": "Не удалось удалить учётную запись. Проверьте связь и попробуйте ещё раз.", "cs": "Účet se nepodařilo smazat. Zkontrolujte připojení a zkuste to znovu.", "de": "Das Konto konnte nicht gelöscht werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le compte n’a pas pu être supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo eliminar la cuenta. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile eliminare l’account. Controlli la connessione e riprovi.", "pt": "Não foi possível excluir a conta. Verifique a conexão e tente novamente.", "ja": "アカウントを削除できませんでした。接続を確認して、もう一度お試しください。", "ko": "계정을 삭제하지 못했습니다. 연결을 확인하고 다시 시도하세요."}
+    "delErr": {"en": "The account could not be deleted. Check your connection and try again.", "ru": "Не удалось удалить учётную запись. Проверьте связь и попробуйте ещё раз.", "cs": "Účet se nepodařilo smazat. Zkontrolujte připojení a zkuste to znovu.", "de": "Das Konto konnte nicht gelöscht werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le compte n’a pas pu être supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo eliminar la cuenta. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile eliminare l’account. Controlli la connessione e riprovi.", "pt": "Não foi possível excluir a conta. Verifique a conexão e tente novamente.", "ja": "アカウントを削除できませんでした。接続を確認して、もう一度お試しください。", "ko": "계정을 삭제하지 못했습니다. 연결을 확인하고 다시 시도하세요."},
+    "outLink": {"en": "Sign out of the account", "ru": "Выйти из учётной записи", "cs": "Odhlásit se z účtu", "de": "Vom Konto abmelden", "fr": "Se déconnecter du compte", "es": "Cerrar sesión en la cuenta", "it": "Esci dall’account", "pt": "Sair da conta", "ja": "アカウントからログアウト", "ko": "계정에서 로그아웃"},
+    "outDlgT": {"en": "Sign out?", "ru": "Выйти из учётной записи?", "cs": "Odhlásit se z účtu?", "de": "Vom Konto abmelden?", "fr": "Se déconnecter du compte ?", "es": "¿Cerrar sesión?", "it": "Uscire dall’account?", "pt": "Sair da conta?", "ja": "ログアウトしますか？", "ko": "로그아웃할까요?"},
+    "outDlgX": {"en": "You will be signed out in this browser. Everything saved stays in your account and will be back when you sign in again.", "ru": "Вы выйдете из учётной записи в этом браузере. Всё сохранённое останется в ней и вернётся при следующем входе.", "cs": "V tomto prohlížeči se odhlásíte. Vše uložené zůstane ve vašem účtu a po dalším přihlášení se vrátí.", "de": "Sie werden in diesem Browser abgemeldet. Alles Gespeicherte bleibt in Ihrem Konto und ist nach der nächsten Anmeldung wieder da.", "fr": "Vous serez déconnecté dans ce navigateur. Tout ce qui est enregistré reste dans votre compte et reviendra à la prochaine connexion.", "es": "Se cerrará la sesión en este navegador. Todo lo guardado se queda en tu cuenta y volverá cuando inicies sesión de nuevo.", "it": "Uscirà dall’account in questo browser. Tutto ciò che è salvato resta nel Suo account e tornerà al prossimo accesso.", "pt": "Você sairá da conta neste navegador. Tudo o que foi salvo continua na sua conta e voltará quando você entrar de novo.", "ja": "このブラウザーでログアウトします。保存した内容はアカウントに残り、次にログインすると戻ります。", "ko": "이 브라우저에서 로그아웃됩니다. 저장된 내용은 계정에 남아 있으며 다시 로그인하면 돌아옵니다."},
+    "appNoPhone": {"en": "This account is not signed in on any phone right now.", "ru": "Сейчас ни на одном телефоне не выполнен вход в эту учётную запись.", "cs": "Do tohoto účtu teď není přihlášen žádný telefon.", "de": "Mit diesem Konto ist derzeit auf keinem Telefon jemand angemeldet.", "fr": "Ce compte n’est actuellement connecté sur aucun téléphone.", "es": "Ahora mismo esta cuenta no tiene la sesión iniciada en ningún teléfono.", "it": "Al momento questo account non è connesso su nessun telefono.", "pt": "No momento, esta conta não está conectada em nenhum telefone.", "ja": "現在、このアカウントでログインしているスマートフォンはありません。", "ko": "현재 이 계정으로 로그인된 휴대폰이 없습니다."},
+    "delPlus": {"en": "Tabi Plus renewal will be cancelled, and Google Play will stop charging you. The time already paid for is lost together with the account.", "ru": "Продление подписки Tabi Plus будет отменено, и Google Play больше не будет списывать оплату. Оплаченный срок пропадёт вместе с учётной записью.", "cs": "Obnovování předplatného Tabi Plus bude zrušeno a Google Play už nebude účtovat platby. Zaplacené období zanikne spolu s účtem.", "de": "Die Verlängerung von Tabi Plus wird gekündigt, und Google Play bucht nichts mehr ab. Die bereits bezahlte Zeit verfällt zusammen mit dem Konto.", "fr": "Le renouvellement de Tabi Plus sera annulé, et Google Play cessera de vous facturer. La période déjà payée disparaît avec le compte.", "es": "Se cancelará la renovación de Tabi Plus y Google Play dejará de cobrarte. El tiempo ya pagado se pierde junto con la cuenta.", "it": "Il rinnovo di Tabi Plus verrà annullato e Google Play non addebiterà più nulla. Il periodo già pagato andrà perso insieme all’account.", "pt": "A renovação do Tabi Plus será cancelada, e o Google Play deixará de cobrar. O período já pago será perdido junto com a conta.", "ja": "Tabi Plus の自動更新は解約され、Google Play からの請求は止まります。支払い済みの期間はアカウントとともに失われます。", "ko": "Tabi Plus 자동 갱신이 해지되어 Google Play에서 더 이상 결제되지 않습니다. 이미 결제한 기간은 계정과 함께 사라집니다."},
+    "delCodeBtn": {"en": "Get a code at {m}", "ru": "Получить код на {m}", "cs": "Získat kód na {m}", "de": "Code an {m} anfordern", "fr": "Recevoir un code à {m}", "es": "Recibir un código en {m}", "it": "Ricevi il codice su {m}", "pt": "Receber código em {m}", "ja": "{m} でコードを受け取る", "ko": "{m}(으)로 코드 받기"},
+    "delSubFail": {"en": "The subscription renewal could not be cancelled, so the account was not deleted. Check your connection and try again.", "ru": "Не удалось отменить продление подписки, поэтому учётная запись не удалена. Проверьте связь и попробуйте ещё раз.", "cs": "Obnovování předplatného se nepodařilo zrušit, proto účet nebyl smazán. Zkontrolujte připojení a zkuste to znovu.", "de": "Die Verlängerung des Abos konnte nicht gekündigt werden, daher wurde das Konto nicht gelöscht. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le renouvellement de l’abonnement n’a pas pu être annulé, le compte n’a donc pas été supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo cancelar la renovación de la suscripción, así que la cuenta no se ha eliminado. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile annullare il rinnovo dell’abbonamento, quindi l’account non è stato eliminato. Controlli la connessione e riprovi.", "pt": "Não foi possível cancelar a renovação da assinatura, por isso a conta não foi excluída. Verifique a conexão e tente novamente.", "ja": "サブスクリプションの自動更新を解約できなかったため、アカウントは削除されていません。接続を確認して、もう一度お試しください。", "ko": "구독 자동 갱신을 해지하지 못해 계정이 삭제되지 않았습니다. 연결을 확인하고 다시 시도해 주세요."}
   };
+  // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
+  // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
+  var FOOT = {"en": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">A collection of the special places you have been.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=en\">Media files from my computer</a><a href=\"/account/?lang=en\">Account</a><a href=\"/how-it-works/\">How it works</a><a href=\"/collection/\">Collection</a><a href=\"/your-data/\">Your data</a><a href=\"/faq/\">FAQ</a><a href=\"/about/\">About Tabi</a><a href=\"/team/\">Team</a><a href=\"/privacy.html\">Privacy policy</a><a href=\"/terms.html\">Terms of use</a><a href=\"/account/?lang=en#delete\">Delete account</a><a href=\"/team/#contact\">Contact</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\" aria-current=\"page\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Map screenshots: © OpenStreetMap contributors, © CARTO. Place descriptions and photos: Wikipedia and Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "ru": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/ru/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Коллекция особых мест, где ты побывал.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ru\">Медиафайлы с моего компьютера</a><a href=\"/account/?lang=ru\">Учётная запись</a><a href=\"/ru/how-it-works/\">Как это работает</a><a href=\"/ru/collection/\">Коллекция</a><a href=\"/ru/your-data/\">Данные</a><a href=\"/ru/faq/\">Вопросы</a><a href=\"/ru/about/\">О Tabi</a><a href=\"/ru/team/\">Команда</a><a href=\"/privacy.ru.html\">Политика конфиденциальности</a><a href=\"/terms.ru.html\">Условия использования</a><a href=\"/account/?lang=ru#delete\">Удаление учётной записи</a><a href=\"/ru/team/#contact\">Связь</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\" aria-current=\"page\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Снимки карт: © участники OpenStreetMap, © CARTO. Описания и фотографии мест: Википедия и Викисклад.<br>© 2026 Tabi</p>\n</div></footer>", "cs": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/cs/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Sbírka výjimečných míst, kde jsi byl.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=cs\">Mediální soubory z mého počítače</a><a href=\"/account/?lang=cs\">Účet</a><a href=\"/cs/how-it-works/\">Jak to funguje</a><a href=\"/cs/collection/\">Sbírka</a><a href=\"/cs/your-data/\">Data</a><a href=\"/cs/faq/\">Otázky</a><a href=\"/cs/about/\">O Tabi</a><a href=\"/cs/team/\">Tým</a><a href=\"/privacy.cs.html\">Zásady ochrany soukromí</a><a href=\"/terms.cs.html\">Podmínky používání</a><a href=\"/account/?lang=cs#delete\">Smazání účtu</a><a href=\"/cs/team/#contact\">Kontakt</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\" aria-current=\"page\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Snímky map: © přispěvatelé OpenStreetMap, © CARTO. Popisy a fotky míst: Wikipedie a Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "de": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/de/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Eine Sammlung der besonderen Orte, an denen du warst.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=de\">Mediendateien von meinem Computer</a><a href=\"/account/?lang=de\">Konto</a><a href=\"/de/how-it-works/\">So funktioniert’s</a><a href=\"/de/collection/\">Sammlung</a><a href=\"/de/your-data/\">Deine Daten</a><a href=\"/de/faq/\">Fragen</a><a href=\"/de/about/\">Über Tabi</a><a href=\"/de/team/\">Team</a><a href=\"/privacy.de.html\">Datenschutzerklärung</a><a href=\"/terms.de.html\">Nutzungsbedingungen</a><a href=\"/account/?lang=de#delete\">Konto löschen</a><a href=\"/de/team/#contact\">Kontakt</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\" aria-current=\"page\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Kartenbilder: © OpenStreetMap-Mitwirkende, © CARTO. Beschreibungen und Fotos der Orte: Wikipedia und Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "fr": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/fr/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La collection des lieux d’exception que tu as visités.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=fr\">Fichiers multimédias de mon ordinateur</a><a href=\"/account/?lang=fr\">Compte</a><a href=\"/fr/how-it-works/\">Fonctionnement</a><a href=\"/fr/collection/\">Collection</a><a href=\"/fr/your-data/\">Tes données</a><a href=\"/fr/faq/\">Questions</a><a href=\"/fr/about/\">À propos</a><a href=\"/fr/team/\">L’équipe</a><a href=\"/privacy.fr.html\">Politique de confidentialité</a><a href=\"/terms.fr.html\">Conditions d’utilisation</a><a href=\"/account/?lang=fr#delete\">Supprimer le compte</a><a href=\"/fr/team/#contact\">Contact</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\" aria-current=\"page\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Captures de cartes : © contributeurs d’OpenStreetMap, © CARTO. Descriptions et photos des lieux : Wikipédia et Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "es": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/es/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La colección de los lugares especiales donde has estado.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=es\">Archivos multimedia de mi ordenador</a><a href=\"/account/?lang=es\">Cuenta</a><a href=\"/es/how-it-works/\">Cómo funciona</a><a href=\"/es/collection/\">Colección</a><a href=\"/es/your-data/\">Tus datos</a><a href=\"/es/faq/\">Preguntas</a><a href=\"/es/about/\">Sobre Tabi</a><a href=\"/es/team/\">Equipo</a><a href=\"/privacy.es.html\">Política de privacidad</a><a href=\"/terms.es.html\">Condiciones de uso</a><a href=\"/account/?lang=es#delete\">Eliminar cuenta</a><a href=\"/es/team/#contact\">Contacto</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\" aria-current=\"page\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Capturas de mapas: © colaboradores de OpenStreetMap, © CARTO. Descripciones y fotos de lugares: Wikipedia y Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "it": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La collezione dei luoghi speciali in cui sei stato.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=it\">File multimediali dal mio computer</a><a href=\"/account/?lang=it\">Account</a><a href=\"/how-it-works/\">Come funziona</a><a href=\"/collection/\">Collezione</a><a href=\"/your-data/\">I tuoi dati</a><a href=\"/faq/\">Domande</a><a href=\"/about/\">Informazioni su Tabi</a><a href=\"/team/\">Team</a><a href=\"/privacy.it.html\">Informativa sulla privacy</a><a href=\"/terms.it.html\">Condizioni d’uso</a><a href=\"/account/?lang=it#delete\">Eliminazione dell’account</a><a href=\"/team/#contact\">Contatti</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\" aria-current=\"page\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Schermate delle mappe: © collaboratori di OpenStreetMap, © CARTO. Descrizioni e foto dei luoghi: Wikipedia e Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "pt": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">A coleção dos lugares especiais onde você esteve.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=pt\">Arquivos de mídia do meu computador</a><a href=\"/account/?lang=pt\">Conta</a><a href=\"/how-it-works/\">Como funciona</a><a href=\"/collection/\">Coleção</a><a href=\"/your-data/\">Seus dados</a><a href=\"/faq/\">Perguntas</a><a href=\"/about/\">Sobre o Tabi</a><a href=\"/team/\">Equipe</a><a href=\"/privacy.pt.html\">Política de privacidade</a><a href=\"/terms.pt.html\">Termos de uso</a><a href=\"/account/?lang=pt#delete\">Exclusão da conta</a><a href=\"/team/#contact\">Contato</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\" aria-current=\"page\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Imagens dos mapas: © colaboradores do OpenStreetMap, © CARTO. Descrições e fotos dos lugares: Wikipédia e Wikimedia Commons.<br>© 2026 Tabi</p>\n</div></footer>", "ja": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/ja/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">訪れた特別な場所のコレクション。</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ja\">自分のパソコンのメディアファイル</a><a href=\"/account/?lang=ja\">アカウント</a><a href=\"/ja/how-it-works/\">しくみ</a><a href=\"/ja/collection/\">コレクション</a><a href=\"/ja/your-data/\">データ</a><a href=\"/ja/faq/\">よくある質問</a><a href=\"/ja/about/\">Tabi について</a><a href=\"/ja/team/\">チーム</a><a href=\"/privacy.ja.html\">プライバシーポリシー</a><a href=\"/terms.ja.html\">利用規約</a><a href=\"/account/?lang=ja#delete\">アカウントの削除</a><a href=\"/ja/team/#contact\">お問い合わせ</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\" aria-current=\"page\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">地図の画像：© OpenStreetMap contributors、© CARTO。場所の説明と写真：ウィキペディア、ウィキメディア・コモンズ。<br>© 2026 Tabi</p>\n</div></footer>", "ko": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">내가 가 본 특별한 장소들의 컬렉션.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ko\">내 컴퓨터의 미디어 파일</a><a href=\"/account/?lang=ko\">계정</a><a href=\"/how-it-works/\">이용 방법</a><a href=\"/collection/\">컬렉션</a><a href=\"/your-data/\">내 데이터</a><a href=\"/faq/\">자주 묻는 질문</a><a href=\"/about/\">Tabi 소개</a><a href=\"/team/\">팀</a><a href=\"/privacy.ko.html\">개인정보처리방침</a><a href=\"/terms.ko.html\">이용약관</a><a href=\"/account/?lang=ko#delete\">계정 삭제</a><a href=\"/team/#contact\">문의</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\" aria-current=\"page\">한국어</a></div>\n<p class=\"credits\">지도 화면: © OpenStreetMap 기여자, © CARTO. 장소 설명과 사진: 위키백과와 위키미디어 공용.<br>© 2026 Tabi</p>\n</div></footer>"};
+  function footPut() {
+    var f = $("foot");
+    f.innerHTML = FOOT[L] || FOOT.en;
+    f.onclick = function (ev) {
+      var a = ev.target.closest && ev.target.closest("a[data-l]");
+      if (!a) return;
+      ev.preventDefault();
+      setLang(a.getAttribute("data-l"));
+    };
+  }
+  function setLang(l) { L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts(); }
+
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
     SITE_LANGS = ["en", "cs", "de", "es", "fr", "ja", "ru"];
@@ -257,18 +279,16 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
       var li = document.createElement("li"), b = document.createElement("button");
       b.type = "button"; b.lang = l; b.textContent = LANG_NAMES[l];
       l === L && b.setAttribute("aria-current", "true");
-      b.onclick = function () { L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts(); };
+      b.onclick = function () { setLang(l); };
       li.appendChild(b); $("langList").appendChild(li);
     });
-    $("homeLink").href = $("fHome").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
+    $("homeLink").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
     renderNav();
-    $("fHome").textContent = "tabimobile.com";
-    $("pol").href = L === "en" ? "/privacy.html" : "/privacy." + L + ".html"; $("pol").textContent = t("pol");
-    $("terms").href = L === "en" ? "/terms.html" : "/terms." + L + ".html"; $("terms").textContent = t("terms");
+    footPut();
     var set = { title: "accTitle", lead: "accLead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", hColl: "hColl",
       sCountries: "sCountries", sCities: "sCities", sPlaces: "sPlaces", hApp: "hApp", appNone: "appNone", bPlay: "install", hPc: "title",
-      pcX: "pcX", bPc: "pcBtn", bOut: "out", wait: "wait", delH: "delH", bDel: "delBtn", delDlgT: "delDlgT", delDlgX: "delDlgX",
-      delNo: "delNo", delYes: "delYes", bDelGoogle: "google", bDelVerify: "verify" };
+      pcX: "pcX", bPc: "pcBtn", bOut: "outLink", wait: "wait", delH: "delH", bDel: "delBtn", delDlgT: "delDlgT", delDlgX: "delDlgX",
+      delNo: "delNo", delYes: "delYes", bDelOpen: "delBtn", outDlgT: "outDlgT", outDlgX: "outDlgX", outNo: "delNo", outYes: "out" };
     for (var id in set) $(id).textContent = t(set[id]);
     $("mail").placeholder = t("mailPh"); $("code").placeholder = t("codePh"); $("delCode").placeholder = t("codePh");
     $("bPlay").href = PLAY + "&hl=" + L;
@@ -285,6 +305,7 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     renderDel();
     $("vIn").hidden = !!S;
     ["vMe", "vColl", "vApp", "vPc", "vOut"].forEach(function (id) { $(id).hidden = !S || !ME; });
+    $("vOut").hidden = !S;
     $("wait").hidden = !(S && !ME);
     if (!S || !ME) return;
     var name = ME.nick || (S.mail || "").split("@")[0] || "Tabi";
@@ -297,9 +318,12 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     $("nCountries").textContent = num(ME.countries);
     $("nCities").textContent = num(ME.cities);
     $("nPlaces").textContent = num(ME.places);
-    var ph = ME.phones || [];
+    // Приложение у человека есть, если оно хоть раз работало с этой учётной записью (21.11.2026, Андрей): установку
+    // такому человеку не предлагаем; телефоны — те, где вход выполнен сейчас.
+    var ph = ME.phones || [], has = !!ME.app || ph.length > 0;
     $("appNone").hidden = ph.length > 0;
-    $("bPlay").hidden = ph.length > 0;
+    $("appNone").textContent = t(has ? "appNoPhone" : "appNone");
+    $("bPlay").hidden = has;
     $("phones").innerHTML = "";
     ph.forEach(function (p) {
       var li = document.createElement("li"), s = document.createElement("span");
@@ -323,7 +347,7 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
   // ===== Вход =====
   window.addEventListener("message", function (e) {
     if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
-    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? (afterAuth(), load(true)) : err("eCode"); });
+    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? load(true) : err("eCode"); });
   });
   $("bGoogle").onclick = function () { err(null); ACC.google(BACK + "?lang=" + L); };
   $("bCode").onclick = function () {
@@ -342,91 +366,89 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     err(null);
     ACC.verify(m, c).then(function (s) { s ? load(true) : err("eCode"); }).catch(function () { err("eNet"); });
   };
-  $("bOut").onclick = function () { ACC.out(); ME = null; render(); };
+  // Выход — с окном подтверждения (21.11.2026, Андрей).
+  var dlg = function (id, on) { var d = $(id); on ? (d.showModal ? d.showModal() : d.setAttribute("open", "")) : (d.close ? d.close() : d.removeAttribute("open")); };
+  $("bOut").onclick = function () { dlg("outDlg", true); };
+  $("outNo").onclick = function () { dlg("outDlg", false); };
+  $("outYes").onclick = function () { dlg("outDlg", false); ACC.out(); ME = null; DEL = { step: "", msg: "", done: false, open: false }; render(); };
 
-  // ===== Удаление учётной записи (20.11.2026, Андрей: ссылка «Удалить аккаунт» в подвале должна работать) =====
-  // Сервер (delete_my_account) удаляет, только если вход кодом или через Google был не раньше десяти минут назад. Окно
-  // подтверждения; вход свежий — удаление сразу; иначе — войти ещё раз в ту же учётную запись (Google или код на почту),
-  // и удаление идёт без второго вопроса. Вошли в другую учётную запись — ничего не удаляется.
-  var DEL = { step: "", msg: "", done: false };
-  var PEND = "tabiDelPend";
-  function jwt(s) { try { var p = s.at.split(".")[1]; return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((p.length + 3) % 4))); } catch (e) { return {}; } }
-  function freshAuth(s) {
-    var now = Date.now() / 1000;
-    return (jwt(s).amr || []).some(function (a) { return (a.method === "otp" || a.method === "oauth") && +a.timestamp >= now - 540; });
-  }
-  function pendGet() { try { var v = JSON.parse(sessionStorage.getItem(PEND) || "null"); return v && Date.now() - v.t < 900000 ? v : null; } catch (e) { return null; } }
-  function pendSet(v) { try { v ? sessionStorage.setItem(PEND, JSON.stringify(v)) : sessionStorage.removeItem(PEND); } catch (e) {} }
+  // ===== Удаление учётной записи (20.11.2026; 21.11.2026, план Андрея) =====
+  // Только по коду из письма на почту учётной записи («Код для удаления учётной записи»): сервер (delete_my_account)
+  // принимает удаление, только если вход по такому коду был не раньше десяти минут назад. При подписке Tabi Plus сначала
+  // отменяется её продление (play-billing cancel_all, как в приложении); не отменилось — учётная запись не удаляется.
+  // Последний шаг — окно подтверждения. Панель открывается тихой ссылкой внизу или адресом #delete (подвал, Google Play).
+  var DEL = { step: "", msg: "", done: false, open: location.hash === "#delete" };
+  var SB = "https://ogrdnhwfgasbgcespsou.supabase.co", PUB = "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5";
   function renderDel() {
-    var S = ACC.get();
-    $("delTxt").textContent = DEL.done ? t("delDone") : S ? (DEL.step === "auth" ? t("delAuth") : t("delX")) : t("delOut");
-    $("delGo").hidden = !S || DEL.done || DEL.step === "auth";
-    $("delAuthBox").hidden = !S || DEL.done || DEL.step !== "auth";
-    $("bDelCode").hidden = !(S && S.mail);
-    $("bDelCode").textContent = S && S.mail ? t("getCode") + " · " + S.mail : "";
+    var S = ACC.get(), owner = !!(ME && ME.owner), plus = !!(ME && ME.plus);
+    $("delete").hidden = !DEL.open && !DEL.done;
+    $("delTxt").textContent = DEL.done ? t("delDone") : !S ? t("delOut") : owner ? t("delOwner") : t("delX");
+    $("delPlus").hidden = !S || DEL.done || owner || !plus;
+    $("delPlus").textContent = t("delPlus");
+    $("delCodeBox").hidden = !S || !S.mail || DEL.done || owner || !ME;
+    $("bDelCode").textContent = S && S.mail ? t("delCodeBtn", { m: S.mail }) : "";
+    $("delCode").hidden = $("bDel").hidden = DEL.step !== "code";
     $("delErr").hidden = !DEL.msg; $("delErr").textContent = DEL.msg ? t(DEL.msg) : "";
   }
-  function delNow() {
-    var S0 = ACC.get();
-    if (!S0) return;
-    $("bDel").disabled = true;
-    ACC.fresh().then(function (s) {
-      if (!s) throw new Error("net");
-      if (!freshAuth(s)) { pendSet({ u: ACC.uid(), t: Date.now() }); DEL.step = "auth"; DEL.msg = ""; renderDel(); return null; }
-      return fetch("https://ogrdnhwfgasbgcespsou.supabase.co/rest/v1/rpc/delete_my_account", { method: "POST",
-        headers: { apikey: "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5", Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: "{}" })
-        .then(function (r) { return r.text().then(function (x) { return { ok: r.ok, x: x }; }); })
-        .then(function (r) {
-          if (r.ok) return delDone();
-          if (/recent_code_required/.test(r.x)) { pendSet({ u: ACC.uid(), t: Date.now() }); DEL.step = "auth"; DEL.msg = ""; return renderDel(); }
-          DEL.msg = /owner account/.test(r.x) ? "delOwner" : "delErr"; DEL.step = ""; pendSet(null); renderDel();
+  function delOpen() {
+    DEL.open = true; DEL.msg = ""; renderDel();
+    setTimeout(function () { $("delete").scrollIntoView({ block: "start", behavior: "smooth" }); }, 30);
+  }
+  function post(url, at, body) {
+    return fetch(url, { method: "POST", headers: { apikey: PUB, Authorization: "Bearer " + at, "Content-Type": "application/json" }, body: JSON.stringify(body || {}) })
+      .then(function (r) { return r.text().then(function (x) { var j = null; try { j = JSON.parse(x); } catch (e) {} return { ok: r.ok, x: x, j: j }; }); });
+  }
+  function delFail(k) { DEL.msg = k; renderDel(); $("bDel").disabled = false; }
+  // Код из письма → продление подписки → удаление.
+  function delRun() {
+    var S0 = ACC.get(), u0 = ACC.uid(), c = $("delCode").value.replace(/\D/g, "");
+    if (!S0 || !S0.mail || c.length < 6) return;
+    $("bDel").disabled = true; DEL.msg = ""; renderDel();
+    ACC.verify(S0.mail, c).then(function (s) {
+      if (!s) return delFail("eCode");
+      if (ACC.uid() !== u0) return delFail("delErr");
+      var subs = ME && ME.plus ? post(SB + "/functions/v1/play-billing", s.at, { type: "cancel_all" }) : Promise.resolve({ ok: true, j: { ok: true } });
+      return subs.then(function (r) {
+        if (!r.ok || !r.j || !r.j.ok) return delFail("delSubFail");
+        return post(SB + "/rest/v1/rpc/delete_my_account", s.at).then(function (r2) {
+          if (r2.ok) return delDone();
+          delFail(/owner account/.test(r2.x) ? "delOwner" : /recent_code_required/.test(r2.x) ? "eCode" : "delErr");
         });
-    }).catch(function () { DEL.msg = "delErr"; renderDel(); }).then(function () { $("bDel").disabled = false; });
+      });
+    }).catch(function () { delFail("delErr"); });
   }
   // Удалено: выход, сведения учётной записи и итог страницы компьютера в этом браузере стираются.
   function delDone() {
-    pendSet(null);
-    DEL = { step: "", msg: "", done: true };
+    DEL = { step: "", msg: "", done: true, open: true };
     try { localStorage.removeItem("tabiAccMe"); indexedDB.deleteDatabase("tabiPc"); } catch (e) {}
     try { ACC.out(); } catch (e) {}
     ME = null; render();
   }
-  // После повторного входа: та же учётная запись — удаление; другая — ничего.
-  function afterAuth() {
-    var p = pendGet();
-    if (!p) return false;
-    if (ACC.uid() !== p.u) { pendSet(null); DEL.step = ""; DEL.msg = "delOther"; renderDel(); return true; }
-    delNow();
-    return true;
-  }
-  $("bDel").onclick = function () { DEL.msg = ""; renderDel(); var d = $("delDlg"); d.showModal ? d.showModal() : d.setAttribute("open", ""); };
-  $("delNo").onclick = function () { var d = $("delDlg"); d.close ? d.close() : d.removeAttribute("open"); };
-  $("delYes").onclick = function () { $("delNo").onclick(); delNow(); };
-  $("bDelGoogle").onclick = function () { DEL.msg = ""; renderDel(); ACC.google(BACK + "?lang=" + L); };
+  $("bDelOpen").onclick = delOpen;
   $("bDelCode").onclick = function () {
     var S = ACC.get();
     if (!S || !S.mail) return;
     $("bDelCode").disabled = true; DEL.msg = ""; renderDel();
-    ACC.otp(S.mail, L).then(function (ok) {
+    ACC.otp(S.mail, L, "sitedelete").then(function (ok) {
       $("bDelCode").disabled = false;
-      if (!ok) { DEL.msg = "delErr"; return renderDel(); }
-      $("delCode").hidden = false; $("bDelVerify").hidden = false; $("delCode").focus();
-    }).catch(function () { $("bDelCode").disabled = false; DEL.msg = "delErr"; renderDel(); });
+      if (!ok) return delFail("delErr");
+      DEL.step = "code"; renderDel(); $("delCode").focus();
+    }).catch(function () { $("bDelCode").disabled = false; delFail("delErr"); });
   };
-  $("bDelVerify").onclick = function () {
-    var S = ACC.get(), c = $("delCode").value.replace(/\D/g, "");
-    if (!S || c.length < 6) return;
-    ACC.verify(S.mail, c).then(function (s) { s ? afterAuth() : ((DEL.msg = "eCode"), renderDel()); }).catch(function () { DEL.msg = "delErr"; renderDel(); });
-  };
+  $("bDel").onclick = function () { if ($("delCode").value.replace(/\D/g, "").length < 6) return; DEL.msg = ""; renderDel(); dlg("delDlg", true); };
+  $("delNo").onclick = function () { dlg("delDlg", false); };
+  $("delYes").onclick = function () { dlg("delDlg", false); delRun(); };
 
   // Возврат из Google переходом (окно не открылось): код в адресе.
   var q = new URLSearchParams(location.search), code = q.get("code");
   applyTexts();
   if (code && q.get("w") !== "1") {
     history.replaceState(null, "", location.pathname + "?lang=" + L);
-    ACC.exchange(code).then(function (s) { s ? (afterAuth(), load(true)) : err("eCode"); });
+    ACC.exchange(code).then(function (s) { s ? load(true) : err("eCode"); });
   } else if (!code) load(false);
-  location.hash === "#delete" && setTimeout(function () { $("delete").scrollIntoView({ block: "start" }); }, 60);
+  // Адрес #delete (подвал сайта, карточка Google Play) открывает удаление сразу.
+  DEL.open && setTimeout(function () { renderDel(); $("delete").scrollIntoView({ block: "start" }); }, 60);
+  window.addEventListener("hashchange", function () { location.hash === "#delete" && delOpen(); });
 })();
 </script>
 </body></html>

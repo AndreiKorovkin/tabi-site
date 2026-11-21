@@ -4,7 +4,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css">
-<script src="/assets/account.js?v=7c12076fcd"></script>
+<script src="/assets/account.js?v=24405b062e"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -95,6 +95,12 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 .pc-dev .nm{font-weight:700;overflow-wrap:anywhere}
 .pc-dev .n{color:var(--sub);font-size:14px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .pc-dev .ln{color:var(--sub);font-size:14px;line-height:1.4}
+/* Удалённые устройства (21.11.2026, план Андрея): 30 дней их можно вернуть; строка-переключатель, список свёрнут. */
+.pc-trash{display:grid;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pc-trash>button{appearance:none;background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:14px;color:var(--sub);text-align:left;text-decoration:underline;text-underline-offset:3px;justify-self:start}
+.pc-trash>button:hover{color:var(--ink)}
+.pc-trash .pc-dev:first-child{padding-top:0;border-top:0}
+.pc-signin{display:grid;gap:10px;margin:14px 0}
 .pc-drop{border:2px dashed var(--line);border-radius:16px;padding:14px;text-align:center;color:var(--sub);font-size:14px}
 .pc-bar{height:8px;border-radius:999px;background:var(--bg2);overflow:hidden}.pc-bar>div{height:100%;width:0;background:var(--accent);transition:width .25s linear}
 .pc-bar.wait>div{width:30%!important;animation:pcWait 1.4s ease-in-out infinite}
@@ -156,14 +162,12 @@ dialog.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:700}
 .pc-tip b{display:block;font-weight:700}
 .pc-legend{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--sub)}
 .pc-legend i{flex:1;max-width:320px;height:8px;border-radius:999px}
-.pc-foot{max-width:1320px;margin:0 auto;padding:0 20px 40px;color:var(--sub);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 18px}
-.pc-foot a{color:var(--sub);font-weight:600;text-decoration:none}.pc-foot a:hover{color:var(--ink)}
 .pc-over{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(6px);font-size:24px;font-weight:800;color:var(--accent);pointer-events:none}
 @keyframes pcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* Открытие (20.11.2026, Андрей: сначала мелькал вид «до разбора» с вопросами): пока идут итог браузера и учётная запись —
    только тонкая полоса посередине, затем страница появляется сразу в своём виде. */
 .pc-loader{max-width:320px;margin:22vh auto 0;padding:0 20px}
-main.pc.pc-load,main.pc.pc-load~.pc-foot{display:none}
+main.pc.pc-load,main.pc.pc-load~#foot{display:none}
 main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
@@ -273,6 +277,11 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 <section class="pc-card pc-route" id="devBox" hidden>
   <h2 id="hDevs"></h2>
   <div class="pc-devs" id="devList"></div>
+  <div class="pc-trash" id="trashBox" hidden>
+    <button type="button" id="trashBtn" aria-expanded="false"></button>
+    <div class="pc-devs" id="trashList" hidden></div>
+    <p class="pc-s" id="trashNote" hidden></p>
+  </div>
 </section>
 <!-- Вопросы и ответы — справа от устройств (20.11.2026, Андрей): подробности о работе страницы, свёрнутые -->
 <section class="pc-card pc-route" id="faqBox">
@@ -295,8 +304,24 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   <p class="pc-s" id="sideX" hidden></p>
   <button class="pc-btn" id="resOk" type="button"></button>
 </dialog>
+<!-- Пришедшим из приложения (21.11.2026, план Андрея): короткая ссылка tabimobile.com/pc из приложения; без входа на сайте —
+     окно: войдите той же почтой, что в приложении, тогда найденное придёт в приложение. Другим это окно не показывается. -->
+<dialog class="pc-dlg" id="appInDlg" aria-labelledby="appInT">
+  <h2 id="appInT"></h2>
+  <p class="pc-t" id="appInX"></p>
+  <div class="pc-signin">
+    <button class="pc-btn" id="appInG" type="button"></button>
+    <p class="pc-s" id="appInOr"></p>
+    <input class="pc-in" id="appInMail" type="email" autocomplete="email">
+    <button class="pc-btn b2" id="appInCode" type="button"></button>
+    <input class="pc-in" id="appInPin" inputmode="numeric" autocomplete="one-time-code" hidden>
+    <button class="pc-btn" id="appInGo" type="button" hidden></button>
+    <p class="pc-s" id="appInErr" hidden></p>
+  </div>
+  <button class="pc-btn b2 sm" id="appInLater" type="button"></button>
+</dialog>
 <dialog class="pc-dlg" id="dlg" aria-labelledby="dlgT"><h2 id="dlgT"></h2><p class="pc-t" id="dlgX"></p><div class="pc-row"><button class="pc-btn b2" id="dlgNo" type="button"></button><button class="pc-btn" id="dlgYes" type="button"></button></div></dialog>
-<footer class="pc-foot"><a href="/" id="fHome"></a><a href="/privacy.html" id="pol"></a><span id="credits"></span></footer>
+<div id="foot"></div>
 <div class="pc-over" id="over" hidden></div>
 <script>
 // Медиафайлы с компьютера (15.11.2026, план Андрея; переделана 17.11.2026 и 18.11.2026 по его плану и замечаниям).
@@ -418,7 +443,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
     "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
     "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
-    "dlgDevX": {"en": "The points of {name} will disappear from this result. You can bring them back by choosing the folder with its photos again.", "ru": "Точки устройства {name} исчезнут из этого итога. Вернуть их можно, снова выбрав папку с его снимками.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Vrátit je můžete tak, že znovu vyberete složku s jeho snímky.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. Sie kommen zurück, wenn Sie den Ordner mit seinen Fotos erneut auswählen.", "fr": "Les points de {name} disparaîtront de ce résultat. Vous pourrez les récupérer en choisissant à nouveau le dossier avec ses photos.", "es": "Los puntos de {name} desaparecerán de este resultado. Puedes recuperarlos eligiendo de nuevo la carpeta con sus fotos.", "it": "I punti di {name} spariranno da questo risultato. Potrà recuperarli scegliendo di nuovo la cartella con le sue foto.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Você pode recuperá-los escolhendo de novo a pasta com as fotos dele.", "ja": "{name}の地点がこの結果から消えます。その機器の写真が入ったフォルダーをもう一度選べば元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 그 기기의 사진이 있는 폴더를 다시 고르면 되돌릴 수 있습니다."},
+    "dlgDevX": {"en": "The points of {name} will disappear from this result. For 30 days you can bring the device back from the list of deleted devices.", "ru": "Точки устройства {name} исчезнут из этого итога. В течение 30 дней его можно вернуть из списка удалённых устройств.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Po dobu 30 dnů ho můžete vrátit ze seznamu smazaných zařízení.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. 30 Tage lang können Sie das Gerät aus der Liste der gelöschten Geräte zurückholen.", "fr": "Les points de {name} disparaîtront de ce résultat. Pendant 30 jours, vous pourrez récupérer l’appareil dans la liste des appareils supprimés.", "es": "Los puntos de {name} desaparecerán de este resultado. Durante 30 días puedes recuperar el dispositivo desde la lista de dispositivos eliminados.", "it": "I punti di {name} spariranno da questo risultato. Per 30 giorni potrà recuperare il dispositivo dall’elenco dei dispositivi eliminati.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Durante 30 dias, você pode recuperar o dispositivo na lista de dispositivos excluídos.", "ja": "{name}の地点がこの結果から消えます。30日間は、削除した機器の一覧から元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 30일 동안 삭제된 기기 목록에서 되돌릴 수 있습니다."},
     "eAnonLimit": {"en": "Today the server no longer accepts results without signing in. The result is kept in this browser; save it so that it is not lost.", "ru": "Сегодня сервер больше не принимает итоги без входа. Итог хранится в этом браузере — сохраните его, чтобы он не потерялся.", "cs": "Dnes už server nepřijímá výsledky bez přihlášení. Výsledek je uložen v tomto prohlížeči — uložte si ho, aby se neztratil.", "de": "Heute nimmt der Server keine Ergebnisse ohne Anmeldung mehr an. Das Ergebnis ist in diesem Browser gespeichert — speichern Sie es, damit es nicht verloren geht.", "fr": "Aujourd’hui, le serveur n’accepte plus de résultats sans connexion. Le résultat est conservé dans ce navigateur : enregistrez-le pour ne pas le perdre.", "es": "Hoy el servidor ya no acepta resultados sin iniciar sesión. El resultado está guardado en este navegador: guárdalo para no perderlo.", "it": "Oggi il server non accetta più risultati senza accesso. Il risultato è conservato in questo browser: lo salvi per non perderlo.", "pt": "Hoje o servidor não aceita mais resultados sem login. O resultado está guardado neste navegador: salve-o para não perdê-lo.", "ja": "本日はログインなしの結果をサーバーが受け付けられません。結果はこのブラウザーに保存されています。失わないように保存してください。", "ko": "오늘은 서버가 로그인 없는 결과를 더 받지 않습니다. 결과는 이 브라우저에 보관되어 있으니, 잃지 않도록 저장하세요."},
     "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые итоги. Итог останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."},
     "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
@@ -449,13 +474,34 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     "resOk": {"en": "Done", "ru": "Готово", "cs": "Hotovo", "de": "Fertig", "fr": "Terminé", "es": "Listo", "it": "Fatto", "pt": "Pronto", "ja": "完了", "ko": "완료"},
     "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
     "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
-    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"}
+    "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
+    "trashH": {"en": "Deleted devices: {n}", "ru": "Удалённые устройства: {n}", "cs": "Smazaná zařízení: {n}", "de": "Gelöschte Geräte: {n}", "fr": "Appareils supprimés : {n}", "es": "Dispositivos eliminados: {n}", "it": "Dispositivi eliminati: {n}", "pt": "Dispositivos excluídos: {n}", "ja": "削除した機器：{n}", "ko": "삭제된 기기: {n}"},
+    "trashAt": {"en": "Deleted on {d}", "ru": "Удалено {d}", "cs": "Smazáno {d}", "de": "Gelöscht am {d}", "fr": "Supprimé le {d}", "es": "Eliminado el {d}", "it": "Eliminato il {d}", "pt": "Excluído em {d}", "ja": "{d}に削除", "ko": "{d} 삭제됨"},
+    "trashBack": {"en": "Restore", "ru": "Вернуть", "cs": "Vrátit", "de": "Wiederherstellen", "fr": "Restaurer", "es": "Recuperar", "it": "Ripristina", "pt": "Restaurar", "ja": "元に戻す", "ko": "되돌리기"},
+    "trashNote": {"en": "Deleted devices can be restored for 30 days.", "ru": "Удалённые устройства можно вернуть в течение 30 дней.", "cs": "Smazaná zařízení lze vrátit po dobu 30 dnů.", "de": "Gelöschte Geräte lassen sich 30 Tage lang wiederherstellen.", "fr": "Les appareils supprimés peuvent être restaurés pendant 30 jours.", "es": "Los dispositivos eliminados se pueden recuperar durante 30 días.", "it": "I dispositivi eliminati si possono ripristinare per 30 giorni.", "pt": "Os dispositivos excluídos podem ser restaurados durante 30 dias.", "ja": "削除した機器は30日間元に戻せます。", "ko": "삭제된 기기는 30일 동안 되돌릴 수 있습니다."},
+    "appInT": {"en": "You already have the Tabi app", "ru": "Приложение Tabi у вас уже есть", "cs": "Aplikaci Tabi už máte", "de": "Die Tabi-App haben Sie bereits", "fr": "Vous avez déjà l’application Tabi", "es": "Ya tienes la aplicación Tabi", "it": "Ha già l’app Tabi", "pt": "Você já tem o aplicativo Tabi", "ja": "Tabiアプリはすでにお持ちです", "ko": "Tabi 앱이 이미 있습니다"},
+    "appInX": {"en": "Sign in here with the same email as in the app, then check your files. After that, open the app: it will show what was found.", "ru": "Войдите здесь той же почтой, что и в приложении, и проверьте файлы. Затем откройте приложение — оно покажет, что нашлось.", "cs": "Přihlaste se tady stejným e-mailem jako v aplikaci a zkontrolujte soubory. Potom otevřete aplikaci — ukáže, co se našlo.", "de": "Melden Sie sich hier mit derselben E-Mail-Adresse wie in der App an und prüfen Sie die Dateien. Öffnen Sie danach die App — sie zeigt, was gefunden wurde.", "fr": "Connectez-vous ici avec la même adresse e-mail que dans l’application, puis vérifiez vos fichiers. Ouvrez ensuite l’application : elle montrera ce qui a été trouvé.", "es": "Inicia sesión aquí con el mismo correo que en la aplicación y revisa tus archivos. Después abre la aplicación: te mostrará lo que se encontró.", "it": "Acceda qui con la stessa e-mail dell’app e controlli i file. Poi apra l’app: Le mostrerà che cosa è stato trovato.", "pt": "Entre aqui com o mesmo e-mail do aplicativo e verifique seus arquivos. Depois abra o aplicativo: ele mostrará o que foi encontrado.", "ja": "アプリと同じメールアドレスでここにログインし、ファイルを確認してください。その後アプリを開くと、見つかったものが表示されます。", "ko": "앱과 같은 이메일로 여기에서 로그인하고 파일을 확인하세요. 그런 다음 앱을 열면 찾은 내용을 보여 줍니다."},
+    "appInLater": {"en": "Later", "ru": "Позже", "cs": "Později", "de": "Später", "fr": "Plus tard", "es": "Más tarde", "it": "Più tardi", "pt": "Mais tarde", "ja": "あとで", "ko": "나중에"},
+    "phoneApp": {"en": "This page works on a computer. Open tabimobile.com/pc on your computer and sign in there with the same email as in the app.", "ru": "Эта страница работает на компьютере. Откройте на компьютере tabimobile.com/pc и войдите там той же почтой, что и в приложении.", "cs": "Tato stránka funguje v počítači. Otevřete v počítači tabimobile.com/pc a přihlaste se tam stejným e-mailem jako v aplikaci.", "de": "Diese Seite funktioniert auf einem Computer. Öffnen Sie tabimobile.com/pc auf dem Computer und melden Sie sich dort mit derselben E-Mail-Adresse wie in der App an.", "fr": "Cette page fonctionne sur un ordinateur. Ouvrez tabimobile.com/pc sur votre ordinateur et connectez-vous avec la même adresse e-mail que dans l’application.", "es": "Esta página funciona en un ordenador. Abre tabimobile.com/pc en tu ordenador e inicia sesión allí con el mismo correo que en la aplicación.", "it": "Questa pagina funziona su un computer. Apra tabimobile.com/pc sul computer e acceda lì con la stessa e-mail dell’app.", "pt": "Esta página funciona em um computador. Abra tabimobile.com/pc no computador e entre lá com o mesmo e-mail do aplicativo.", "ja": "このページはパソコンで使います。パソコンで tabimobile.com/pc を開き、アプリと同じメールアドレスでログインしてください。", "ko": "이 페이지는 컴퓨터에서 작동합니다. 컴퓨터에서 tabimobile.com/pc를 열고 앱과 같은 이메일로 로그인하세요."}
   };
+  // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
+  // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
+  var FOOT = {"en": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">A collection of the special places you have been.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=en\">Media files from my computer</a><a href=\"/account/?lang=en\">Account</a><a href=\"/how-it-works/\">How it works</a><a href=\"/collection/\">Collection</a><a href=\"/your-data/\">Your data</a><a href=\"/faq/\">FAQ</a><a href=\"/about/\">About Tabi</a><a href=\"/team/\">Team</a><a href=\"/privacy.html\">Privacy policy</a><a href=\"/terms.html\">Terms of use</a><a href=\"/account/?lang=en#delete\">Delete account</a><a href=\"/team/#contact\">Contact</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\" aria-current=\"page\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Country and region borders: Natural Earth; cities: GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "ru": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/ru/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Коллекция особых мест, где ты побывал.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ru\">Медиафайлы с моего компьютера</a><a href=\"/account/?lang=ru\">Учётная запись</a><a href=\"/ru/how-it-works/\">Как это работает</a><a href=\"/ru/collection/\">Коллекция</a><a href=\"/ru/your-data/\">Данные</a><a href=\"/ru/faq/\">Вопросы</a><a href=\"/ru/about/\">О Tabi</a><a href=\"/ru/team/\">Команда</a><a href=\"/privacy.ru.html\">Политика конфиденциальности</a><a href=\"/terms.ru.html\">Условия использования</a><a href=\"/account/?lang=ru#delete\">Удаление учётной записи</a><a href=\"/ru/team/#contact\">Связь</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\" aria-current=\"page\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Границы стран и регионов — Natural Earth, города — GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "cs": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/cs/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Sbírka výjimečných míst, kde jsi byl.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=cs\">Mediální soubory z mého počítače</a><a href=\"/account/?lang=cs\">Účet</a><a href=\"/cs/how-it-works/\">Jak to funguje</a><a href=\"/cs/collection/\">Sbírka</a><a href=\"/cs/your-data/\">Data</a><a href=\"/cs/faq/\">Otázky</a><a href=\"/cs/about/\">O Tabi</a><a href=\"/cs/team/\">Tým</a><a href=\"/privacy.cs.html\">Zásady ochrany soukromí</a><a href=\"/terms.cs.html\">Podmínky používání</a><a href=\"/account/?lang=cs#delete\">Smazání účtu</a><a href=\"/cs/team/#contact\">Kontakt</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\" aria-current=\"page\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Hranice zemí a regionů — Natural Earth, města — GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "de": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/de/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">Eine Sammlung der besonderen Orte, an denen du warst.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=de\">Mediendateien von meinem Computer</a><a href=\"/account/?lang=de\">Konto</a><a href=\"/de/how-it-works/\">So funktioniert’s</a><a href=\"/de/collection/\">Sammlung</a><a href=\"/de/your-data/\">Deine Daten</a><a href=\"/de/faq/\">Fragen</a><a href=\"/de/about/\">Über Tabi</a><a href=\"/de/team/\">Team</a><a href=\"/privacy.de.html\">Datenschutzerklärung</a><a href=\"/terms.de.html\">Nutzungsbedingungen</a><a href=\"/account/?lang=de#delete\">Konto löschen</a><a href=\"/de/team/#contact\">Kontakt</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\" aria-current=\"page\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Länder- und Regionsgrenzen: Natural Earth; Städte: GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "fr": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/fr/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La collection des lieux d’exception que tu as visités.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=fr\">Fichiers multimédias de mon ordinateur</a><a href=\"/account/?lang=fr\">Compte</a><a href=\"/fr/how-it-works/\">Fonctionnement</a><a href=\"/fr/collection/\">Collection</a><a href=\"/fr/your-data/\">Tes données</a><a href=\"/fr/faq/\">Questions</a><a href=\"/fr/about/\">À propos</a><a href=\"/fr/team/\">L’équipe</a><a href=\"/privacy.fr.html\">Politique de confidentialité</a><a href=\"/terms.fr.html\">Conditions d’utilisation</a><a href=\"/account/?lang=fr#delete\">Supprimer le compte</a><a href=\"/fr/team/#contact\">Contact</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\" aria-current=\"page\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Frontières des pays et des régions : Natural Earth ; villes : GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "es": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/es/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La colección de los lugares especiales donde has estado.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=es\">Archivos multimedia de mi ordenador</a><a href=\"/account/?lang=es\">Cuenta</a><a href=\"/es/how-it-works/\">Cómo funciona</a><a href=\"/es/collection/\">Colección</a><a href=\"/es/your-data/\">Tus datos</a><a href=\"/es/faq/\">Preguntas</a><a href=\"/es/about/\">Sobre Tabi</a><a href=\"/es/team/\">Equipo</a><a href=\"/privacy.es.html\">Política de privacidad</a><a href=\"/terms.es.html\">Condiciones de uso</a><a href=\"/account/?lang=es#delete\">Eliminar cuenta</a><a href=\"/es/team/#contact\">Contacto</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\" aria-current=\"page\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Fronteras de países y regiones: Natural Earth; ciudades: GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "it": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">La collezione dei luoghi speciali in cui sei stato.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=it\">File multimediali dal mio computer</a><a href=\"/account/?lang=it\">Account</a><a href=\"/how-it-works/\">Come funziona</a><a href=\"/collection/\">Collezione</a><a href=\"/your-data/\">I tuoi dati</a><a href=\"/faq/\">Domande</a><a href=\"/about/\">Informazioni su Tabi</a><a href=\"/team/\">Team</a><a href=\"/privacy.it.html\">Informativa sulla privacy</a><a href=\"/terms.it.html\">Condizioni d’uso</a><a href=\"/account/?lang=it#delete\">Eliminazione dell’account</a><a href=\"/team/#contact\">Contatti</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\" aria-current=\"page\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Confini di paesi e regioni: Natural Earth; città: GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "pt": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">A coleção dos lugares especiais onde você esteve.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=pt\">Arquivos de mídia do meu computador</a><a href=\"/account/?lang=pt\">Conta</a><a href=\"/how-it-works/\">Como funciona</a><a href=\"/collection/\">Coleção</a><a href=\"/your-data/\">Seus dados</a><a href=\"/faq/\">Perguntas</a><a href=\"/about/\">Sobre o Tabi</a><a href=\"/team/\">Equipe</a><a href=\"/privacy.pt.html\">Política de privacidade</a><a href=\"/terms.pt.html\">Termos de uso</a><a href=\"/account/?lang=pt#delete\">Exclusão da conta</a><a href=\"/team/#contact\">Contato</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\" aria-current=\"page\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">Fronteiras de países e regiões: Natural Earth; cidades: GeoNames (CC BY 4.0).<br>© 2026 Tabi</p>\n</div></footer>", "ja": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/ja/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">訪れた特別な場所のコレクション。</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ja\">自分のパソコンのメディアファイル</a><a href=\"/account/?lang=ja\">アカウント</a><a href=\"/ja/how-it-works/\">しくみ</a><a href=\"/ja/collection/\">コレクション</a><a href=\"/ja/your-data/\">データ</a><a href=\"/ja/faq/\">よくある質問</a><a href=\"/ja/about/\">Tabi について</a><a href=\"/ja/team/\">チーム</a><a href=\"/privacy.ja.html\">プライバシーポリシー</a><a href=\"/terms.ja.html\">利用規約</a><a href=\"/account/?lang=ja#delete\">アカウントの削除</a><a href=\"/ja/team/#contact\">お問い合わせ</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\" aria-current=\"page\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\">한국어</a></div>\n<p class=\"credits\">国と地域の境界：Natural Earth、都市：GeoNames（CC BY 4.0）<br>© 2026 Tabi</p>\n</div></footer>", "ko": "<footer><div class=\"wrap\">\n<div class=\"row\">\n<div><a class=\"wordmark\" href=\"/\" aria-label=\"Tabi\">Tabi</a><p style=\"margin:8px 0 0\">내가 가 본 특별한 장소들의 컬렉션.</p></div>\n<nav aria-label=\"Tabi\"><a href=\"/computer/?lang=ko\">내 컴퓨터의 미디어 파일</a><a href=\"/account/?lang=ko\">계정</a><a href=\"/how-it-works/\">이용 방법</a><a href=\"/collection/\">컬렉션</a><a href=\"/your-data/\">내 데이터</a><a href=\"/faq/\">자주 묻는 질문</a><a href=\"/about/\">Tabi 소개</a><a href=\"/team/\">팀</a><a href=\"/privacy.ko.html\">개인정보처리방침</a><a href=\"/terms.ko.html\">이용약관</a><a href=\"/account/?lang=ko#delete\">계정 삭제</a><a href=\"/team/#contact\">문의</a></nav>\n</div>\n<div class=\"social\"><a href=\"https://t.me/tabimobile\" aria-label=\"Telegram\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m22 2-7 20-4-9-9-4Z\"/><path d=\"M22 2 11 13\"/></svg><span>Telegram</span></a><a href=\"#\" aria-label=\"Discord\"><svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\"/><path d=\"M8 12h.01\"/><path d=\"M12 12h.01\"/><path d=\"M16 12h.01\"/></svg><span>Discord</span></a></div>\n<div class=\"langs\"><a href=\"?lang=en\" hreflang=\"en\" lang=\"en\" data-l=\"en\">English</a><a href=\"?lang=ru\" hreflang=\"ru\" lang=\"ru\" data-l=\"ru\">Русский</a><a href=\"?lang=cs\" hreflang=\"cs\" lang=\"cs\" data-l=\"cs\">Čeština</a><a href=\"?lang=de\" hreflang=\"de\" lang=\"de\" data-l=\"de\">Deutsch</a><a href=\"?lang=fr\" hreflang=\"fr\" lang=\"fr\" data-l=\"fr\">Français</a><a href=\"?lang=es\" hreflang=\"es\" lang=\"es\" data-l=\"es\">Español</a><a href=\"?lang=it\" hreflang=\"it\" lang=\"it\" data-l=\"it\">Italiano</a><a href=\"?lang=pt\" hreflang=\"pt\" lang=\"pt\" data-l=\"pt\">Português</a><a href=\"?lang=ja\" hreflang=\"ja\" lang=\"ja\" data-l=\"ja\">日本語</a><a href=\"?lang=ko\" hreflang=\"ko\" lang=\"ko\" data-l=\"ko\" aria-current=\"page\">한국어</a></div>\n<p class=\"credits\">국가·지역 경계: Natural Earth, 도시: GeoNames(CC BY 4.0)<br>© 2026 Tabi</p>\n</div></footer>"};
+  function footPut() {
+    var f = $("foot");
+    f.innerHTML = FOOT[L] || FOOT.en;
+    f.onclick = function (ev) {
+      var a = ev.target.closest && ev.target.closest("a[data-l]");
+      if (!a) return;
+      ev.preventDefault();
+      setLang(a.getAttribute("data-l"));
+    };
+  }
+  function setLang(l) { L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts(); }
+
   var LANGS = ["en", "ru", "cs", "de", "fr", "es", "it", "pt", "ja", "ko"],
     LANG_NAMES = { en: "English", ru: "Русский", cs: "Čeština", de: "Deutsch", fr: "Français", es: "Español", it: "Italiano", pt: "Português", ja: "日本語", ko: "한국어" },
-    POLICY = { en: "/privacy.html" },
     SITE_LANGS = ["en", "cs", "de", "es", "fr", "ja", "ru"];
-  LANGS.forEach(function (l) { l !== "en" && (POLICY[l] = "/privacy." + l + ".html"); });
   var ls = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
   var okLang = function (l) { l = String(l || "").slice(0, 2).toLowerCase(); return LANGS.indexOf(l) >= 0 ? l : null; };
   var L = okLang(new URLSearchParams(location.search).get("lang")) || okLang(ls.get("tabiLang")) || okLang(navigator.language) || "en";
@@ -475,7 +521,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   var UA = navigator.userAgent || "",
     IOS = /iPhone|iPad|iPod/i.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1),
     ANDROID = /Android/i.test(UA),
-    PHONE = IOS || ANDROID;
+    PHONE = IOS || ANDROID,
+    FROM_APP = (function () { try { return sessionStorage.getItem("tabiFromApp") === "1"; } catch (e) { return false; } })();
 
   // ===== Язык и тема =====
   var ICON = {
@@ -506,25 +553,23 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       var li = document.createElement("li"), b = document.createElement("button");
       b.type = "button"; b.lang = l; b.textContent = LANG_NAMES[l];
       l === L && b.setAttribute("aria-current", "true");
-      b.onclick = function () {
-        L = l; ls.set("tabiLang", l); history.replaceState(null, "", location.pathname + "?lang=" + l); $("langBox").open = false; applyTexts();
-      };
+      b.onclick = function () { setLang(l); };
       li.appendChild(b); $("langList").appendChild(li);
     });
     $("homeLink").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
-    $("fHome").href = $("homeLink").href; $("fHome").textContent = "tabimobile.com";
-    $("pol").href = POLICY[L]; $("pol").textContent = t("pol");
-    $("credits").textContent = t("credits");
+    footPut();
     var set = { title: "title", lead: "lead", bGoogle: "google", bFolder: "folder", bMore: "moreFolder",
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
-      hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq" };
+      hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
+      appInT: "appInT", appInX: "appInX", appInG: "google", appInOr: "orMail", appInCode: "getCode", appInGo: "verify", appInLater: "appInLater" };
+    $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
     renderNav();
     shotsLang = "";
     renderFaq();
-    $("phoneX").textContent = t(ANDROID ? "phoneA" : "phoneI");
+    $("phoneX").textContent = t(FROM_APP ? "phoneApp" : ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
     $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); TACC.repaint && TACC.repaint();
@@ -557,7 +602,13 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   // этом браузере до «Выйти», шапка показывает, кто вошёл. =====
   // Имя TACC: ACC на этой странице — цвет акцента карты.
   var TACC = window.TabiAcc, S = TACC.get();
-  TACC.on(function (s) { S = s; });
+  // Выход из учётной записи (21.11.2026, план Андрея: итог одной учётной записи был виден другой): итог учётной записи
+  // стирается из браузера — он остаётся в учётной записи и вернётся при следующем входе; страница открывается заново.
+  TACC.on(function (s) {
+    var was = S;
+    S = s;
+    was && !s && keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
+  });
   var keep = function (s) { TACC.keep(s); S = TACC.get(); },
     fresh = function () { return TACC.fresh().then(function (s) { S = s; return s; }); };
   // Вход через Google — окном (вкладка с разбором остаётся); окно не открылось — переходом, разбор перед этим
@@ -593,6 +644,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     loadSpecial();
     REG = {};
     (j.devs || []).forEach(function (d) { REG[d.id] = d; });
+    TRASH.srv = Array.isArray(j.trash) ? j.trash : [];
     var have = new Set();
     base.forEach(function (p) { have.add(accKey(p[0], p[1], p[2])); });
     var near = function (q) {
@@ -694,7 +746,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy2").textContent = t("copied"); }).catch(function () { prompt("", u); });
   };
   $("bCopy").onclick = function () {
-    var u = location.origin + "/computer/?lang=" + L;
+    var u = location.origin + (FROM_APP ? "/pc?lang=" : "/computer/?lang=") + L;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy").textContent = t("copied"); }).catch(function () { prompt("", u); });
   };
 
@@ -2056,7 +2108,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     show("vApp", on);
     if (!on) return;
     if (!meAsked) { meAsked = true; TACC.me().then(function (v) { ME = v || null; renderApp(); }).catch(function () {}); }
-    var hasApp = !!(ME && Array.isArray(ME.phones) && ME.phones.length);
+    var hasApp = !!(ME && (ME.app || (Array.isArray(ME.phones) && ME.phones.length)));
     $("spT").textContent = t(sp.partial ? "spTMin" : "spT", { n: num(sp.n) });
     // Только редкости, которые у человека есть (20.11.2026, Андрей: нулей не показывать), без нажатий.
     var tiers = sp.tiers || {}, box = $("tiers");
@@ -2223,7 +2275,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   function renderDevs() {
     var box = $("devBox"), list = $("devList");
     if (!box) return;
-    if (revealing || !A.shown || !A.pts.length) return void (box.hidden = true);
+    if (revealing) return void (box.hidden = true);
+    if (!A.shown || !A.pts.length) { $("devList").innerHTML = ""; return void (box.hidden = !renderTrash()); }
     var rows = {}, order = [], ownBy = {};
     A.pts.forEach(function (p) {
       var d = DEV.list[p[3]];
@@ -2287,10 +2340,68 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       bd.children[1].textContent = [r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1, cl].filter(Boolean).join(" · ");
       var del = it.children[1];
       del.textContent = t("delDev");
-      del.onclick = function () { ask(t("dlgDevT"), t("dlgDevX", { name: nm }), t("delDev"), function () { devDrop(key); }); };
+      del.onclick = function () { ask(t("dlgDevT"), t("dlgDevX", { name: nm }), t("delDev"), function () { devDrop(key, r.name || ""); }); };
       list.appendChild(it);
     });
-    box.hidden = !order.length;
+    box.hidden = !(renderTrash() + order.length);
+  }
+  // ===== Корзина удалённых устройств (21.11.2026, план Андрея: удалённое устройство можно вернуть) =====
+  // Браузер хранит точки каждого удалённого устройства 30 дней (TRASH.loc, вместе с итогом); у сохранённого итога сервер
+  // держит свою корзину (TRASH.srv из ответа mine): точки, ещё не переданные телефону, и пометки «не брать» и скрытия.
+  // «Вернуть» — сервер возвращает своё, браузер — своё, и итог плавно пересчитывается.
+  var TRASH = { loc: [], srv: [], open: false }, TRASH_MS = 30 * 86400000;
+  function trashKeep(list) {
+    var now = Date.now(), n = 0;
+    return (list || []).filter(function (x) { return x && now - x.at < TRASH_MS; }).slice(0, 40)
+      .filter(function (x) { return (n += (x.pts || []).length) <= 300000; });
+  }
+  function trashRows() {
+    var rows = [], seen = {};
+    S && TRASH.srv.forEach(function (x) { seen[x.id] = 1; rows.push({ at: x.at, label: x.label, sid: x.id }); });
+    TRASH.loc.forEach(function (x) { (!x.sid || !seen[x.sid]) && rows.push({ at: x.at, label: x.label, sid: S ? x.sid : 0, loc: x }); });
+    return rows.sort(function (a, b) { return b.at - a.at; });
+  }
+  function renderTrash() {
+    var rows = trashRows(), box = $("trashBox"), list = $("trashList");
+    box.hidden = !rows.length;
+    if (!rows.length) return 0;
+    $("trashBtn").textContent = t("trashH", { n: num(rows.length) });
+    $("trashBtn").setAttribute("aria-expanded", TRASH.open ? "true" : "false");
+    show("trashList", TRASH.open); show("trashNote", TRASH.open);
+    $("trashNote").textContent = t("trashNote");
+    list.innerHTML = "";
+    rows.forEach(function (x) {
+      var it = document.createElement("div");
+      it.className = "pc-dev";
+      it.innerHTML = '<div class="bd"><div class="hd"><span class="nm"></span></div><div class="ln"></div></div><button class="pc-btn b2 sm" type="button"></button>';
+      it.children[0].children[0].children[0].textContent = x.label || t("devNone");
+      it.children[0].children[1].textContent = t("trashAt", { d: new Date(x.at).toLocaleDateString(L, { day: "numeric", month: "long", year: "numeric" }) });
+      var b = it.children[1];
+      b.textContent = t("trashBack");
+      b.onclick = function () { trashBack(x, b); };
+      list.appendChild(it);
+    });
+    return rows.length;
+  }
+  $("trashBtn").onclick = function () { TRASH.open = !TRASH.open; renderTrash(); };
+  function trashBack(x, btn) {
+    btn.disabled = true;
+    var loc = x.loc || TRASH.loc.filter(function (e) { return e.sid && e.sid === x.sid; })[0] || null;
+    var pts = loc ? loc.pts.map(function (q) { var p = q.slice(0, 5); q[5] && (p.sent = true); return p; }) : [];
+    var srv = x.sid && S ? fresh().then(function (s) {
+      if (!s) throw new Error("net");
+      return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "restore", id: x.sid }) })
+        .then(function (r) { return r.json(); });
+    }).then(function (j) { if (!j || !j.ok) throw new Error("restore"); return accFetch(); }) : Promise.resolve(null);
+    srv.then(function (j) {
+      TRASH.loc = TRASH.loc.filter(function (e) { return e !== loc; });
+      x.sid && (TRASH.srv = TRASH.srv.filter(function (e) { return e.id !== x.sid; }));
+      var add = pts.concat(j ? accMerge(j, A.pts.concat(pts)) : []);
+      keepPut();
+      if (!add.length) return renderDevs();
+      A.pts.length || show("vPick", false);
+      return geo().then(function () { return reveal(add, 500); });
+    }).catch(function () { btn.disabled = false; err("eNet"); });
   }
   // Ключ устройства: номер в реестре учётной записи, если итог сохранён, иначе — марка, модель и отпечаток номера.
   function devKey(d, i) { return d.rid ? "r" + d.rid : "l" + (d.mk + "|" + (d.nm || d.md) + "|" + d.sn).toLowerCase(); }
@@ -2300,17 +2411,27 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   // Удаление (20.11.2026, план Андрея: «Устройство не определено» возвращалось, страница перезагружалась): строка исчезает
   // сразу, числа плавно пересчитываются без перезагрузки. Устройство из реестра — «не брать» (forget); точки без устройства
   // в реестре — скрыть на сервере по ключам точек (hide), чтобы они не вернулись из учётной записи.
-  function devDrop(key) {
+  function devDrop(key, label) {
     var gone = A.pts.filter(function (p) { return p._k === key; }), left = A.pts.filter(function (p) { return p._k !== key; });
     $("dlgNo").onclick();
     if (!gone.length) return;
     var rid = /^r(\d+)$/.exec(key), sent = gone.filter(function (p) { return p.sent || p.acc; });
+    // В корзину (21.11.2026, план Андрея): точки этого браузера; у сохранённого итога сервер кладёт в корзину своё.
+    var ent = { id: Date.now(), at: Date.now(), label: label || "", sid: 0,
+      pts: gone.filter(function (p) { return !p.acc; }).map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }) };
+    TRASH.loc = trashKeep([ent].concat(TRASH.loc));
     A.pts = left;
     if (S && sent.length) fresh().then(function (s) {
       if (!s) return;
-      var call = function (b) { return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(b) }).catch(function () {}); };
+      var call = function (b) {
+        return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(b) })
+          .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+      };
       // Особые места — заново, когда сервер уже убрал точки.
-      (rid ? call({ op: "forget", dev: "pc:" + rid[1] }) : call({ op: "hide", k: sent.map(function (p) { return accKey(p[0], p[1], p[2]); }) })).then(loadSpecial);
+      (rid ? call({ op: "forget", dev: "pc:" + rid[1], label: label || "" }) : call({ op: "hide", k: sent.map(function (p) { return accKey(p[0], p[1], p[2]); }), label: label || "" })).then(function (j) {
+        if (j && j.trash) { ent.sid = j.trash; TRASH.srv = [{ id: j.trash, at: ent.at, label: ent.label }].concat(TRASH.srv); keepPut(); renderDevs(); }
+        loadSpecial();
+      });
     });
     // Копия до входа перезапишется оставшимся при открытии (anonPut), а без оставшегося — стирается.
     left.length ? ls.set(AK + "N", "") : anonDrop();
@@ -2407,7 +2528,10 @@ main.pc.pc-show{animation:pcFade .35s ease both}
         var tx = db.transaction("st", "readwrite");
         var own = A.pts.filter(function (p) { return !p.acc; });
         tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
-          saved: saveSt.state === "saved", special: saveSt.special || null, owner: own.some(function (p) { return p.sent; }) ? uidOf(S) : KEEP_OWNER || null }, "result");
+          saved: saveSt.state === "saved", special: saveSt.special || null, trash: TRASH.loc,
+          // Итог, показанный при входе, принадлежит этой учётной записи (21.11.2026): другой учётной записи и без входа он не
+          // показывается и стирается.
+          owner: S ? uidOf(S) : KEEP_OWNER || null }, "result");
         tx.oncomplete = ok; tx.onerror = ok;
       });
     }).catch(function () {});
@@ -2438,6 +2562,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   function restore(st, j) {
     st = st || {};
     KEEP_OWNER = st.owner || null;
+    TRASH.loc = trashKeep(st.trash || []);
     DEV.list = st.devs || []; DIR.list = st.dirs || [];
     DEV.by = {}; DIR.by = {};
     DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
@@ -2545,9 +2670,43 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     }).catch(function () { return ""; });
   }
 
+  // ===== Пришедшие из приложения (21.11.2026, план Андрея) =====
+  // Короткая ссылка из приложения tabimobile.com/pc ставит метку tabiFromApp (страница /pc) и ведёт сюда. На компьютере без
+  // входа на сайте — окно: войдите той же почтой, что в приложении, тогда найденное появится в приложении. Один раз за
+  // посещение. Без метки окно не показывается никогда.
+  function appInMaybe() {
+    if (!FROM_APP || PHONE || S) return;
+    try { if (sessionStorage.getItem("tabiFromAppSeen")) return; sessionStorage.setItem("tabiFromAppSeen", "1"); } catch (e) {}
+    var d = $("appInDlg");
+    d.showModal ? d.showModal() : d.setAttribute("open", "");
+  }
+  function appInClose() { var d = $("appInDlg"); d.close ? d.close() : d.removeAttribute("open"); }
+  function appInErr(k) { show("appInErr", !!k); $("appInErr").textContent = k ? t(k) : ""; }
+  $("appInLater").onclick = appInClose;
+  $("appInG").onclick = function () { appInClose(); TACC.google(BACK + "?lang=" + L, stash); };
+  $("appInCode").onclick = function () {
+    var m = $("appInMail").value.trim();
+    if (!/^\S+@\S+\.\S+$/.test(m)) return;
+    $("appInCode").disabled = true; appInErr(null);
+    TACC.otp(m, L).then(function (ok) {
+      $("appInCode").disabled = false;
+      if (!ok) return appInErr("eNet");
+      show("appInPin", true); show("appInGo", true); $("appInPin").focus();
+    }).catch(function () { $("appInCode").disabled = false; appInErr("eNet"); });
+  };
+  $("appInGo").onclick = function () {
+    var m = $("appInMail").value.trim(), c = $("appInPin").value.replace(/\D/g, "");
+    if (c.length < 6) return;
+    appInErr(null);
+    TACC.verify(m, c).then(function (s) { if (!s) return appInErr("eCode"); S = s; appInClose(); signedIn(); }).catch(function () { appInErr("eNet"); });
+  };
+
   // ===== Начало =====
   applyTexts();
-  if (PHONE) { show("vPhone", true); show("bPlay", ANDROID); statSend({ k: "phone", ios: IOS }); }
+  if (PHONE) {
+    show("vPhone", true); show("bPlay", ANDROID && !FROM_APP); statSend({ k: "phone", ios: IOS });
+    FROM_APP && ($("phoneX").textContent = t("phoneApp"));
+  }
   else {
     show("vPick", true);
     geo();
@@ -2561,7 +2720,10 @@ main.pc.pc-show{animation:pcFade .35s ease both}
       var accP = S ? accFetch() : Promise.resolve(null);
       keepGet()
         .then(function (st) {
-          if (st && st.owner && S && st.owner !== uidOf(S)) return keepDrop().then(function () { return null; });
+          // Итог учётной записи (владелец) — только ей; сохранённые точки без отметки владельца (записи до 21.11.2026) — тоже
+          // учётной записи, неизвестно какой: стираются, учётная запись вернёт их сама. Разбор без входа остаётся.
+          var mine = S ? uidOf(S) : null, saved = st && (st.pts || []).some(function (q) { return q[5]; });
+          if (st && (st.owner ? st.owner !== mine : saved)) return keepDrop().then(function () { return null; });
           return st;
         })
         .then(function (st) {
@@ -2570,7 +2732,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
         .then(function (shown) {
           // Пока открытие ждало учётную запись, человек мог уже выбрать файлы — тогда его разбор не трогаем.
           if (RUN.on) return;
-          unload(); shown || (show("vWork", false), show("vPick", true)); renderSave();
+          unload(); shown || (show("vWork", false), show("vPick", true)); renderSave(); renderDevs(); appInMaybe();
         });
     }
     if (code && q.get("w") !== "1") {
