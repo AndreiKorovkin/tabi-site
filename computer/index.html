@@ -2314,7 +2314,8 @@ main.pc{position:relative}
       var old = box.querySelector(".pc-hint:not(.out)");
       old && (old.classList.add("out"), setTimeout(function () { old.parentNode && old.parentNode.removeChild(old); }, 600));
       box.appendChild(hintEl(HINTS[hintI++ % HINTS.length]));
-      hintT = setTimeout(step, 7000);
+      // Подсказка стоит 8 секунд (21.11.2026, Андрей: на секунду дольше прежних семи).
+      hintT = setTimeout(step, 8000);
     };
     step();
     demoSync();
