@@ -96,7 +96,8 @@ header.top.tighter details.lang:not(.menu) summary>svg:last-child{display:none}
 header.top.tighter .thm,header.top.tighter .pc-theme,header.top.tighter .ac-theme{width:36px;height:36px}
 header.top.tighter .tacc{padding:4px;max-width:none}header.top.tighter .tacc .nm{display:none}
 header.top.tighter .tacc.in{padding:0;width:38px;height:38px;justify-content:center}header.top.tighter .tacc.in .pi{display:block}
-.tacc{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
+/* «Войти» — тем же цветом надписи, что у главных кнопок (21.11.2026, Андрей: белая на оранжевом выбивалась). */
+.tacc{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
 details.lang{position:relative}
 details.lang summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);font-weight:600;font-size:15px;color:var(--ink)}
 details.lang summary::-webkit-details-marker{display:none}
@@ -290,7 +291,7 @@ footer .credits{grid-column:1/-1;margin:0;font-size:12px;max-width:none}
  .cta{padding:72px 0}
 }
 @media (max-width:420px){.wrap{padding:0 16px}.card{padding:24px}}</style>
-<script src="/assets/account.js?v=0f4aa3adc4" defer></script>
+<script src="/assets/account.js?v=654b9cd5c5" defer></script>
 </head>
 <body>
 <div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
