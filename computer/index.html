@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
+<!-- Открыта для поиска (21.11.2026, Андрей); описание — на языке страницы: сборка ставит английское, сценарий меняет. -->
+<meta name="description" content="We will check the media files on your computer and show the statistics of your life: the countries, regions and cities you have visited. The files themselves are not viewed and never leave your device: only their metadata are collected, above all the place and time of shooting. We value your privacy.">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=6158a2a3ff">
-<script src="/assets/account.js?v=5a2783499a"></script>
+<link rel="stylesheet" href="/assets/site.css?v=0b934ffe89">
+<script src="/assets/account.js?v=bf3a87c473"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -266,7 +267,7 @@ main.pc{position:relative}
       <h2 id="saveT"></h2>
       <p class="pc-t" id="saveX"></p>
       <div class="pc-row" id="saveWays"><button class="pc-btn" id="bSaveAcc" type="button"></button><button class="pc-btn b2" id="bSavePhone" type="button"></button></div>
-      <button class="pc-btn" id="bGoogle" type="button" hidden></button>
+      <div class="gis" id="bGoogle" hidden></div>
     </div>
     <!-- Особые места на снимках по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
          приложение: код и ссылка Google Play, экраны приложения; приложение уже есть — без строк о нём -->
@@ -342,7 +343,7 @@ main.pc{position:relative}
   <h2 id="appInT"></h2>
   <p class="pc-t" id="appInX"></p>
   <div class="pc-signin">
-    <button class="pc-btn" id="appInG" type="button"></button>
+    <div class="gis" id="appInG"></div>
     <p class="pc-s" id="appInOr"></p>
     <input class="pc-in" id="appInMail" type="email" autocomplete="email">
     <button class="pc-btn b2" id="appInCode" type="button"></button>
@@ -539,7 +540,8 @@ main.pc{position:relative}
     "pkNote": {"en": "The browser will ask for permission to access the files: without it the page cannot read them. The files themselves stay on your computer.", "ru": "Браузер попросит разрешения на доступ к файлам: без него страница не сможет их прочитать. Сами файлы остаются на компьютере.", "cs": "Prohlížeč požádá o povolení přístupu k souborům: bez něj je stránka nemůže přečíst. Samotné soubory zůstávají v počítači.", "de": "Der Browser fragt nach der Erlaubnis, auf die Dateien zuzugreifen: Ohne sie kann die Seite sie nicht lesen. Die Dateien selbst bleiben auf Ihrem Computer.", "fr": "Le navigateur demandera l’autorisation d’accéder aux fichiers : sans elle, la page ne peut pas les lire. Les fichiers eux-mêmes restent sur votre ordinateur.", "es": "El navegador pedirá permiso para acceder a los archivos: sin él, la página no puede leerlos. Los archivos se quedan en tu ordenador.", "it": "Il browser chiederà il permesso di accedere ai file: senza, la pagina non può leggerli. I file restano sul Suo computer.", "pt": "O navegador vai pedir permissão para acessar os arquivos: sem ela, a página não consegue lê-los. Os arquivos ficam no seu computador.", "ja": "ブラウザーがファイルへのアクセス許可を求めます。許可がないとページはファイルを読み取れません。ファイルそのものはパソコンに残ります。", "ko": "브라우저가 파일 접근 권한을 요청합니다. 권한이 없으면 페이지가 파일을 읽을 수 없습니다. 파일 자체는 컴퓨터에 그대로 남습니다."},
     "listingT": {"en": "The browser is listing the files… {t}", "ru": "Браузер собирает список файлов… {t}", "cs": "Prohlížeč sestavuje seznam souborů… {t}", "de": "Der Browser erstellt die Dateiliste… {t}", "fr": "Le navigateur dresse la liste des fichiers… {t}", "es": "El navegador está listando los archivos… {t}", "it": "Il browser sta elencando i file… {t}", "pt": "O navegador está listando os arquivos… {t}", "ja": "ブラウザーがファイルの一覧を作成中… {t}", "ko": "브라우저가 파일 목록을 만드는 중… {t}"},
     "bigList": {"en": "This looks like a large folder: the browser first goes through all its files on its own and does not show the page any progress. A whole disk takes 5–15 minutes this way, and then even longer to reach the page. Dragging the disk onto the page is faster, and you will see the progress at once.", "ru": "Похоже, выбрана большая папка: браузер сначала сам перебирает все её файлы и не сообщает странице о прогрессе. Весь диск так перебирается 5–15 минут, а затем ещё дольше передаётся странице. Быстрее перетащить диск на страницу — прогресс будет виден сразу.", "cs": "Zdá se, že jde o velkou složku: prohlížeč nejprve sám projde všechny její soubory a stránce neukazuje průběh. Celý disk tak trvá 5–15 minut a pak se ještě déle předává stránce. Rychlejší je přetáhnout disk na stránku — průběh uvidíte hned.", "de": "Das scheint ein großer Ordner zu sein: Der Browser geht zuerst selbst alle Dateien durch und zeigt der Seite keinen Fortschritt. Eine ganze Festplatte dauert so 5–15 Minuten und danach noch länger, bis sie die Seite erreicht. Schneller geht es, die Festplatte auf die Seite zu ziehen – der Fortschritt ist sofort sichtbar.", "fr": "Il semble s’agir d’un grand dossier : le navigateur parcourt d’abord lui-même tous ses fichiers sans montrer de progression à la page. Un disque entier prend ainsi 5 à 15 minutes, puis encore plus longtemps pour arriver à la page. Il est plus rapide de faire glisser le disque sur la page : la progression sera visible tout de suite.", "es": "Parece una carpeta grande: el navegador primero recorre por sí mismo todos sus archivos y no muestra el avance a la página. Un disco entero tarda así de 5 a 15 minutos y luego aún más en llegar a la página. Es más rápido arrastrar el disco a la página: el avance se verá enseguida.", "it": "Sembra una cartella grande: il browser prima scorre da solo tutti i file e non mostra l’avanzamento alla pagina. Un intero disco richiede così 5–15 minuti e poi ancora di più per arrivare alla pagina. È più veloce trascinare il disco sulla pagina: l’avanzamento si vedrà subito.", "pt": "Parece uma pasta grande: o navegador primeiro percorre sozinho todos os arquivos e não mostra o progresso à página. Um disco inteiro leva assim de 5 a 15 minutos e depois ainda mais para chegar à página. É mais rápido arrastar o disco para a página — o progresso aparece na hora.", "ja": "大きなフォルダーのようです。ブラウザーはまず自分ですべてのファイルを調べ、その間ページに進み具合を伝えません。ディスク全体だとこれに5〜15分、さらにページに渡すまでにもっと時間がかかります。ディスクをページにドラッグするほうが速く、進み具合もすぐに見えます。", "ko": "큰 폴더로 보입니다. 브라우저가 먼저 모든 파일을 직접 훑으며, 그동안 페이지에 진행 상황을 알려 주지 않습니다. 디스크 전체는 이렇게 5~15분이 걸리고, 페이지로 넘어오는 데는 그보다 더 걸립니다. 디스크를 페이지로 끌어다 놓는 편이 더 빠르며 진행 상황도 바로 보입니다."},
-    "cancelList": {"en": "Cancel", "ru": "Отменить", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"}
+    "cancelList": {"en": "Cancel", "ru": "Отменить", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
+    "eGoogle": {"en": "Could not sign in with Google. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cs": "Přihlášení přes Google se nezdařilo. Zkuste to prosím znovu.", "de": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.", "fr": "La connexion avec Google a échoué. Veuillez réessayer.", "es": "No se ha podido iniciar sesión con Google. Inténtalo de nuevo.", "it": "Non è stato possibile accedere con Google. Riprovi.", "pt": "Não foi possível entrar com o Google. Tente novamente.", "ja": "Google でログインできませんでした。もう一度お試しください。", "ko": "Google로 로그인하지 못했습니다. 다시 시도해 주세요."}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -606,6 +608,7 @@ main.pc{position:relative}
   function applyTexts() {
     document.documentElement.lang = L;
     document.title = "Tabi — " + t("docTitle");
+    var md = document.querySelector('meta[name="description"]'); md && (md.content = t("lead"));
     $("langLbl").textContent = t("langLabel") + ": ";
     $("langCur").textContent = LANG_NAMES[L];
     $("langList").innerHTML = "";
@@ -618,11 +621,11 @@ main.pc{position:relative}
     });
     $("homeLink").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
     footPut();
-    var set = { title: "title", lead: "lead", bGoogle: "google", bFolder: "folder", bMore: "moreFolder",
+    var set = { title: "title", lead: "lead", bFolder: "folder", bMore: "moreFolder",
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
-      appInT: "appInT", appInX: "appInX", appInG: "google", appInOr: "orMail", appInCode: "getCode", appInGo: "verify", appInLater: "appInLater",
+      appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify", appInLater: "appInLater",
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList" };
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
@@ -678,11 +681,19 @@ main.pc{position:relative}
   function exchange(code) {
     return TACC.exchange(code).then(function (s) { s ? (S = s) : err("eCode"); return s; }).catch(function () { err("eNet"); return null; });
   }
-  window.addEventListener("message", function (e) {
-    if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
-    exchange(String(e.data.tabiCode)).then(function (s) { s && signedIn(); });
-  });
-  $("bGoogle").onclick = function () { ls.set("tabiPcWay", WAY); TACC.google(BACK + "?lang=" + L, stash); };
+  // Вход через Google — кнопкой Google (account.js, gis): в блоке сохранения и в окне входа для пришедших из приложения.
+  // Запасной вход уходит со страницы: путь сохранения и разбор перед этим сохраняются (stash) и после возврата
+  // восстанавливаются.
+  var gisOpt = {
+    done: function (s, e) {
+      if (!s) return void err(e);
+      $("appInDlg").open && appInClose();
+      S = s; signedIn();
+    },
+    cls: "pc-btn", label: function () { return t("google"); }, back: function () { return BACK + "?lang=" + L; }, before: stash,
+    start: function () { ls.set("tabiPcWay", WAY); }
+  };
+  TACC.gis($("bGoogle"), gisOpt);
   // Точки учётной записи (20.11.2026, Андрей: «данные скачут» — 128 городов стали 110, когда страница перестала их
   // показывать): после входа и после каждого разбора страница добирает точки, сохранённые в учётной записи с любого
   // компьютера и уже переданные телефону, которых нет в этом браузере. В браузере они не хранятся (acc).
@@ -3172,7 +3183,7 @@ main.pc{position:relative}
   function appInClose() { winClose("appInDlg"); }
   function appInErr(k) { show("appInErr", !!k); $("appInErr").textContent = k ? t(k) : ""; }
   $("appInLater").onclick = appInClose;
-  $("appInG").onclick = function () { appInClose(); TACC.google(BACK + "?lang=" + L, stash); };
+  TACC.gis($("appInG"), gisOpt);
   $("appInCode").onclick = function () {
     var m = $("appInMail").value.trim();
     if (!/^\S+@\S+\.\S+$/.test(m)) return;

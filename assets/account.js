@@ -8,7 +8,7 @@
 // (site_me: ник, подписка, телефоны, число стран, городов и особых мест) — один запрос на открытие страницы, копия в
 // этом браузере не дольше десяти минут.
 //
-// Страницы зовут window.TabiAcc: get, keep, fresh, exchange, google, captcha, otp, verify, out, me, uid, on.
+// Страницы зовут window.TabiAcc: get, keep, fresh, exchange, google, gis, captcha, otp, verify, out, me, uid, on.
 (function () {
   "use strict";
   var SB = "https://ogrdnhwfgasbgcespsou.supabase.co",
@@ -62,66 +62,92 @@
     return freshP;
   }
   var b64u = function (buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
-  // Вход через Google (PKCE): окном, страница остаётся на месте; окно не открылось — переходом (before — сохранить
-  // состояние страницы перед уходом). Код из окна приходит странице сообщением, его обменивает exchange.
+  // ===== Вход через Google (21.11.2026, план Андрея) =====
+  // Кнопку рисует сам Google (Google Identity Services): подтверждение входа Google выдаёт только своей кнопке. В Chrome
+  // выбор учётной записи открывается внутри вкладки (FedCM), в остальных браузерах — окном Google; везде Google называет
+  // tabimobile.com, а не адрес сервера. Подтверждение (ID-токен) сайт обменивает в Supabase на вход в ту же учётную запись
+  // Tabi, что в приложении. На каждую попытку — одноразовое число: Google вписывает в подтверждение его отпечаток SHA-256,
+  // сервер сверяет его с самим числом, поэтому чужое или старое подтверждение не подойдёт. Сценарий Google грузится, только
+  // когда кнопка входа появилась на экране. Не загрузился (блокировщик) — на месте кнопки своя, и вход идёт прежним путём
+  // через Supabase, переходом в этой же вкладке (before — сохранить состояние страницы перед уходом).
+  var GID = "533059625327-7e0mf9mc0u64i8vcmuv1aj76veo1pa8m.apps.googleusercontent.com",
+    GLOC = { pt: "pt-BR" }, gisP = null, gisRaw = "", gisDone = null, gisEls = [];
+  var hex = function (buf) { return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join(""); };
+  function gisLoad() {
+    return gisP || (gisP = new Promise(function (ok, bad) {
+      var sc = document.createElement("script");
+      sc.src = "https://accounts.google.com/gsi/client"; sc.async = true;
+      sc.onload = function () { window.google && google.accounts && google.accounts.id ? ok() : bad(); };
+      sc.onerror = bad;
+      setTimeout(bad, 10000);
+      document.head.appendChild(sc);
+    }).then(gisInit));
+  }
+  function gisInit() {
+    var raw = b64u(crypto.getRandomValues(new Uint8Array(24)).buffer);
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)).then(function (d) {
+      gisRaw = raw;
+      google.accounts.id.initialize({ client_id: GID, nonce: hex(d), callback: gisCred, use_fedcm_for_button: true, auto_select: false, context: "signin", ux_mode: "popup" });
+    });
+  }
+  function gisCred(r) {
+    var raw = gisRaw, done = gisDone;
+    // Следующая попытка — со своим числом; кнопки перерисовываются под новое.
+    gisInit().then(function () { gisEls.forEach(function (it) { it.el._gis = ""; gisDraw(it.el); }); });
+    auth("token?grant_type=id_token", { provider: "google", id_token: r && r.credential, nonce: raw }).then(function (x) {
+      var s = x.ok && fromToken(x.j);
+      s && keep(s);
+      done && done(s || null, s ? null : "eGoogle");
+    }).catch(function () { done && done(null, "eNet"); });
+  }
+  function gisLight() {
+    var m = /(\d+)\D+(\d+)\D+(\d+)/.exec(getComputedStyle(document.body).backgroundColor || "");
+    return !!m && +m[1] + +m[2] + +m[3] > 384;
+  }
+  // Кнопка Google в элементе el: по ширине элемента (Google допускает 200–400 точек), тёмная или светлая под тему, на
+  // языке страницы; перерисовывается, только если что-то из этого изменилось.
+  function gisDraw(el) {
+    var w = el.clientWidth;
+    if (!w || el._fb || !(window.google && google.accounts && google.accounts.id)) return;
+    var th = gisLight() ? "outline" : "filled_black", lang = (document.documentElement.lang || "en").slice(0, 2),
+      bw = Math.max(200, Math.min(400, w)), key = bw + th + lang;
+    if (el._gis === key) return;
+    el._gis = key; el.innerHTML = "";
+    google.accounts.id.renderButton(el, { type: "standard", theme: th, size: "large", text: "continue_with", shape: "pill", logo_alignment: "center", width: bw, locale: GLOC[lang] || lang });
+  }
+  function gisFallback(el, o) {
+    el.innerHTML = "";
+    var b = document.createElement("button");
+    b.type = "button"; b.className = o.cls; b.textContent = o.label();
+    b.onclick = function () { o.start && o.start(); google(o.back(), o.before); };
+    el.appendChild(b); el._fb = b;
+  }
+  // Страница отдаёт место под кнопку: o.done(сессия или null, код ошибки) — итог входа; запасная кнопка — o.cls, o.label(),
+  // o.back() (адрес возврата), o.before, o.start (что сделать перед уходом).
+  function gis(el, o) {
+    gisDone = o.done;
+    var it = { el: el, o: o, on: false };
+    gisEls.push(it);
+    var go = function () {
+      if (!el.clientWidth) return;
+      if (it.on) return void gisDraw(el);
+      it.on = true;
+      gisLoad().then(function () { gisDraw(el); }, function () { gisFallback(el, o); });
+    };
+    window.ResizeObserver ? new ResizeObserver(go).observe(el) : go();
+  }
+  // Тема или язык страницы сменились — кнопки Google заново, подпись запасной — на новом языке.
+  new MutationObserver(function () {
+    gisEls.forEach(function (it) { it.el._fb ? (it.el._fb.textContent = it.o.label()) : it.on && gisDraw(it.el); });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "lang"] });
+  // Запасной вход (PKCE) — переходом к Google через Supabase в этой же вкладке; код возврата обменивает exchange.
   function google(back, before) {
     var v = b64u(crypto.getRandomValues(new Uint8Array(32)).buffer);
     return crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
       set(KV, v);
-      var sep = back.indexOf("?") < 0 ? "?" : "&";
-      var url = function (w) { return SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(back + (w ? sep + "w=1" : "")) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256"; };
-      var win = gOpen(url(true));
-      if (!win) return Promise.resolve(before ? before() : null).then(function () { location.href = url(false); });
-      gWait(win, function () { return gOpen(url(true)); });
+      var url = SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(back) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256";
+      return Promise.resolve(before ? before() : null).then(function () { location.href = url; });
     });
-  }
-  // Окно Google — по центру окна браузера и размером под выбор учётной записи (21.11.2026, Андрей: оно открывалось в
-  // углу экрана). Само окно рисует Google: выбор учётной записи страница показать не может — так его нельзя подделать.
-  function gOpen(u) {
-    var W = 480, H = 640, x = window.screenX != null ? window.screenX : window.screenLeft || 0,
-      y = window.screenY != null ? window.screenY : window.screenTop || 0;
-    var left = Math.round(x + Math.max(0, (window.outerWidth - W) / 2)), top = Math.round(y + Math.max(0, (window.outerHeight - H) / 2));
-    try { return window.open(u, "tabiAuth", "popup=yes,width=" + W + ",height=" + H + ",left=" + left + ",top=" + top); } catch (e) { return null; }
-  }
-  // Пока открыто окно Google, страница затемнена окном сайта: что происходит и кнопка, которая выводит окно Google вперёд
-  // (оно уходит за браузер, если щёлкнуть по странице). Окно сайта закрывается само: вход состоялся или окно Google закрыли.
-  var GW = {
-    en: ["Sign in with Google", "Choose your account in the Google window. It will close by itself once you are signed in.", "Show the Google window"],
-    ru: ["Вход через Google", "Выберите учётную запись в окне Google. Когда вход завершится, оно закроется само.", "Показать окно Google"],
-    cs: ["Přihlášení přes Google", "Vyberte účet v okně Google. Po dokončení přihlášení se samo zavře.", "Zobrazit okno Google"],
-    de: ["Anmeldung mit Google", "Wählen Sie Ihr Konto im Google-Fenster. Nach der Anmeldung schließt es sich von selbst.", "Google-Fenster anzeigen"],
-    fr: ["Connexion avec Google", "Choisissez votre compte dans la fenêtre Google. Elle se fermera d’elle-même une fois la connexion terminée.", "Afficher la fenêtre Google"],
-    es: ["Inicio de sesión con Google", "Elige tu cuenta en la ventana de Google. Se cerrará sola cuando termine el inicio de sesión.", "Mostrar la ventana de Google"],
-    it: ["Accesso con Google", "Scelga il Suo account nella finestra di Google. Si chiuderà da sola al termine dell’accesso.", "Mostra la finestra di Google"],
-    pt: ["Entrar com o Google", "Escolha sua conta na janela do Google. Ela se fechará sozinha quando o login terminar.", "Mostrar a janela do Google"],
-    ja: ["Google でログイン", "Google のウィンドウでアカウントを選んでください。ログインが終わると自動的に閉じます。", "Google のウィンドウを表示"],
-    ko: ["Google로 로그인", "Google 창에서 계정을 선택하세요. 로그인이 끝나면 창이 저절로 닫힙니다.", "Google 창 보기"]
-  };
-  var gw = null;
-  function gWait(win, reopen) {
-    if (!window.HTMLDialogElement) return;
-    var T = GW[(document.documentElement.lang || "en").slice(0, 2)] || GW.en, S0 = S;
-    if (!gw) {
-      gw = { d: document.createElement("dialog") };
-      gw.d.className = "win";
-      gw.d.setAttribute("aria-labelledby", "gwT");
-      gw.d.innerHTML = '<button type="button" class="win-x" data-close><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'
-        + '<h2 id="gwT"></h2><p class="win-p"></p><button type="button" class="win-go"></button>';
-      document.body.appendChild(gw.d);
-      gw.d.addEventListener("close", function () { clearInterval(gw.t); });
-    }
-    gw.d.querySelector("h2").textContent = T[0];
-    gw.d.querySelector(".win-p").textContent = T[1];
-    gw.d.querySelector(".win-x").setAttribute("aria-label", T[2]);
-    var go = gw.d.querySelector(".win-go");
-    go.textContent = T[2];
-    go.onclick = function () { win && !win.closed ? win.focus() : (win = reopen()); };
-    gw.d.open || gw.d.showModal();
-    clearInterval(gw.t);
-    gw.t = setInterval(function () {
-      // Вход состоялся (новая сессия) или окно Google закрыто — окно сайта уходит плавно.
-      if ((S && S !== S0) || !win || win.closed) { clearInterval(gw.t); gw.d.open && winShut(gw.d); }
-    }, 400);
   }
   function exchange(code) {
     var ver = get(KV);
@@ -131,14 +157,6 @@
       return s || null;
     }).catch(function () { return null; });
   }
-  // Окно входа Google вернулось с кодом: код — открывшей странице, окно закрывается.
-  (function () {
-    var q = new URLSearchParams(location.search), code = q.get("code");
-    if (code && q.get("w") === "1" && window.opener) {
-      try { window.opener.postMessage({ tabiCode: code }, location.origin); } catch (e) {}
-      setTimeout(function () { window.close(); }, 50);
-    }
-  })();
   // Капча Cloudflare Turnstile для письма с кодом: скрипт грузится только по нажатию.
   function captcha() {
     return new Promise(function (ok, bad) {
@@ -271,7 +289,7 @@
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fitWatch) : fitWatch();
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", chips) : chips();
   window.TabiAcc = {
-    get: function () { return S; }, keep: keep, fresh: fresh, exchange: exchange, google: google, captcha: captcha,
+    get: function () { return S; }, keep: keep, fresh: fresh, exchange: exchange, google: google, gis: gis, captcha: captcha,
     otp: otp, verify: verify, out: out, me: me, uid: uid, on: function (f) { subs.push(f); },
     repaint: function () { repaintFn && repaintFn(); }
   };

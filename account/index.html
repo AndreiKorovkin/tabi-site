@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex">
+<!-- Открыта для поиска (21.11.2026, Андрей); описание — на языке страницы: сборка ставит английское, сценарий меняет. -->
+<meta name="description" content="The account on the website is the same as in the Tabi app. Sign in to see your collection and the results of scanning media files from your computer.">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=6158a2a3ff">
-<script src="/assets/account.js?v=5a2783499a"></script>
+<link rel="stylesheet" href="/assets/site.css?v=0b934ffe89">
+<script src="/assets/account.js?v=bf3a87c473"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -83,7 +84,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     <h1 id="title"></h1>
     <p class="ac-t" id="lead"></p>
     <div class="ac-in">
-      <button class="ac-btn" id="bGoogle" type="button"></button>
+      <div class="gis" id="bGoogle"></div>
       <p class="ac-s" id="orMail"></p>
       <input class="ac-f" id="mail" type="email" autocomplete="email">
       <button class="ac-btn b2" id="bCode" type="button"></button>
@@ -151,6 +152,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     BACK = location.origin + location.pathname;
   var T = {
     "google": {"en": "Sign in with Google", "ru": "Войти через Google", "cs": "Přihlásit se přes Google", "de": "Mit Google anmelden", "fr": "Se connecter avec Google", "es": "Iniciar sesión con Google", "it": "Accedi con Google", "pt": "Entrar com o Google", "ja": "Googleでログイン", "ko": "Google로 로그인"},
+    "eGoogle": {"en": "Could not sign in with Google. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cs": "Přihlášení přes Google se nezdařilo. Zkuste to prosím znovu.", "de": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.", "fr": "La connexion avec Google a échoué. Veuillez réessayer.", "es": "No se ha podido iniciar sesión con Google. Inténtalo de nuevo.", "it": "Non è stato possibile accedere con Google. Riprovi.", "pt": "Não foi possível entrar com o Google. Tente novamente.", "ja": "Google でログインできませんでした。もう一度お試しください。", "ko": "Google로 로그인하지 못했습니다. 다시 시도해 주세요."},
     "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
     "mailPh": {"en": "Email", "ru": "Почта", "cs": "E-mail", "de": "E-Mail", "fr": "E-mail", "es": "Correo", "it": "E-mail", "pt": "E-mail", "ja": "メールアドレス", "ko": "이메일"},
     "getCode": {"en": "Get a code", "ru": "Получить код", "cs": "Získat kód", "de": "Code anfordern", "fr": "Recevoir un code", "es": "Recibir un código", "it": "Ricevi il codice", "pt": "Receber código", "ja": "コードを受け取る", "ko": "코드 받기"},
@@ -274,6 +276,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   function applyTexts() {
     document.documentElement.lang = L;
     document.title = "Tabi — " + t("accTitle");
+    var md = document.querySelector('meta[name="description"]'); md && (md.content = t("accLead"));
     $("langLbl").textContent = t("langLabel") + ": ";
     $("langCur").textContent = LANG_NAMES[L];
     $("langList").innerHTML = "";
@@ -287,7 +290,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("homeLink").href = SITE_LANGS.indexOf(L) > 0 ? "/" + L + "/" : "/";
     renderNav();
     footPut();
-    var set = { title: "accTitle", lead: "accLead", bGoogle: "google", orMail: "orMail", bCode: "getCode", bVerify: "verify", hColl: "hColl",
+    var set = { title: "accTitle", lead: "accLead", orMail: "orMail", bCode: "getCode", bVerify: "verify", hColl: "hColl",
       sCountries: "sCountries", sCities: "sCities", sPlaces: "sPlaces", hApp: "hApp", appNone: "appNone", bPlay: "install", hPc: "title",
       pcX: "pcX", bPc: "pcBtn", bOut: "outLink", wait: "wait", delH: "delH", bDel: "delBtn", delDlgT: "delDlgT", delDlgX: "delDlgX",
       delNo: "delNo", delYes: "delYes", bDelOpen: "delBtn", outDlgT: "outDlgT", outDlgX: "outDlgX", outNo: "delNo", outYes: "out" };
@@ -347,11 +350,12 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   ACC.on(function (s) { s ? load(false) : ((ME = null), render()); });
 
   // ===== Вход =====
-  window.addEventListener("message", function (e) {
-    if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
-    ACC.exchange(String(e.data.tabiCode)).then(function (s) { s ? load(true) : err("eCode"); });
+  // Вход через Google — кнопкой Google на месте #bGoogle (account.js, gis).
+  ACC.gis($("bGoogle"), {
+    done: function (s, e) { s ? load(true) : err(e); },
+    cls: "ac-btn", label: function () { return t("google"); }, back: function () { return BACK + "?lang=" + L; },
+    start: function () { err(null); }
   });
-  $("bGoogle").onclick = function () { err(null); ACC.google(BACK + "?lang=" + L); };
   $("bCode").onclick = function () {
     var m = $("mail").value.trim();
     if (!/^\S+@\S+\.\S+$/.test(m)) return;

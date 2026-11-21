@@ -5,6 +5,5 @@ Disallow: /auth.html
 Disallow: /update.html
 Disallow: /unsub.html
 Disallow: /hq/
-Disallow: /account/
 
 Sitemap: https://tabimobile.com/sitemap.xml
