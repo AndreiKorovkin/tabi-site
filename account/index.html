@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=9e8df7ee81">
+<link rel="stylesheet" href="/assets/site.css?v=d793ca43b8">
 <script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
@@ -26,8 +26,9 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac h1{margin:0 0 8px;font-size:30px;line-height:1.15}
 .ac h2{margin:0 0 10px;font-size:19px}
 .ac-t{margin:0;color:var(--sub);line-height:1.55}
-.ac-in{display:grid;gap:10px;margin-top:18px;max-width:420px}
-.ac-btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-weight:700;font-size:15px;text-decoration:none}
+/* Вход — во всю ширину карточки (21.11.2026, Андрей: узкий блок слева выглядел некрасиво и не по центру). */
+.ac-in{display:grid;gap:10px;margin-top:18px}
+.ac-btn{appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:999px;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:700;font-size:15px;text-decoration:none}
 .ac-btn.b2{background:var(--accent-soft);color:var(--accent)}
 .ac-btn:disabled{opacity:.6;cursor:default}
 .ac-f{font:inherit;font-size:16px;padding:12px 16px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}

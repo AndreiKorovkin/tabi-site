@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=9e8df7ee81">
+<link rel="stylesheet" href="/assets/site.css?v=d793ca43b8">
 <script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
@@ -34,7 +34,8 @@ details.lang li button{all:unset;display:block;box-sizing:border-box;width:100%;
 details.lang li button:hover,details.lang li button[aria-current]{background:var(--accent-soft);color:var(--accent)}
 .pc{max-width:1320px;margin:0 auto;padding:28px 20px 56px}
 .pc-grid{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;gap:20px;align-items:start;transition:grid-template-columns .4s ease}
-.pc-grid.idle{grid-template-columns:minmax(0,600px);justify-content:center}
+/* Вступительный блок — 720 точек (21.11.2026, Андрей: в 600 заголовок не влезал в строку, с результатом блок шире). */
+.pc-grid.idle{grid-template-columns:minmax(0,720px);justify-content:center}
 .pc-grid.idle .pc-side{display:none}
 .pc-card{background:var(--panel);border-radius:24px;padding:26px;box-shadow:var(--shadow);border:1px solid var(--line)}
 .pc-main{display:grid;gap:16px}
@@ -71,7 +72,7 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-res-tl b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;white-space:nowrap}
 .pc-res-tl span{font-size:12.5px;color:var(--sub)}
 .pc-res-tl .new{border-color:var(--accent)}.pc-res-tl .new b{color:var(--accent)}
-.pc-res-cc{display:flex;flex-wrap:wrap;gap:8px}
+.pc-res-cc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .pc-res-cc span{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:650;font-size:14.5px}
 .pc-res-cc img{width:26px;height:18px;object-fit:cover;border-radius:4px}
 .pc-app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
@@ -115,8 +116,8 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-progrow #eta{flex:none}
 .pc-why summary{cursor:pointer;font-weight:700;color:var(--ink);font-size:14.5px;list-style:none}
 .pc-why summary::-webkit-details-marker{display:none}
-.pc-why summary::after{content:" ›";color:var(--sub)}
-.pc-why[open] summary::after{content:" ⌄"}
+/* Без стрелок-шевронов (правило Андрея): строка-переключатель подчёркнута. */
+.pc-why summary{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
 .pc-why ul{margin:8px 0 0;padding:0 0 0 18px;display:grid;gap:6px;font-size:14px;color:var(--sub);line-height:1.45}
 .pc-why li b{color:var(--ink);font-weight:650}
 .pc-when{font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;min-height:1.1em}
@@ -143,7 +144,7 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-route{margin-top:20px;display:grid;gap:12px}
 /* Под картой — две половины (20.11.2026, Андрей: устройства — левая половина, правая пока пуста). */
 .pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
-.pc-under.idle{grid-template-columns:minmax(0,600px);justify-content:center}
+.pc-under.idle{grid-template-columns:minmax(0,720px);justify-content:center}
 /* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
 .pc-tiers{display:flex;flex-wrap:wrap;gap:8px}
 .pc-tier{flex:1 1 96px;min-width:min-content;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
@@ -174,7 +175,7 @@ main.pc.pc-load,main.pc.pc-load~#foot{display:none}
 main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
-@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,600px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
+@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,720px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
 @media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
 /* Подсказки во время проверки (21.11.2026, Андрей): карточка въезжает справа, стоит, уходит влево. */
 .pc-hints{position:relative;overflow:hidden}
@@ -185,18 +186,20 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes hintOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-90px)}}
 /* Пример результата по бокам (21.11.2026, Андрей): место остаётся пустым, в нём живёт анимация. */
 main.pc{position:relative}
-.pc-demo{position:absolute;top:28px;width:300px;animation:pcFade .6s ease both}
-#demoL{right:calc(50% + 324px)}
-#demoR{left:calc(50% + 324px)}
-#demoMap{width:300px;height:380px;display:block}
+.pc-demo{position:absolute;top:28px;width:min(300px,calc(50vw - 360px - 52px));animation:pcFade .6s ease both}
+#demoL{right:calc(50% + 384px)}
+#demoR{left:calc(50% + 384px)}
+#demoMap{width:100%;height:380px;display:block}
 #demoList{min-height:380px;align-content:start}
 .pc-item.out{animation:pcOut .5s ease forwards}
 @keyframes pcOut{to{opacity:0;transform:translateY(-8px)}}
-@media (max-width:1359px){.pc-demo{display:none!important}}
+@media (max-width:1299px){.pc-demo{display:none!important}}
 @media (prefers-reduced-motion:reduce){.pc-hint,.pc-hint.out,.pc-item.out{animation:none}}
 [hidden]{display:none!important}
 </style></head>
 <body>
+<!-- Живой фон (21.11.2026, Андрей): фиолетовые, синие и оранжевые огни переливаются, как отражения гирлянды -->
+<div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
 <header class="top"><div class="wrap">
 <a class="wordmark" href="/" id="homeLink" aria-label="Tabi">Tabi</a>
 <nav class="sections" id="nav" aria-label="Tabi"></nav>
@@ -402,7 +405,7 @@ main.pc{position:relative}
     "sCountries": {"en": "Countries", "ru": "Страны", "cs": "Země", "de": "Länder", "fr": "Pays", "es": "Países", "it": "Paesi", "pt": "Países", "ja": "国", "ko": "국가"},
     "sRegions": {"en": "Regions", "ru": "Регионы", "cs": "Regiony", "de": "Regionen", "fr": "Régions", "es": "Regiones", "it": "Regioni", "pt": "Regiões", "ja": "地域", "ko": "지역"},
     "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
-    "sDays": {"en": "Days with photos", "ru": "Дни со снимками", "cs": "Dny se snímky", "de": "Tage mit Fotos", "fr": "Jours avec photos", "es": "Días con fotos", "it": "Giorni con foto", "pt": "Dias com fotos", "ja": "撮影した日", "ko": "촬영한 날"},
+    "sDays": {"en": "Days", "ru": "Дни", "cs": "Dny", "de": "Tage", "fr": "Jours", "es": "Días", "it": "Giorni", "pt": "Dias", "ja": "日数", "ko": "일수"},
     "sKm": {"en": "Kilometres", "ru": "Километры", "cs": "Kilometry", "de": "Kilometer", "fr": "Kilomètres", "es": "Kilómetros", "it": "Chilometri", "pt": "Quilômetros", "ja": "キロメートル", "ko": "킬로미터"},
     "tracing": {"en": "Restoring your trips…", "ru": "Восстанавливаем ваши поездки…", "cs": "Obnovujeme vaše cesty…", "de": "Ihre Reisen werden wiederhergestellt …", "fr": "Nous retrouvons vos voyages…", "es": "Recuperando tus viajes…", "it": "Ricostruiamo i Suoi viaggi…", "pt": "Restaurando suas viagens…", "ja": "旅を復元しています…", "ko": "여행을 복원하는 중…"},
     "loadingMap": {"en": "Preparing the world map…", "ru": "Готовим карту мира…", "cs": "Připravujeme mapu světa…", "de": "Die Weltkarte wird vorbereitet …", "fr": "Préparation de la carte du monde…", "es": "Preparando el mapa del mundo…", "it": "Prepariamo la mappa del mondo…", "pt": "Preparando o mapa-múndi…", "ja": "世界地図を準備しています…", "ko": "세계 지도를 준비하는 중…"},
@@ -450,7 +453,7 @@ main.pc{position:relative}
     "whyTl": {"en": "Points from the Google location history: {n}.", "ru": "Точек из истории местоположений Google: {n}.", "cs": "Bodů z historie polohy Google: {n}.", "de": "Punkte aus dem Google-Standortverlauf: {n}.", "fr": "Points de l’historique des positions Google : {n}.", "es": "Puntos del historial de ubicaciones de Google: {n}.", "it": "Punti dalla cronologia delle posizioni di Google: {n}.", "pt": "Pontos do histórico de localização do Google: {n}.", "ja": "Googleのロケーション履歴の地点：{n}。", "ko": "Google 위치 기록의 지점: {n}."},
     "whyTrk": {"en": "Points from route files (GPX, KML, TCX, GeoJSON): {n}.", "ru": "Точек из файлов маршрута (GPX, KML, TCX, GeoJSON): {n}.", "cs": "Bodů ze souborů trasy (GPX, KML, TCX, GeoJSON): {n}.", "de": "Punkte aus Routendateien (GPX, KML, TCX, GeoJSON): {n}.", "fr": "Points des fichiers d’itinéraire (GPX, KML, TCX, GeoJSON) : {n}.", "es": "Puntos de archivos de ruta (GPX, KML, TCX, GeoJSON): {n}.", "it": "Punti dai file di percorso (GPX, KML, TCX, GeoJSON): {n}.", "pt": "Pontos de arquivos de rota (GPX, KML, TCX, GeoJSON): {n}.", "ja": "ルートファイル（GPX、KML、TCX、GeoJSON）の地点：{n}。", "ko": "경로 파일(GPX, KML, TCX, GeoJSON)의 지점: {n}."},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
-    "wholeX": {"ru": "Выбран весь диск. Системные папки и папки программ тоже читаются — последними, после ваших папок.", "en": "The whole drive is selected. System and program folders are read too — last, after your own folders.", "cs": "Vybrán celý disk. Systémové složky a složky programů se také čtou — jako poslední, po vašich složkách.", "de": "Das ganze Laufwerk ist ausgewählt. System- und Programmordner werden ebenfalls gelesen — zuletzt, nach Ihren eigenen Ordnern.", "fr": "Le disque entier est sélectionné. Les dossiers système et de programmes sont aussi lus — en dernier, après vos propres dossiers.", "es": "Está seleccionado todo el disco. Las carpetas del sistema y de programas también se leen, al final, después de sus propias carpetas.", "it": "È selezionato l’intero disco. Anche le cartelle di sistema e dei programmi vengono lette, per ultime, dopo le Sue cartelle.", "pt": "O disco inteiro está selecionado. As pastas do sistema e de programas também são lidas — por último, depois das suas pastas.", "ja": "ドライブ全体が選択されています。システムフォルダーとプログラムフォルダーも、ご自身のフォルダーの後に読み込みます。", "ko": "드라이브 전체가 선택되었습니다. 시스템 폴더와 프로그램 폴더도 사용자 폴더 다음에 마지막으로 읽습니다."},
+    "wholeX": {"en": "Whole disk selected: the Windows and Program Files folders are skipped, program folders are read last, after yours.", "ru": "Выбран весь диск: папки Windows и Program Files пропускаются, папки программ читаются последними, после ваших.", "cs": "Vybrán celý disk: složky Windows a Program Files se přeskakují, složky programů se čtou nakonec, po vašich.", "de": "Ganze Festplatte gewählt: Die Ordner Windows und Program Files werden übersprungen, Programmordner zuletzt gelesen, nach Ihren.", "fr": "Disque entier choisi : les dossiers Windows et Program Files sont ignorés, les dossiers des programmes sont lus en dernier, après les vôtres.", "es": "Disco entero elegido: se omiten las carpetas Windows y Program Files; las carpetas de programas se leen al final, después de las tuyas.", "it": "Scelto l’intero disco: le cartelle Windows e Program Files vengono saltate, le cartelle dei programmi lette per ultime, dopo le Sue.", "pt": "Disco inteiro escolhido: as pastas Windows e Program Files são ignoradas; as pastas de programas são lidas por último, depois das suas.", "ja": "ディスク全体が選ばれました。WindowsとProgram Filesのフォルダーは飛ばし、プログラムのフォルダーはあなたのフォルダーの後に最後に読み取ります。", "ko": "디스크 전체를 골랐습니다. Windows와 Program Files 폴더는 건너뛰고, 프로그램 폴더는 사용자 폴더 다음에 마지막으로 읽습니다."},
     "hDevs": {"ru": "Устройства", "en": "Devices", "cs": "Zařízení", "de": "Geräte", "fr": "Appareils", "es": "Dispositivos", "it": "Dispositivi", "pt": "Dispositivos", "ja": "デバイス", "ko": "기기"},
     "devPts": {"ru": "Точек: {n}", "en": "Points: {n}", "cs": "Bodů: {n}", "de": "Punkte: {n}", "fr": "Points : {n}", "es": "Puntos: {n}", "it": "Punti: {n}", "pt": "Pontos: {n}", "ja": "地点：{n}", "ko": "지점: {n}"},
     "devNone": {"ru": "Устройство не определено", "en": "Device not identified", "cs": "Zařízení neurčeno", "de": "Gerät nicht bestimmt", "fr": "Appareil non déterminé", "es": "Dispositivo no identificado", "it": "Dispositivo non identificato", "pt": "Dispositivo não identificado", "ja": "デバイス不明", "ko": "기기 확인 불가"},
@@ -654,7 +657,7 @@ main.pc{position:relative}
   TACC.on(function (s) {
     var was = S;
     S = s;
-    was && !s && keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
+    was && !s && keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
   });
   var keep = function (s) { TACC.keep(s); S = TACC.get(); },
     fresh = function () { return TACC.fresh().then(function (s) { S = s; return s; }); };
@@ -735,7 +738,7 @@ main.pc{position:relative}
   }
   function signedIn() {
     err(null);
-    if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepDrop().then(function () { location.replace(location.pathname + "?lang=" + L); });
+    if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
     WAY = WAY || ls.get("tabiPcWay") || "";
     ls.set("tabiPcWay", "");
     renderSave();
@@ -830,30 +833,46 @@ main.pc{position:relative}
     if (!canDrop()) return;
     e.preventDefault();
     var items = Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.items) || []),
-      out = [], seen = 0,
-      walk = function (en) {
-        if (!en) return Promise.resolve();
-        if (en.isFile) {
-          ++seen % 500 === 0 && ($("prog").textContent = t("collecting", { n: num(seen) }));
-          if (!wanted(en.name)) return Promise.resolve();
-          return new Promise(function (ok) { en.file(function (f) { try { f.tabiPath = en.fullPath; } catch (x) {} out.push(f); ok(); }, function () { ok(); }); });
-        }
-        var rd = en.createReader();
-        return new Promise(function (ok) {
-          var next = function () {
-            rd.readEntries(function (list) {
-              if (!list.length) return ok();
-              Promise.all(list.map(walk)).then(next);
-            }, function () { ok(); });
-          };
-          next();
-        });
-      };
-    var entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; });
-    entries.some(Boolean) && (RUN.src = "drop", busy(t("collecting", { n: 0 })));
-    if (entries.some(Boolean)) Promise.all(entries.map(walk)).then(function () { unbusy(); run(out, seen); });
+      entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; }).filter(Boolean);
+    if (entries.length) { RUN.src = "drop"; busy(t("collecting", { n: 0 })); dropWalk(entries).then(function (r) { unbusy(); run(r.out, r.seen); }); }
     else run(Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.files) || []));
   });
+  // Обход перетащенного (21.11.2026): папки — очередью, до восьми сразу (прежде все сразу: на диске C Андрея — до 3,1 ГБ
+  // памяти); открываются только файлы подходящих форматов; в корне перетащенного папки Windows и Program Files не
+  // обходятся (слово Андрея: снимков с телефона в них не бывает, а файлов там большая часть диска).
+  var SKIP_ROOT = /^(windows|program files|program files \(x86\))$/i;
+  function dropWalk(roots) {
+    return new Promise(function (done) {
+      var out = [], seen = 0, q = [], act = 0, pend = 0;
+      var fin = function () { !act && !pend && !q.length && done({ out: out, seen: seen }); };
+      var file = function (en) {
+        ++seen % 500 === 0 && ($("prog").textContent = t("collecting", { n: num(seen) }));
+        if (!wanted(en.name)) return;
+        pend++;
+        en.file(function (f) { try { f.tabiPath = en.fullPath; } catch (x) {} out.push(f); pend--; fin(); }, function () { pend--; fin(); });
+      };
+      var pump = function () {
+        while (act < 8 && q.length) dir(q.pop());
+        fin();
+      };
+      var dir = function (it) {
+        var en = it[0], depth = it[1], rd;
+        if (depth === 1 && SKIP_ROOT.test(en.name)) return;
+        try { rd = en.createReader(); } catch (x) { return; }
+        act++;
+        var next = function () {
+          rd.readEntries(function (list) {
+            if (!list.length) { act--; return pump(); }
+            list.forEach(function (c) { c.isFile ? file(c) : q.push([c, depth + 1]); });
+            next();
+          }, function () { act--; pump(); });
+        };
+        next();
+      };
+      roots.forEach(function (en) { en.isFile ? file(en) : q.push([en, 0]); });
+      pump();
+    });
+  }
 
   // ===== Чтение места и времени =====
   var u8 = function (f, a, b) { return f.slice(a, b).arrayBuffer().then(function (x) { return new Uint8Array(x); }); },
@@ -1894,9 +1913,9 @@ main.pc{position:relative}
   function renderWhy() {
     var miss = WHY.files - WHY.place, ul = $("whyL");
     // Место из описаний Google Фото — не причина, а находка: отдельной строкой вне списка причин.
-    show("sideX", WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0 || WHY.sysFiles > 0);
-    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : "",
-      WHY.sysFiles ? t("sysRead", { a: num(WHY.sysFiles), b: num(WHY.sysPlace || 0) }) : ""].filter(Boolean).join(" ");
+    // Строки о системных папках в итоге нет (21.11.2026, Андрей: никому не нужна).
+    show("sideX", WHY.side > 0 || WHY.tl > 0 || WHY.trk > 0);
+    $("sideX").textContent = [WHY.side ? t("whySide", { n: num(WHY.side) }) : "", WHY.tl ? t("whyTl", { n: num(WHY.tl) }) : "", WHY.trk ? t("whyTrk", { n: num(WHY.trk) }) : ""].filter(Boolean).join(" ");
     show("why", miss > 0);
     if (!(miss > 0)) return;
     $("whyS").textContent = t("whyS", { n: num(miss) });
@@ -1998,9 +2017,11 @@ main.pc{position:relative}
       var g = sysSeg(f);
       if (!g) return;
       f.tabiSys = 1;
-      g[0] <= 1 && (g[1] === "windows" ? (rootWin = true) : /^program files/.test(g[1]) && (rootPf = true));
+      g[0] <= 1 && (g[1] === "windows" ? (rootWin = f.tabiSkip = true) : /^program files/.test(g[1]) && (rootPf = f.tabiSkip = true));
     });
     var whole = rootWin && rootPf;
+    // Весь диск (21.11.2026, слово Андрея): папки Windows и Program Files не читаются — снимков с телефона в них не бывает.
+    whole && (list = list.filter(function (f) { return !f.tabiSkip; }));
     WHY.whole = !!(WHY.whole || whole);
     $("sysX").textContent = t("wholeX"); show("sysX", whole);
     var side = sideMap(list), tlFiles = list.filter(isTimeline), trkFiles = list.filter(isTrack);
@@ -2284,7 +2305,7 @@ main.pc{position:relative}
     [38.7223, -9.1393, 2022], [48.2082, 16.3738, 2019], [37.9838, 23.7275, 2021], [55.7558, 37.6173, 2015], [59.3293, 18.0686, 2023],
     [47.4979, 19.0402, 2020]];
   var demo = { on: false, raf: 0, r: 0, c: 0, t0: 0, ct: 0, land: null, key: "" };
-  function demoWant() { return !PHONE && !!G && window.innerWidth >= 1360 && $("grid").classList.contains("idle") && !$("vPick").hidden; }
+  function demoWant() { return !PHONE && !!G && window.innerWidth >= 1300 && $("grid").classList.contains("idle") && !$("vPick").hidden; }
   function demoSync() {
     var on = demoWant();
     $("demoL").hidden = $("demoR").hidden = !on;
@@ -2925,7 +2946,60 @@ main.pc{position:relative}
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
   }
-  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — чужой итог стирается.
+  // Несохранённые точки другой учётной записи (21.11.2026, найдено при разборе, слово Андрея): вход в другую учётную запись
+  // или выход прежде стирали итог браузера вместе с точками, которые не успели уйти на сервер (нет сети, предел). Теперь
+  // такие точки откладываются под ключом «away:<учётная запись>» — не показываются никому — и возвращаются, когда эта
+  // учётная запись снова войдёт на этой странице; затем уходят на сервер обычным сохранением.
+  function keepAway(st) {
+    var un = st && st.owner ? (st.pts || []).filter(function (q) { return !q[5]; }) : [];
+    if (!un.length) return Promise.resolve();
+    return idb().then(function (db) {
+      return new Promise(function (ok) {
+        var tx = db.transaction("st", "readwrite"), os = tx.objectStore("st"), rq = os.get("away:" + st.owner);
+        rq.onsuccess = function () {
+          var v = rq.result || { recs: [] };
+          v.recs.push({ at: Date.now(), pts: un, devs: st.devs || [], dirs: st.dirs || [] });
+          os.put(v, "away:" + st.owner);
+        };
+        tx.oncomplete = ok; tx.onerror = ok;
+      });
+    }).catch(function () {});
+  }
+  // Отложенное этой учётной записью — в её итог браузера (устройства и папки сводятся по марке, модели, номеру и пути).
+  function keepBack(uid, st) {
+    if (!uid) return Promise.resolve(st);
+    return idb().then(function (db) {
+      return new Promise(function (ok) {
+        var tx = db.transaction("st", "readwrite"), os = tx.objectStore("st"), rq = os.get("away:" + uid);
+        rq.onsuccess = function () {
+          var v = rq.result;
+          if (!v || !v.recs || !v.recs.length) return ok(st);
+          os.delete("away:" + uid);
+          st = st || { pts: [], devs: [], dirs: [], owner: uid };
+          st.pts = st.pts || []; st.devs = st.devs || []; st.dirs = st.dirs || []; st.owner = uid; st.saved = false;
+          var dk = {}, fk = {}, have = new Set();
+          st.devs.forEach(function (d, i) { dk[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
+          st.dirs.forEach(function (d, i) { fk[d] = i; });
+          st.pts.forEach(function (q) { have.add(q[0] + "," + q[1] + "," + q[2]); });
+          v.recs.forEach(function (r) {
+            r.pts.forEach(function (q) {
+              var key = q[0] + "," + q[1] + "," + q[2];
+              if (have.has(key)) return;
+              have.add(key);
+              var d = r.devs[q[3]], f = r.dirs[q[4]], di = -1, fi = -1;
+              if (d) { var k = (d.mk + "|" + d.md + "|" + d.sn).toLowerCase(); dk[k] == null && (dk[k] = st.devs.push(d) - 1); di = dk[k]; }
+              if (f != null) { fk[f] == null && (fk[f] = st.dirs.push(f) - 1); fi = fk[f]; }
+              st.pts.push([q[0], q[1], q[2], di, fi, 0]);
+            });
+          });
+          ok(st);
+        };
+        rq.onerror = function () { ok(st); };
+      });
+    }).catch(function () { return st; });
+  }
+  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — чужой итог убирается со страницы
+  // (несохранённое — в сторону, keepAway).
   var KEEP_OWNER = null;
   function uidOf(s) {
     if (!s) return null;
@@ -3101,8 +3175,9 @@ main.pc{position:relative}
           // Итог учётной записи (владелец) — только ей; сохранённые точки без отметки владельца (записи до 21.11.2026) — тоже
           // учётной записи, неизвестно какой: стираются, учётная запись вернёт их сама. Разбор без входа остаётся.
           var mine = S ? uidOf(S) : null, saved = st && (st.pts || []).some(function (q) { return q[5]; });
-          if (st && (st.owner ? st.owner !== mine : saved)) return keepDrop().then(function () { return null; });
-          return st;
+          if (st && st.owner && st.owner !== mine) return keepAway(st).then(function () { return keepDrop(); }).then(function () { return keepBack(mine, null); });
+          if (st && !st.owner && saved) return keepDrop().then(function () { return keepBack(mine, null); });
+          return keepBack(mine, st);
         })
         .then(function (st) {
           return accP.then(function (j) { return restore(st, j); });
