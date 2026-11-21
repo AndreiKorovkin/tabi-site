@@ -44,6 +44,13 @@
 @media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+/* Полоса прокрутки страницы — в цветах сайта (21.11.2026, Андрей: серая системная не вписывалась): тонкая, бегунок — цветом
+   подписей, дорожка прозрачная. Chrome, Edge и Firefox — scrollbar-color; Safari — ::-webkit-scrollbar. */
+html{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--sub) 55%,transparent) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--sub) 55%,transparent);border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:var(--sub)}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Onest,system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI","Noto Sans JP",sans-serif}
 :lang(ja) body,body:lang(ja){line-height:1.75}

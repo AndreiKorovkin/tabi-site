@@ -3,7 +3,7 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=4d13796a34">
+<link rel="stylesheet" href="/assets/site.css?v=e19e56ea71">
 <script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
@@ -34,8 +34,9 @@ details.lang li button{all:unset;display:block;box-sizing:border-box;width:100%;
 details.lang li button:hover,details.lang li button[aria-current]{background:var(--accent-soft);color:var(--accent)}
 .pc{max-width:1320px;margin:0 auto;padding:28px 20px 56px}
 .pc-grid{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;gap:20px;align-items:start;transition:grid-template-columns .4s ease}
-/* Вступительный блок — 720 точек (21.11.2026, Андрей: в 600 заголовок не влезал в строку, с результатом блок шире). */
-.pc-grid.idle{grid-template-columns:minmax(0,720px);justify-content:center}
+/* Вступительный блок — 640 точек (21.11.2026, Андрей: чуть уже 720, но русский заголовок — одной строкой; заголовок
+   550 точек, поля по 26 — запас 36). С результатом блок шире. */
+.pc-grid.idle{grid-template-columns:minmax(0,640px);justify-content:center}
 .pc-grid.idle .pc-side{display:none}
 .pc-card{background:var(--panel);border-radius:24px;padding:26px;box-shadow:var(--shadow);border:1px solid var(--line)}
 .pc-main{display:grid;gap:16px}
@@ -144,7 +145,7 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-route{margin-top:20px;display:grid;gap:12px}
 /* Под картой — две половины (20.11.2026, Андрей: устройства — левая половина, правая пока пуста). */
 .pc-under{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
-.pc-under.idle{grid-template-columns:minmax(0,720px);justify-content:center}
+.pc-under.idle{grid-template-columns:minmax(0,640px);justify-content:center}
 /* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
 .pc-tiers{display:flex;flex-wrap:wrap;gap:8px}
 .pc-tier{flex:1 1 96px;min-width:min-content;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
@@ -175,7 +176,7 @@ main.pc.pc-load,main.pc.pc-load~#foot{display:none}
 main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
-@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,720px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
+@media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,640px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
 @media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
 /* Подсказки во время проверки (21.11.2026, Андрей): карточка въезжает справа, стоит, уходит влево. */
 .pc-hints{position:relative;overflow:hidden}
@@ -186,15 +187,18 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes hintOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-90px)}}
 /* Пример результата по бокам (21.11.2026, Андрей): место остаётся пустым, в нём живёт анимация. */
 main.pc{position:relative}
-.pc-demo{position:absolute;top:28px;width:min(300px,calc(50vw - 360px - 52px));animation:pcFade .6s ease both}
-#demoL{right:calc(50% + 384px)}
-#demoR{left:calc(50% + 384px)}
+.pc-demo{position:absolute;top:28px;width:min(300px,calc(50vw - 320px - 52px));animation:pcFade .6s ease both}
+#demoL{right:calc(50% + 344px)}
+#demoR{left:calc(50% + 344px)}
 #demoMap{width:100%;height:380px;display:block}
 #demoList{min-height:380px;align-content:start}
 .pc-item.out{animation:pcOut .5s ease forwards}
 @keyframes pcOut{to{opacity:0;transform:translateY(-8px)}}
 @media (max-width:1299px){.pc-demo{display:none!important}}
 @media (prefers-reduced-motion:reduce){.pc-hint,.pc-hint.out,.pc-item.out{animation:none}}
+/* Тихая отмена (правило Андрея: отмена и выход — невзрачной ссылкой). */
+.pc-quiet{appearance:none;background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:14px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;justify-self:start}
+.pc-quiet:hover{color:var(--ink)}
 [hidden]{display:none!important}
 </style></head>
 <body>
@@ -247,6 +251,8 @@ main.pc{position:relative}
       <div class="pc-progrow"><div id="prog" class="pc-s"></div><div id="eta" class="pc-s" hidden></div></div>
       <div class="pc-bar" id="bar"><div id="barIn"></div></div>
       <p class="pc-s" id="slow" hidden></p>
+      <p class="pc-s" id="bigList" hidden></p>
+      <button class="pc-quiet" id="bCancelList" type="button" hidden></button>
       <p class="pc-s" id="sysX" hidden></p>
     </div>
     <div class="pc-stats" id="stats" hidden></div>
@@ -530,7 +536,10 @@ main.pc{position:relative}
     "pkDir": {"en": "Choose a folder", "ru": "Выбрать папку", "cs": "Vybrat složku", "de": "Ordner auswählen", "fr": "Choisir un dossier", "es": "Elegir una carpeta", "it": "Scegli una cartella", "pt": "Escolher uma pasta", "ja": "フォルダーを選ぶ", "ko": "폴더 선택"},
     "pkFiles": {"en": "Choose files", "ru": "Выбрать файлы", "cs": "Vybrat soubory", "de": "Dateien auswählen", "fr": "Choisir des fichiers", "es": "Elegir archivos", "it": "Scegli i file", "pt": "Escolher arquivos", "ja": "ファイルを選ぶ", "ko": "파일 선택"},
     "close": {"en": "Close", "ru": "Закрыть", "cs": "Zavřít", "de": "Schließen", "fr": "Fermer", "es": "Cerrar", "it": "Chiudi", "pt": "Fechar", "ja": "閉じる", "ko": "닫기"},
-    "pkNote": {"en": "The browser will ask for permission to access the files: without it the page cannot read them. The files themselves stay on your computer.", "ru": "Браузер попросит разрешения на доступ к файлам: без него страница не сможет их прочитать. Сами файлы остаются на компьютере.", "cs": "Prohlížeč požádá o povolení přístupu k souborům: bez něj je stránka nemůže přečíst. Samotné soubory zůstávají v počítači.", "de": "Der Browser fragt nach der Erlaubnis, auf die Dateien zuzugreifen: Ohne sie kann die Seite sie nicht lesen. Die Dateien selbst bleiben auf Ihrem Computer.", "fr": "Le navigateur demandera l’autorisation d’accéder aux fichiers : sans elle, la page ne peut pas les lire. Les fichiers eux-mêmes restent sur votre ordinateur.", "es": "El navegador pedirá permiso para acceder a los archivos: sin él, la página no puede leerlos. Los archivos se quedan en tu ordenador.", "it": "Il browser chiederà il permesso di accedere ai file: senza, la pagina non può leggerli. I file restano sul Suo computer.", "pt": "O navegador vai pedir permissão para acessar os arquivos: sem ela, a página não consegue lê-los. Os arquivos ficam no seu computador.", "ja": "ブラウザーがファイルへのアクセス許可を求めます。許可がないとページはファイルを読み取れません。ファイルそのものはパソコンに残ります。", "ko": "브라우저가 파일 접근 권한을 요청합니다. 권한이 없으면 페이지가 파일을 읽을 수 없습니다. 파일 자체는 컴퓨터에 그대로 남습니다."}
+    "pkNote": {"en": "The browser will ask for permission to access the files: without it the page cannot read them. The files themselves stay on your computer.", "ru": "Браузер попросит разрешения на доступ к файлам: без него страница не сможет их прочитать. Сами файлы остаются на компьютере.", "cs": "Prohlížeč požádá o povolení přístupu k souborům: bez něj je stránka nemůže přečíst. Samotné soubory zůstávají v počítači.", "de": "Der Browser fragt nach der Erlaubnis, auf die Dateien zuzugreifen: Ohne sie kann die Seite sie nicht lesen. Die Dateien selbst bleiben auf Ihrem Computer.", "fr": "Le navigateur demandera l’autorisation d’accéder aux fichiers : sans elle, la page ne peut pas les lire. Les fichiers eux-mêmes restent sur votre ordinateur.", "es": "El navegador pedirá permiso para acceder a los archivos: sin él, la página no puede leerlos. Los archivos se quedan en tu ordenador.", "it": "Il browser chiederà il permesso di accedere ai file: senza, la pagina non può leggerli. I file restano sul Suo computer.", "pt": "O navegador vai pedir permissão para acessar os arquivos: sem ela, a página não consegue lê-los. Os arquivos ficam no seu computador.", "ja": "ブラウザーがファイルへのアクセス許可を求めます。許可がないとページはファイルを読み取れません。ファイルそのものはパソコンに残ります。", "ko": "브라우저가 파일 접근 권한을 요청합니다. 권한이 없으면 페이지가 파일을 읽을 수 없습니다. 파일 자체는 컴퓨터에 그대로 남습니다."},
+    "listingT": {"en": "The browser is listing the files… {t}", "ru": "Браузер собирает список файлов… {t}", "cs": "Prohlížeč sestavuje seznam souborů… {t}", "de": "Der Browser erstellt die Dateiliste… {t}", "fr": "Le navigateur dresse la liste des fichiers… {t}", "es": "El navegador está listando los archivos… {t}", "it": "Il browser sta elencando i file… {t}", "pt": "O navegador está listando os arquivos… {t}", "ja": "ブラウザーがファイルの一覧を作成中… {t}", "ko": "브라우저가 파일 목록을 만드는 중… {t}"},
+    "bigList": {"en": "This looks like a large folder: the browser first goes through all its files on its own and does not show the page any progress. A whole disk takes 5–15 minutes this way, and then even longer to reach the page. Dragging the disk onto the page is faster, and you will see the progress at once.", "ru": "Похоже, выбрана большая папка: браузер сначала сам перебирает все её файлы и не показывает странице хода. Весь диск так перебирается 5–15 минут, а затем ещё дольше передаётся странице. Быстрее перетащить диск на страницу — ход будет виден сразу.", "cs": "Zdá se, že jde o velkou složku: prohlížeč nejprve sám projde všechny její soubory a stránce neukazuje průběh. Celý disk tak trvá 5–15 minut a pak se ještě déle předává stránce. Rychlejší je přetáhnout disk na stránku — průběh uvidíte hned.", "de": "Das scheint ein großer Ordner zu sein: Der Browser geht zuerst selbst alle Dateien durch und zeigt der Seite keinen Fortschritt. Eine ganze Festplatte dauert so 5–15 Minuten und danach noch länger, bis sie die Seite erreicht. Schneller geht es, die Festplatte auf die Seite zu ziehen – der Fortschritt ist sofort sichtbar.", "fr": "Il semble s’agir d’un grand dossier : le navigateur parcourt d’abord lui-même tous ses fichiers sans montrer de progression à la page. Un disque entier prend ainsi 5 à 15 minutes, puis encore plus longtemps pour arriver à la page. Il est plus rapide de faire glisser le disque sur la page : la progression sera visible tout de suite.", "es": "Parece una carpeta grande: el navegador primero recorre por sí mismo todos sus archivos y no muestra el avance a la página. Un disco entero tarda así de 5 a 15 minutos y luego aún más en llegar a la página. Es más rápido arrastrar el disco a la página: el avance se verá enseguida.", "it": "Sembra una cartella grande: il browser prima scorre da solo tutti i file e non mostra l’avanzamento alla pagina. Un intero disco richiede così 5–15 minuti e poi ancora di più per arrivare alla pagina. È più veloce trascinare il disco sulla pagina: l’avanzamento si vedrà subito.", "pt": "Parece uma pasta grande: o navegador primeiro percorre sozinho todos os arquivos e não mostra o progresso à página. Um disco inteiro leva assim de 5 a 15 minutos e depois ainda mais para chegar à página. É mais rápido arrastar o disco para a página — o progresso aparece na hora.", "ja": "大きなフォルダーのようです。ブラウザーはまず自分ですべてのファイルを調べ、その間ページに進み具合を伝えません。ディスク全体だとこれに5〜15分、さらにページに渡すまでにもっと時間がかかります。ディスクをページにドラッグするほうが速く、進み具合もすぐに見えます。", "ko": "큰 폴더로 보입니다. 브라우저가 먼저 모든 파일을 직접 훑으며, 그동안 페이지에 진행 상황을 알려 주지 않습니다. 디스크 전체는 이렇게 5~15분이 걸리고, 페이지로 넘어오는 데는 그보다 더 걸립니다. 디스크를 페이지로 끌어다 놓는 편이 더 빠르며 진행 상황도 바로 보입니다."},
+    "cancelList": {"en": "Cancel", "ru": "Отменить", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -611,7 +620,7 @@ main.pc{position:relative}
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
       appInT: "appInT", appInX: "appInX", appInG: "google", appInOr: "orMail", appInCode: "getCode", appInGo: "verify", appInLater: "appInLater",
-      pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq" };
+      pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList" };
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
@@ -753,22 +762,36 @@ main.pc{position:relative}
   // Пока браузер собирает список выбранной папки (на десятках тысяч файлов — полминуты и дольше), страница показывает, что
   // работа идёт (18.11.2026, Андрей: казалось, что сайт завис). Окно выбора закрылось — вернулся фокус: ждём список;
   // «Отмена» в окне — событие cancel.
-  var picking = false;
+  // Список собирает сам браузер и странице не сообщает ни числа файлов, ни хода (21.11.2026, Андрей: пять минут без
+  // движения на диске C). Страница показывает, сколько уже идёт; дольше 15 секунд — выбрано тяжёлое: срок по замеру на
+  // компьютере Андрея (диск C, 1,26 млн файлов: 5–15 минут перебора, затем дольше — передача странице), совет перетащить
+  // диск и «Отменить» — ответ браузера, если он всё же придёт, страница пропустит.
+  var picking = false, pickT = 0, pickAbort = false;
   function pick(input) {
-    picking = true;
+    picking = true; pickAbort = false;
     var back = function () {
       window.removeEventListener("focus", back);
-      setTimeout(function () { if (picking) busy(t("listing")); }, 250);
+      setTimeout(function () { if (picking) { busy(t("listing")); listWait(); } }, 250);
     };
     window.addEventListener("focus", back);
     input.click();
+  }
+  function listWait() {
+    var t0 = Date.now();
+    clearInterval(pickT);
+    pickT = setInterval(function () {
+      if (!picking) return void clearInterval(pickT);
+      var s = Math.floor((Date.now() - t0) / 1000);
+      $("prog").textContent = t("listingT", { t: Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2) });
+      s >= 15 && (show("bigList", true), show("bCancelList", true));
+    }, 1000);
   }
   function busy(text) {
     show("vPick", false); show("vDone", false); show("vWork", true); hintsOn(true);
     $("when").textContent = ""; $("prog").textContent = text;
     $("bar").classList.add("wait"); show("eta", false); show("slow", false);
   }
-  function unbusy() { picking = false; $("bar").classList.remove("wait"); }
+  function unbusy() { picking = false; clearInterval(pickT); show("bigList", false); show("bCancelList", false); $("bar").classList.remove("wait"); }
   // Окно выбора (21.11.2026, Андрей): кнопка «Проверить файлы на компьютере» сначала открывает окно — какие файлы выбирать;
   // в нём две кнопки: окно браузера выбирает либо папку, либо файлы (так же у Google Диска). Несколько папок сразу —
   // перетаскиванием на страницу.
@@ -794,7 +817,12 @@ main.pc{position:relative}
     $("fFiles").accept = "." + Object.keys(EXT).concat(Object.keys(OTHER), Object.keys(WALK_X)).join(",.");
     pick($("fFiles"));
   };
-  $("fFolder").onchange = $("fFiles").onchange = function () { unbusy(); run(Array.prototype.slice.call(this.files)); this.value = ""; };
+  $("fFolder").onchange = $("fFiles").onchange = function () {
+    // Человек отменил ожидание — пришедший позже список не разбирается.
+    if (pickAbort) { pickAbort = false; this.value = ""; return; }
+    unbusy(); run(Array.prototype.slice.call(this.files)); this.value = "";
+  };
+  $("bCancelList").onclick = function () { pickAbort = true; unpick(); };
   $("faqOpen").onclick = function () { winOpen("faqDlg"); statSend({ k: "faq" }); };
   // Окно подтверждения (20.11.2026, Андрей): «Начать заново» и удаление устройства — только после него.
   var DLG = null;
