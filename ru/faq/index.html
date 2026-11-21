@@ -231,16 +231,24 @@ dialog.win.closing::backdrop{animation:winFadeOut .2s ease forwards}
 .cta{text-align:center;padding:104px 0;background:var(--glow)}
 .cta h2{margin:0 auto 14px}
 .cta p{color:var(--sub);font-size:19px;margin:0 0 28px}
-footer{border-top:1px solid var(--line);padding:44px 0 56px;color:var(--sub);font-size:15px}
-footer .row{display:flex;justify-content:space-between;gap:32px;flex-wrap:wrap;align-items:flex-start}
-footer .wordmark{font-size:26px}
-footer nav{display:flex;gap:10px 22px;flex-wrap:wrap;max-width:640px}
-footer nav a{color:var(--ink);text-decoration:none;font-weight:600}
+/* Подвал — вдвое ниже (21.11.2026, Андрей): сетка в две колонки — слева знак, подпись и ссылки соцсетей, справа разделы
+   и языки; источники — одной строкой внизу. На узком экране — столбцом. */
+footer{border-top:1px solid var(--line);padding:20px 0 22px;color:var(--sub);font-size:14px}
+footer .wrap{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:48px;row-gap:12px;align-items:center}
+footer .row{display:contents}
+footer .row>div p{margin:2px 0 0!important;font-size:13px}
+footer .wordmark{font-size:22px}
+footer nav{display:flex;gap:6px 18px;flex-wrap:wrap;justify-content:flex-end}
+footer nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}
 footer nav a:hover{color:var(--accent)}
-footer .langs{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:22px}
+footer .social{margin:0;gap:8px}
+footer .social a{padding:6px 12px;font-size:13.5px}
+footer .social .ic{width:16px;height:16px}
+footer .langs{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0;justify-content:flex-end;font-size:13.5px}
 footer .langs a{color:var(--sub);text-decoration:none}
 footer .langs a[aria-current]{color:var(--ink);font-weight:700}
-footer .credits{margin-top:22px;font-size:13px;max-width:60em}
+footer .credits{grid-column:1/-1;margin:0;font-size:12px;max-width:none}
+@media (max-width:760px){footer .wrap{grid-template-columns:minmax(0,1fr)}footer nav,footer .langs{justify-content:flex-start}}
 .soon{display:inline-block;vertical-align:middle;margin-left:8px;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:700;white-space:nowrap}
 .faq summary .q{flex:1;min-width:0}
 .social{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
