@@ -70,10 +70,58 @@
       set(KV, v);
       var sep = back.indexOf("?") < 0 ? "?" : "&";
       var url = function (w) { return SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(back + (w ? sep + "w=1" : "")) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256"; };
-      var win = null;
-      try { win = window.open(url(true), "tabiAuth", "width=520,height=700"); } catch (e) {}
+      var win = gOpen(url(true));
       if (!win) return Promise.resolve(before ? before() : null).then(function () { location.href = url(false); });
+      gWait(win, function () { return gOpen(url(true)); });
     });
+  }
+  // Окно Google — по центру окна браузера и размером под выбор учётной записи (21.11.2026, Андрей: оно открывалось в
+  // углу экрана). Само окно рисует Google: выбор учётной записи страница показать не может — так его нельзя подделать.
+  function gOpen(u) {
+    var W = 480, H = 640, x = window.screenX != null ? window.screenX : window.screenLeft || 0,
+      y = window.screenY != null ? window.screenY : window.screenTop || 0;
+    var left = Math.round(x + Math.max(0, (window.outerWidth - W) / 2)), top = Math.round(y + Math.max(0, (window.outerHeight - H) / 2));
+    try { return window.open(u, "tabiAuth", "popup=yes,width=" + W + ",height=" + H + ",left=" + left + ",top=" + top); } catch (e) { return null; }
+  }
+  // Пока открыто окно Google, страница затемнена окном сайта: что происходит и кнопка, которая выводит окно Google вперёд
+  // (оно уходит за браузер, если щёлкнуть по странице). Окно сайта закрывается само: вход состоялся или окно Google закрыли.
+  var GW = {
+    en: ["Sign in with Google", "Choose your account in the Google window. It will close by itself once you are signed in.", "Show the Google window"],
+    ru: ["Вход через Google", "Выберите учётную запись в окне Google. Когда вход завершится, оно закроется само.", "Показать окно Google"],
+    cs: ["Přihlášení přes Google", "Vyberte účet v okně Google. Po dokončení přihlášení se samo zavře.", "Zobrazit okno Google"],
+    de: ["Anmeldung mit Google", "Wählen Sie Ihr Konto im Google-Fenster. Nach der Anmeldung schließt es sich von selbst.", "Google-Fenster anzeigen"],
+    fr: ["Connexion avec Google", "Choisissez votre compte dans la fenêtre Google. Elle se fermera d’elle-même une fois la connexion terminée.", "Afficher la fenêtre Google"],
+    es: ["Inicio de sesión con Google", "Elige tu cuenta en la ventana de Google. Se cerrará sola cuando termine el inicio de sesión.", "Mostrar la ventana de Google"],
+    it: ["Accesso con Google", "Scelga il Suo account nella finestra di Google. Si chiuderà da sola al termine dell’accesso.", "Mostra la finestra di Google"],
+    pt: ["Entrar com o Google", "Escolha sua conta na janela do Google. Ela se fechará sozinha quando o login terminar.", "Mostrar a janela do Google"],
+    ja: ["Google でログイン", "Google のウィンドウでアカウントを選んでください。ログインが終わると自動的に閉じます。", "Google のウィンドウを表示"],
+    ko: ["Google로 로그인", "Google 창에서 계정을 선택하세요. 로그인이 끝나면 창이 저절로 닫힙니다.", "Google 창 보기"]
+  };
+  var gw = null;
+  function gWait(win, reopen) {
+    if (!window.HTMLDialogElement) return;
+    var T = GW[(document.documentElement.lang || "en").slice(0, 2)] || GW.en, S0 = S;
+    if (!gw) {
+      gw = { d: document.createElement("dialog") };
+      gw.d.className = "win";
+      gw.d.setAttribute("aria-labelledby", "gwT");
+      gw.d.innerHTML = '<button type="button" class="win-x" data-close><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>'
+        + '<h2 id="gwT"></h2><p class="win-p"></p><button type="button" class="win-go"></button>';
+      document.body.appendChild(gw.d);
+      gw.d.addEventListener("close", function () { clearInterval(gw.t); });
+    }
+    gw.d.querySelector("h2").textContent = T[0];
+    gw.d.querySelector(".win-p").textContent = T[1];
+    gw.d.querySelector(".win-x").setAttribute("aria-label", T[2]);
+    var go = gw.d.querySelector(".win-go");
+    go.textContent = T[2];
+    go.onclick = function () { win && !win.closed ? win.focus() : (win = reopen()); };
+    gw.d.open || gw.d.showModal();
+    clearInterval(gw.t);
+    gw.t = setInterval(function () {
+      // Вход состоялся (новая сессия) или окно Google закрыто — окно сайта уходит плавно.
+      if ((S && S !== S0) || !win || win.closed) { clearInterval(gw.t); gw.d.open && winShut(gw.d); }
+    }, 400);
   }
   function exchange(code) {
     var ver = get(KV);

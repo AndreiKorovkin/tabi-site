@@ -212,6 +212,10 @@ dialog.win::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px}
 dialog.win::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
 dialog.win h2{font-size:20px;line-height:1.3;margin:0 0 10px;letter-spacing:-.01em}
 dialog.win:has(.win-x) h2{padding-right:44px}
+/* Главное действие окна сайта (окно «Вход через Google» из account.js) и его текст. */
+dialog.win .win-p{margin:0 0 18px;color:var(--sub);font-size:15.5px;line-height:1.55}
+dialog.win .win-go{appearance:none;border:0;border-radius:14px;padding:13px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--accent);color:var(--on-accent);width:100%;text-align:center}
+dialog.win .win-go:hover{filter:brightness(1.06)}
 .win-x{position:absolute;top:18px;right:18px;appearance:none;border:0;width:36px;height:36px;border-radius:999px;background:var(--bg2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .win-x:hover{color:var(--accent)}
 .win-x .ic{width:18px;height:18px}
@@ -242,6 +246,10 @@ dialog.win.closing::backdrop{animation:winFadeOut .2s ease forwards}
 .cta{text-align:center;padding:104px 0;background:var(--glow)}
 .cta h2{margin:0 auto 14px}
 .cta p{color:var(--sub);font-size:19px;margin:0 0 28px}
+/* Подвал — всегда ниже первого экрана (21.11.2026, Андрей: на коротких страницах он стоял посреди экрана): содержимое
+   страницы занимает не меньше высоты окна без шапки (64 точки на любой ширине), и до подвала прокручивают; блоки
+   страниц-сеток при этом не растягиваются (align-content). */
+main{min-height:calc(100vh - 64px);min-height:calc(100svh - 64px);align-content:start}
 /* Подвал — вдвое ниже (21.11.2026, Андрей): сетка в две колонки — слева знак, подпись и ссылки соцсетей, справа разделы
    и языки; источники — одной строкой внизу. На узком экране — столбцом. */
 footer{border-top:1px solid var(--line);padding:20px 0 22px;color:var(--sub);font-size:14px}
@@ -291,7 +299,7 @@ footer .credits{grid-column:1/-1;margin:0;font-size:12px;max-width:none}
  .cta{padding:72px 0}
 }
 @media (max-width:420px){.wrap{padding:0 16px}.card{padding:24px}}</style>
-<script src="/assets/account.js?v=654b9cd5c5" defer></script>
+<script src="/assets/account.js?v=b7ce364170" defer></script>
 </head>
 <body>
 <div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
