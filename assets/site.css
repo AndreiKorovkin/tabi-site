@@ -23,7 +23,7 @@ img{max-width:100%;display:block}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .ic{width:22px;height:22px;flex:none}
 header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);view-transition-name:site-header}
-header.top .wrap{display:flex;align-items:center;gap:24px;height:64px}
+header.top .wrap{display:flex;align-items:center;gap:24px;height:64px;max-width:1320px}
 .wordmark{font-family:TabiWord,Georgia,serif;font-size:30px;line-height:1;color:var(--ink);text-decoration:none}
 nav.sections{display:flex;gap:22px;margin-left:auto}
 nav.sections a{color:var(--sub);text-decoration:none;font-weight:600;font-size:15px;white-space:nowrap;padding:6px 0;border-bottom:2px solid transparent}
@@ -37,6 +37,24 @@ header.top .tacc{flex:none}
 details.menu{display:none}
 @media (max-width:1100px){nav.sections{display:none}nav.sections+.tools{margin-left:auto}details.menu{display:block}}
 @media (max-width:560px){header.top .lang .cur{display:none}header.top .tools{gap:8px}}
+.tacc .pi{display:none;flex:none;width:19px;height:19px}
+/* Самые узкие экраны (21.11.2026, план Андрея: на 320 точках шапка была шире окна, по-немецки и по-французски — и на 360–390):
+   язык и меню — одними значками, знак учётной записи — кругом без подписи, промежутки меньше. Правила с header.top сильнее
+   стилей знака, которые добавляет общий сценарий входа. */
+@media (max-width:480px){header.top .wrap{gap:12px}header.top .tools,header.top .pc-tools,header.top .ac-tools{gap:6px}
+header.top details.lang summary{padding:8px}header.top details.lang:not(.menu) summary>svg:last-child{display:none}
+header.top .thm,header.top .pc-theme,header.top .ac-theme{width:36px;height:36px}
+header.top .tacc{padding:4px;max-width:none}header.top .tacc .nm{display:none}
+header.top .tacc.in{padding:0;width:38px;height:38px;justify-content:center}header.top .tacc.in .pi{display:block}}
+/* То же по замеру (сценарий входа, fitHead): шапка не поместилась — вкладки в «Меню» (tight), и так тесно — одни значки. */
+header.top.tight nav.sections{display:none}header.top.tight details.menu{display:block}
+header.top.tight nav.sections+.tools,header.top.tight nav.sections+.pc-tools,header.top.tight nav.sections+.ac-tools{margin-left:auto}
+header.top.tighter .wrap{gap:12px}header.top.tighter .tools,header.top.tighter .pc-tools,header.top.tighter .ac-tools{gap:6px}
+header.top.tighter details.lang summary{padding:8px}header.top.tighter details.lang .cur,header.top.tighter #langCur,header.top.tighter #menuLbl{display:none}
+header.top.tighter details.lang:not(.menu) summary>svg:last-child{display:none}
+header.top.tighter .thm,header.top.tighter .pc-theme,header.top.tighter .ac-theme{width:36px;height:36px}
+header.top.tighter .tacc{padding:4px;max-width:none}header.top.tighter .tacc .nm{display:none}
+header.top.tighter .tacc.in{padding:0;width:38px;height:38px;justify-content:center}header.top.tighter .tacc.in .pi{display:block}
 .tacc{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}
 details.lang{position:relative}
 details.lang summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:var(--panel);box-shadow:var(--shadow);font-weight:600;font-size:15px;color:var(--ink)}

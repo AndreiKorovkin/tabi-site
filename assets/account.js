@@ -150,7 +150,7 @@
   var css = ".tacc{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--panel,#fff);box-shadow:var(--shadow,0 1px 3px rgba(0,0,0,.12));color:var(--ink,#1b1715);text-decoration:none;font-weight:700;font-size:14px;max-width:220px;white-space:nowrap}" +
     ".tacc.in{padding:9px 16px;background:var(--accent,#b3321f);color:#fff;box-shadow:none}" +
     ".tacc .av{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft,#f3dcd6);color:var(--accent,#b3321f);font-size:14px;font-weight:800;position:relative;overflow:hidden}" +
-    ".tacc .nm{overflow:hidden;text-overflow:ellipsis}" +
+    ".tacc .nm{overflow:hidden;text-overflow:ellipsis}.tacc .pi{display:none;flex:none;width:19px;height:19px}" +
     ".tacc.plus .av{background:linear-gradient(135deg,#f6d36b,#d79b20 55%,#f8e3a0);color:#5a3c00;box-shadow:0 0 0 2px #e9b949,0 0 12px rgba(233,185,73,.55)}" +
     ".tacc.plus .av::after{content:'';position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 50%,transparent 60%);animation:taccShine 3.2s ease-in-out infinite}" +
     "@keyframes taccShine{0%,55%{transform:translateX(-60%)}100%{transform:translateX(60%)}}" +
@@ -166,7 +166,14 @@
         el.href = "/account/?lang=" + lang;
         el.className = "tacc" + (S ? "" : " in") + (S && v && v.plus ? " plus" : "");
         el.textContent = "";
-        if (!S) return void (el.textContent = el.getAttribute("data-in") || "Sign in");
+        // «Войти» — значок человека и подпись; на самых узких экранах подпись скрыта (site.css), название — у ссылки.
+        if (!S) {
+          var lbl = el.getAttribute("data-in") || "Sign in";
+          el.innerHTML = '<svg class="pi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nm"></span>';
+          el.lastChild.textContent = lbl; el.title = lbl; el.setAttribute("aria-label", lbl);
+          return;
+        }
+        el.removeAttribute("aria-label");
         var name = (v && v.nick) || (S.mail || "").split("@")[0] || "Tabi";
         var av = document.createElement("span"); av.className = "av"; av.textContent = name.charAt(0).toUpperCase();
         var nm = document.createElement("span"); nm.className = "nm"; nm.textContent = name;
@@ -174,11 +181,41 @@
         el.title = S.mail || name;
       });
     };
-    var run = function () { paint(null); S && me().then(paint); };
+    var run = function () { paint(null); fitHead(); S && me().then(function (v) { paint(v); fitHead(); }); };
     run();
     subs.push(run);
     repaintFn = run;
   }
+  // Шапка не шире своей полосы (21.11.2026, план Андрея: на узких экранах и на ширине чуть больше 1100 точек по-немецки и
+  // по-французски шапка выходила за край): не помещается — вкладки уходят в «Меню»; и так тесно — язык и знак учётной
+  // записи одними значками.
+  function fitHead() {
+    var h = document.querySelector("header.top"), w = h && h.querySelector(".wrap");
+    if (!w) return;
+    // Не помещается — правый край содержимого шапки заходит за поле полосы (полоса прокрутки окна тоже отнимает ширину).
+    var over = function () {
+      var edge = w.getBoundingClientRect().right - parseFloat(getComputedStyle(w).paddingRight) + 1, m = 0;
+      // Все видимые части шапки, не только её прямые потомки: вкладка или кнопка может выйти и за край своего блока.
+      var all = w.querySelectorAll("*");
+      for (var i = 0; i < all.length; i++) { var r = all[i].getBoundingClientRect(); r.width && r.right > m && (m = r.right); }
+      return m > edge || w.scrollWidth > w.clientWidth + 1;
+    };
+    h.classList.remove("tight", "tighter");
+    over() && h.classList.add("tight");
+    over() && h.classList.add("tighter");
+  }
+  var fitQ = 0;
+  window.addEventListener("resize", function () { fitLater(); });
+  var fitLater = function () { fitQ || (fitQ = requestAnimationFrame(function () { fitQ = 0; fitHead(); })); };
+  document.fonts && document.fonts.ready && document.fonts.ready.then(fitHead);
+  // Шрифт пришёл позже, страница дописала вкладки или ник — шапка меряется снова (размеры частей шапки изменились).
+  var fitWatch = function () {
+    var w = document.querySelector("header.top .wrap");
+    if (!w || !window.ResizeObserver) return;
+    var ro = new ResizeObserver(fitLater);
+    for (var i = 0; i < w.children.length; i++) ro.observe(w.children[i]);
+  };
+  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fitWatch) : fitWatch();
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", chips) : chips();
   window.TabiAcc = {
     get: function () { return S; }, keep: keep, fresh: fresh, exchange: exchange, google: google, captcha: captcha,
