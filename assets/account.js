@@ -227,3 +227,14 @@
     repaint: function () { repaintFn && repaintFn(); }
   };
 })();
+
+// Окна сайта (21.11.2026, Андрей: окно — общий элемент): dialog.win с крестиком [data-close] закрывается крестиком и
+// щелчком мимо окна (по затемнённому фону); окна подтверждения без крестика так не закрываются.
+document.addEventListener("click", function (e) {
+  var d = e.target && e.target.closest ? e.target.closest("dialog.win") : null;
+  if (!d || !d.open) return;
+  if (e.target.closest("[data-close]")) return void d.close();
+  if (e.target !== d || !d.querySelector("[data-close]")) return;
+  var r = d.getBoundingClientRect();
+  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+});

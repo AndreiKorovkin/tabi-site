@@ -4,7 +4,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css">
-<script src="/assets/account.js?v=24405b062e"></script>
+<script src="/assets/account.js?v=133aa878b5"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -58,9 +58,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 .ac-quiet{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 22px;margin:18px 0 0}
 .ac-quiet button{appearance:none;background:none;border:0;padding:4px 0;cursor:pointer;font:inherit;font-size:13.5px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--sub) 45%,transparent)}
 .ac-quiet button:hover{color:var(--ink)}
-dialog.ac-dlg{border:1px solid var(--line);border-radius:24px;padding:26px;width:min(460px,calc(100vw - 32px));box-sizing:border-box;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
-dialog.ac-dlg::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(4px)}
-dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
+/* Окна — общий элемент сайта (dialog.win в assets/site.css, 21.11.2026). */
 [hidden]{display:none!important}
 </style></head>
 <body>
@@ -132,9 +130,9 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
   </section>
   <div class="ac-quiet" id="vOut" hidden><button id="bOut" type="button"></button><button id="bDelOpen" type="button"></button></div>
 </main>
-<dialog class="ac-dlg" id="delDlg" aria-labelledby="delDlgT"><h2 id="delDlgT"></h2><p class="ac-t" id="delDlgX"></p>
+<dialog class="win" id="delDlg" aria-labelledby="delDlgT"><h2 id="delDlgT"></h2><p class="ac-t" id="delDlgX"></p>
 <div class="ac-row"><button class="ac-btn b2" id="delNo" type="button"></button><button class="ac-btn" id="delYes" type="button"></button></div></dialog>
-<dialog class="ac-dlg" id="outDlg" aria-labelledby="outDlgT"><h2 id="outDlgT"></h2><p class="ac-t" id="outDlgX"></p>
+<dialog class="win" id="outDlg" aria-labelledby="outDlgT"><h2 id="outDlgT"></h2><p class="ac-t" id="outDlgX"></p>
 <div class="ac-row"><button class="ac-btn b2" id="outNo" type="button"></button><button class="ac-btn" id="outYes" type="button"></button></div></dialog>
 <div id="foot"></div>
 <script>
@@ -163,7 +161,7 @@ dialog.ac-dlg h2{font-size:20px;margin:0 0 10px}
     "thDark": {"en": "Dark theme", "ru": "Тёмная тема", "cs": "Tmavý motiv", "de": "Dunkles Design", "fr": "Thème sombre", "es": "Tema oscuro", "it": "Tema scuro", "pt": "Tema escuro", "ja": "ダークテーマ", "ko": "어두운 테마"},
     "sCountries": {"en": "Countries", "ru": "Страны", "cs": "Země", "de": "Länder", "fr": "Pays", "es": "Países", "it": "Paesi", "pt": "Países", "ja": "国", "ko": "국가"},
     "sCities": {"en": "Cities", "ru": "Города", "cs": "Města", "de": "Städte", "fr": "Villes", "es": "Ciudades", "it": "Città", "pt": "Cidades", "ja": "都市", "ko": "도시"},
-    "title": {"en": "Media files from your computer", "ru": "Медиафайлы с компьютера", "cs": "Mediální soubory z počítače", "de": "Mediendateien vom Computer", "fr": "Fichiers multimédias de l’ordinateur", "es": "Archivos multimedia del ordenador", "it": "File multimediali dal computer", "pt": "Arquivos de mídia do computador", "ja": "パソコンのメディアファイル", "ko": "컴퓨터의 미디어 파일"},
+    "title": {"en": "Recover your travels!", "ru": "Восстановите свои путешествия!", "cs": "Obnovte své cesty!", "de": "Holen Sie Ihre Reisen zurück!", "fr": "Retrouvez vos voyages !", "es": "¡Recupera tus viajes!", "it": "Ritrovi i Suoi viaggi!", "pt": "Recupere suas viagens!", "ja": "旅の記録を取り戻しましょう！", "ko": "여행을 되찾아 보세요!"},
     "accIn": {"en": "Sign in", "ru": "Войти", "cs": "Přihlásit se", "de": "Anmelden", "fr": "Se connecter", "es": "Iniciar sesión", "it": "Accedi", "pt": "Entrar", "ja": "ログイン", "ko": "로그인"},
     "navHome": {"en": "Home", "ru": "Главная", "cs": "Domů", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
     "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
