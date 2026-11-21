@@ -1160,7 +1160,6 @@ main.pc{position:relative}
       tnRefresh || (tnRefresh = setTimeout(function () {
         tnRefresh = 0;
         [].forEach.call(document.querySelectorAll("#cities .pc-city"), function (el) { el.children[0].textContent = townName(+el.dataset.ti); });
-        [].forEach.call(document.querySelectorAll("#demoList .nm[data-ti]"), function (el) { el.textContent = townName(+el.dataset.ti); });
         mapDirty = true; schedule();
       }, 60));
     });
@@ -1274,7 +1273,8 @@ main.pc{position:relative}
     return best;
   }
   var dec = new TextDecoder("utf-8");
-  var townName = function (i) { var o = townNamesOf(L, G.t.codes[G.t.ci[i]]); return (o && o[G.t.gi[i]]) || dec.decode(G.t.b.subarray(G.t.no[i], G.t.no[i] + G.t.nl[i])); };
+  var townDict = function (i) { return dec.decode(G.t.b.subarray(G.t.no[i], G.t.no[i] + G.t.nl[i])); };
+  var townName = function (i) { var o = townNamesOf(L, G.t.codes[G.t.ci[i]]); return (o && o[G.t.gi[i]]) || townDict(i); };
   var countryName = function (cc) { var c = G && G.w[cc]; return (c && c.n && (c.n[L] || c.n.en)) || String(cc || "").toUpperCase(); };
   var flagUrl = function (cc) { var c = G && G.w[cc]; return c && c.f && c.f.h ? DATA + "flags/" + c.f.h + (c.f.t === "s" ? ".svg" : ".webp") : ""; };
   var regionName = function (rg) { return rg.n[L] || rg.n.en || rg.id; };
@@ -2331,6 +2331,10 @@ main.pc{position:relative}
     [[52.52, 13.405], [52.3676, 4.9041], [50.8503, 4.3517], [48.8566, 2.3522]],
     [[41.0082, 28.9784], [38.4237, 27.1428], [36.8969, 30.7133], [38.6244, 34.7144]]
   ];
+  // Названия городов примера на десяти языках кладёт в страницу сборка (tools/pc_build.py, demo_names): номер GeoNames →
+  // название, только где перевод отличается от словаря. Файлы переводов стран ради примера не грузятся.
+  var DEMO_NAMES = {"cs":{"3067696":"Praha","2761369":"Vídeň","3054643":"Budapešť","792680":"Bělehrad","3173435":"Milán","3164603":"Benátky","3176959":"Florencie","3169070":"Řím","2267057":"Lisabon","1850147":"Tokio","1857910":"Kjóto","1862415":"Hirošima","2950159":"Berlín","2759794":"Amsterodam","2800866":"Brusel","2988507":"Paříž","5128581":"New York","1835848":"Soul","264371":"Athény","524901":"Moskva"},"de":{"3067696":"Prag","2761369":"Wien","792680":"Belgrad","3173435":"Mailand","3164603":"Venedig","3176959":"Florenz","3169070":"Rom","2267057":"Lissabon","1850147":"Tokio","1857910":"Kyōto","2800866":"Brüssel","311046":"Izmir","264371":"Athen","524901":"Moskau"},"en":{"2510911":"Seville","311046":"Izmir","5128581":"New York"},"es":{"3067696":"Praga","2761369":"Viena","792680":"Belgrado","3173435":"Milán","3164603":"Venecia","3176959":"Florencia","3169070":"Roma","2267057":"Lisboa","1850147":"Tokio","1857910":"Kioto","2950159":"Berlín","2759794":"Ámsterdam","2800866":"Bruselas","2988507":"París","745044":"Estambul","311046":"Esmirna","5128581":"Nueva York","1835848":"Seúl","264371":"Atenas","524901":"Moscú","2673730":"Estocolmo"},"fr":{"2761369":"Vienne","3164603":"Venise","3128760":"Barcelone","2510911":"Séville","2267057":"Lisbonne","1857910":"Kyōto","2800866":"Bruxelles","311046":"Izmir","5128581":"New York","1835848":"Séoul","264371":"Athènes","524901":"Moscou"},"it":{"3067696":"Praga","792680":"Belgrado","3173435":"Milano","3164603":"Venezia","3176959":"Firenze","3169070":"Roma","3128760":"Barcellona","2510911":"Siviglia","2267057":"Lisbona","2950159":"Berlino","2800866":"Bruxelles","2988507":"Parigi","311046":"Smirne","5128581":"New York","1835848":"Seul","264371":"Atene","524901":"Mosca","2673730":"Stoccolma"},"ja":{"3067696":"プラハ","2761369":"ウィーン","3054643":"ブダペスト","792680":"ベオグラード","3173435":"ミラノ","3164603":"ヴェネツィア","3176959":"フィレンツェ","3169070":"ローマ","3128760":"バルセロナ","3117735":"マドリード","2510911":"セビリャ","2267057":"リスボン","1850147":"東京都","1857910":"京都市","1862415":"広島市","1863967":"福岡市","2950159":"ベルリン","2759794":"Amusuterudamu","2800866":"ブリュッセル","2988507":"パリ","745044":"イスタンブール","311046":"イズミル","323777":"アンタルヤ","303831":"ネヴシェヒル","5128581":"ニューヨーク","1835848":"ソウル特別市","264371":"アテネ","524901":"モスクワ","2673730":"ストックホルム"},"ko":{"3067696":"프라하","2761369":"빈","3054643":"부다페스트","792680":"베오그라드","3173435":"밀라노","3164603":"베니스","3176959":"피렌체","3169070":"로마","3128760":"바르셀로나","3117735":"마드리드","2510911":"세비야","2267057":"리스본","1850147":"도쿄","1857910":"교토 시","1862415":"히로시마 시","1863967":"후쿠오카 시","2950159":"베를린","2759794":"Amsŭt'erŭdam","2800866":"브뤼셀","2988507":"파리","745044":"이스탄불","323777":"안탈리아","303831":"네브셰히르","5128581":"뉴욕 시","1835848":"서울특별시","264371":"아테네","524901":"모스크바","2673730":"스톡홀름"},"pt":{"3067696":"Praga","2761369":"Viena","3054643":"Budapeste","792680":"Belgrado","3173435":"Milão","3164603":"Veneza","3176959":"Florença","3169070":"Roma","2510911":"Sevilha","2267057":"Lisboa","1850147":"Tóquio","1857910":"Quioto","1862415":"Hiroxima","2950159":"Berlim","2759794":"Amesterdã","2800866":"Bruxelas","745044":"Istambul","311046":"Esmirna","5128581":"Nova Iorque","1835848":"Seul","264371":"Atenas","524901":"Moscovo","2673730":"Estocolmo"},"ru":{"3067696":"Прага","2761369":"Вена","3054643":"Будапешт","792680":"Белград","3173435":"Милан","3164603":"Венеция","3176959":"Флоренция","3169070":"Рим","3128760":"Барселона","3117735":"Мадрид","2510911":"Севилья","2267057":"Лиссабон","1850147":"Токио","1857910":"Киото","1862415":"Хиросима","1863967":"Фукуока","2950159":"Берлин","2759794":"Амстердам","2800866":"Брюссель","2988507":"Париж","745044":"Стамбул","311046":"Измир","323777":"Анталия","303831":"Невшехир","5128581":"Нью-Йорк","1835848":"Сеул","264371":"Афины","524901":"Москва","2673730":"Стокгольм"}};
+  var demoName = function (i) { var o = DEMO_NAMES[L]; return (o && o[G.t.gi[i]]) || townDict(i); };
   var DEMO_CITIES = [[50.0875, 14.4213, 2019], [41.9028, 12.4964, 2021], [35.6762, 139.6503, 2018], [41.3874, 2.1686, 2022],
     [48.8566, 2.3522, 2017], [41.0082, 28.9784, 2023], [40.7128, -74.006, 2016], [52.52, 13.405, 2020], [37.5665, 126.978, 2024],
     [38.7223, -9.1393, 2022], [48.2082, 16.3738, 2019], [37.9838, 23.7275, 2021], [55.7558, 37.6173, 2015], [59.3293, 18.0686, 2023],
@@ -2341,7 +2345,6 @@ main.pc{position:relative}
     var on = demoWant();
     $("demoL").hidden = $("demoR").hidden = !on;
     if (on && !demo.on) {
-      DEMO_CITIES.forEach(function (q) { var ci = cityAt(q[0], q[1]); ci >= 0 && townName(ci); });
       demo.on = true; demo.t0 = performance.now(); demoCities(); demo.raf = requestAnimationFrame(demoFrame);
     }
     if (!on && demo.on) { demo.on = false; cancelAnimationFrame(demo.raf); clearTimeout(demo.ct); $("demoList").innerHTML = ""; }
@@ -2395,8 +2398,6 @@ main.pc{position:relative}
         lg.fillStyle = gr; lg.fillRect(0, 0, W, H);
       });
       lg.globalCompositeOperation = "source-over";
-      // Названия городов примера — загрузка перевода на язык страницы.
-      R.forEach(function (q) { var ci = cityAt(q[0], q[1]); ci >= 0 && townName(ci); });
     }
     var fade = el > n * STEP + HOLD ? Math.max(0, 1 - (el - n * STEP - HOLD) / FADE) : Math.min(1, el / 500);
     g.clearRect(0, 0, W, H);
@@ -2419,7 +2420,7 @@ main.pc{position:relative}
       if (a <= 0) continue;
       g.fillStyle = C.acc; g.beginPath(); g.arc(P[i][0], P[i][1], 6.5 * dpr * a, 0, 6.2832); g.fill();
       g.strokeStyle = C.ink; g.lineWidth = 2 * dpr; g.stroke();
-      var ci = cityAt(R[i][0], R[i][1]), nm = ci >= 0 ? townName(ci) : "", la2 = ease((el - i * STEP - 200) / 400);
+      var ci = cityAt(R[i][0], R[i][1]), nm = ci >= 0 ? demoName(ci) : "", la2 = ease((el - i * STEP - 200) / 400);
       if (!nm || la2 <= 0) continue;
       var tw = g.measureText(nm).width, th = 16 * dpr, pos = null,
         cand = [[11, -12], [-11 - tw / dpr, -12], [11, 14], [-11 - tw / dpr, 14], [-tw / dpr / 2, -22], [-tw / dpr / 2, 24]];
@@ -2459,7 +2460,7 @@ main.pc{position:relative}
           it.className = "pc-item";
           if (fu) { var im = document.createElement("img"); im.src = fu; im.alt = ""; it.appendChild(im); }
           body.innerHTML = '<div class="nm"></div><div class="dt"></div>';
-          body.children[0].textContent = townName(ci); body.children[0].dataset.ti = ci;
+          body.children[0].textContent = demoName(ci);
           body.children[1].textContent = countryName(cc) + " · " + q[2];
           it.appendChild(body); box.appendChild(it);
         }
