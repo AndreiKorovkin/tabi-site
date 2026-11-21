@@ -230,11 +230,31 @@
 
 // Окна сайта (21.11.2026, Андрей: окно — общий элемент): dialog.win с крестиком [data-close] закрывается крестиком и
 // щелчком мимо окна (по затемнённому фону); окна подтверждения без крестика так не закрываются.
+// Закрытие плавное (21.11.2026, Андрей): класс closing, по концу анимации — close(); Esc — так же.
+function winShut(d) {
+  if (!d || !d.open || d.classList.contains("closing")) return;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !d.close) return void (d.close ? d.close() : d.removeAttribute("open"));
+  d.classList.add("closing");
+  var done = function () {
+    if (!d.classList.contains("closing")) return;
+    d.removeEventListener("animationend", done);
+    d.classList.remove("closing");
+    d.close();
+  };
+  d.addEventListener("animationend", done);
+  setTimeout(done, 300);
+}
+window.TabiWin = { close: winShut };
+document.addEventListener("cancel", function (e) {
+  var d = e.target;
+  if (d && d.matches && d.matches("dialog.win")) { e.preventDefault(); winShut(d); }
+}, true);
 document.addEventListener("click", function (e) {
   var d = e.target && e.target.closest ? e.target.closest("dialog.win") : null;
   if (!d || !d.open) return;
-  if (e.target.closest("[data-close]")) return void d.close();
+  if (e.target.closest("[data-close]")) return void winShut(d);
   if (e.target !== d || !d.querySelector("[data-close]")) return;
   var r = d.getBoundingClientRect();
-  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) d.close();
+  if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) winShut(d);
 });

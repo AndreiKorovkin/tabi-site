@@ -3,8 +3,8 @@
 <meta name="robots" content="noindex">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=1642cf362e">
-<script src="/assets/account.js?v=133aa878b5"></script>
+<link rel="stylesheet" href="/assets/site.css?v=a613ae88b3">
+<script src="/assets/account.js?v=21fed789be"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -109,6 +109,10 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 @keyframes pcWait{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}
 /* Строка хода не дёргается: цифры одной ширины (18.11.2026, Андрей). */
 #prog,#eta{font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Срок — справа в строке хода (21.11.2026, Андрей: отдельной строкой он растягивал карточку). */
+.pc-progrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;min-width:0}
+.pc-progrow #prog{flex:1;min-width:0}
+.pc-progrow #eta{flex:none}
 .pc-why summary{cursor:pointer;font-weight:700;color:var(--ink);font-size:14.5px;list-style:none}
 .pc-why summary::-webkit-details-marker{display:none}
 .pc-why summary::after{content:" ›";color:var(--sub)}
@@ -213,9 +217,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     <!-- Чтение и разбор -->
     <div id="vWork" hidden style="display:grid;gap:12px">
       <div class="pc-when" id="when" aria-live="polite"></div>
-      <div id="prog" class="pc-s"></div>
+      <div class="pc-progrow"><div id="prog" class="pc-s"></div><div id="eta" class="pc-s" hidden></div></div>
       <div class="pc-bar" id="bar"><div id="barIn"></div></div>
-      <div id="eta" class="pc-s" hidden></div>
       <p class="pc-s" id="slow" hidden></p>
       <p class="pc-s" id="sysX" hidden></p>
     </div>
@@ -407,7 +410,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     "zAll": {"en": "Whole route", "ru": "Весь маршрут", "cs": "Celá trasa", "de": "Ganze Route", "fr": "Tout l’itinéraire", "es": "Toda la ruta", "it": "Tutto il percorso", "pt": "Todo o trajeto", "ja": "ルート全体", "ko": "전체 경로"},
     "listing": {"en": "The browser is collecting the list of files…", "ru": "Браузер собирает список файлов…", "cs": "Prohlížeč sestavuje seznam souborů…", "de": "Der Browser stellt die Dateiliste zusammen …", "fr": "Le navigateur rassemble la liste des fichiers…", "es": "El navegador está reuniendo la lista de archivos…", "it": "Il browser sta raccogliendo l’elenco dei file…", "pt": "O navegador está reunindo a lista de arquivos…", "ja": "ブラウザーがファイルの一覧を集めています…", "ko": "브라우저가 파일 목록을 모으는 중…"},
     "collecting": {"en": "Collecting files: {n}", "ru": "Собираем файлы: {n}", "cs": "Shromažďujeme soubory: {n}", "de": "Dateien werden gesammelt: {n}", "fr": "Collecte des fichiers : {n}", "es": "Reuniendo archivos: {n}", "it": "Raccolta dei file: {n}", "pt": "Reunindo arquivos: {n}", "ja": "ファイルを集めています：{n}", "ko": "파일을 모으는 중: {n}"},
-    "eta": {"en": "About {t} left", "ru": "Осталось около {t}", "cs": "Zbývá asi {t}", "de": "Noch etwa {t}", "fr": "Environ {t} restantes", "es": "Quedan unos {t}", "it": "Mancano circa {t}", "pt": "Faltam cerca de {t}", "ja": "残り約{t}", "ko": "약 {t} 남음"},
+    "eta": {"en": "≈ {t}", "ru": "≈ {t}", "cs": "≈ {t}", "de": "≈ {t}", "fr": "≈ {t}", "es": "≈ {t}", "it": "≈ {t}", "pt": "≈ {t}", "ja": "≈ {t}", "ko": "≈ {t}"},
     "slow": {"en": "The files are being read slowly: this happens when they are on a flash drive, an external disk or in a cloud folder that the computer downloads first.", "ru": "Файлы читаются медленно: так бывает, когда они лежат на флешке, внешнем диске или в облачной папке, которую компьютер сначала скачивает.", "cs": "Soubory se čtou pomalu: tak to bývá, když jsou na flash disku, externím disku nebo v cloudové složce, kterou počítač nejdřív stahuje.", "de": "Die Dateien werden langsam gelesen: Das kommt vor, wenn sie auf einem USB-Stick, einer externen Festplatte oder in einem Cloud-Ordner liegen, den der Computer zuerst herunterlädt.", "fr": "Les fichiers sont lus lentement : cela arrive lorsqu’ils se trouvent sur une clé USB, un disque externe ou dans un dossier cloud que l’ordinateur télécharge d’abord.", "es": "Los archivos se leen despacio: ocurre cuando están en una memoria USB, un disco externo o una carpeta en la nube que el ordenador descarga primero.", "it": "I file vengono letti lentamente: succede quando si trovano su una chiavetta USB, su un disco esterno o in una cartella cloud che il computer scarica prima.", "pt": "Os arquivos estão sendo lidos devagar: isso acontece quando estão em um pen drive, em um disco externo ou em uma pasta na nuvem que o computador baixa primeiro.", "ja": "ファイルの読み込みに時間がかかっています。USBメモリーや外付けディスク、先にダウンロードが必要なクラウドのフォルダにあるファイルでは、こうなることがあります。", "ko": "파일을 천천히 읽고 있습니다. 파일이 USB 메모리, 외장 디스크 또는 컴퓨터가 먼저 내려받아야 하는 클라우드 폴더에 있을 때 이렇게 됩니다."},
     "whyS": {"en": "Files without a shooting location: {n}. Why", "ru": "Файлы без места съёмки: {n}. Почему", "cs": "Soubory bez místa pořízení: {n}. Proč", "de": "Dateien ohne Aufnahmeort: {n}. Warum", "fr": "Fichiers sans lieu de prise de vue : {n}. Pourquoi", "es": "Archivos sin lugar de captura: {n}. Por qué", "it": "File senza luogo di scatto: {n}. Perché", "pt": "Arquivos sem local da captura: {n}. Por quê", "ja": "撮影場所のないファイル：{n}。理由", "ko": "촬영 장소가 없는 파일: {n}. 이유"},
     "whyCam": {"en": "The camera did not record the place: {n}. Either the camera has no GPS, or location recording was turned off in its settings:", "ru": "Камера не записала место — {n}. У камеры нет GPS, или запись места была выключена в её настройках:", "cs": "Fotoaparát místo nezaznamenal — {n}. Fotoaparát nemá GPS, nebo bylo ukládání polohy v jeho nastavení vypnuté:", "de": "Die Kamera hat den Ort nicht gespeichert: {n}. Die Kamera hat kein GPS, oder die Ortsaufzeichnung war in ihren Einstellungen ausgeschaltet:", "fr": "L’appareil n’a pas enregistré le lieu : {n}. Il n’a pas de GPS, ou l’enregistrement du lieu était désactivé dans ses réglages :", "es": "La cámara no registró el lugar: {n}. La cámara no tiene GPS o el registro de ubicación estaba desactivado en sus ajustes:", "it": "La fotocamera non ha registrato il luogo: {n}. Non ha il GPS, oppure la registrazione della posizione era disattivata nelle sue impostazioni:", "pt": "A câmera não registrou o local: {n}. A câmera não tem GPS ou o registro de localização estava desativado nas configurações dela:", "ja": "カメラが撮影場所を記録していません：{n}。GPSのないカメラか、設定で位置情報の記録がオフになっていました：", "ko": "카메라가 장소를 기록하지 않았습니다: {n}. 카메라에 GPS가 없거나 설정에서 위치 기록이 꺼져 있었습니다:"},
@@ -743,7 +746,8 @@ main.pc.pc-show{animation:pcFade .35s ease both}
   // в нём две кнопки: окно браузера выбирает либо папку, либо файлы (так же у Google Диска). Несколько папок сразу —
   // перетаскиванием на страницу.
   function winOpen(id) { var d = $(id); d.showModal ? d.showModal() : d.setAttribute("open", ""); }
-  function winClose(id) { var d = $(id); d.close ? d.close() : d.removeAttribute("open"); }
+  // Закрытие — плавно, общим закрытием окон сайта (account.js, TabiWin).
+  function winClose(id) { var d = $(id); window.TabiWin ? TabiWin.close(d) : d.close ? d.close() : d.removeAttribute("open"); }
   function renderPick() {
     var ul = $("pkList");
     ul.innerHTML = "";
@@ -773,7 +777,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     var d = $("dlg");
     d.showModal ? d.showModal() : d.setAttribute("open", "");
   }
-  $("dlgNo").onclick = function () { DLG = null; var d = $("dlg"); d.close ? d.close() : d.removeAttribute("open"); };
+  $("dlgNo").onclick = function () { DLG = null; winClose("dlg"); };
   $("dlgYes").onclick = function () { $("dlgYes").disabled = true; DLG && DLG(); };
   $("bClear").onclick = function () {
     ask(t("dlgT"), t("dlgX"), t("clearBtn"), function () { keepDrop(true).then(function () { location.replace(location.pathname + "?lang=" + L); }); });
@@ -1875,7 +1879,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     d.addEventListener("close", fin);
     d.showModal ? d.showModal() : d.setAttribute("open", "");
   }
-  $("resOk").onclick = function () { var d = $("resDlg"); d.close ? d.close() : (d.removeAttribute("open"), d.dispatchEvent(new Event("close"))); };
+  $("resOk").onclick = function () { var d = $("resDlg"); d.close ? winClose("resDlg") : (d.removeAttribute("open"), d.dispatchEvent(new Event("close"))); };
   // Что нового даст разбор — до показа: страны, регионы и города по тем же данным, что у показа (у точки остаются cc, rg,
   // ct — показ их не пересчитывает), дни и километры всего итога.
   function kmOf(list) {
@@ -2750,7 +2754,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
     var d = $("appInDlg");
     d.showModal ? d.showModal() : d.setAttribute("open", "");
   }
-  function appInClose() { var d = $("appInDlg"); d.close ? d.close() : d.removeAttribute("open"); }
+  function appInClose() { winClose("appInDlg"); }
   function appInErr(k) { show("appInErr", !!k); $("appInErr").textContent = k ? t(k) : ""; }
   $("appInLater").onclick = appInClose;
   $("appInG").onclick = function () { appInClose(); TACC.google(BACK + "?lang=" + L, stash); };

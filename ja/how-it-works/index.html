@@ -169,6 +169,16 @@ dialog.win:has(.win-x) h2{padding-right:44px}
 .win-x{position:absolute;top:18px;right:18px;appearance:none;border:0;width:36px;height:36px;border-radius:999px;background:var(--bg2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .win-x:hover{color:var(--accent)}
 .win-x .ic{width:18px;height:18px}
+/* Окно появляется и уходит плавно (21.11.2026, Андрей: появлялось резко); уход — класс closing (account.js, TabiWin). */
+dialog.win[open]{animation:winIn .26s cubic-bezier(.2,.8,.2,1)}
+dialog.win[open]::backdrop{animation:winFade .26s ease}
+dialog.win.closing{animation:winOut .2s ease forwards}
+dialog.win.closing::backdrop{animation:winFadeOut .2s ease forwards}
+@keyframes winIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes winOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px) scale(.98)}}
+@keyframes winFade{from{opacity:0}to{opacity:1}}
+@keyframes winFadeOut{from{opacity:1}to{opacity:0}}
+@media (prefers-reduced-motion:reduce){dialog.win,dialog.win::backdrop{animation:none!important}}
 /* Вопросы окна — кнопками (21.11.2026, Андрей): нажатие раскрывает ответ под вопросом. */
 .qa{display:grid;gap:10px;margin-top:6px}
 .qa details{border:1px solid var(--line);border-radius:16px;background:var(--bg);transition:border-color .2s ease}
@@ -227,7 +237,7 @@ footer .credits{margin-top:22px;font-size:13px;max-width:60em}
  .cta{padding:72px 0}
 }
 @media (max-width:420px){.wrap{padding:0 16px}.card{padding:24px}}</style>
-<script src="/assets/account.js?v=133aa878b5" defer></script>
+<script src="/assets/account.js?v=21fed789be" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">本文へ移動</a>
