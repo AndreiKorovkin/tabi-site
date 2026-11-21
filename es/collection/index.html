@@ -154,7 +154,6 @@ section.alt{background:var(--bg2)}
 .faq summary .ic{color:var(--sub);transition:transform .25s ease}
 .faq details[open] summary .ic{transform:rotate(180deg)}
 .faq details p{margin:0 0 22px;color:var(--sub);max-width:44em}
-.faq details p:not(:last-child){margin-bottom:12px}
 /* Окно сайта — один элемент на всех страницах (21.11.2026, Андрей: окно вопросов и ответов универсальное): затемнённый
    фон, крестик [data-close] и щелчок мимо окна закрывают его (общий сценарий /assets/account.js). */
 dialog.win{border:1px solid var(--line);border-radius:24px;padding:26px;width:min(460px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow-y:auto;box-sizing:border-box;background:var(--panel);color:var(--ink);box-shadow:var(--shadow)}
@@ -170,6 +169,17 @@ dialog.win:has(.win-x) h2{padding-right:44px}
 .win-x{position:absolute;top:18px;right:18px;appearance:none;border:0;width:36px;height:36px;border-radius:999px;background:var(--bg2);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
 .win-x:hover{color:var(--accent)}
 .win-x .ic{width:18px;height:18px}
+/* Вопросы окна — кнопками (21.11.2026, Андрей): нажатие раскрывает ответ под вопросом. */
+.qa{display:grid;gap:10px;margin-top:6px}
+.qa details{border:1px solid var(--line);border-radius:16px;background:var(--bg);transition:border-color .2s ease}
+.qa details[open]{border-color:var(--accent)}
+.qa summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 18px;font-weight:700;font-size:16.5px;line-height:1.35;color:var(--ink);border-radius:16px}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary:hover{color:var(--accent)}
+.qa summary .ic{width:20px;height:20px;color:var(--sub);transition:transform .25s ease}
+.qa details[open] summary .ic{transform:rotate(180deg)}
+.qa details p{margin:0 18px 12px;color:var(--sub);font-size:15.5px;line-height:1.55}
+.qa details p:last-child{margin-bottom:18px}
 .next{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:28px;margin-top:64px}
 .next a{font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .next .ic{width:18px;height:18px}
