@@ -68,7 +68,7 @@ More than 80,000 special places on every continent, and any of them can become y
 
 Your collection is your personal story, and Tabi treats it with care.
 
-- Your route stays on your phone: Your route is kept on the device and sent to your account once a day.
+- Your route is kept on your phone: Your route is kept on the device and sent to your account once a day.
 - Your photos never leave your phone: Only the location and date of each picture are read. The images themselves are never uploaded.
 - Export and deletion: You can export all your collection data as a file in the app settings, and delete your account there or on your account page on this site.
 - Details: What exactly is stored and why is described in the privacy policy.
@@ -158,7 +158,10 @@ Earlier generations collected what they could hold: stamps, coins, postcards. Ta
 - [Deutsch](https://tabimobile.com/de/)
 - [Español](https://tabimobile.com/es/)
 - [Français](https://tabimobile.com/fr/)
+- [Italiano](https://tabimobile.com/it/)
 - [日本語](https://tabimobile.com/ja/)
+- [한국어](https://tabimobile.com/ko/)
+- [Português](https://tabimobile.com/pt/)
 - [Русский](https://tabimobile.com/ru/)
 
 - [Privacy policy](https://tabimobile.com/privacy.html)
