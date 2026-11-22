@@ -1021,7 +1021,8 @@ main.pc{position:relative}
     e.preventDefault();
     var items = Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.items) || []),
       entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; }).filter(Boolean);
-    if (entries.length) { RUN.src = "drop"; busy(t("collecting", { n: 0 })); dropWalk(entries).then(function (r) { unbusy(); run(r.out, r.seen); }); }
+    // Обход перетащенного идёт долго (весь диск — десятки минут): уход со страницы и тогда спрашивается (picking).
+    if (entries.length) { RUN.src = "drop"; picking = true; busy(t("collecting", { n: 0 })); dropWalk(entries).then(function (r) { unbusy(); run(r.out, r.seen); }); }
     else run(Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.files) || []));
   });
   // Обход перетащенного (21.11.2026): папки — очередью, до восьми сразу (прежде все сразу: на диске C Андрея — до 3,1 ГБ
