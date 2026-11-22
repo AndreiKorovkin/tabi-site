@@ -340,6 +340,7 @@ main.pc{position:relative}
 <!-- Пришедшим из приложения (21.11.2026, план Андрея): короткая ссылка tabimobile.com/pc из приложения; без входа на сайте —
      окно: войдите той же почтой, что в приложении, тогда найденное придёт в приложение. Другим это окно не показывается. -->
 <dialog class="win" id="appInDlg" aria-labelledby="appInT">
+  <button type="button" class="win-x" data-close><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   <h2 id="appInT"></h2>
   <p class="pc-t" id="appInX"></p>
   <div class="pc-signin">
@@ -351,7 +352,6 @@ main.pc{position:relative}
     <button class="pc-btn" id="appInGo" type="button" hidden></button>
     <p class="pc-s" id="appInErr" hidden></p>
   </div>
-  <button class="pc-btn b2 sm" id="appInLater" type="button"></button>
 </dialog>
 <dialog class="win" id="dlg" aria-labelledby="dlgT"><h2 id="dlgT"></h2><p class="pc-t" id="dlgX"></p><div class="pc-row"><button class="pc-btn b2" id="dlgNo" type="button"></button><button class="pc-btn" id="dlgYes" type="button"></button></div></dialog>
 <!-- Окно выбора (21.11.2026, Андрей): перед системным окном браузера — какие файлы выбирать; затем папка или файлы -->
@@ -523,9 +523,8 @@ main.pc{position:relative}
     "trashAt": {"en": "Deleted on {d}", "ru": "Удалено {d}", "cs": "Smazáno {d}", "de": "Gelöscht am {d}", "fr": "Supprimé le {d}", "es": "Eliminado el {d}", "it": "Eliminato il {d}", "pt": "Excluído em {d}", "ja": "{d}に削除", "ko": "{d} 삭제됨"},
     "trashBack": {"en": "Restore", "ru": "Вернуть", "cs": "Vrátit", "de": "Wiederherstellen", "fr": "Restaurer", "es": "Recuperar", "it": "Ripristina", "pt": "Restaurar", "ja": "元に戻す", "ko": "되돌리기"},
     "trashNote": {"en": "Deleted devices can be restored for 30 days.", "ru": "Удалённые устройства можно вернуть в течение 30 дней.", "cs": "Smazaná zařízení lze vrátit po dobu 30 dnů.", "de": "Gelöschte Geräte lassen sich 30 Tage lang wiederherstellen.", "fr": "Les appareils supprimés peuvent être restaurés pendant 30 jours.", "es": "Los dispositivos eliminados se pueden recuperar durante 30 días.", "it": "I dispositivi eliminati si possono ripristinare per 30 giorni.", "pt": "Os dispositivos excluídos podem ser restaurados durante 30 dias.", "ja": "削除した機器は30日間元に戻せます。", "ko": "삭제된 기기는 30일 동안 되돌릴 수 있습니다."},
-    "appInT": {"en": "You already have the Tabi app", "ru": "Приложение Tabi у вас уже есть", "cs": "Aplikaci Tabi už máte", "de": "Die Tabi-App haben Sie bereits", "fr": "Vous avez déjà l’application Tabi", "es": "Ya tienes la aplicación Tabi", "it": "Ha già l’app Tabi", "pt": "Você já tem o aplicativo Tabi", "ja": "Tabiアプリはすでにお持ちです", "ko": "Tabi 앱이 이미 있습니다"},
-    "appInX": {"en": "Sign in here with the same email as in the app, then check your files. After that, open the app: it will show what was found.", "ru": "Войдите здесь той же почтой, что и в приложении, и проверьте файлы. Затем откройте приложение — оно покажет, что нашлось.", "cs": "Přihlaste se tady stejným e-mailem jako v aplikaci a zkontrolujte soubory. Potom otevřete aplikaci — ukáže, co se našlo.", "de": "Melden Sie sich hier mit derselben E-Mail-Adresse wie in der App an und prüfen Sie die Dateien. Öffnen Sie danach die App — sie zeigt, was gefunden wurde.", "fr": "Connectez-vous ici avec la même adresse e-mail que dans l’application, puis vérifiez vos fichiers. Ouvrez ensuite l’application : elle montrera ce qui a été trouvé.", "es": "Inicia sesión aquí con el mismo correo que en la aplicación y revisa tus archivos. Después abre la aplicación: te mostrará lo que se encontró.", "it": "Acceda qui con la stessa e-mail dell’app e controlli i file. Poi apra l’app: Le mostrerà che cosa è stato trovato.", "pt": "Entre aqui com o mesmo e-mail do aplicativo e verifique seus arquivos. Depois abra o aplicativo: ele mostrará o que foi encontrado.", "ja": "アプリと同じメールアドレスでここにログインし、ファイルを確認してください。その後アプリを開くと、見つかったものが表示されます。", "ko": "앱과 같은 이메일로 여기에서 로그인하고 파일을 확인하세요. 그런 다음 앱을 열면 찾은 내용을 보여 줍니다."},
-    "appInLater": {"en": "Later", "ru": "Позже", "cs": "Později", "de": "Später", "fr": "Plus tard", "es": "Más tarde", "it": "Più tardi", "pt": "Mais tarde", "ja": "あとで", "ko": "나중에"},
+    "appInT": {"en": "Sign up on the website", "ru": "Зарегистрируйтесь на сайте", "cs": "Zaregistrujte se na webu", "de": "Registrieren Sie sich auf der Website", "fr": "Inscrivez-vous sur le site", "es": "Regístrate en el sitio web", "it": "Si registri sul sito", "pt": "Cadastre-se no site", "ja": "サイトに登録してください", "ko": "사이트에 가입하세요"},
+    "appInX": {"en": "Sign in to the website with the same email you use for the Tabi app. After your files on the computer have been checked successfully, open the Tabi app on your phone to sync the results.", "ru": "Войдите на сайт той же электронной почтой, которую вы используете для приложения Tabi. После успешной проверки файлов на компьютере зайдите в приложение Tabi на телефоне, чтобы синхронизировать итоги.", "cs": "Přihlaste se na web stejným e-mailem, který používáte pro aplikaci Tabi. Po úspěšné kontrole souborů v počítači otevřete aplikaci Tabi v telefonu, aby se výsledky synchronizovaly.", "de": "Melden Sie sich auf der Website mit derselben E-Mail-Adresse an, die Sie für die Tabi-App verwenden. Öffnen Sie nach der erfolgreichen Prüfung der Dateien auf dem Computer die Tabi-App auf dem Telefon, um die Ergebnisse zu synchronisieren.", "fr": "Connectez-vous au site avec la même adresse e-mail que celle que vous utilisez pour l’application Tabi. Une fois les fichiers vérifiés avec succès sur l’ordinateur, ouvrez l’application Tabi sur votre téléphone pour synchroniser les résultats.", "es": "Inicia sesión en el sitio web con el mismo correo que usas para la aplicación Tabi. Cuando los archivos del ordenador se hayan comprobado correctamente, abre la aplicación Tabi en el teléfono para sincronizar los resultados.", "it": "Acceda al sito con la stessa e-mail che usa per l’app Tabi. Dopo che i file sul computer sono stati verificati con successo, apra l’app Tabi sul telefono per sincronizzare i risultati.", "pt": "Entre no site com o mesmo e-mail que você usa no aplicativo Tabi. Depois que os arquivos do computador forem verificados com sucesso, abra o aplicativo Tabi no celular para sincronizar os resultados.", "ja": "Tabiアプリで使っているのと同じメールアドレスでサイトにログインしてください。パソコンでのファイルの確認が完了したら、スマートフォンでTabiアプリを開いて結果を同期してください。", "ko": "Tabi 앱에서 사용하는 것과 같은 이메일로 사이트에 로그인하세요. 컴퓨터에서 파일 확인이 완료되면 휴대폰에서 Tabi 앱을 열어 결과를 동기화하세요."},
     "phoneApp": {"en": "This page works on a computer. Open tabimobile.com/pc on your computer and sign in there with the same email as in the app.", "ru": "Эта страница работает на компьютере. Откройте на компьютере tabimobile.com/pc и войдите там той же почтой, что и в приложении.", "cs": "Tato stránka funguje v počítači. Otevřete v počítači tabimobile.com/pc a přihlaste se tam stejným e-mailem jako v aplikaci.", "de": "Diese Seite funktioniert auf einem Computer. Öffnen Sie tabimobile.com/pc auf dem Computer und melden Sie sich dort mit derselben E-Mail-Adresse wie in der App an.", "fr": "Cette page fonctionne sur un ordinateur. Ouvrez tabimobile.com/pc sur votre ordinateur et connectez-vous avec la même adresse e-mail que dans l’application.", "es": "Esta página funciona en un ordenador. Abre tabimobile.com/pc en tu ordenador e inicia sesión allí con el mismo correo que en la aplicación.", "it": "Questa pagina funziona su un computer. Apra tabimobile.com/pc sul computer e acceda lì con la stessa e-mail dell’app.", "pt": "Esta página funciona em um computador. Abra tabimobile.com/pc no computador e entre lá com o mesmo e-mail do aplicativo.", "ja": "このページはパソコンで使います。パソコンで tabimobile.com/pc を開き、アプリと同じメールアドレスでログインしてください。", "ko": "이 페이지는 컴퓨터에서 작동합니다. 컴퓨터에서 tabimobile.com/pc를 열고 앱과 같은 이메일로 로그인하세요."},
     "pkT": {"en": "Which files to choose", "ru": "Какие файлы выбрать", "cs": "Které soubory vybrat", "de": "Welche Dateien Sie wählen sollten", "fr": "Quels fichiers choisir", "es": "Qué archivos elegir", "it": "Quali file scegliere", "pt": "Quais arquivos escolher", "ja": "どのファイルを選ぶか", "ko": "어떤 파일을 고를까요"},
     "pk1": {"en": "The place and time of shooting are recorded above all by phones. Start with the folders where you moved media files from your phones.", "ru": "Место и время съёмки записывают прежде всего телефоны. Начните с папок, куда вы переносили с них медиафайлы.", "cs": "Místo a čas pořízení zaznamenávají především telefony. Začněte složkami, do kterých jste z nich přenášeli mediální soubory.", "de": "Aufnahmeort und -zeit zeichnen vor allem Telefone auf. Beginnen Sie mit den Ordnern, in die Sie Mediendateien von Ihren Telefonen übertragen haben.", "fr": "Ce sont surtout les téléphones qui enregistrent le lieu et l’heure de prise de vue. Commencez par les dossiers où vous avez transféré les fichiers multimédias de vos téléphones.", "es": "El lugar y la hora de la toma los graban sobre todo los teléfonos. Empieza por las carpetas a las que pasaste los archivos multimedia de tus teléfonos.", "it": "Il luogo e l’ora dello scatto li registrano soprattutto i telefoni. Inizi dalle cartelle in cui ha trasferito i file multimediali dai Suoi telefoni.", "pt": "Quem grava o local e a hora da captura são, sobretudo, os celulares. Comece pelas pastas para onde você passou os arquivos de mídia dos seus celulares.", "ja": "撮影場所と時刻を記録するのは主にスマートフォンです。まずはスマートフォンからメディアファイルを移したフォルダーを選んでください。", "ko": "촬영 장소와 시간은 주로 휴대폰이 기록합니다. 휴대폰에서 미디어 파일을 옮겨 둔 폴더부터 확인하세요."},
@@ -625,7 +624,7 @@ main.pc{position:relative}
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
-      appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify", appInLater: "appInLater",
+      appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify",
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList" };
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
@@ -3173,7 +3172,8 @@ main.pc{position:relative}
   // ===== Пришедшие из приложения (21.11.2026, план Андрея) =====
   // Короткая ссылка из приложения tabimobile.com/pc ставит метку tabiFromApp (страница /pc) и ведёт сюда. На компьютере без
   // входа на сайте — окно: войдите той же почтой, что в приложении, тогда найденное появится в приложении. Один раз за
-  // посещение. Без метки окно не показывается никогда.
+  // посещение. Без метки окно не показывается никогда. Окно открывается сразу при открытии страницы (22.11.2026, Андрей:
+  // оно появлялось с задержкой — ждало конца загрузки сохранённого разбора, который ему не нужен); закрывается крестиком.
   function appInMaybe() {
     if (!FROM_APP || PHONE || S) return;
     try { if (sessionStorage.getItem("tabiFromAppSeen")) return; sessionStorage.setItem("tabiFromAppSeen", "1"); } catch (e) {}
@@ -3182,7 +3182,6 @@ main.pc{position:relative}
   }
   function appInClose() { winClose("appInDlg"); }
   function appInErr(k) { show("appInErr", !!k); $("appInErr").textContent = k ? t(k) : ""; }
-  $("appInLater").onclick = appInClose;
   TACC.gis($("appInG"), gisOpt);
   $("appInCode").onclick = function () {
     var m = $("appInMail").value.trim();
@@ -3211,6 +3210,8 @@ main.pc{position:relative}
     show("vPick", true);
     geo().then(demoSync);
     var q = new URLSearchParams(location.search), code = q.get("code");
+    // Пришедший из приложения без входа — окно входа сразу, до загрузки итога (при возврате со входа Google — нет: идёт вход).
+    code || appInMaybe();
     // Открытие (20.11.2026, Андрей: итог грузился дважды и нарочно медленно): итог этого браузера и сохранённое в учётной
     // записи приходят вместе и показываются один раз, коротко; пока ждём учётную запись — тонкая полоса ожидания.
     if (!code) {
