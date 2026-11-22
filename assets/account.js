@@ -1,14 +1,15 @@
 // Tabi — вход на сайте tabimobile.com (18.11.2026, слово Андрея: полноценный вход на всём сайте; справа сверху видно,
 // кто вошёл; вход сохраняется после закрытия браузера). Одна учётная запись Tabi — та же, что в приложении: Google или
 // код на почту. Ключ входа хранится в этом браузере (localStorage «tabiAcc») до «Выйти»; прежний вход страницы
-// компьютера жил только во вкладке (sessionStorage «tabiPc») и переносится сюда при первом открытии.
+// компьютера жил только во вкладке (sessionStorage «tabiPc») и переносится сюда при первом открытии. С 22.11.2026 (слово
+// Андрея) — и Facebook, как в приложении.
 //
 // Шапка каждой страницы: элемент с атрибутом data-tabi-acc (ссылка «Войти» на страницу учётной записи) — вошедшему он
 // показывает ник и знак с первой буквой; у подписчика Tabi Plus знак — золотой с бликом. Сведения учётной записи
 // (site_me: ник, подписка, телефоны, число стран, городов и особых мест) — один запрос на открытие страницы, копия в
 // этом браузере не дольше десяти минут.
 //
-// Страницы зовут window.TabiAcc: get, keep, fresh, exchange, google, gis, captcha, otp, verify, out, me, uid, on.
+// Страницы зовут window.TabiAcc: get, keep, fresh, exchange, google, gis, fb, captcha, otp, verify, out, me, uid, on.
 (function () {
   "use strict";
   var SB = "https://ogrdnhwfgasbgcespsou.supabase.co",
@@ -142,15 +143,41 @@
   // Тема или язык страницы сменились — кнопки Google заново, подпись запасной — на новом языке.
   new MutationObserver(function () {
     gisEls.forEach(function (it) { it.el._fb ? (it.el._fb.textContent = it.o.label()) : it.on && gisDraw(it.el); });
+    fbEls.forEach(fbLabel);
   }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "lang"] });
-  // Запасной вход (PKCE) — переходом к Google через Supabase в этой же вкладке; код возврата обменивает exchange.
-  function google(back, before) {
+  // Вход переходом через Supabase в этой же вкладке (PKCE): запасной вход Google и вход Facebook; код возврата обменивает
+  // exchange, отказ сервиса приходит в адресе возврата полем error (страница показывает строку об ошибке).
+  function oauth(provider, back, before) {
     var v = b64u(crypto.getRandomValues(new Uint8Array(32)).buffer);
     return crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
       set(KV, v);
-      var url = SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(back) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256";
+      var url = SB + "/auth/v1/authorize?provider=" + provider + "&redirect_to=" + encodeURIComponent(back) + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256";
       return Promise.resolve(before ? before() : null).then(function () { location.href = url; });
     });
+  }
+  function google(back, before) { return oauth("google", back, before); }
+  // Кнопка Facebook (22.11.2026, слово Андрея) — под кнопкой Google, той же высоты и формы, в цветах Facebook (правила
+  // оформления Meta: синий #1877F2, белый знак «f»); подпись — на языке страницы. o — то же, что у gis: back, before, start.
+  var FBL = { en: "Continue with Facebook", ru: "Вход с аккаунтом Facebook", cs: "Pokračovat s účtem Facebook", de: "Weiter mit Facebook",
+    fr: "Continuer avec Facebook", es: "Continuar con Facebook", it: "Continua con Facebook", pt: "Continuar com o Facebook",
+    ja: "Facebookで続行", ko: "Facebook으로 계속하기" };
+  var FBI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>';
+  var fbEls = [];
+  function fbLabel(b) { b.lastChild.textContent = FBL[(document.documentElement.lang || "en").slice(0, 2)] || FBL.en; }
+  function fb(el, o) {
+    if (!document.getElementById("tfbCss")) {
+      var st = document.createElement("style"); st.id = "tfbCss";
+      st.textContent = ".tfb{appearance:none;border:0;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;min-width:200px;height:40px;padding:0 16px;border-radius:999px;background:#1877F2;color:#fff;font:500 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-sizing:border-box}" +
+        ".tfb:hover{background:#166FE5}.tfb:focus-visible{outline:2px solid #1877F2;outline-offset:2px}.tfb svg{width:20px;height:20px;flex:none}";
+      document.head.appendChild(st);
+    }
+    el.innerHTML = "";
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "tfb"; b.innerHTML = FBI + "<span></span>";
+    fbLabel(b);
+    b.onclick = function () { o.start && o.start(); oauth("facebook", o.back(), o.before); };
+    el.appendChild(b);
+    fbEls.push(b);
   }
   function exchange(code) {
     var ver = get(KV);
@@ -292,7 +319,7 @@
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fitWatch) : fitWatch();
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", chips) : chips();
   window.TabiAcc = {
-    get: function () { return S; }, keep: keep, fresh: fresh, exchange: exchange, google: google, gis: gis, captcha: captcha,
+    get: function () { return S; }, keep: keep, fresh: fresh, exchange: exchange, google: google, gis: gis, fb: fb, captcha: captcha,
     otp: otp, verify: verify, out: out, me: me, uid: uid, on: function (f) { subs.push(f); },
     repaint: function () { repaintFn && repaintFn(); }
   };

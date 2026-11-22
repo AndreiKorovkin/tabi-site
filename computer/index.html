@@ -5,7 +5,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css?v=63cbd493f4">
-<script src="/assets/account.js?v=9736026469"></script>
+<script src="/assets/account.js?v=22279a2405"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -78,11 +78,12 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-res-cc span{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:650;font-size:14.5px}
 .pc-res-cc img{width:26px;height:18px;object-fit:cover;border-radius:4px}
 .pc-app{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start}
-.pc-qr{width:128px;height:128px;padding:10px;background:#fff;border-radius:14px}
+.pc-qr{width:128px;height:128px;padding:10px;background:#fff;border-radius:14px;border:0;appearance:none;cursor:zoom-in;display:block;box-sizing:content-box}
+.pc-qr:hover,.pc-qr:focus-visible{box-shadow:0 0 0 3px var(--accent);outline:none}
+.pc-qr.big{width:auto;height:auto;aspect-ratio:1;padding:16px;cursor:default;margin-top:14px}
+.pc-qr.big:hover{box-shadow:none}
 .pc-qr svg{width:100%;height:100%;display:block}
 .pc-steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:15px;line-height:1.45;color:var(--ink)}
-.pc-shots{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px}
-.pc-shots img{height:240px;width:auto;border-radius:18px;border:1px solid var(--line);flex:none}
 .pc-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pc-in{box-sizing:border-box;width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;background:var(--bg);color:var(--ink)}
 .pc-s{color:var(--sub);font-size:14px;line-height:1.45;margin:0}
@@ -149,7 +150,20 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-under.idle{grid-template-columns:minmax(0,640px);justify-content:center}
 /* Особые места по редкости (20.11.2026, Андрей): полоса долей и плитки; нажатие — сколько таких на всей карте. */
 .pc-tiers{display:flex;flex-wrap:wrap;gap:8px}
-.pc-tier{flex:1 1 96px;min-width:min-content;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden}
+.pc-tier{flex:1 1 96px;min-width:min-content;border:1px solid var(--line);border-radius:14px;padding:12px 10px 9px;background:var(--bg);color:var(--ink);display:grid;gap:2px;position:relative;overflow:hidden;appearance:none;font:inherit;text-align:left;cursor:pointer;transition:border-color .15s}
+.pc-tier:hover,.pc-tier:focus-visible{border-color:var(--tc);outline:none}
+/* Окно редкости (22.11.2026, слово Андрея): полоса цвета редкости сверху, как у плитки. */
+dialog.win.pc-tw{width:min(480px,calc(100vw - 32px));overflow:hidden}
+dialog.win.pc-tw[open]{display:grid;gap:12px}
+dialog.win.pc-tw::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--tc)}
+dialog.win.pc-qrw{width:min(400px,calc(100vw - 32px))}
+/* «Позже» убирает блок особых мест плавно; кнопка «Перенести на телефон» под «Устройствами» его возвращает. */
+#vApp:not([hidden]),#bToPhone:not([hidden]){animation:pcIn .35s ease both}
+#vApp.pc-leave{animation:pcOut .25s ease forwards}
+/* Кнопки рядом с кодом — одна под другой: подписи не переносятся ни на одном языке. */
+#vApp .pc-row{grid-template-columns:minmax(0,1fr);gap:10px}
+.pc-col{display:grid;gap:14px;align-content:start;min-width:0}
+.pc-col:not(:has(>:not([hidden]))){display:none}
 .pc-tier::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--tc)}
 .pc-tier b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap}
 .pc-tier span{font-size:12.5px;color:var(--sub)}
@@ -277,7 +291,7 @@ main.pc.pc-show{animation:pcFade .35s ease both}
 @keyframes pcFade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pc-item,.pc-city,.pc-regs span{animation:none}}
 @media (max-width:1100px){.pc-under{grid-template-columns:minmax(0,1fr)}.pc-grid{grid-template-columns:minmax(0,1fr)}.pc-grid.idle{grid-template-columns:minmax(0,640px)}.pc-side{position:static;max-height:none}.pc-stat{flex-basis:calc((100% - 21px) / 3)}}
-@media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}.pc-shots img{height:200px}}
+@media (max-width:520px){.pc-map canvas{height:340px}.pc-row{grid-template-columns:1fr}.pc-app{grid-template-columns:1fr}}
 /* Подсказки во время проверки (21.11.2026, Андрей): карточка въезжает справа, стоит, уходит влево. */
 .pc-hints{position:relative;overflow:hidden}
 .pc-hint{position:absolute;left:0;right:0;top:0;display:flex;gap:12px;align-items:flex-start;padding:15px 18px;border-radius:18px;background:var(--bg);border:1px solid var(--line);font-size:15.5px;line-height:1.5;color:var(--ink);animation:hintIn .65s cubic-bezier(.2,.8,.2,1) both}
@@ -368,22 +382,25 @@ main.pc{position:relative}
       <p class="pc-t" id="saveX"></p>
       <div class="pc-row" id="saveWays"><button class="pc-btn" id="bSaveAcc" type="button"></button><button class="pc-btn b2" id="bSavePhone" type="button"></button></div>
       <div class="gis" id="bGoogle" hidden></div>
+      <div class="gis" id="bFb" hidden></div>
     </div>
-    <!-- Особые места на снимках по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
-         приложение: код и ссылка Google Play, экраны приложения; приложение уже есть — без строк о нём -->
+    <!-- Особые места на маршруте по редкости (20.11.2026, Андрей): число и плитки; приложения нет — какие это места, покажет
+         приложение Tabi: код и ссылка Google Play, суть приложения, «Позже» (22.11.2026); приложение уже есть — без строк о нём -->
     <div id="vApp" hidden class="pc-box">
       <h2 id="spT"></h2>
       <div class="pc-tiers" id="tiers"></div>
       <div id="appGet" style="display:grid;gap:12px">
-        <p class="pc-t" id="spApp" style="font-weight:700"></p>
+        <div style="display:grid;gap:4px">
+          <p class="pc-t" id="spApp" style="font-weight:700"></p>
+          <p class="pc-s" id="spGet"></p>
+        </div>
         <div class="pc-app">
-          <div class="pc-qr" id="qr" role="img"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33"><path stroke="#000" d="M0 0.5h7m1 0h3m7 0h4m1 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m2 0h1m4 0h1m5 0h2m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h3m7 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m5 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m2 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m4 0h1m2 0h1m1 0h6m2 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m7 0h3m1 0h1m1 0h2m-24 1h1m1 0h2m1 0h3m1 0h1m1 0h1m2 0h6m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m-32 1h4m2 0h1m2 0h3m3 0h5m2 0h2m1 0h2m1 0h4m-33 1h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h4m1 0h2m-33 1h1m1 0h4m2 0h3m2 0h1m1 0h2m1 0h1m1 0h1m6 0h1m1 0h1m1 0h1m-32 1h4m2 0h2m3 0h1m3 0h1m1 0h3m2 0h4m1 0h3m-28 1h2m3 0h3m4 0h3m2 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m-32 1h1m1 0h2m2 0h2m2 0h1m2 0h1m4 0h2m1 0h1m2 0h1m1 0h1m1 0h3m-31 1h1m1 0h1m1 0h2m3 0h1m1 0h1m2 0h2m4 0h4m1 0h2m3 0h1m-31 1h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h4m3 0h3m1 0h3m1 0h3m-31 1h1m1 0h2m4 0h1m1 0h4m1 0h1m1 0h1m4 0h3m1 0h1m1 0h2m2 0h1m-32 1h1m3 0h3m3 0h1m3 0h3m2 0h2m4 0h3m1 0h2m-29 1h3m1 0h1m2 0h2m1 0h5m4 0h2m1 0h2m1 0h1m3 0h1m-33 1h2m3 0h3m2 0h1m1 0h1m2 0h7m2 0h1m2 0h1m1 0h3m-32 1h2m2 0h2m1 0h1m1 0h2m3 0h1m1 0h5m1 0h3m1 0h1m2 0h1m2 0h1m-30 1h1m2 0h4m1 0h1m2 0h1m3 0h1m1 0h5m1 0h2m2 0h3m-32 1h1m1 0h1m5 0h2m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m-30 1h1m1 0h1m1 0h1m1 0h3m1 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h2m2 0h3m1 0h2m3 0h2m3 0h2m1 0h1m-32 1h7m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h2m5 0h2m3 0h2m1 0h2m3 0h4m-32 1h1m1 0h3m1 0h1m2 0h1m2 0h2m4 0h11m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m11 0h1m1 0h1m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m3 0h2m2 0h2m2 0h1m-31 1h1m5 0h1m2 0h2m3 0h5m1 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h7m1 0h1m2 0h5m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1"/></svg></div>
-          <div style="display:grid;gap:12px;align-content:start">
-            <p class="pc-s" id="spGet"></p>
+          <button class="pc-qr" id="qr" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33"><path stroke="#000" d="M0 0.5h7m1 0h3m7 0h4m1 0h1m2 0h7m-33 1h1m5 0h1m1 0h1m2 0h1m4 0h1m5 0h2m2 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h3m7 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m5 0h2m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h1m2 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m4 0h1m2 0h1m1 0h6m2 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h1m7 0h3m1 0h1m1 0h2m-24 1h1m1 0h2m1 0h3m1 0h1m1 0h1m2 0h6m1 0h1m1 0h1m2 0h1m2 0h1m1 0h2m-32 1h4m2 0h1m2 0h3m3 0h5m2 0h2m1 0h2m1 0h4m-33 1h2m2 0h1m1 0h1m1 0h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h3m1 0h4m1 0h2m-33 1h1m1 0h4m2 0h3m2 0h1m1 0h2m1 0h1m1 0h1m6 0h1m1 0h1m1 0h1m-32 1h4m2 0h2m3 0h1m3 0h1m1 0h3m2 0h4m1 0h3m-28 1h2m3 0h3m4 0h3m2 0h1m1 0h1m2 0h1m2 0h1m1 0h1m1 0h1m-32 1h1m1 0h2m2 0h2m2 0h1m2 0h1m4 0h2m1 0h1m2 0h1m1 0h1m1 0h3m-31 1h1m1 0h1m1 0h2m3 0h1m1 0h1m2 0h2m4 0h4m1 0h2m3 0h1m-31 1h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h4m3 0h3m1 0h3m1 0h3m-31 1h1m1 0h2m4 0h1m1 0h4m1 0h1m1 0h1m4 0h3m1 0h1m1 0h2m2 0h1m-32 1h1m3 0h3m3 0h1m3 0h3m2 0h2m4 0h3m1 0h2m-29 1h3m1 0h1m2 0h2m1 0h5m4 0h2m1 0h2m1 0h1m3 0h1m-33 1h2m3 0h3m2 0h1m1 0h1m2 0h7m2 0h1m2 0h1m1 0h3m-32 1h2m2 0h2m1 0h1m1 0h2m3 0h1m1 0h5m1 0h3m1 0h1m2 0h1m2 0h1m-30 1h1m2 0h4m1 0h1m2 0h1m3 0h1m1 0h5m1 0h2m2 0h3m-32 1h1m1 0h1m5 0h2m4 0h2m1 0h1m1 0h1m2 0h1m1 0h1m1 0h3m-30 1h1m1 0h1m1 0h1m1 0h3m1 0h3m2 0h1m1 0h1m1 0h1m2 0h1m1 0h5m2 0h2m-25 1h1m1 0h2m2 0h3m1 0h2m3 0h2m3 0h2m1 0h1m-32 1h7m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m-29 1h1m5 0h1m1 0h2m5 0h2m3 0h2m1 0h2m3 0h4m-32 1h1m1 0h3m1 0h1m2 0h1m2 0h2m4 0h11m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h3m11 0h1m1 0h1m2 0h1m-33 1h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m3 0h2m2 0h2m2 0h1m-31 1h1m5 0h1m2 0h2m3 0h5m1 0h1m1 0h1m1 0h2m1 0h2m3 0h1m-33 1h7m1 0h1m2 0h5m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1"/></svg></button>
+          <div style="display:grid;gap:12px;align-content:center;align-self:stretch">
             <div class="pc-row"><a class="pc-btn" id="bPlay2" rel="noopener" target="_blank"></a><button class="pc-btn b2" id="bCopy2" type="button"></button></div>
           </div>
         </div>
-        <div class="pc-shots" id="appShots"></div>
+        <button class="pc-quiet" id="bLater" type="button"></button>
       </div>
     </div>
     <div class="pc-e" id="err" hidden></div>
@@ -416,6 +433,7 @@ main.pc{position:relative}
 </section>
 <!-- Устройства — под картой, левая половина (20.11.2026, Андрей): с каких устройств что пришло и через какой компьютер -->
 <div class="pc-under idle" id="under">
+<div class="pc-col">
 <section class="pc-card pc-route" id="devBox" hidden>
   <h2 id="hDevs"></h2>
   <div class="pc-devs" id="devList"></div>
@@ -425,6 +443,9 @@ main.pc{position:relative}
     <p class="pc-s" id="trashNote" hidden></p>
   </div>
 </section>
+<!-- Вернуть блок особых мест, убранный «Позже» (22.11.2026, слово Андрея) -->
+<button class="pc-btn" id="bToPhone" type="button" hidden></button>
+</div>
 <!-- Вопросы и ответы (21.11.2026, Андрей): небольшой блок; нажатие — окно поверх затемнённой страницы -->
 <button type="button" class="pc-card pc-qa" id="faqOpen"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg><span id="hFaq"></span></button>
 </div>
@@ -453,6 +474,7 @@ main.pc{position:relative}
   <p class="pc-t" id="appInX"></p>
   <div class="pc-signin">
     <div class="gis" id="appInG"></div>
+    <div class="gis" id="appInF"></div>
     <p class="pc-s" id="appInOr"></p>
     <input class="pc-in" id="appInMail" type="email" autocomplete="email">
     <button class="pc-btn b2" id="appInCode" type="button"></button>
@@ -460,6 +482,19 @@ main.pc{position:relative}
     <button class="pc-btn" id="appInGo" type="button" hidden></button>
     <p class="pc-s" id="appInErr" hidden></p>
   </div>
+</dialog>
+<!-- Код Google Play крупно (22.11.2026, слово Андрея: нажатие на код увеличивает его) -->
+<dialog class="win pc-qrw" id="qrDlg" aria-labelledby="qrT">
+  <button type="button" class="win-x" data-close><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <h2 id="qrT"></h2>
+  <div class="pc-qr big" id="qrBig" role="img"></div>
+</dialog>
+<!-- Редкость особых мест (22.11.2026, слово Андрея: нажатие на плитку — что это за места и как их увидеть) -->
+<dialog class="win pc-tw" id="tierDlg" aria-labelledby="tierT">
+  <button type="button" class="win-x" data-close><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <h2 id="tierT"></h2>
+  <p class="pc-t" id="tierX"></p>
+  <p class="pc-t" id="tierApp"></p>
 </dialog>
 <dialog class="win" id="dlg" aria-labelledby="dlgT"><h2 id="dlgT"></h2><p class="pc-t" id="dlgX"></p><div class="pc-row"><button class="pc-btn b2" id="dlgNo" type="button"></button><button class="pc-btn" id="dlgYes" type="button"></button></div></dialog>
 <!-- Окно выбора (21.11.2026, Андрей): перед системным окном браузера — какие файлы выбирать; затем папка или файлы -->
@@ -609,24 +644,21 @@ main.pc{position:relative}
     "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже есть в результате.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
     "saveAcc": {"en": "Save the result", "ru": "Сохранить результат", "cs": "Uložit výsledek", "de": "Ergebnis speichern", "fr": "Enregistrer le résultat", "es": "Guardar el resultado", "it": "Salva il risultato", "pt": "Salvar o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "savePhone": {"en": "Move to my phone", "ru": "Перенести на телефон", "cs": "Přenést do telefonu", "de": "Aufs Telefon übertragen", "fr": "Transférer sur mon téléphone", "es": "Pasar a mi teléfono", "it": "Trasferisci sul telefono", "pt": "Passar para o celular", "ja": "スマートフォンに移す", "ko": "휴대폰으로 옮기기"},
-    "openPlay": {"en": "Open in Google Play", "ru": "Открыть в Google Play", "cs": "Otevřít v Google Play", "de": "In Google Play öffnen", "fr": "Ouvrir dans Google Play", "es": "Abrir en Google Play", "it": "Apri in Google Play", "pt": "Abrir no Google Play", "ja": "Google Playで開く", "ko": "Google Play에서 열기"},
-    "shotA": {"en": "City map in the app", "ru": "Карта города в приложении", "cs": "Mapa města v aplikaci", "de": "Stadtkarte in der App", "fr": "Carte d’une ville dans l’application", "es": "Mapa de una ciudad en la aplicación", "it": "Mappa di una città nell’app", "pt": "Mapa de uma cidade no aplicativo", "ja": "アプリの都市マップ", "ko": "앱의 도시 지도"},
-    "shotB": {"en": "A special place in the app", "ru": "Особое место в приложении", "cs": "Výjimečné místo v aplikaci", "de": "Ein besonderer Ort in der App", "fr": "Un lieu d’exception dans l’application", "es": "Un lugar especial en la aplicación", "it": "Un luogo speciale nell’app", "pt": "Um lugar especial no aplicativo", "ja": "アプリの特別な場所", "ko": "앱의 특별한 장소"},
-    "shotC": {"en": "World map in the app", "ru": "Карта мира в приложении", "cs": "Mapa světa v aplikaci", "de": "Weltkarte in der App", "fr": "Carte du monde dans l’application", "es": "Mapa del mundo en la aplicación", "it": "Mappa del mondo nell’app", "pt": "Mapa-múndi no aplicativo", "ja": "アプリの世界地図", "ko": "앱의 세계 지도"},
+    "openPlay": {"en": "Open Google Play", "ru": "Открыть Google Play", "cs": "Otevřít Google Play", "de": "Google Play öffnen", "fr": "Ouvrir Google Play", "es": "Abrir Google Play", "it": "Apri Google Play", "pt": "Abrir o Google Play", "ja": "Google Playを開く", "ko": "Google Play 열기"},
     "qrLbl": {"en": "Code with a link to the app on Google Play", "ru": "Код со ссылкой на приложение в Google Play", "cs": "Kód s odkazem na aplikaci v Google Play", "de": "Code mit einem Link zur App in Google Play", "fr": "Code avec un lien vers l’application sur Google Play", "es": "Código con un enlace a la aplicación en Google Play", "it": "Codice con il link all’app su Google Play", "pt": "Código com o link para o aplicativo no Google Play", "ja": "Google Playのアプリへのリンクのコード", "ko": "Google Play 앱 링크 코드"},
     "dlgT": {"en": "Start over?", "ru": "Начать заново?", "cs": "Začít znovu?", "de": "Neu beginnen?", "fr": "Recommencer ?", "es": "¿Empezar de nuevo?", "it": "Ricominciare?", "pt": "Começar de novo?", "ja": "最初からやり直しますか？", "ko": "처음부터 다시 시작할까요?"},
     "dlgX": {"en": "The result of this check will disappear from the page and from this browser. It can’t be brought back here, only by checking the files again.", "ru": "Результат этой проверки исчезнет со страницы и из этого браузера. Вернуть его сюда будет нельзя, только проверить файлы заново.", "cs": "Výsledek této kontroly zmizí ze stránky a z tohoto prohlížeče. Vrátit ho sem nepůjde, jen znovu zkontrolovat soubory.", "de": "Das Ergebnis dieser Prüfung verschwindet von der Seite und aus diesem Browser. Hierher zurückholen lässt es sich nicht, nur durch eine neue Prüfung der Dateien.", "fr": "Le résultat de cette vérification disparaîtra de la page et de ce navigateur. Il ne pourra pas revenir ici, seulement être refait en vérifiant à nouveau les fichiers.", "es": "El resultado de esta comprobación desaparecerá de la página y de este navegador. No se podrá recuperar aquí, solo volver a comprobar los archivos.", "it": "Il risultato di questo controllo sparirà dalla pagina e da questo browser. Non si potrà recuperare qui, solo ricontrollando i file.", "pt": "O resultado desta verificação vai desaparecer da página e deste navegador. Não será possível recuperá-lo aqui, só verificar os arquivos de novo.", "ja": "この確認の結果は、ページとこのブラウザーから消えます。ここに戻すことはできず、ファイルをもう一度確認するしかありません。", "ko": "이 확인 결과가 페이지와 이 브라우저에서 사라집니다. 여기로 되돌릴 수 없으며, 파일을 다시 확인해야 합니다."},
     "dlgNo": {"en": "Cancel", "ru": "Отмена", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
-    "spT": {"en": "Special places: {n}", "ru": "Особые места: {n}", "cs": "Výjimečná místa: {n}", "de": "Besondere Orte: {n}", "fr": "Lieux d’exception : {n}", "es": "Lugares especiales: {n}", "it": "Luoghi speciali: {n}", "pt": "Lugares especiais: {n}", "ja": "特別な場所：{n}", "ko": "특별한 장소: {n}"},
-    "spTMin": {"en": "Special places: at least {n}", "ru": "Особые места: не меньше {n}", "cs": "Výjimečná místa: nejméně {n}", "de": "Besondere Orte: mindestens {n}", "fr": "Lieux d’exception : au moins {n}", "es": "Lugares especiales: al menos {n}", "it": "Luoghi speciali: almeno {n}", "pt": "Lugares especiais: pelo menos {n}", "ja": "特別な場所：{n}か所以上", "ko": "특별한 장소: {n}곳 이상"},
+    "spT": {"en": "Special places on your route: {n}", "ru": "Особые места на вашем маршруте: {n}", "cs": "Výjimečná místa na vaší trase: {n}", "de": "Besondere Orte auf Ihrer Route: {n}", "fr": "Lieux d’exception sur votre itinéraire : {n}", "es": "Lugares especiales en tu ruta: {n}", "it": "Luoghi speciali sul Suo percorso: {n}", "pt": "Lugares especiais no seu trajeto: {n}", "ja": "あなたのルート上の特別な場所：{n}", "ko": "내 경로의 특별한 장소: {n}"},
+    "spTMin": {"en": "Special places on your route: at least {n}", "ru": "Особые места на вашем маршруте: не меньше {n}", "cs": "Výjimečná místa na vaší trase: nejméně {n}", "de": "Besondere Orte auf Ihrer Route: mindestens {n}", "fr": "Lieux d’exception sur votre itinéraire : au moins {n}", "es": "Lugares especiales en tu ruta: al menos {n}", "it": "Luoghi speciali sul Suo percorso: almeno {n}", "pt": "Lugares especiais no seu trajeto: pelo menos {n}", "ja": "あなたのルート上の特別な場所：{n}か所以上", "ko": "내 경로의 특별한 장소: {n}곳 이상"},
     "tCommon": {"en": "Common", "ru": "Обычные", "cs": "Běžná", "de": "Gewöhnliche", "fr": "Communs", "es": "Comunes", "it": "Comuni", "pt": "Comuns", "ja": "定番", "ko": "일반"},
     "tRare": {"en": "Rare", "ru": "Редкие", "cs": "Vzácná", "de": "Seltene", "fr": "Rares", "es": "Raros", "it": "Rari", "pt": "Raros", "ja": "名勝", "ko": "희귀"},
     "tEpic": {"en": "Epic", "ru": "Эпические", "cs": "Epická", "de": "Epische", "fr": "Épiques", "es": "Épicos", "it": "Epici", "pt": "Épicos", "ja": "絶景", "ko": "에픽"},
     "tLegendary": {"en": "Legendary", "ru": "Легендарные", "cs": "Legendární", "de": "Legendäre", "fr": "Légendaires", "es": "Legendarios", "it": "Leggendari", "pt": "Lendários", "ja": "秘境", "ko": "전설"},
     "tMythic": {"en": "Unique", "ru": "Уникальные", "cs": "Unikátní", "de": "Einzigartige", "fr": "Uniques", "es": "Únicos", "it": "Unici", "pt": "Únicos", "ja": "唯一無二", "ko": "유일"},
     "tDangerous": {"en": "Dangerous", "ru": "Опасные", "cs": "Nebezpečná", "de": "Gefährliche", "fr": "Dangereux", "es": "Peligrosos", "it": "Pericolosi", "pt": "Perigosos", "ja": "危険", "ko": "위험"},
-    "spApp": {"en": "The app will show which places these are.", "ru": "Какие это места, покажет приложение.", "cs": "Která místa to jsou, ukáže aplikace.", "de": "Welche Orte das sind, zeigt die App.", "fr": "L’application vous montrera de quels lieux il s’agit.", "es": "La aplicación te mostrará qué lugares son.", "it": "Quali luoghi siano, lo mostrerà l’app.", "pt": "O aplicativo mostrará quais lugares são.", "ja": "どの場所かはアプリでわかります。", "ko": "어떤 장소인지는 앱에서 볼 수 있습니다."},
-    "spGet": {"en": "Point your phone’s camera at the code or open Google Play, then sign in to the app with the same Google account.", "ru": "Наведите камеру телефона на код или откройте Google Play, затем войдите в приложении с той же учётной записью Google.", "cs": "Namiřte fotoaparát telefonu na kód nebo otevřete Google Play a pak se v aplikaci přihlaste stejným účtem Google.", "de": "Richten Sie die Kamera Ihres Telefons auf den Code oder öffnen Sie Google Play und melden Sie sich dann in der App mit demselben Google-Konto an.", "fr": "Pointez l’appareil photo de votre téléphone vers le code ou ouvrez Google Play, puis connectez-vous à l’application avec le même compte Google.", "es": "Apunta la cámara del teléfono al código o abre Google Play y luego inicia sesión en la aplicación con la misma cuenta de Google.", "it": "Inquadri il codice con la fotocamera del telefono oppure apra Google Play, poi acceda all’app con lo stesso account Google.", "pt": "Aponte a câmera do celular para o código ou abra o Google Play e depois entre no aplicativo com a mesma conta do Google.", "ja": "スマートフォンのカメラでコードを読み取るかGoogle Playを開き、同じGoogleアカウントでアプリにログインしてください。", "ko": "휴대폰 카메라로 코드를 비추거나 Google Play를 연 다음, 같은 Google 계정으로 앱에 로그인하세요."},
+    "spApp": {"en": "The Tabi app will show you which places these are.", "ru": "Какие это места, покажет приложение Tabi.", "cs": "Která místa to jsou, vám ukáže aplikace Tabi.", "de": "Welche Orte das sind, zeigt Ihnen die App Tabi.", "fr": "L’application Tabi vous montrera de quels lieux il s’agit.", "es": "La aplicación Tabi te mostrará qué lugares son.", "it": "Quali luoghi siano, Glielo mostrerà l’app Tabi.", "pt": "O aplicativo Tabi mostrará quais lugares são.", "ja": "どの場所かはTabiアプリでわかります。", "ko": "어떤 장소인지는 Tabi 앱에서 볼 수 있습니다."},
+    "spGet": {"en": "Tabi helps you collect special places, cities and countries, shows the story of your travels and suggests new places that match your interests.", "ru": "Tabi поможет коллекционировать особые места, города и страны, покажет историю поездок и подберёт новые места по вашим интересам.", "cs": "Tabi vám pomůže sbírat výjimečná místa, města a země, ukáže historii vašich cest a doporučí nová místa podle vašich zájmů.", "de": "Tabi hilft Ihnen, besondere Orte, Städte und Länder zu sammeln, zeigt die Geschichte Ihrer Reisen und schlägt neue Orte nach Ihren Interessen vor.", "fr": "Tabi vous aide à collectionner lieux d’exception, villes et pays, retrace vos voyages et vous propose de nouveaux lieux selon vos goûts.", "es": "Tabi te ayuda a coleccionar lugares especiales, ciudades y países, muestra la historia de tus viajes y te sugiere nuevos lugares según tus intereses.", "it": "Tabi La aiuta a collezionare luoghi speciali, città e paesi, mostra la storia dei Suoi viaggi e Le suggerisce nuovi luoghi secondo i Suoi interessi.", "pt": "O Tabi ajuda a colecionar lugares especiais, cidades e países, mostra a história das suas viagens e sugere novos lugares do seu interesse.", "ja": "Tabiは特別な場所・都市・国のコレクションを手伝い、旅の歴史を見せ、興味に合った新しい場所を提案します。", "ko": "Tabi는 특별한 장소와 도시, 국가를 모으도록 돕고, 여행의 역사를 보여 주며, 관심사에 맞는 새로운 장소를 추천합니다."},
     "hFaq": {"en": "Questions and answers", "ru": "Вопросы и ответы", "cs": "Otázky a odpovědi", "de": "Fragen und Antworten", "fr": "Questions et réponses", "es": "Preguntas y respuestas", "it": "Domande e risposte", "pt": "Perguntas e respostas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
     "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
     "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
@@ -771,7 +803,25 @@ main.pc{position:relative}
     "proJumpDel": {"ru": "Удалить отмеченные точки", "en": "Delete the marked points", "cs": "Smazat označené body", "de": "Markierte Punkte löschen", "fr": "Supprimer les points signalés", "es": "Eliminar los puntos marcados", "it": "Elimina i punti segnalati", "pt": "Excluir os pontos marcados", "ja": "印の付いた地点を削除", "ko": "표시된 지점 삭제"},
     "proJumpDelT": {"ru": "Удалить точки со скачком?", "en": "Delete the points with a jump?", "cs": "Smazat body se skokem?", "de": "Punkte mit Sprung löschen?", "fr": "Supprimer les points avec un saut ?", "es": "¿Eliminar los puntos con salto?", "it": "Eliminare i punti con un salto?", "pt": "Excluir os pontos com salto?", "ja": "ありえない移動の地点を削除しますか？", "ko": "이동 오류 지점을 삭제할까요?"},
     "proJumpDelX": {"ru": "Точки со скачком ({n}) уйдут в корзину и перестанут учитываться. Вернуть их можно в течение 30 дней в блоке «Устройства».", "en": "The points with a jump ({n}) will go to the bin and stop counting. You can restore them for 30 days in Devices.", "cs": "Body se skokem ({n}) se přesunou do koše a přestanou se započítávat. Vrátit je můžete do 30 dnů v části „Zařízení“.", "de": "Die Punkte mit Sprung ({n}) kommen in den Papierkorb und zählen nicht mehr. Wiederherstellen können Sie sie 30 Tage lang unter „Geräte“.", "fr": "Les points avec un saut ({n}) iront à la corbeille et ne seront plus comptés. Vous pourrez les restaurer pendant 30 jours dans « Appareils ».", "es": "Los puntos con salto ({n}) irán a la papelera y dejarán de contar. Puedes recuperarlos durante 30 días en «Dispositivos».", "it": "I punti con un salto ({n}) andranno nel cestino e non verranno più contati. Può ripristinarli per 30 giorni in «Dispositivi».", "pt": "Os pontos com salto ({n}) irão para a lixeira e deixarão de contar. Você pode restaurá-los por 30 dias em “Dispositivos”.", "ja": "ありえない移動の地点（{n}）はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "이동 오류 지점({n})은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."},
-    "proJumpLbl": {"ru": "Точки со скачком ({n})", "en": "Points with a jump ({n})", "cs": "Body se skokem ({n})", "de": "Punkte mit Sprung ({n})", "fr": "Points avec un saut ({n})", "es": "Puntos con salto ({n})", "it": "Punti con un salto ({n})", "pt": "Pontos com salto ({n})", "ja": "ありえない移動の地点（{n}）", "ko": "이동 오류 지점({n})"}
+    "proJumpLbl": {"ru": "Точки со скачком ({n})", "en": "Points with a jump ({n})", "cs": "Body se skokem ({n})", "de": "Punkte mit Sprung ({n})", "fr": "Points avec un saut ({n})", "es": "Puntos con salto ({n})", "it": "Punti con un salto ({n})", "pt": "Pontos com salto ({n})", "ja": "ありえない移動の地点（{n}）", "ko": "이동 오류 지점({n})"},
+    "later": {"en": "Later", "ru": "Позже", "cs": "Později", "de": "Später", "fr": "Plus tard", "es": "Más tarde", "it": "Più tardi", "pt": "Mais tarde", "ja": "後で", "ko": "나중에"},
+    "qrT": {"en": "Tabi on Google Play", "ru": "Tabi в Google Play", "cs": "Tabi v Google Play", "de": "Tabi in Google Play", "fr": "Tabi sur Google Play", "es": "Tabi en Google Play", "it": "Tabi su Google Play", "pt": "Tabi no Google Play", "ja": "Google PlayのTabi", "ko": "Google Play의 Tabi"},
+    "tGen": {"en": "Rarity shows how much a place stands out among places of its kind: castles, waterfalls, museums.", "ru": "Редкость показывает, насколько место выделяется среди мест своего рода — замков, водопадов, музеев.", "cs": "Vzácnost ukazuje, jak moc místo vyniká mezi místy svého druhu – hrady, vodopády, muzei.", "de": "Die Seltenheit zeigt, wie sehr ein Ort unter Orten seiner Art hervorsticht – unter Burgen, Wasserfällen, Museen.", "fr": "La rareté indique à quel point un lieu se distingue parmi ceux de son genre : châteaux, cascades, musées.", "es": "La rareza indica cuánto destaca un lugar entre los de su tipo: castillos, cascadas, museos.", "it": "La rarità indica quanto un luogo si distingue tra quelli del suo genere: castelli, cascate, musei.", "pt": "A raridade indica quanto um lugar se destaca entre os do seu tipo: castelos, cachoeiras, museus.", "ja": "レア度は、城・滝・博物館など同じ種類の場所の中で、その場所がどれほど際立っているかを表します。", "ko": "희귀도는 성, 폭포, 박물관처럼 같은 종류의 장소 가운데 그곳이 얼마나 돋보이는지를 나타냅니다."},
+    "tX_mythic": {"en": "Unique is the highest rarity: symbols of countries and of the whole world, only a few dozen on the entire planet.", "ru": "Уникальные — высшая редкость: символы стран и всего мира, на всей планете их лишь несколько десятков.", "cs": "Unikátní je nejvyšší vzácnost: symboly zemí i celého světa, na celé planetě jich je jen několik desítek.", "de": "Einzigartig ist die höchste Seltenheit: Symbole von Ländern und der ganzen Welt, auf dem ganzen Planeten nur einige Dutzend.", "fr": "Unique est la plus haute rareté : des symboles de pays et du monde entier, quelques dizaines seulement sur toute la planète.", "es": "Único es la rareza más alta: símbolos de países y del mundo entero, apenas unas decenas en todo el planeta.", "it": "Unico è la rarità più alta: simboli di paesi e del mondo intero, solo poche decine su tutto il pianeta.", "pt": "Único é a raridade mais alta: símbolos de países e do mundo inteiro, apenas algumas dezenas em todo o planeta.", "ja": "「唯一無二」は最高のレア度で、国や世界の象徴です。地球全体でも数十か所しかありません。", "ko": "유일은 가장 높은 희귀도로, 국가와 세계의 상징입니다. 지구 전체에 수십 곳뿐입니다."},
+    "tX_legendary": {"en": "Legendary places are the best of their kind, the most famous places in the world.", "ru": "Легендарные — лучшие в своём роде, самые известные места мира.", "cs": "Legendární místa jsou nejlepší svého druhu, nejznámější místa světa.", "de": "Legendäre Orte sind die besten ihrer Art, die bekanntesten Orte der Welt.", "fr": "Les lieux légendaires sont les meilleurs de leur genre, les plus célèbres du monde.", "es": "Los lugares legendarios son los mejores de su tipo, los más famosos del mundo.", "it": "I luoghi leggendari sono i migliori del loro genere, i più famosi al mondo.", "pt": "Os lugares lendários são os melhores do seu tipo, os mais famosos do mundo.", "ja": "「秘境」は同じ種類の中で最高の、世界でも特に有名な場所です。", "ko": "전설은 같은 종류 가운데 최고이자 세계에서 가장 유명한 장소입니다."},
+    "tX_epic": {"en": "Epic places are outstanding: people travel to a country or a city to see them.", "ru": "Эпические — выдающиеся места, ради которых едут в страну или город.", "cs": "Epická místa jsou výjimečná: kvůli nim se jezdí do země nebo do města.", "de": "Epische Orte sind herausragend: Ihretwegen reist man in ein Land oder eine Stadt.", "fr": "Les lieux épiques sont remarquables : on se rend dans un pays ou une ville pour les voir.", "es": "Los lugares épicos son excepcionales: se viaja a un país o a una ciudad para verlos.", "it": "I luoghi epici sono eccezionali: si va in un paese o in una città apposta per vederli.", "pt": "Os lugares épicos são excepcionais: as pessoas viajam a um país ou a uma cidade para vê-los.", "ja": "「絶景」は、それを見るために国や街を訪れるほどの際立った場所です。", "ko": "에픽은 그곳을 보려고 나라나 도시를 찾을 만큼 뛰어난 장소입니다."},
+    "tX_rare": {"en": "Rare places stand out and are worth seeing.", "ru": "Редкие — заметные места, которые стоит увидеть.", "cs": "Vzácná místa vynikají a stojí za to je vidět.", "de": "Seltene Orte stechen hervor und sind sehenswert.", "fr": "Les lieux rares se distinguent et méritent d’être vus.", "es": "Los lugares raros destacan y merecen la pena.", "it": "I luoghi rari si distinguono e meritano di essere visti.", "pt": "Os lugares raros se destacam e valem a visita.", "ja": "「名勝」は、ひときわ目を引く一見の価値がある場所です。", "ko": "희귀는 눈에 띄며 볼 만한 장소입니다."},
+    "tX_common": {"en": "Common places are the core of the collection: known to travellers and described in encyclopaedias.", "ru": "Обычные — основа коллекции: места, известные путешественникам и описанные в энциклопедиях.", "cs": "Běžná místa jsou základem sbírky: znají je cestovatelé a popisují je encyklopedie.", "de": "Gewöhnliche Orte sind die Grundlage der Sammlung: Reisenden bekannt und in Enzyklopädien beschrieben.", "fr": "Les lieux de rang commun forment la base de la collection : connus des voyageurs et décrits dans les encyclopédies.", "es": "Los lugares de rango común son la base de la colección: conocidos por los viajeros y descritos en las enciclopedias.", "it": "I luoghi di rango comune sono la base della collezione: noti ai viaggiatori e descritti nelle enciclopedie.", "pt": "Os lugares de nível comum são a base da coleção: conhecidos dos viajantes e descritos em enciclopédias.", "ja": "「定番」はコレクションの基本で、旅行者に知られ、百科事典にも載っている場所です。", "ko": "일반은 컬렉션의 바탕으로, 여행자에게 알려져 있고 백과사전에도 실린 장소입니다."},
+    "tX_dangerous": {"en": "Dangerous places call for special caution; the app says what makes each of them dangerous.", "ru": "Опасные — места, где нужна особая осторожность; в приложении у каждого сказано, чем оно опасно.", "cs": "Nebezpečná místa vyžadují zvláštní opatrnost; aplikace u každého uvádí, čím je nebezpečné.", "de": "Gefährliche Orte verlangen besondere Vorsicht; die App nennt bei jedem, was ihn gefährlich macht.", "fr": "Les lieux dangereux demandent une prudence particulière ; l’application précise pour chacun ce qui le rend dangereux.", "es": "Los lugares peligrosos exigen una precaución especial; la aplicación indica qué hace peligroso a cada uno.", "it": "I luoghi pericolosi richiedono particolare prudenza; l’app indica per ciascuno che cosa lo rende pericoloso.", "pt": "Os lugares perigosos exigem cuidado especial; o aplicativo indica o que torna cada um deles perigoso.", "ja": "「危険」は特に注意が必要な場所で、アプリでは何が危険なのかをそれぞれ説明しています。", "ko": "위험은 각별한 주의가 필요한 장소로, 앱에서 각각 무엇이 위험한지 알려 줍니다."},
+    "tN_mythic": {"en": "one:{n} unique place|other:{n} unique places", "ru": "one:{n} уникальное место|few:{n} уникальных места|many:{n} уникальных мест|other:{n} уникального места", "cs": "one:{n} unikátní místo|few:{n} unikátní místa|other:{n} unikátních míst", "de": "one:{n} einzigartiger Ort|other:{n} einzigartige Orte", "fr": "one:{n} lieu unique|other:{n} lieux uniques", "es": "one:{n} lugar único|other:{n} lugares únicos", "it": "one:{n} luogo unico|other:{n} luoghi unici", "pt": "one:{n} lugar único|other:{n} lugares únicos", "ja": "other:「唯一無二」の場所 {n}か所", "ko": "other:유일 등급 장소 {n}곳"},
+    "tN_legendary": {"en": "one:{n} legendary place|other:{n} legendary places", "ru": "one:{n} легендарное место|few:{n} легендарных места|many:{n} легендарных мест|other:{n} легендарного места", "cs": "one:{n} legendární místo|few:{n} legendární místa|other:{n} legendárních míst", "de": "one:{n} legendärer Ort|other:{n} legendäre Orte", "fr": "one:{n} lieu légendaire|other:{n} lieux légendaires", "es": "one:{n} lugar legendario|other:{n} lugares legendarios", "it": "one:{n} luogo leggendario|other:{n} luoghi leggendari", "pt": "one:{n} lugar lendário|other:{n} lugares lendários", "ja": "other:「秘境」の場所 {n}か所", "ko": "other:전설 등급 장소 {n}곳"},
+    "tN_epic": {"en": "one:{n} epic place|other:{n} epic places", "ru": "one:{n} эпическое место|few:{n} эпических места|many:{n} эпических мест|other:{n} эпического места", "cs": "one:{n} epické místo|few:{n} epická místa|other:{n} epických míst", "de": "one:{n} epischer Ort|other:{n} epische Orte", "fr": "one:{n} lieu épique|other:{n} lieux épiques", "es": "one:{n} lugar épico|other:{n} lugares épicos", "it": "one:{n} luogo epico|other:{n} luoghi epici", "pt": "one:{n} lugar épico|other:{n} lugares épicos", "ja": "other:「絶景」の場所 {n}か所", "ko": "other:에픽 등급 장소 {n}곳"},
+    "tN_rare": {"en": "one:{n} rare place|other:{n} rare places", "ru": "one:{n} редкое место|few:{n} редких места|many:{n} редких мест|other:{n} редкого места", "cs": "one:{n} vzácné místo|few:{n} vzácná místa|other:{n} vzácných míst", "de": "one:{n} seltener Ort|other:{n} seltene Orte", "fr": "one:{n} lieu rare|other:{n} lieux rares", "es": "one:{n} lugar raro|other:{n} lugares raros", "it": "one:{n} luogo raro|other:{n} luoghi rari", "pt": "one:{n} lugar raro|other:{n} lugares raros", "ja": "other:「名勝」の場所 {n}か所", "ko": "other:희귀 등급 장소 {n}곳"},
+    "tN_common": {"en": "one:{n} common place|other:{n} common places", "ru": "one:{n} обычное место|few:{n} обычных места|many:{n} обычных мест|other:{n} обычного места", "cs": "one:{n} běžné místo|few:{n} běžná místa|other:{n} běžných míst", "de": "one:{n} gewöhnlicher Ort|other:{n} gewöhnliche Orte", "fr": "one:{n} lieu de rang commun|other:{n} lieux de rang commun", "es": "one:{n} lugar de rango común|other:{n} lugares de rango común", "it": "one:{n} luogo di rango comune|other:{n} luoghi di rango comune", "pt": "one:{n} lugar de nível comum|other:{n} lugares de nível comum", "ja": "other:「定番」の場所 {n}か所", "ko": "other:일반 등급 장소 {n}곳"},
+    "tN_dangerous": {"en": "one:{n} dangerous place|other:{n} dangerous places", "ru": "one:{n} опасное место|few:{n} опасных места|many:{n} опасных мест|other:{n} опасного места", "cs": "one:{n} nebezpečné místo|few:{n} nebezpečná místa|other:{n} nebezpečných míst", "de": "one:{n} gefährlicher Ort|other:{n} gefährliche Orte", "fr": "one:{n} lieu dangereux|other:{n} lieux dangereux", "es": "one:{n} lugar peligroso|other:{n} lugares peligrosos", "it": "one:{n} luogo pericoloso|other:{n} luoghi pericolosi", "pt": "one:{n} lugar perigoso|other:{n} lugares perigosos", "ja": "other:「危険」の場所 {n}か所", "ko": "other:위험 등급 장소 {n}곳"},
+    "tGet": {"en": "Your route shows that you have been there. The Tabi app will show names, photos and descriptions: install it on your phone and sign in with the same account, {mail}. The app will receive your route and mark what was found in your collection.", "ru": "Ваш маршрут показывает, что вы там побывали. Названия, снимки и описания покажет приложение Tabi: установите его на телефон и войдите с той же учётной записью — {mail}. Приложение получит ваш маршрут и отметит найденное в коллекции.", "cs": "Vaše trasa ukazuje, že jste tam byli. Názvy, fotografie a popisy ukáže aplikace Tabi: nainstalujte si ji do telefonu a přihlaste se stejným účtem – {mail}. Aplikace převezme vaši trasu a nalezené označí ve sbírce.", "de": "Ihre Route zeigt, dass Sie dort waren. Namen, Fotos und Beschreibungen zeigt die App Tabi: Installieren Sie sie auf dem Telefon und melden Sie sich mit demselben Konto an – {mail}. Die App übernimmt Ihre Route und markiert das Gefundene in Ihrer Sammlung.", "fr": "Votre itinéraire montre votre passage sur place. Les noms, photos et descriptions s’affichent dans l’application Tabi : installez-la sur votre téléphone et connectez-vous avec le même compte, {mail}. L’application recevra votre itinéraire et marquera les lieux trouvés dans votre collection.", "es": "Tu ruta muestra que estuviste allí. Los nombres, las fotos y las descripciones te los mostrará la aplicación Tabi: instálala en tu teléfono e inicia sesión con la misma cuenta, {mail}. La aplicación recibirá tu ruta y marcará lo encontrado en tu colección.", "it": "Lo indica il Suo percorso. Nomi, foto e descrizioni Glieli mostrerà l’app Tabi: la installi sul telefono e acceda con lo stesso account, {mail}. L’app riceverà il Suo percorso e segnerà nella Sua collezione ciò che è stato trovato.", "pt": "O seu trajeto mostra que você esteve lá. Os nomes, as fotos e as descrições aparecem no aplicativo Tabi: instale-o no celular e entre com a mesma conta, {mail}. O aplicativo vai receber o seu trajeto e marcar na sua coleção o que foi encontrado.", "ja": "ルートから、あなたがそこを訪れたことがわかります。名前・写真・説明はTabiアプリで見られます。スマートフォンにインストールし、同じアカウント（{mail}）でログインしてください。アプリがルートを受け取り、見つかった場所をコレクションに記録します。", "ko": "경로를 보면 그곳에 다녀오신 것을 알 수 있습니다. 이름과 사진, 설명은 Tabi 앱에서 볼 수 있습니다. 휴대폰에 앱을 설치하고 같은 계정({mail})으로 로그인하세요. 앱이 경로를 받아 찾은 장소를 컬렉션에 표시합니다."},
+    "tHas": {"en": "Your route shows that you have been there. Names, photos and descriptions are in the Tabi app: open it on your phone, and what was found on your route will appear in your collection.", "ru": "Ваш маршрут показывает, что вы там побывали. Названия, снимки и описания — в приложении Tabi: откройте его на телефоне, и найденное по маршруту появится в коллекции.", "cs": "Vaše trasa ukazuje, že jste tam byli. Názvy, fotografie a popisy najdete v aplikaci Tabi: otevřete ji v telefonu a nalezené podle trasy se objeví ve sbírce.", "de": "Ihre Route zeigt, dass Sie dort waren. Namen, Fotos und Beschreibungen finden Sie in der App Tabi: Öffnen Sie sie auf dem Telefon, dann erscheint das auf Ihrer Route Gefundene in Ihrer Sammlung.", "fr": "Votre itinéraire montre votre passage sur place. Les noms, photos et descriptions sont dans l’application Tabi : ouvrez-la sur votre téléphone, et les lieux trouvés sur votre itinéraire apparaîtront dans votre collection.", "es": "Tu ruta muestra que estuviste allí. Los nombres, las fotos y las descripciones están en la aplicación Tabi: ábrela en tu teléfono y lo encontrado en tu ruta aparecerá en tu colección.", "it": "Lo indica il Suo percorso. Nomi, foto e descrizioni sono nell’app Tabi: la apra sul telefono, e ciò che è stato trovato sul Suo percorso comparirà nella Sua collezione.", "pt": "O seu trajeto mostra que você esteve lá. Os nomes, as fotos e as descrições estão no aplicativo Tabi: abra-o no celular, e o que foi encontrado no seu trajeto aparecerá na sua coleção.", "ja": "ルートから、あなたがそこを訪れたことがわかります。名前・写真・説明はTabiアプリにあります。スマートフォンでアプリを開くと、ルートで見つかった場所がコレクションに表示されます。", "ko": "경로를 보면 그곳에 다녀오신 것을 알 수 있습니다. 이름과 사진, 설명은 Tabi 앱에 있습니다. 휴대폰에서 앱을 열면 경로에서 찾은 장소가 컬렉션에 나타납니다."},
+    "eOauth": {"en": "Sign-in did not work. Try again or sign in with a code sent to your email.", "ru": "Войти не удалось. Попробуйте ещё раз или войдите по коду на почту.", "cs": "Přihlášení se nezdařilo. Zkuste to znovu nebo se přihlaste kódem zaslaným e-mailem.", "de": "Die Anmeldung hat nicht geklappt. Versuchen Sie es erneut oder melden Sie sich mit einem Code per E-Mail an.", "fr": "La connexion n’a pas abouti. Réessayez ou connectez-vous avec un code envoyé par e-mail.", "es": "No se pudo iniciar sesión. Inténtalo de nuevo o inicia sesión con un código enviado a tu correo.", "it": "L’accesso non è riuscito. Riprovi oppure acceda con un codice inviato per e-mail.", "pt": "Não foi possível entrar. Tente de novo ou entre com um código enviado ao seu e-mail.", "ja": "ログインできませんでした。もう一度試すか、メールに届くコードでログインしてください。", "ko": "로그인하지 못했습니다. 다시 시도하거나 이메일로 받은 코드로 로그인하세요."}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -801,6 +851,13 @@ main.pc{position:relative}
     },
     $ = function (id) { return document.getElementById(id); },
     num = function (n) { return Number(n || 0).toLocaleString(L); },
+    // Строка с формами числа (22.11.2026): «one:…|few:…|many:…|other:…», форма — по правилам языка (Intl.PluralRules).
+    tn = function (k, n) {
+      var s = t(k), f = "other", m = {};
+      try { f = new Intl.PluralRules(L).select(n); } catch (e) {}
+      s.split("|").forEach(function (x) { var i = x.indexOf(":"); i > 0 && (m[x.slice(0, i)] = x.slice(i + 1)); });
+      return (m[f] || m.other || s).split("{n}").join(num(n));
+    },
     show = function (id, on) { $(id).hidden = !on; },
     errKey = null, errArgs = null,
     err = function (k, v) { errKey = k || null; errArgs = v || null; $("err").hidden = !k; $("err").textContent = k ? t(k, v) : ""; };
@@ -856,6 +913,7 @@ main.pc{position:relative}
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
+      bLater: "later", bToPhone: "savePhone", qrT: "qrT",
       appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify",
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList",
       proT: "zPro", proDaysH: "proDaysH", proViewH: "proViewH", proLinesL: "proLines", proTimeH: "proTimeH", proDevH: "hDevs", proCcH: "sCountries",
@@ -867,9 +925,8 @@ main.pc{position:relative}
     $("proQ").placeholder = t("proSearchPh");
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
-    $("qr").setAttribute("aria-label", t("qrLbl"));
+    $("qr").setAttribute("aria-label", t("qrLbl")); $("qr").title = t("qrLbl"); $("qrBig").setAttribute("aria-label", t("qrLbl"));
     renderNav();
-    shotsLang = "";
     renderFaq(); renderPick();
     [].forEach.call(document.querySelectorAll("dialog.win [data-close]"), function (b) { b.setAttribute("aria-label", t("close")); b.title = t("close"); });
     $("phoneX").textContent = t(FROM_APP ? "phoneApp" : ANDROID ? "phoneA" : "phoneI");
@@ -907,12 +964,13 @@ main.pc{position:relative}
   // этом браузере до «Выйти», шапка показывает, кто вошёл. =====
   // Имя TACC: ACC на этой странице — цвет акцента карты.
   var TACC = window.TabiAcc, S = TACC.get();
-  // Выход из учётной записи (21.11.2026, план Андрея: итог одной учётной записи был виден другой): итог учётной записи
-  // стирается из браузера — он остаётся в учётной записи и вернётся при следующем входе; страница открывается заново.
+  // Выход из учётной записи (22.11.2026, слово Андрея: выход не стирает данные — они обезличиваются и остаются в этом
+  // браузере): страница открывается заново без учётной записи — с итогом этого браузера, без точек, пришедших из учётной
+  // записи (их браузер не хранит). Сохранённое остаётся в учётной записи.
   TACC.on(function (s) {
     var was = S;
     S = s;
-    was && !s && keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
+    was && !s && location.replace(location.pathname + "?lang=" + L);
   });
   var keep = function (s) { TACC.keep(s); S = TACC.get(); },
     fresh = function () { return TACC.fresh().then(function (s) { S = s; return s; }); };
@@ -934,6 +992,8 @@ main.pc{position:relative}
     start: function () { ls.set("tabiPcWay", WAY); }
   };
   TACC.gis($("bGoogle"), gisOpt);
+  // Facebook — тем же путём, что запасной вход Google (переход и возврат с кодом), 22.11.2026.
+  TACC.fb($("bFb"), gisOpt);
   // Точки учётной записи (20.11.2026, Андрей: «данные скачут» — 128 городов стали 110, когда страница перестала их
   // показывать): после входа и после каждого разбора страница добирает точки, сохранённые в учётной записи с любого
   // компьютера и уже переданные телефону, которых нет в этом браузере. В браузере они не хранятся (acc).
@@ -1001,7 +1061,14 @@ main.pc{position:relative}
   }
   function signedIn() {
     err(null);
-    if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
+    // Итог этого браузера был сохранён в другую учётную запись, а вошла эта (22.11.2026, слово Андрея: после выхода итог —
+    // обезличенный, как разбор без входа) — он сохраняется и в неё; точки, пришедшие из прежней учётной записи, браузер не
+    // хранит, поэтому в новую уходит только разбор этого браузера.
+    var me = uidOf(S);
+    if (KEEP_OWNER && KEEP_OWNER !== me) {
+      A.pts.forEach(function (p) { p.acc || (p.sent = false); });
+      KEEP_OWNER = me; saveSt.state = "idle"; saveSt.special = null; saveSt.n = 0;
+    }
     WAY = WAY || ls.get("tabiPcWay") || "";
     ls.set("tabiPcWay", "");
     renderSave();
@@ -1097,6 +1164,7 @@ main.pc{position:relative}
   $("bSavePhone").onclick = function () { WAY = "phone"; renderSave(); };
   $("bCopy2").onclick = function () {
     var u = PLAY + "&hl=" + L;
+    APPN.copy++;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy2").textContent = t("copied"); }).catch(function () { prompt("", u); });
   };
   $("bCopy").onclick = function () {
@@ -3492,6 +3560,7 @@ main.pc{position:relative}
   function reveal(keep, quickMs) {
     var all = A.pts.concat(keep).sort(function (x, y) { return x[2] - y[2]; });
     A.pts = all;
+    restoring = false;
     T0 = all.length ? all[0][2] : 0; T1 = all.length ? all[all.length - 1][2] : 1;
     MV = null; mapDirty = true;
     revealing = true; statGoal = null;
@@ -3788,47 +3857,73 @@ main.pc{position:relative}
     show("vSave", has && !S && st !== "saved" && st !== "saving" && !PHONE);
     show("saveWays", !S && !WAY);
     show("bGoogle", !S && !!WAY);
+    show("bFb", !S && !!WAY);
     // Сохранение идёт само и молча (20.11.2026, Андрей): ни строки «Сохраняем», ни «Повторить»; сбой связи или сервера —
     // повтор сам (saveLater), человеку сообщаются только пределы сервера.
     show("endBox", !PHONE && !S && !revealing && (A.shown > 0 || A.none));
     $("under").classList.toggle("idle", !(A.shown > 0) || PHONE);
     renderApp();
   }
-  // Особые места на снимках (20.11.2026, Андрей: показать, сколько мест нашлось и какой они редкости; какие именно — в
-  // приложении). Приложения у учётной записи нет (site_me) — код и ссылка Google Play и экраны приложения; есть — без них.
-  var SHOTS = { cs: 1, de: 1, en: 1, es: 1, fr: 1, ja: 1, ru: 1 }, shotsLang = "", TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#E8A317", "tLegendary"],
+  // Особые места на маршруте (20.11.2026, Андрей: показать, сколько мест нашлось и какой они редкости; какие именно — в
+  // приложении). Приложения у учётной записи нет (site_me) — код и ссылка Google Play, суть приложения и «Позже»; есть —
+  // без них (22.11.2026, слово Андрея: снимков экрана нет). Нажатие на код — он крупно в окне; на плитку редкости — окно:
+  // что это за места и как их увидеть. «Позже» убирает блок (это помнит браузер), кнопка «Перенести на телефон» под
+  // «Устройствами» возвращает его. Статистика — строка «appblk» при уходе со страницы.
+  var LATER = "tabiPcAppLater", APPN = { qr: 0, tier: 0, later: 0, back: 0, play: 0, copy: 0 }, TIERS = [["mythic", "#b91c1c", "tMythic"], ["legendary", "#E8A317", "tLegendary"],
     ["epic", "#7c3aed", "tEpic"], ["rare", "#2563eb", "tRare"], ["common", "#15803d", "tCommon"], ["dangerous", "#111111", "tDangerous"]];
+  function hasAppNow() { return !!(ME && (ME.app || (Array.isArray(ME.phones) && ME.phones.length))); }
   function renderApp() {
     var sp = saveSt.special, on = !!S && saveSt.state === "saved" && !PHONE && !revealing && !!(sp && sp.n > 0);
-    show("vApp", on);
-    if (!on) return;
-    if (!meAsked) { meAsked = true; TACC.me().then(function (v) { ME = v || null; renderApp(); }).catch(function () {}); }
-    var hasApp = !!(ME && (ME.app || (Array.isArray(ME.phones) && ME.phones.length)));
+    if (on && !meAsked) { meAsked = true; TACC.me().then(function (v) { ME = v || null; renderApp(); }).catch(function () {}); }
+    var hasApp = hasAppNow(), later = on && !hasApp && ls.get(LATER) === "1";
+    show("vApp", on && !later);
+    show("bToPhone", later);
+    if (!on || later) return;
     $("spT").textContent = t(sp.partial ? "spTMin" : "spT", { n: num(sp.n) });
-    // Только редкости, которые у человека есть (20.11.2026, Андрей: нулей не показывать), без нажатий.
+    // Только редкости, которые у человека есть (20.11.2026, Андрей: нулей не показывать); нажатие — окно редкости.
     var tiers = sp.tiers || {}, box = $("tiers");
     box.innerHTML = "";
     TIERS.forEach(function (x) {
       var n = Number(tiers[x[0]]) || 0;
       if (!n) return;
-      var b = document.createElement("div");
-      b.className = "pc-tier"; b.style.setProperty("--tc", x[1]);
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "pc-tier"; b.style.setProperty("--tc", x[1]);
       b.innerHTML = "<b></b><span></span>";
       b.children[0].textContent = num(n); b.children[1].textContent = t(x[2]);
+      b.onclick = function () { tierOpen(x, n); };
       box.appendChild(b);
     });
     show("appGet", !hasApp);
-    if (!hasApp && shotsLang !== L) {
-      shotsLang = L;
-      var sl = SHOTS[L] ? L : "en", shots = $("appShots");
-      shots.innerHTML = "";
-      [[1, "shotA"], [4, "shotB"], [7, "shotC"]].forEach(function (x) {
-        var im = document.createElement("img"), u = "/assets/img/" + sl + "/frame-" + x[0] + "-";
-        im.src = u + "360.webp"; im.srcset = u + "360.webp 1x, " + u + "720.webp 2x"; im.alt = t(x[1]); im.loading = "lazy"; im.decoding = "async";
-        shots.appendChild(im);
-      });
-    }
   }
+  function winOpen(id) { var d = $(id); d.showModal ? d.showModal() : d.setAttribute("open", ""); }
+  // Окно редкости: сколько таких мест на маршруте, что значит редкость, как увидеть сами места.
+  function tierOpen(x, n) {
+    $("tierDlg").style.setProperty("--tc", x[1]);
+    $("tierT").textContent = tn("tN_" + x[0], n);
+    $("tierX").textContent = t("tGen") + " " + t("tX_" + x[0]);
+    var mail = (S && S.mail) || "", s = t(hasAppNow() ? "tHas" : "tGet");
+    $("tierApp").textContent = mail ? s.split("{mail}").join(mail) : s.replace(/[\s,\u2014\u2013]*[(\uff08]?\{mail\}[)\uff09]?/, "");
+    APPN.tier++;
+    winOpen("tierDlg");
+  }
+  $("qr").onclick = function () { $("qrBig").innerHTML = $("qr").innerHTML; APPN.qr++; winOpen("qrDlg"); };
+  $("bLater").onclick = function () {
+    ls.set(LATER, "1"); APPN.later++;
+    var v = $("vApp");
+    v.classList.add("pc-leave");
+    setTimeout(function () { v.classList.remove("pc-leave"); renderApp(); }, 250);
+  };
+  $("bToPhone").onclick = function () {
+    ls.set(LATER, ""); APPN.back++; renderApp();
+    setTimeout(function () { $("vApp").scrollIntoView({ behavior: "smooth", block: "center" }); }, 60);
+  };
+  $("bPlay2").addEventListener("click", function () { APPN.play++; });
+  window.addEventListener("pagehide", function () {
+    var a = APPN;
+    if (!(a.qr || a.tier || a.later || a.back || a.play || a.copy)) return;
+    statSend({ k: "appblk", qr: a.qr, tier: a.tier, later: a.later, back: a.back, play: a.play, copy: a.copy });
+    APPN = { qr: 0, tier: 0, later: 0, back: 0, play: 0, copy: 0 };
+  });
   // Вопросы и ответы (21.11.2026, Андрей): окно, одно для всех; вопросы — кнопками (.qa в assets/site.css), нажатие
   // раскрывает ответ; значок раскрытия — из tools/site_build.py. Первый — о данных, последний — о числе точек; абзацы ответа — «\n\n».
   var DOWN = "<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg>";
@@ -4269,7 +4364,12 @@ main.pc{position:relative}
 
   // Итог хранится в этом браузере (18.11.2026, Андрей: закрыл страницу — всё пропало): точки, устройства, папки, причины
   // и отметки «сохранено». Открыл снова — итог на месте; «Начать заново» стирает его.
+  // Пока открытие раскладывает итог браузера (restore → reveal), записи нет (22.11.2026, найдено при проверке: ответ числа
+  // особых мест мог прийти раньше раскладки и записать в браузер пустой итог; закрой человек вкладку в этот миг — итог
+  // пропал бы).
+  var restoring = false;
   function keepPut() {
+    if (restoring) return Promise.resolve();
     return idb().then(function (db) {
       return new Promise(function (ok) {
         var tx = db.transaction("st", "readwrite");
@@ -4301,26 +4401,9 @@ main.pc{position:relative}
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
   }
-  // Несохранённые точки другой учётной записи (21.11.2026, найдено при разборе, слово Андрея): вход в другую учётную запись
-  // или выход прежде стирали итог браузера вместе с точками, которые не успели уйти на сервер (нет сети, предел). Теперь
-  // такие точки откладываются под ключом «away:<учётная запись>» — не показываются никому — и возвращаются, когда эта
-  // учётная запись снова войдёт на этой странице; затем уходят на сервер обычным сохранением.
-  function keepAway(st) {
-    var un = st && st.owner ? (st.pts || []).filter(function (q) { return !q[5]; }) : [];
-    if (!un.length) return Promise.resolve();
-    return idb().then(function (db) {
-      return new Promise(function (ok) {
-        var tx = db.transaction("st", "readwrite"), os = tx.objectStore("st"), rq = os.get("away:" + st.owner);
-        rq.onsuccess = function () {
-          var v = rq.result || { recs: [] };
-          v.recs.push({ at: Date.now(), pts: un, devs: st.devs || [], dirs: st.dirs || [] });
-          os.put(v, "away:" + st.owner);
-        };
-        tx.oncomplete = ok; tx.onerror = ok;
-      });
-    }).catch(function () {});
-  }
-  // Отложенное этой учётной записью — в её итог браузера (устройства и папки сводятся по марке, модели, номеру и пути).
+  // Несохранённые точки, отложенные до 22.11.2026 под ключом «away:<учётная запись>» (тогда вход другой учётной записи и
+  // выход убирали итог браузера), возвращаются в итог браузера, когда эта учётная запись снова войдёт на этой странице;
+  // устройства и папки сводятся по марке, модели, номеру и пути. Новые записи «away» больше не появляются.
   function keepBack(uid, st) {
     if (!uid) return Promise.resolve(st);
     return idb().then(function (db) {
@@ -4353,8 +4436,7 @@ main.pc{position:relative}
       });
     }).catch(function () { return st; });
   }
-  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — чужой итог убирается со страницы
-  // (несохранённое — в сторону, keepAway).
+  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — итог браузера сохраняется и в неё.
   var KEEP_OWNER = null;
   function uidOf(s) {
     if (!s) return null;
@@ -4368,6 +4450,7 @@ main.pc{position:relative}
   }
   function restore(st, j) {
     st = st || {};
+    restoring = true;
     KEEP_OWNER = st.owner || null;
     TRASH.loc = trashKeep(st.trash || []);
     DEV.list = st.devs || []; DIR.list = st.dirs || [];
@@ -4378,9 +4461,11 @@ main.pc{position:relative}
     A.held = (st.held || []).map(function (p) { var q = back(p); q.sys = 1; seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     var pts = (st.pts || []).map(function (p) { var q = back(p); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     pts = pts.concat(accMerge(j, pts));
-    if (!pts.length) return Promise.resolve(false);
-    st.saved && (saveSt.state = "saved");
-    st.special && st.special.n != null && (saveSt.special = st.special);
+    if (!pts.length) return (restoring = false), Promise.resolve(false);
+    // Без входа итог не считается сохранённым: блок сохранения предлагает войти (вошедшему в ту же учётную запись нечего
+    // отправлять — сохранение сразу станет «сохранено»).
+    S && st.saved && (saveSt.state = "saved");
+    S && st.special && st.special.n != null && (saveSt.special = st.special);
     show("vPick", false);
     // Границы и регионы найденных стран — до показа: пустых рамок до прихода данных не видно, итог появляется сразу.
     // Страна, регион и город точки хранятся с итогом (22.11.2026, замер: на 94 тысячах точек их пересчёт занимал
@@ -4400,7 +4485,7 @@ main.pc{position:relative}
       keys.forEach(function (cc, i) { regCache[cc] = lists[i]; var m = (byId[cc] = {}); (lists[i] || []).forEach(function (rg) { m[String(rg.id)] = rg; }); });
       pts.forEach(function (p) { p.pv && (p.rg = p._rg && byId[p.cc] ? byId[p.cc][p._rg] || null : null); });
       show("vWork", false); unload(); return reveal(pts, 600);
-    }).then(function () { return true; });
+    }).then(function () { return true; }, function (e) { restoring = false; throw e; });
   }
 
   // ===== Картинка «Поделиться» =====
@@ -4509,6 +4594,7 @@ main.pc{position:relative}
   function appInClose() { winClose("appInDlg"); }
   function appInErr(k) { show("appInErr", !!k); $("appInErr").textContent = k ? t(k) : ""; }
   TACC.gis($("appInG"), gisOpt);
+  TACC.fb($("appInF"), gisOpt);
   $("appInCode").onclick = function () {
     var m = $("appInMail").value.trim();
     if (!/^\S+@\S+\.\S+$/.test(m)) return;
@@ -4536,6 +4622,8 @@ main.pc{position:relative}
     show("vPick", true);
     geo().then(demoSync);
     var q = new URLSearchParams(location.search), code = q.get("code");
+    // Сервис входа отказал (Facebook не передал почту, человек отменил вход) — адрес без отказа и строка об ошибке.
+    if (!code && (q.get("error") || /[#&]error=/.test(location.hash))) { history.replaceState(null, "", location.pathname + "?lang=" + L); err("eOauth"); }
     // Пришедший из приложения без входа — окно входа сразу, до загрузки итога (при возврате со входа Google — нет: идёт вход).
     code || appInMaybe();
     // Открытие (20.11.2026, Андрей: итог грузился дважды и нарочно медленно): итог этого браузера и сохранённое в учётной
@@ -4547,11 +4635,14 @@ main.pc{position:relative}
       var accP = S ? accFetch() : Promise.resolve(null);
       keepGet()
         .then(function (st) {
-          // Итог учётной записи (владелец) — только ей; сохранённые точки без отметки владельца (записи до 21.11.2026) — тоже
-          // учётной записи, неизвестно какой: стираются, учётная запись вернёт их сама. Разбор без входа остаётся.
+          // Итог браузера после выхода остаётся и показывается без учётной записи (22.11.2026, слово Андрея). Вошла учётная
+          // запись, в которую он не сохранялся (или записи до 21.11.2026 без отметки владельца), — итог этого браузера
+          // становится её итогом и сохраняется в неё, как разбор без входа.
           var mine = S ? uidOf(S) : null, saved = st && (st.pts || []).some(function (q) { return q[5]; });
-          if (st && st.owner && st.owner !== mine) return keepAway(st).then(function () { return keepDrop(); }).then(function () { return keepBack(mine, null); });
-          if (st && !st.owner && saved) return keepDrop().then(function () { return keepBack(mine, null); });
+          if (st && mine && (st.owner ? st.owner !== mine : saved)) {
+            (st.pts || []).forEach(function (q) { q[5] = 0; });
+            st.owner = mine; st.saved = false; st.special = null;
+          }
           return keepBack(mine, st);
         })
         .then(function (st) {

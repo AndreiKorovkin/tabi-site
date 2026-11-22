@@ -5,7 +5,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css?v=63cbd493f4">
-<script src="/assets/account.js?v=9736026469"></script>
+<script src="/assets/account.js?v=22279a2405"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -85,6 +85,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     <p class="ac-t" id="lead"></p>
     <div class="ac-in">
       <div class="gis" id="bGoogle"></div>
+      <div class="gis" id="bFb"></div>
       <p class="ac-s" id="orMail"></p>
       <input class="ac-f" id="mail" type="email" autocomplete="email">
       <button class="ac-btn b2" id="bCode" type="button"></button>
@@ -206,7 +207,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     "appNoPhone": {"en": "This account is not signed in on any phone right now.", "ru": "Сейчас ни на одном телефоне не выполнен вход в эту учётную запись.", "cs": "Do tohoto účtu teď není přihlášen žádný telefon.", "de": "Mit diesem Konto ist derzeit auf keinem Telefon jemand angemeldet.", "fr": "Ce compte n’est actuellement connecté sur aucun téléphone.", "es": "Ahora mismo esta cuenta no tiene la sesión iniciada en ningún teléfono.", "it": "Al momento questo account non è connesso su nessun telefono.", "pt": "No momento, esta conta não está conectada em nenhum telefone.", "ja": "現在、このアカウントでログインしているスマートフォンはありません。", "ko": "현재 이 계정으로 로그인된 휴대폰이 없습니다."},
     "delPlus": {"ru": "Продление подписки Tabi Plus будет отменено, и Google Play больше не будет списывать оплату.", "en": "Tabi Plus renewal will be cancelled, and Google Play will stop charging you.", "cs": "Obnovování předplatného Tabi Plus bude zrušeno a Google Play už nebude účtovat platby.", "de": "Die Verlängerung von Tabi Plus wird gekündigt, und Google Play bucht nichts mehr ab.", "fr": "Le renouvellement de Tabi Plus sera annulé, et Google Play cessera de vous facturer.", "es": "Se cancelará la renovación de Tabi Plus y Google Play dejará de cobrarte.", "it": "Il rinnovo di Tabi Plus verrà annullato e Google Play non addebiterà più nulla.", "pt": "A renovação do Tabi Plus será cancelada, e o Google Play deixará de cobrar.", "ja": "Tabi Plus の自動更新は解約され、Google Play からの請求は止まります。", "ko": "Tabi Plus 자동 갱신이 해지되어 Google Play에서 더 이상 결제되지 않습니다."},
     "delCodeBtn": {"en": "Get a code at {m}", "ru": "Получить код на {m}", "cs": "Získat kód na {m}", "de": "Code an {m} anfordern", "fr": "Recevoir un code à {m}", "es": "Recibir un código en {m}", "it": "Ricevi il codice su {m}", "pt": "Receber código em {m}", "ja": "{m} でコードを受け取る", "ko": "{m}(으)로 코드 받기"},
-    "delSubFail": {"en": "The subscription renewal could not be cancelled, so the account was not deleted. Check your connection and try again.", "ru": "Не удалось отменить продление подписки, поэтому учётная запись не удалена. Проверьте связь и попробуйте ещё раз.", "cs": "Obnovování předplatného se nepodařilo zrušit, proto účet nebyl smazán. Zkontrolujte připojení a zkuste to znovu.", "de": "Die Verlängerung des Abos konnte nicht gekündigt werden, daher wurde das Konto nicht gelöscht. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le renouvellement de l’abonnement n’a pas pu être annulé, le compte n’a donc pas été supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo cancelar la renovación de la suscripción, así que la cuenta no se ha eliminado. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile annullare il rinnovo dell’abbonamento, quindi l’account non è stato eliminato. Controlli la connessione e riprovi.", "pt": "Não foi possível cancelar a renovação da assinatura, por isso a conta não foi excluída. Verifique a conexão e tente novamente.", "ja": "サブスクリプションの自動更新を解約できなかったため、アカウントは削除されていません。接続を確認して、もう一度お試しください。", "ko": "구독 자동 갱신을 해지하지 못해 계정이 삭제되지 않았습니다. 연결을 확인하고 다시 시도해 주세요."}
+    "delSubFail": {"en": "The subscription renewal could not be cancelled, so the account was not deleted. Check your connection and try again.", "ru": "Не удалось отменить продление подписки, поэтому учётная запись не удалена. Проверьте связь и попробуйте ещё раз.", "cs": "Obnovování předplatného se nepodařilo zrušit, proto účet nebyl smazán. Zkontrolujte připojení a zkuste to znovu.", "de": "Die Verlängerung des Abos konnte nicht gekündigt werden, daher wurde das Konto nicht gelöscht. Prüfen Sie die Verbindung und versuchen Sie es erneut.", "fr": "Le renouvellement de l’abonnement n’a pas pu être annulé, le compte n’a donc pas été supprimé. Vérifiez la connexion et réessayez.", "es": "No se pudo cancelar la renovación de la suscripción, así que la cuenta no se ha eliminado. Comprueba la conexión e inténtalo de nuevo.", "it": "Non è stato possibile annullare il rinnovo dell’abbonamento, quindi l’account non è stato eliminato. Controlli la connessione e riprovi.", "pt": "Não foi possível cancelar a renovação da assinatura, por isso a conta não foi excluída. Verifique a conexão e tente novamente.", "ja": "サブスクリプションの自動更新を解約できなかったため、アカウントは削除されていません。接続を確認して、もう一度お試しください。", "ko": "구독 자동 갱신을 해지하지 못해 계정이 삭제되지 않았습니다. 연결을 확인하고 다시 시도해 주세요."},
+    "eOauth": {"en": "Sign-in did not work. Try again or sign in with a code sent to your email.", "ru": "Войти не удалось. Попробуйте ещё раз или войдите по коду на почту.", "cs": "Přihlášení se nezdařilo. Zkuste to znovu nebo se přihlaste kódem zaslaným e-mailem.", "de": "Die Anmeldung hat nicht geklappt. Versuchen Sie es erneut oder melden Sie sich mit einem Code per E-Mail an.", "fr": "La connexion n’a pas abouti. Réessayez ou connectez-vous avec un code envoyé par e-mail.", "es": "No se pudo iniciar sesión. Inténtalo de nuevo o inicia sesión con un código enviado a tu correo.", "it": "L’accesso non è riuscito. Riprovi oppure acceda con un codice inviato per e-mail.", "pt": "Não foi possível entrar. Tente de novo ou entre com um código enviado ao seu e-mail.", "ja": "ログインできませんでした。もう一度試すか、メールに届くコードでログインしてください。", "ko": "로그인하지 못했습니다. 다시 시도하거나 이메일로 받은 코드로 로그인하세요."}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -351,11 +353,14 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // ===== Вход =====
   // Вход через Google — кнопкой Google на месте #bGoogle (account.js, gis).
-  ACC.gis($("bGoogle"), {
+  var gisOpt = {
     done: function (s, e) { s ? load(true) : err(e); },
     cls: "ac-btn", label: function () { return t("google"); }, back: function () { return BACK + "?lang=" + L; },
     start: function () { err(null); }
-  });
+  };
+  ACC.gis($("bGoogle"), gisOpt);
+  // Facebook (22.11.2026, слово Андрея) — переходом через Supabase, возврат с кодом — ниже, как у запасного входа Google.
+  ACC.fb($("bFb"), gisOpt);
   $("bCode").onclick = function () {
     var m = $("mail").value.trim();
     if (!/^\S+@\S+\.\S+$/.test(m)) return;
@@ -448,6 +453,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // Возврат из Google переходом (окно не открылось): код в адресе.
   var q = new URLSearchParams(location.search), code = q.get("code");
+  // Сервис входа отказал (Facebook не передал почту, человек отменил вход) — адрес без отказа и строка об ошибке.
+  if (!code && (q.get("error") || /[#&]error=/.test(location.hash))) { history.replaceState(null, "", location.pathname + "?lang=" + L); setTimeout(function () { err("eOauth"); }, 0); }
   applyTexts();
   if (code && q.get("w") !== "1") {
     history.replaceState(null, "", location.pathname + "?lang=" + L);
