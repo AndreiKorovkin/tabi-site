@@ -228,6 +228,8 @@ dialog.win.closing::backdrop{animation:winFadeOut .2s ease forwards}
 @keyframes winFade{from{opacity:0}to{opacity:1}}
 @keyframes winFadeOut{from{opacity:1}to{opacity:0}}
 @media (prefers-reduced-motion:reduce){dialog.win,dialog.win::backdrop{animation:none!important}}
+/* Под открытым окном всё стоит (22.11.2026, Андрей: окно и выбор почты Google в нём тормозили): фон окна размыт, и любое движение под ним — огни сайта, мерцание — заставляло браузер заново размывать весь экран в каждом кадре. */
+html:has(dialog[open]) :not(dialog,dialog *){animation-play-state:paused!important}
 /* Вопросы окна — кнопками (21.11.2026, Андрей): нажатие раскрывает ответ под вопросом. */
 .qa{display:grid;gap:10px;margin-top:6px}
 .qa details{border:1px solid var(--line);border-radius:16px;background:var(--bg);transition:border-color .2s ease}

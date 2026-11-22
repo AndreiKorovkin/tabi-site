@@ -4,7 +4,7 @@
 <meta name="description" content="We will check the media files on your computer and show the statistics of your life: the countries, regions and cities you have visited. The files themselves are not viewed and never leave your device: only their metadata are collected, above all the place and time of shooting. We value your privacy.">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=0b934ffe89">
+<link rel="stylesheet" href="/assets/site.css?v=63cbd493f4">
 <script src="/assets/account.js?v=9736026469"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
@@ -2351,7 +2351,9 @@ main.pc{position:relative}
     [38.7223, -9.1393, 2022], [48.2082, 16.3738, 2019], [37.9838, 23.7275, 2021], [55.7558, 37.6173, 2015], [59.3293, 18.0686, 2023],
     [47.4979, 19.0402, 2020]];
   var demo = { on: false, raf: 0, r: 0, c: 0, t0: 0, ct: 0, land: null, key: "" };
-  function demoWant() { return !PHONE && !!G && window.innerWidth >= 1300 && $("grid").classList.contains("idle") && !$("vPick").hidden; }
+  // Пример стоит, пока открыто любое окно (22.11.2026, Андрей: окно и выбор почты Google в нём тормозили — холст под
+  // размытым фоном окна менялся в каждом кадре, и браузер заново размывал весь экран).
+  function demoWant() { return !PHONE && !!G && window.innerWidth >= 1300 && $("grid").classList.contains("idle") && !$("vPick").hidden && !document.querySelector("dialog[open]"); }
   function demoSync() {
     var on = demoWant();
     $("demoL").hidden = $("demoR").hidden = !on;
@@ -2363,6 +2365,9 @@ main.pc{position:relative}
   window.addEventListener("resize", demoSync);
   // Выбор показан или скрыт, итог появился — пример включается и выключается сам.
   window.MutationObserver && new MutationObserver(function () { demoSync(); }).observe($("vPick"), { attributes: true, attributeFilter: ["hidden"] });
+  window.MutationObserver && [].forEach.call(document.querySelectorAll("dialog"), function (d) {
+    new MutationObserver(function () { demoSync(); }).observe(d, { attributes: true, attributeFilter: ["open"] });
+  });
   // Маршрут примера: проекция Меркатора на свой квадрат, подложка — границы стран вокруг маршрута (рисуется раз на пример).
   function demoBox(R, w, h) {
     var xs = R.map(function (q) { return q[1] * D2R; }), ys = R.map(function (q) { return ne(0, q[0] * D2R)[1]; }),
