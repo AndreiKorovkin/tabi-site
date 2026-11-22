@@ -168,6 +168,76 @@ dialog.win.pc-res h3{font-size:15px;margin:0 0 8px;color:var(--sub);font-weight:
 .pc-tip b{display:block;font-weight:700}
 .pc-legend{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--sub)}
 .pc-legend i{flex:1;max-width:320px;height:8px;border-radius:999px}
+/* Профессиональный режим (22.11.2026, слово Андрея): карта на всё окно и панель работы со своими точками. */
+html.pc-pro-on,html.pc-pro-on body{overflow:hidden}
+.pc-pro{position:fixed;inset:0;z-index:1000;display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);background:var(--bg)}
+.pc-pro[hidden]{display:none}
+.pc-pro-side{overflow:auto;overscroll-behavior:contain;padding:0 18px 28px;display:flex;flex-direction:column;gap:20px;background:var(--panel);border-right:1px solid var(--line);scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.pc-pro-hd{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.pc-pro-hd h2{margin:0;font-size:19px}
+.pc-pro-x{appearance:none;border:1px solid var(--line);width:36px;height:36px;border-radius:12px;background:var(--panel);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}
+.pc-pro-x svg{width:18px;height:18px}
+.pc-pro-side section{display:grid;gap:10px;padding:0;margin:0;max-width:none;border:0;background:none}
+.pc-pro-side section[hidden],.pc-pro-side [hidden]{display:none}
+.pc-pro-side h3{margin:0;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--sub);font-weight:700}
+.pc-pro-map{position:relative;min-width:0;min-height:0}
+.pc-pro-map .pc-map{position:absolute;inset:0;border-radius:0}
+.pc-pro-map .pc-map canvas{height:100%}
+.pc-pro-st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pc-pro-st div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 6px;text-align:center;min-width:0}
+.pc-pro-st b{display:block;font-size:17px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pc-pro-st span{font-size:12px;color:var(--sub)}
+.pc-pro-list{display:grid;gap:7px;max-height:236px;overflow:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.pc-pro-row{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px;color:var(--ink);cursor:pointer}
+.pc-pro-row.nb{cursor:default}
+.pc-pro-row input{width:17px;height:17px;accent-color:var(--accent);margin:0}
+.pc-pro-row img{width:20px;height:14px;border-radius:3px;object-fit:cover;vertical-align:-2px;box-shadow:0 0 0 1px var(--line)}
+.pc-pro-row .nm img{display:inline-block;margin-right:7px}
+.pc-pro-row>span>img{display:block}
+.pc-pro-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-pro-row .n{color:var(--sub);font-variant-numeric:tabular-nums;font-size:13px}
+.pc-pro-selb{display:grid;gap:10px}
+.pc-pro-file{appearance:none;border:0;border-top:1px solid var(--line);background:none;font:inherit;color:var(--ink);text-align:left;padding:7px 0 0;display:grid;gap:1px;cursor:pointer;min-width:0}
+.pc-pro-file:first-child{border-top:0;padding-top:0}
+.pc-pro-file b{font-weight:650;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-pro-file span{font-size:12.5px;color:var(--sub)}
+.pc-pro-file:hover b{color:var(--accent)}
+.pc-range{position:relative;height:28px}
+.pc-range i{position:absolute;left:9px;right:9px;top:12px;height:4px;border-radius:999px;background:var(--bg2)}
+.pc-range i b{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:999px}
+.pc-range input{position:absolute;left:0;top:0;width:100%;height:28px;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.pc-range input::-webkit-slider-runnable-track{background:none;height:28px}
+.pc-range input::-moz-range-track{background:none}
+.pc-range input::-webkit-slider-thumb{pointer-events:auto;-webkit-appearance:none;width:18px;height:18px;margin-top:5px;border-radius:50%;background:var(--accent);border:2px solid var(--panel);box-shadow:var(--shadow);cursor:pointer}
+.pc-range input::-moz-range-thumb{pointer-events:auto;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--panel);cursor:pointer}
+.pc-range-l{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--sub)}
+.pc-row2{display:flex;flex-wrap:wrap;gap:8px}
+.pc-row2[hidden]{display:none}
+.pc-row2 .pc-in{flex:1 1 200px;padding:9px 12px;font-size:13.5px}
+.pc-row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pc-row3 .pc-btn.sm{width:100%;padding-left:6px;padding-right:6px}
+.pc-quiet{appearance:none;border:0;background:none;padding:0;font:inherit;font-size:14px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);cursor:pointer;justify-self:start;align-self:start;text-align:left}
+.pc-quiet:hover{color:var(--ink)}
+.pc-quiet[hidden]{display:none}
+@media (max-width:820px){.pc-pro{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,44vh)}.pc-pro-side{order:2;border-right:0;border-top:1px solid var(--line)}}
+/* Карточка точки (22.11.2026) */
+.pc-pt{position:absolute;left:12px;top:12px;z-index:2;width:min(380px,calc(100% - 74px));max-height:calc(100% - 24px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px 16px;display:grid;gap:9px;font-size:14px;align-content:start}
+.pc-pt[hidden]{display:none}
+.pc-pt h4{margin:0;font-size:16px;line-height:1.3;padding-right:34px}
+.pc-pt>.x{position:absolute;right:8px;top:8px;appearance:none;border:0;background:none;color:var(--sub);width:30px;height:30px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pc-pt>.x:hover{background:var(--bg2);color:var(--ink)}
+.pc-pt>.x svg{width:17px;height:17px}
+.pc-pt .pth{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.45;color:var(--ink);overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;user-select:all}
+.pc-pt .li{appearance:none;border:0;border-top:1px solid var(--line);background:none;font:inherit;color:inherit;text-align:left;padding:8px 0 0;display:grid;gap:1px;cursor:pointer;min-width:0}
+.pc-pt h4+.li{border-top:0;padding-top:0}
+.pc-pt .li b{font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-pt .li span{color:var(--sub);font-size:13px}
+.pc-pt .li:hover b{color:var(--accent)}
+.pc-pt .pc-btn.sm{justify-self:start}
+.pc-selbox{position:absolute;z-index:1;border:1.5px dashed var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);pointer-events:none;border-radius:4px}
+.pc-selbox[hidden]{display:none}
+.pc-map canvas.sel{cursor:crosshair}
+.pc-dev.held .nm{color:var(--sub)}
 .pc-over{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(6px);font-size:24px;font-weight:800;color:var(--accent);pointer-events:none}
 @keyframes pcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* Открытие (20.11.2026, Андрей: сначала мелькал вид «до разбора» с вопросами): пока идут итог браузера и учётная запись —
@@ -245,6 +315,7 @@ main.pc{position:relative}
       <div class="pc-drop" id="drop"></div>
       <input type="file" id="fFolder" webkitdirectory multiple hidden>
       <input type="file" id="fFiles" multiple hidden>
+      <input type="file" id="fRe" webkitdirectory multiple hidden>
     </div>
     <!-- Чтение и разбор -->
     <div id="vWork" hidden style="display:grid;gap:12px">
@@ -303,8 +374,11 @@ main.pc{position:relative}
       <button type="button" id="zIn">+</button>
       <button type="button" id="zOut">−</button>
       <button type="button" id="zAll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button type="button" id="zPro"></button>
     </div>
     <div class="pc-tip" id="tip" hidden></div>
+    <div class="pc-pt" id="ptCard" hidden></div>
+    <div class="pc-selbox" id="selBox" hidden></div>
   </div>
   <div class="pc-legend" id="legend" hidden><span id="lgA"></span><i id="lgBar"></i><span id="lgB"></span></div>
 </section>
@@ -335,6 +409,8 @@ main.pc{position:relative}
   <div><h3 id="resChkH"></h3><div class="pc-res-tl" id="resChk"></div></div>
   <details class="pc-why" id="why" hidden><summary id="whyS"></summary><ul id="whyL"></ul></details>
   <p class="pc-s" id="sideX" hidden></p>
+  <p class="pc-s" id="tinyX" hidden></p>
+  <p class="pc-s" id="heldX" hidden></p>
   <button class="pc-btn" id="resOk" type="button"></button>
 </dialog>
 <!-- Пришедшим из приложения (21.11.2026, план Андрея): короткая ссылка tabimobile.com/pc из приложения; без входа на сайте —
@@ -368,6 +444,24 @@ main.pc{position:relative}
   <h2 id="faqT"></h2>
   <div class="qa" id="faqList"></div>
 </dialog>
+<!-- Профессиональный режим (22.11.2026, слово Андрея): карта на всё окно и панель работы со своими точками -->
+<div class="pc-pro" id="pro" hidden>
+  <aside class="pc-pro-side" aria-labelledby="proT">
+    <div class="pc-pro-hd"><h2 id="proT"></h2><button type="button" class="pc-pro-x" id="proX"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <section><h3 id="proStH"></h3><div class="pc-pro-st" id="proSt"></div><p class="pc-s" id="proSpan"></p></section>
+    <section id="proDaysBox"><h3 id="proDaysH"></h3><div class="pc-pro-list" id="proDays"></div><button type="button" class="pc-quiet" id="proDaysMore" hidden></button></section>
+    <section><h3 id="proViewH"></h3><label class="pc-chk"><input type="checkbox" id="proLines" checked><span id="proLinesL"></span></label></section>
+    <section id="proTimeBox"><h3 id="proTimeH"></h3><div class="pc-range"><i><b id="proRf"></b></i><input type="range" id="proRa" min="0" max="0" value="0" step="1"><input type="range" id="proRb" min="0" max="0" value="0" step="1"></div><div class="pc-range-l"><span id="proRA"></span><span id="proRB"></span></div></section>
+    <section><h3 id="proDevH"></h3><div class="pc-pro-list" id="proDevs"></div></section>
+    <section><h3 id="proCcH"></h3><div class="pc-pro-list" id="proCcs"></div></section>
+    <section><h3 id="proSelH"></h3><button type="button" class="pc-btn b2 sm" id="proSel"></button><p class="pc-s" id="proSelGo" hidden></p>
+      <div class="pc-pro-selb" id="proSelBox" hidden><p class="pc-t" id="proSelN"></p><div class="pc-pro-list" id="proSelList"></div><p class="pc-s" id="proSelMore" hidden></p>
+        <div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proSelClear"></button></div><button type="button" class="pc-quiet" id="proSelDel"></button></div></section>
+    <section><h3 id="proExpH"></h3><div class="pc-row3"><button type="button" class="pc-btn b2 sm" id="proExpGPX">GPX</button><button type="button" class="pc-btn b2 sm" id="proExpKML">KML</button><button type="button" class="pc-btn b2 sm" id="proExpCSV">CSV</button></div><p class="pc-s" id="proExpX"></p></section>
+    <button type="button" class="pc-quiet" id="proReset" hidden></button>
+  </aside>
+  <div class="pc-pro-map" id="proMap"></div>
+</div>
 <div id="foot"></div>
 <div class="pc-over" id="over" hidden></div>
 <script>
@@ -519,10 +613,10 @@ main.pc{position:relative}
     "navHow": {"en": "How it works", "ru": "Как это работает", "cs": "Jak to funguje", "de": "So funktioniert’s", "fr": "Fonctionnement", "es": "Cómo funciona", "it": "Come funziona", "pt": "Como funciona", "ja": "しくみ", "ko": "이용 방법"},
     "navColl": {"en": "Collection", "ru": "Коллекция", "cs": "Sbírka", "de": "Sammlung", "fr": "Collection", "es": "Colección", "it": "Collezione", "pt": "Coleção", "ja": "コレクション", "ko": "컬렉션"},
     "navFaq": {"en": "FAQ", "ru": "Вопросы", "cs": "Otázky", "de": "Fragen", "fr": "Questions", "es": "Preguntas", "it": "Domande", "pt": "Perguntas", "ja": "よくある質問", "ko": "자주 묻는 질문"},
-    "trashH": {"en": "Deleted devices: {n}", "ru": "Удалённые устройства: {n}", "cs": "Smazaná zařízení: {n}", "de": "Gelöschte Geräte: {n}", "fr": "Appareils supprimés : {n}", "es": "Dispositivos eliminados: {n}", "it": "Dispositivi eliminati: {n}", "pt": "Dispositivos excluídos: {n}", "ja": "削除した機器：{n}", "ko": "삭제된 기기: {n}"},
+    "trashH": {"ru": "Удалённое: {n}", "en": "Deleted: {n}", "cs": "Smazané: {n}", "de": "Gelöscht: {n}", "fr": "Supprimé : {n}", "es": "Eliminado: {n}", "it": "Eliminati: {n}", "pt": "Excluído: {n}", "ja": "削除したもの：{n}", "ko": "삭제한 항목: {n}"},
     "trashAt": {"en": "Deleted on {d}", "ru": "Удалено {d}", "cs": "Smazáno {d}", "de": "Gelöscht am {d}", "fr": "Supprimé le {d}", "es": "Eliminado el {d}", "it": "Eliminato il {d}", "pt": "Excluído em {d}", "ja": "{d}に削除", "ko": "{d} 삭제됨"},
     "trashBack": {"en": "Restore", "ru": "Вернуть", "cs": "Vrátit", "de": "Wiederherstellen", "fr": "Restaurer", "es": "Recuperar", "it": "Ripristina", "pt": "Restaurar", "ja": "元に戻す", "ko": "되돌리기"},
-    "trashNote": {"en": "Deleted devices can be restored for 30 days.", "ru": "Удалённые устройства можно вернуть в течение 30 дней.", "cs": "Smazaná zařízení lze vrátit po dobu 30 dnů.", "de": "Gelöschte Geräte lassen sich 30 Tage lang wiederherstellen.", "fr": "Les appareils supprimés peuvent être restaurés pendant 30 jours.", "es": "Los dispositivos eliminados se pueden recuperar durante 30 días.", "it": "I dispositivi eliminati si possono ripristinare per 30 giorni.", "pt": "Os dispositivos excluídos podem ser restaurados durante 30 dias.", "ja": "削除した機器は30日間元に戻せます。", "ko": "삭제된 기기는 30일 동안 되돌릴 수 있습니다."},
+    "trashNote": {"ru": "Удалённые устройства и точки можно вернуть в течение 30 дней.", "en": "Deleted devices and points can be restored for 30 days.", "cs": "Smazaná zařízení a body lze vrátit do 30 dnů.", "de": "Gelöschte Geräte und Punkte lassen sich 30 Tage lang wiederherstellen.", "fr": "Les appareils et points supprimés peuvent être restaurés pendant 30 jours.", "es": "Los dispositivos y puntos eliminados se pueden recuperar durante 30 días.", "it": "Dispositivi e punti eliminati si possono ripristinare per 30 giorni.", "pt": "Aparelhos e pontos excluídos podem ser restaurados por 30 dias.", "ja": "削除したデバイスと地点は30日以内なら元に戻せます。", "ko": "삭제한 기기와 지점은 30일 동안 되돌릴 수 있습니다."},
     "appInT": {"en": "Sign up on the website", "ru": "Зарегистрируйтесь на сайте", "cs": "Zaregistrujte se na webu", "de": "Registrieren Sie sich auf der Website", "fr": "Inscrivez-vous sur le site", "es": "Regístrate en el sitio web", "it": "Si registri sul sito", "pt": "Cadastre-se no site", "ja": "サイトに登録してください", "ko": "사이트에 가입하세요"},
     "appInX": {"en": "Sign in to the website with the same email you use for the Tabi app. After your files on the computer have been checked successfully, open the Tabi app on your phone to sync the results.", "ru": "Войдите на сайт той же электронной почтой, которую вы используете для приложения Tabi. После успешной проверки файлов на компьютере зайдите в приложение Tabi на телефоне, чтобы синхронизировать итоги.", "cs": "Přihlaste se na web stejným e-mailem, který používáte pro aplikaci Tabi. Po úspěšné kontrole souborů v počítači otevřete aplikaci Tabi v telefonu, aby se výsledky synchronizovaly.", "de": "Melden Sie sich auf der Website mit derselben E-Mail-Adresse an, die Sie für die Tabi-App verwenden. Öffnen Sie nach der erfolgreichen Prüfung der Dateien auf dem Computer die Tabi-App auf dem Telefon, um die Ergebnisse zu synchronisieren.", "fr": "Connectez-vous au site avec la même adresse e-mail que celle que vous utilisez pour l’application Tabi. Une fois les fichiers vérifiés avec succès sur l’ordinateur, ouvrez l’application Tabi sur votre téléphone pour synchroniser les résultats.", "es": "Inicia sesión en el sitio web con el mismo correo que usas para la aplicación Tabi. Cuando los archivos del ordenador se hayan comprobado correctamente, abre la aplicación Tabi en el teléfono para sincronizar los resultados.", "it": "Acceda al sito con la stessa e-mail che usa per l’app Tabi. Dopo che i file sul computer sono stati verificati con successo, apra l’app Tabi sul telefono per sincronizzare i risultati.", "pt": "Entre no site com o mesmo e-mail que você usa no aplicativo Tabi. Depois que os arquivos do computador forem verificados com sucesso, abra o aplicativo Tabi no celular para sincronizar os resultados.", "ja": "Tabiアプリで使っているのと同じメールアドレスでサイトにログインしてください。パソコンでのファイルの確認が完了したら、スマートフォンでTabiアプリを開いて結果を同期してください。", "ko": "Tabi 앱에서 사용하는 것과 같은 이메일로 사이트에 로그인하세요. 컴퓨터에서 파일 확인이 완료되면 휴대폰에서 Tabi 앱을 열어 결과를 동기화하세요."},
     "phoneApp": {"en": "This page works on a computer. Open tabimobile.com/pc on your computer and sign in there with the same email as in the app.", "ru": "Эта страница работает на компьютере. Откройте на компьютере tabimobile.com/pc и войдите там той же почтой, что и в приложении.", "cs": "Tato stránka funguje v počítači. Otevřete v počítači tabimobile.com/pc a přihlaste se tam stejným e-mailem jako v aplikaci.", "de": "Diese Seite funktioniert auf einem Computer. Öffnen Sie tabimobile.com/pc auf dem Computer und melden Sie sich dort mit derselben E-Mail-Adresse wie in der App an.", "fr": "Cette page fonctionne sur un ordinateur. Ouvrez tabimobile.com/pc sur votre ordinateur et connectez-vous avec la même adresse e-mail que dans l’application.", "es": "Esta página funciona en un ordenador. Abre tabimobile.com/pc en tu ordenador e inicia sesión allí con el mismo correo que en la aplicación.", "it": "Questa pagina funziona su un computer. Apra tabimobile.com/pc sul computer e acceda lì con la stessa e-mail dell’app.", "pt": "Esta página funciona em um computador. Abra tabimobile.com/pc no computador e entre lá com o mesmo e-mail do aplicativo.", "ja": "このページはパソコンで使います。パソコンで tabimobile.com/pc を開き、アプリと同じメールアドレスでログインしてください。", "ko": "이 페이지는 컴퓨터에서 작동합니다. 컴퓨터에서 tabimobile.com/pc를 열고 앱과 같은 이메일로 로그인하세요."},
@@ -532,15 +626,63 @@ main.pc{position:relative}
     "pk3": {"en": "Connect flash drives, memory cards and cameras to your computer: they can be checked too. Move media files from a phone to your computer first.", "ru": "Подключите к компьютеру флешки, карты памяти и фотоаппараты — их тоже можно проверить. Медиафайлы с телефона сначала перенесите на компьютер.", "cs": "Připojte k počítači flash disky, paměťové karty a fotoaparáty — i ty lze zkontrolovat. Mediální soubory z telefonu nejprve přeneste do počítače.", "de": "Schließen Sie USB-Sticks, Speicherkarten und Kameras an den Computer an – auch sie lassen sich prüfen. Mediendateien vom Telefon übertragen Sie zuerst auf den Computer.", "fr": "Branchez vos clés USB, cartes mémoire et appareils photo à l’ordinateur : on peut aussi les vérifier. Transférez d’abord sur l’ordinateur les fichiers multimédias de votre téléphone.", "es": "Conecta al ordenador memorias USB, tarjetas de memoria y cámaras: también se pueden comprobar. Los archivos multimedia del teléfono pásalos primero al ordenador.", "it": "Colleghi al computer chiavette USB, schede di memoria e fotocamere: si possono controllare anche quelle. I file multimediali del telefono li trasferisca prima sul computer.", "pt": "Conecte ao computador pen drives, cartões de memória e câmeras: eles também podem ser verificados. Os arquivos de mídia do celular, passe-os primeiro para o computador.", "ja": "USBメモリ、メモリーカード、カメラをパソコンにつなげば、それらも確認できます。スマートフォンのメディアファイルは、先にパソコンへ移してください。", "ko": "USB 메모리, 메모리 카드, 카메라를 컴퓨터에 연결하면 함께 확인할 수 있습니다. 휴대폰의 미디어 파일은 먼저 컴퓨터로 옮기세요."},
     "pk4": {"en": "Many cameras and camcorders record only the time of shooting, without the place.", "ru": "Многие фотоаппараты и видеокамеры записывают только время съёмки, без места.", "cs": "Mnoho fotoaparátů a videokamer zaznamenává jen čas pořízení, bez místa.", "de": "Viele Foto- und Videokameras zeichnen nur die Aufnahmezeit auf, ohne den Ort.", "fr": "Beaucoup d’appareils photo et de caméscopes n’enregistrent que l’heure de prise de vue, sans le lieu.", "es": "Muchas cámaras de fotos y videocámaras graban solo la hora de la toma, sin el lugar.", "it": "Molte fotocamere e videocamere registrano solo l’ora dello scatto, senza il luogo.", "pt": "Muitas câmeras fotográficas e filmadoras gravam só a hora da captura, sem o local.", "ja": "多くのカメラやビデオカメラは撮影時刻だけを記録し、場所は記録しません。", "ko": "많은 카메라와 캠코더는 촬영 시간만 기록하고 위치는 기록하지 않습니다."},
     "pk5": {"en": "The site also reads Google location history (a Google Takeout or Timeline export) and route files in GPX, KML, TCX and GeoJSON. Choose the folder with them or the files themselves.", "ru": "Сайт читает и историю местоположений Google — выгрузку Google Takeout или «Хронологии», — а также файлы маршрута GPX, KML, TCX и GeoJSON. Выберите папку с ними или сами файлы.", "cs": "Web čte i historii polohy Google — export z Google Takeout nebo z Časové osy — a soubory trasy GPX, KML, TCX a GeoJSON. Vyberte složku s nimi nebo samotné soubory.", "de": "Die Website liest auch den Google-Standortverlauf – einen Export aus Google Takeout oder der Zeitachse – sowie Routendateien im Format GPX, KML, TCX und GeoJSON. Wählen Sie den Ordner damit oder die Dateien selbst.", "fr": "Le site lit aussi l’historique des positions Google (export Google Takeout ou de la Chronologie) ainsi que les fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Choisissez le dossier qui les contient ou les fichiers eux-mêmes.", "es": "El sitio también lee el historial de ubicaciones de Google (una exportación de Google Takeout o de Cronología) y los archivos de ruta GPX, KML, TCX y GeoJSON. Elige la carpeta que los contiene o los propios archivos.", "it": "Il sito legge anche la cronologia delle posizioni di Google (un’esportazione di Google Takeout o della Cronologia) e i file di percorso GPX, KML, TCX e GeoJSON. Scelga la cartella che li contiene o i file stessi.", "pt": "O site também lê o histórico de localização do Google (uma exportação do Google Takeout ou da Linha do tempo) e os arquivos de trajeto GPX, KML, TCX e GeoJSON. Escolha a pasta com eles ou os próprios arquivos.", "ja": "Googleのロケーション履歴（Google Takeoutまたはタイムラインの書き出し）と、GPX・KML・TCX・GeoJSONのルートファイルも読み取れます。それらが入ったフォルダーか、ファイルそのものを選んでください。", "ko": "Google 위치 기록(Google 테이크아웃 또는 타임라인 내보내기)과 GPX, KML, TCX, GeoJSON 경로 파일도 읽을 수 있습니다. 이 파일이 든 폴더나 파일 자체를 고르세요."},
-    "pk6": {"en": "Don’t remember where your media files are? Drag your whole desktop or an entire disk onto this page — from “This PC” in File Explorer. The check will take longer, but nothing will be missed.", "ru": "Не помните, где хранятся медиафайлы? Перетащите на эту страницу весь рабочий стол или целый диск — из раздела «Этот компьютер» в проводнике. Проверка займёт больше времени, зато ничего не будет упущено.", "cs": "Nevíte, kde mediální soubory máte? Přetáhněte na tuto stránku celou plochu nebo celý disk — z oddílu „Tento počítač“ v Průzkumníku. Kontrola potrvá déle, ale nic se nevynechá.", "de": "Sie wissen nicht mehr, wo Ihre Mediendateien liegen? Ziehen Sie den ganzen Desktop oder ein ganzes Laufwerk auf diese Seite – aus „Dieser PC“ im Explorer. Die Prüfung dauert länger, dafür entgeht ihr nichts.", "fr": "Vous ne savez plus où se trouvent vos fichiers multimédias ? Faites glisser sur cette page tout le Bureau ou un disque entier, depuis « Ce PC » dans l’Explorateur de fichiers. La vérification prendra plus de temps, mais rien ne sera oublié.", "es": "¿No recuerdas dónde están tus archivos multimedia? Arrastra a esta página todo el escritorio o un disco entero, desde «Este equipo» en el Explorador de archivos. La comprobación tardará más, pero no se escapará nada.", "it": "Non ricorda dove sono i file multimediali? Trascini su questa pagina l’intero desktop o un disco intero, da «Questo PC» in Esplora file. Il controllo richiederà più tempo, ma non sfuggirà nulla.", "pt": "Não lembra onde estão os arquivos de mídia? Arraste para esta página a área de trabalho inteira ou um disco inteiro, a partir de “Este Computador” no Explorador de Arquivos. A verificação vai demorar mais, mas nada vai escapar.", "ja": "メディアファイルの場所がわからない場合は、デスクトップ全体やディスク全体をこのページにドラッグしてください（エクスプローラーの「PC」から）。確認に時間はかかりますが、見落としはありません。", "ko": "미디어 파일이 어디 있는지 기억나지 않나요? 바탕 화면 전체나 디스크 전체를 이 페이지로 끌어다 놓으세요. 파일 탐색기의 ‘내 PC’에서 끌어오면 됩니다. 확인에 시간이 더 걸리지만 빠뜨리는 것이 없습니다."},
+    "pk6": {"en": "Don’t remember where your media files are? Drag your whole desktop or an entire disk onto this page — from “This PC” in File Explorer. The check will take longer, but nothing will be missed. A large folder or a whole disk is much faster to drag onto the page than to choose with the button: the check starts at once and you see its progress.", "ru": "Не помните, где хранятся медиафайлы? Перетащите на эту страницу весь рабочий стол или целый диск — из раздела «Этот компьютер» в проводнике. Проверка займёт больше времени, зато ничего не будет упущено. Большую папку или целый диск гораздо быстрее перетащить на страницу, чем выбрать кнопкой: проверка начнётся сразу, и её ход будет виден.", "cs": "Nevíte, kde mediální soubory máte? Přetáhněte na tuto stránku celou plochu nebo celý disk — z oddílu „Tento počítač“ v Průzkumníku. Kontrola potrvá déle, ale nic se nevynechá. Velkou složku nebo celý disk je mnohem rychlejší přetáhnout na stránku než vybrat tlačítkem: kontrola začne hned a její průběh uvidíte.", "de": "Sie wissen nicht mehr, wo Ihre Mediendateien liegen? Ziehen Sie den ganzen Desktop oder ein ganzes Laufwerk auf diese Seite – aus „Dieser PC“ im Explorer. Die Prüfung dauert länger, dafür entgeht ihr nichts. Einen großen Ordner oder eine ganze Festplatte ziehen Sie viel schneller auf die Seite, als sie über die Schaltfläche zu wählen: Die Prüfung beginnt sofort, und ihr Fortschritt ist sichtbar.", "fr": "Vous ne savez plus où se trouvent vos fichiers multimédias ? Faites glisser sur cette page tout le Bureau ou un disque entier, depuis « Ce PC » dans l’Explorateur de fichiers. La vérification prendra plus de temps, mais rien ne sera oublié. Un grand dossier ou un disque entier se glisse sur la page bien plus vite qu’il ne se choisit avec le bouton : l’analyse commence aussitôt et sa progression est visible.", "es": "¿No recuerdas dónde están tus archivos multimedia? Arrastra a esta página todo el escritorio o un disco entero, desde «Este equipo» en el Explorador de archivos. La comprobación tardará más, pero no se escapará nada. Una carpeta grande o un disco entero se arrastra a la página mucho más rápido que si lo eliges con el botón: la revisión empieza enseguida y ves su avance.", "it": "Non ricorda dove sono i file multimediali? Trascini su questa pagina l’intero desktop o un disco intero, da «Questo PC» in Esplora file. Il controllo richiederà più tempo, ma non sfuggirà nulla. Una cartella grande o un intero disco si trascina sulla pagina molto più velocemente di quanto si scelga con il pulsante: la verifica inizia subito e ne vede l’avanzamento.", "pt": "Não lembra onde estão os arquivos de mídia? Arraste para esta página a área de trabalho inteira ou um disco inteiro, a partir de “Este Computador” no Explorador de Arquivos. A verificação vai demorar mais, mas nada vai escapar. Uma pasta grande ou um disco inteiro é muito mais rápido arrastar para a página do que escolher pelo botão: a verificação começa na hora e você vê o progresso.", "ja": "メディアファイルの場所がわからない場合は、デスクトップ全体やディスク全体をこのページにドラッグしてください（エクスプローラーの「PC」から）。確認に時間はかかりますが、見落としはありません。大きなフォルダーやディスク全体は、ボタンで選ぶよりページにドラッグするほうがはるかに速く、すぐに確認が始まって進み具合も見えます。", "ko": "미디어 파일이 어디 있는지 기억나지 않나요? 바탕 화면 전체나 디스크 전체를 이 페이지로 끌어다 놓으세요. 파일 탐색기의 ‘내 PC’에서 끌어오면 됩니다. 확인에 시간이 더 걸리지만 빠뜨리는 것이 없습니다. 큰 폴더나 디스크 전체는 버튼으로 선택하는 것보다 페이지로 끌어다 놓는 편이 훨씬 빠르며, 확인이 바로 시작되고 진행 상황도 보입니다."},
     "pkDir": {"en": "Choose a folder", "ru": "Выбрать папку", "cs": "Vybrat složku", "de": "Ordner auswählen", "fr": "Choisir un dossier", "es": "Elegir una carpeta", "it": "Scegli una cartella", "pt": "Escolher uma pasta", "ja": "フォルダーを選ぶ", "ko": "폴더 선택"},
     "pkFiles": {"en": "Choose files", "ru": "Выбрать файлы", "cs": "Vybrat soubory", "de": "Dateien auswählen", "fr": "Choisir des fichiers", "es": "Elegir archivos", "it": "Scegli i file", "pt": "Escolher arquivos", "ja": "ファイルを選ぶ", "ko": "파일 선택"},
     "close": {"en": "Close", "ru": "Закрыть", "cs": "Zavřít", "de": "Schließen", "fr": "Fermer", "es": "Cerrar", "it": "Chiudi", "pt": "Fechar", "ja": "閉じる", "ko": "닫기"},
     "pkNote": {"en": "The browser will ask for permission to access the files: without it the page cannot read them. The files themselves stay on your computer.", "ru": "Браузер попросит разрешения на доступ к файлам: без него страница не сможет их прочитать. Сами файлы остаются на компьютере.", "cs": "Prohlížeč požádá o povolení přístupu k souborům: bez něj je stránka nemůže přečíst. Samotné soubory zůstávají v počítači.", "de": "Der Browser fragt nach der Erlaubnis, auf die Dateien zuzugreifen: Ohne sie kann die Seite sie nicht lesen. Die Dateien selbst bleiben auf Ihrem Computer.", "fr": "Le navigateur demandera l’autorisation d’accéder aux fichiers : sans elle, la page ne peut pas les lire. Les fichiers eux-mêmes restent sur votre ordinateur.", "es": "El navegador pedirá permiso para acceder a los archivos: sin él, la página no puede leerlos. Los archivos se quedan en tu ordenador.", "it": "Il browser chiederà il permesso di accedere ai file: senza, la pagina non può leggerli. I file restano sul Suo computer.", "pt": "O navegador vai pedir permissão para acessar os arquivos: sem ela, a página não consegue lê-los. Os arquivos ficam no seu computador.", "ja": "ブラウザーがファイルへのアクセス許可を求めます。許可がないとページはファイルを読み取れません。ファイルそのものはパソコンに残ります。", "ko": "브라우저가 파일 접근 권한을 요청합니다. 권한이 없으면 페이지가 파일을 읽을 수 없습니다. 파일 자체는 컴퓨터에 그대로 남습니다."},
     "listingT": {"en": "The browser is listing the files… {t}", "ru": "Браузер собирает список файлов… {t}", "cs": "Prohlížeč sestavuje seznam souborů… {t}", "de": "Der Browser erstellt die Dateiliste… {t}", "fr": "Le navigateur dresse la liste des fichiers… {t}", "es": "El navegador está listando los archivos… {t}", "it": "Il browser sta elencando i file… {t}", "pt": "O navegador está listando os arquivos… {t}", "ja": "ブラウザーがファイルの一覧を作成中… {t}", "ko": "브라우저가 파일 목록을 만드는 중… {t}"},
-    "bigList": {"en": "This looks like a large folder: the browser first goes through all its files on its own and does not show the page any progress. A whole disk takes 5–15 minutes this way, and then even longer to reach the page. Dragging the disk onto the page is faster, and you will see the progress at once.", "ru": "Похоже, выбрана большая папка: браузер сначала сам перебирает все её файлы и не сообщает странице о прогрессе. Весь диск так перебирается 5–15 минут, а затем ещё дольше передаётся странице. Быстрее перетащить диск на страницу — прогресс будет виден сразу.", "cs": "Zdá se, že jde o velkou složku: prohlížeč nejprve sám projde všechny její soubory a stránce neukazuje průběh. Celý disk tak trvá 5–15 minut a pak se ještě déle předává stránce. Rychlejší je přetáhnout disk na stránku — průběh uvidíte hned.", "de": "Das scheint ein großer Ordner zu sein: Der Browser geht zuerst selbst alle Dateien durch und zeigt der Seite keinen Fortschritt. Eine ganze Festplatte dauert so 5–15 Minuten und danach noch länger, bis sie die Seite erreicht. Schneller geht es, die Festplatte auf die Seite zu ziehen – der Fortschritt ist sofort sichtbar.", "fr": "Il semble s’agir d’un grand dossier : le navigateur parcourt d’abord lui-même tous ses fichiers sans montrer de progression à la page. Un disque entier prend ainsi 5 à 15 minutes, puis encore plus longtemps pour arriver à la page. Il est plus rapide de faire glisser le disque sur la page : la progression sera visible tout de suite.", "es": "Parece una carpeta grande: el navegador primero recorre por sí mismo todos sus archivos y no muestra el avance a la página. Un disco entero tarda así de 5 a 15 minutos y luego aún más en llegar a la página. Es más rápido arrastrar el disco a la página: el avance se verá enseguida.", "it": "Sembra una cartella grande: il browser prima scorre da solo tutti i file e non mostra l’avanzamento alla pagina. Un intero disco richiede così 5–15 minuti e poi ancora di più per arrivare alla pagina. È più veloce trascinare il disco sulla pagina: l’avanzamento si vedrà subito.", "pt": "Parece uma pasta grande: o navegador primeiro percorre sozinho todos os arquivos e não mostra o progresso à página. Um disco inteiro leva assim de 5 a 15 minutos e depois ainda mais para chegar à página. É mais rápido arrastar o disco para a página — o progresso aparece na hora.", "ja": "大きなフォルダーのようです。ブラウザーはまず自分ですべてのファイルを調べ、その間ページに進み具合を伝えません。ディスク全体だとこれに5〜15分、さらにページに渡すまでにもっと時間がかかります。ディスクをページにドラッグするほうが速く、進み具合もすぐに見えます。", "ko": "큰 폴더로 보입니다. 브라우저가 먼저 모든 파일을 직접 훑으며, 그동안 페이지에 진행 상황을 알려 주지 않습니다. 디스크 전체는 이렇게 5~15분이 걸리고, 페이지로 넘어오는 데는 그보다 더 걸립니다. 디스크를 페이지로 끌어다 놓는 편이 더 빠르며 진행 상황도 바로 보입니다."},
+    "bigList": {"ru": "Похоже, выбрана большая папка или весь диск. Браузер сначала сам перебирает все файлы и ничего не сообщает странице: весь диск так перебирается 5–15 минут, а затем ещё дольше передаётся странице. Гораздо быстрее перетащить этот диск или папку прямо на страницу — проверка пойдёт быстрее, и её ход будет виден сразу. Нажмите «Отменить» и перетащите диск или папку сюда из Проводника.", "en": "This looks like a large folder or a whole disk. The browser first goes through all the files on its own and tells the page nothing: a whole disk takes 5–15 minutes this way, and then even longer to reach the page. It is much faster to drag this disk or folder straight onto the page: the check will go faster and you will see its progress at once. Press Cancel and drag the disk or folder here from File Explorer.", "cs": "Zdá se, že jde o velkou složku nebo celý disk. Prohlížeč nejprve sám projde všechny soubory a stránce nic nesděluje: celý disk tak trvá 5–15 minut a pak se ještě déle předává stránce. Mnohem rychlejší je přetáhnout tento disk nebo složku přímo na stránku — kontrola poběží rychleji a její průběh uvidíte hned. Klikněte na „Zrušit“ a přetáhněte disk nebo složku sem z Průzkumníka.", "de": "Das scheint ein großer Ordner oder eine ganze Festplatte zu sein. Der Browser geht zuerst selbst alle Dateien durch und meldet der Seite nichts: Eine ganze Festplatte dauert so 5–15 Minuten und danach noch länger, bis sie die Seite erreicht. Viel schneller geht es, diese Festplatte oder diesen Ordner direkt auf die Seite zu ziehen – die Prüfung läuft schneller, und ihr Fortschritt ist sofort sichtbar. Klicken Sie auf „Abbrechen“ und ziehen Sie die Festplatte oder den Ordner aus dem Datei-Explorer hierher.", "fr": "Il semble s’agir d’un grand dossier ou d’un disque entier. Le navigateur parcourt d’abord lui-même tous les fichiers sans rien communiquer à la page : un disque entier prend ainsi 5 à 15 minutes, puis encore plus longtemps pour arriver à la page. Il est beaucoup plus rapide de faire glisser ce disque ou ce dossier directement sur la page : l’analyse ira plus vite et sa progression sera visible tout de suite. Cliquez sur « Annuler » et faites glisser le disque ou le dossier ici depuis l’Explorateur de fichiers.", "es": "Parece una carpeta grande o un disco entero. El navegador primero recorre por sí mismo todos los archivos y no le comunica nada a la página: un disco entero tarda así de 5 a 15 minutos y luego aún más en llegar a la página. Es mucho más rápido arrastrar este disco o carpeta directamente a la página: la revisión irá más rápido y verás su avance enseguida. Pulsa «Cancelar» y arrastra el disco o la carpeta aquí desde el Explorador de archivos.", "it": "Sembra una cartella grande o un intero disco. Il browser prima scorre da solo tutti i file e non comunica nulla alla pagina: un intero disco richiede così 5–15 minuti e poi ancora di più per arrivare alla pagina. È molto più veloce trascinare questo disco o questa cartella direttamente sulla pagina: la verifica sarà più rapida e ne vedrà subito l’avanzamento. Prema «Annulla» e trascini qui il disco o la cartella da Esplora file.", "pt": "Parece uma pasta grande ou um disco inteiro. O navegador primeiro percorre sozinho todos os arquivos e não informa nada à página: um disco inteiro leva assim de 5 a 15 minutos e depois ainda mais para chegar à página. É muito mais rápido arrastar este disco ou pasta direto para a página — a verificação será mais rápida e o progresso aparecerá na hora. Clique em “Cancelar” e arraste o disco ou a pasta para cá a partir do Explorador de Arquivos.", "ja": "大きなフォルダーかディスク全体のようです。ブラウザーはまず自分ですべてのファイルを調べ、その間ページには何も伝えません。ディスク全体だとこれに5〜15分、さらにページに渡すまでにもっと時間がかかります。このディスクやフォルダーをページに直接ドラッグするほうがはるかに速く、進み具合もすぐに見えます。「キャンセル」を押し、エクスプローラーからディスクかフォルダーをここへドラッグしてください。", "ko": "큰 폴더나 디스크 전체로 보입니다. 브라우저가 먼저 모든 파일을 직접 훑으며 그동안 페이지에 아무것도 알려 주지 않습니다. 디스크 전체는 이렇게 5~15분이 걸리고, 페이지로 넘어오는 데는 그보다 더 걸립니다. 이 디스크나 폴더를 페이지로 바로 끌어다 놓는 편이 훨씬 빠르며 진행 상황도 바로 보입니다. '취소'를 누르고 파일 탐색기에서 디스크나 폴더를 이곳으로 끌어다 놓으세요."},
     "cancelList": {"en": "Cancel", "ru": "Отменить", "cs": "Zrušit", "de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "it": "Annulla", "pt": "Cancelar", "ja": "キャンセル", "ko": "취소"},
-    "eGoogle": {"en": "Could not sign in with Google. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cs": "Přihlášení přes Google se nezdařilo. Zkuste to prosím znovu.", "de": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.", "fr": "La connexion avec Google a échoué. Veuillez réessayer.", "es": "No se ha podido iniciar sesión con Google. Inténtalo de nuevo.", "it": "Non è stato possibile accedere con Google. Riprovi.", "pt": "Não foi possível entrar com o Google. Tente novamente.", "ja": "Google でログインできませんでした。もう一度お試しください。", "ko": "Google로 로그인하지 못했습니다. 다시 시도해 주세요."}
+    "eGoogle": {"en": "Could not sign in with Google. Please try again.", "ru": "Не удалось войти через Google. Попробуйте ещё раз.", "cs": "Přihlášení přes Google se nezdařilo. Zkuste to prosím znovu.", "de": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.", "fr": "La connexion avec Google a échoué. Veuillez réessayer.", "es": "No se ha podido iniciar sesión con Google. Inténtalo de nuevo.", "it": "Non è stato possibile accedere con Google. Riprovi.", "pt": "Não foi possível entrar com o Google. Tente novamente.", "ja": "Google でログインできませんでした。もう一度お試しください。", "ko": "Google로 로그인하지 못했습니다. 다시 시도해 주세요."},
+    "whyTiny": {"ru": "Картинки меньше 320 пикселей по длинной стороне не учтены — {n}: это значки, миниатюры и картинки программ, а не снимки.", "en": "Pictures under 320 pixels on the long side are not counted: {n}. These are icons, thumbnails and program images, not photos.", "cs": "Obrázky menší než 320 pixelů na delší straně se nezapočítávají — {n}: jsou to ikony, náhledy a obrázky programů, ne fotografie.", "de": "Bilder unter 320 Pixel an der längeren Seite werden nicht gezählt: {n}. Das sind Symbole, Vorschaubilder und Programmbilder, keine Fotos.", "fr": "Les images de moins de 320 pixels sur le grand côté ne sont pas comptées : {n}. Ce sont des icônes, des miniatures et des images de programmes, pas des photos.", "es": "Las imágenes de menos de 320 píxeles en el lado largo no se cuentan: {n}. Son iconos, miniaturas e imágenes de programas, no fotos.", "it": "Le immagini sotto i 320 pixel sul lato lungo non vengono contate: {n}. Sono icone, miniature e immagini di programmi, non foto.", "pt": "Imagens com menos de 320 pixels no lado maior não são contadas: {n}. São ícones, miniaturas e imagens de programas, não fotos.", "ja": "長辺が320ピクセル未満の画像は数えません：{n}。アイコンやサムネイル、プログラムの画像で、写真ではありません。", "ko": "긴 변이 320픽셀 미만인 이미지는 세지 않습니다: {n}. 아이콘, 미리보기, 프로그램 이미지이며 사진이 아닙니다."},
+    "heldX": {"ru": "Найдено только в папках программ и пока не учтено — {n}: там лежат образцы программ и снимки, присланные в мессенджерах. Учесть их можно в блоке «Устройства».", "en": "Found only in program folders and not counted yet: {n}. Program samples and photos received in messengers are kept there. You can include them in Devices.", "cs": "Nalezeno jen ve složkách programů a zatím nezapočteno — {n}: bývají tam ukázky programů a fotky přijaté v messengerech. Započítat je můžete v části „Zařízení“.", "de": "Nur in Programmordnern gefunden und noch nicht gezählt: {n}. Dort liegen Beispieldateien von Programmen und in Messengern empfangene Fotos. Einbeziehen können Sie sie unter „Geräte“.", "fr": "Trouvé uniquement dans les dossiers de programmes et pas encore compté : {n}. On y trouve des exemples de programmes et des photos reçues par messagerie. Vous pouvez les inclure dans « Appareils ».", "es": "Encontrado solo en carpetas de programas y aún sin contar: {n}. Ahí se guardan ejemplos de programas y fotos recibidas por mensajería. Puedes incluirlas en «Dispositivos».", "it": "Trovato solo nelle cartelle dei programmi e non ancora contato: {n}. Lì si trovano esempi dei programmi e foto ricevute nelle app di messaggistica. Può includerle in «Dispositivi».", "pt": "Encontrado só em pastas de programas e ainda não contado: {n}. Ali ficam exemplos de programas e fotos recebidas em aplicativos de mensagens. Você pode incluí-las em “Dispositivos”.", "ja": "プログラムのフォルダーだけで見つかり、まだ数えていません：{n}。そこにはプログラムの見本やメッセンジャーで受け取った写真があります。「デバイス」で含めることができます。", "ko": "프로그램 폴더에서만 발견되어 아직 세지 않았습니다: {n}. 그곳에는 프로그램 예시와 메신저로 받은 사진이 있습니다. ‘기기’에서 포함할 수 있습니다."},
+    "devSys": {"ru": "только в папках программ · не учтено", "en": "only in program folders · not counted", "cs": "jen ve složkách programů · nezapočteno", "de": "nur in Programmordnern · nicht gezählt", "fr": "uniquement dans des dossiers de programmes · non compté", "es": "solo en carpetas de programas · sin contar", "it": "solo nelle cartelle dei programmi · non contato", "pt": "só em pastas de programas · não contado", "ja": "プログラムのフォルダーのみ・未集計", "ko": "프로그램 폴더에만 있음 · 세지 않음"},
+    "devTake": {"ru": "Учесть", "en": "Include", "cs": "Započítat", "de": "Einbeziehen", "fr": "Inclure", "es": "Incluir", "it": "Includi", "pt": "Incluir", "ja": "含める", "ko": "포함하기"},
+    "zPro": {"ru": "Профессиональный режим", "en": "Professional mode", "cs": "Profesionální režim", "de": "Profimodus", "fr": "Mode professionnel", "es": "Modo profesional", "it": "Modalità professionale", "pt": "Modo profissional", "ja": "プロモード", "ko": "전문가 모드"},
+    "zProOff": {"ru": "Выйти из профессионального режима", "en": "Leave professional mode", "cs": "Ukončit profesionální režim", "de": "Profimodus verlassen", "fr": "Quitter le mode professionnel", "es": "Salir del modo profesional", "it": "Esci dalla modalità professionale", "pt": "Sair do modo profissional", "ja": "プロモードを終了", "ko": "전문가 모드 종료"},
+    "proStH": {"ru": "На карте", "en": "On the map", "cs": "Na mapě", "de": "Auf der Karte", "fr": "Sur la carte", "es": "En el mapa", "it": "Sulla mappa", "pt": "No mapa", "ja": "地図上", "ko": "지도에 표시"},
+    "proSelH2": {"ru": "Выделено", "en": "Selected", "cs": "Vybráno", "de": "Ausgewählt", "fr": "Sélection", "es": "Seleccionado", "it": "Selezionato", "pt": "Selecionado", "ja": "選択中", "ko": "선택됨"},
+    "proPts": {"ru": "Точки", "en": "Points", "cs": "Body", "de": "Punkte", "fr": "Points", "es": "Puntos", "it": "Punti", "pt": "Pontos", "ja": "地点", "ko": "지점"},
+    "proDaysH": {"ru": "Дни по странам", "en": "Days by country", "cs": "Dny podle zemí", "de": "Tage nach Ländern", "fr": "Jours par pays", "es": "Días por país", "it": "Giorni per paese", "pt": "Dias por país", "ja": "国別の日数", "ko": "국가별 일수"},
+    "proDaysAll": {"ru": "Все страны: {n}", "en": "All countries: {n}", "cs": "Všechny země: {n}", "de": "Alle Länder: {n}", "fr": "Tous les pays : {n}", "es": "Todos los países: {n}", "it": "Tutti i paesi: {n}", "pt": "Todos os países: {n}", "ja": "すべての国：{n}", "ko": "모든 국가: {n}"},
+    "proDaysLess": {"ru": "Свернуть", "en": "Show less", "cs": "Sbalit", "de": "Weniger anzeigen", "fr": "Réduire", "es": "Mostrar menos", "it": "Mostra meno", "pt": "Mostrar menos", "ja": "折りたたむ", "ko": "접기"},
+    "proViewH": {"ru": "Вид", "en": "View", "cs": "Zobrazení", "de": "Ansicht", "fr": "Affichage", "es": "Vista", "it": "Vista", "pt": "Visualização", "ja": "表示", "ko": "보기"},
+    "proLines": {"ru": "Линии между точками", "en": "Lines between points", "cs": "Čáry mezi body", "de": "Linien zwischen Punkten", "fr": "Lignes entre les points", "es": "Líneas entre puntos", "it": "Linee tra i punti", "pt": "Linhas entre pontos", "ja": "地点を結ぶ線", "ko": "지점 사이 선"},
+    "proTimeH": {"ru": "Период", "en": "Period", "cs": "Období", "de": "Zeitraum", "fr": "Période", "es": "Periodo", "it": "Periodo", "pt": "Período", "ja": "期間", "ko": "기간"},
+    "ccNone": {"ru": "Без страны", "en": "No country", "cs": "Bez země", "de": "Ohne Land", "fr": "Sans pays", "es": "Sin país", "it": "Senza paese", "pt": "Sem país", "ja": "国なし", "ko": "국가 없음"},
+    "proSelH": {"ru": "Выделение", "en": "Selection", "cs": "Výběr", "de": "Auswahl", "fr": "Sélection", "es": "Selección", "it": "Selezione", "pt": "Seleção", "ja": "範囲選択", "ko": "영역 선택"},
+    "proSel": {"ru": "Выделить область", "en": "Select an area", "cs": "Vybrat oblast", "de": "Bereich auswählen", "fr": "Sélectionner une zone", "es": "Seleccionar un área", "it": "Seleziona un’area", "pt": "Selecionar uma área", "ja": "範囲を選択", "ko": "영역 선택하기"},
+    "proSelCancel": {"ru": "Отменить выделение", "en": "Cancel selecting", "cs": "Přerušit výběr", "de": "Auswahl abbrechen", "fr": "Annuler la sélection", "es": "Cancelar la selección", "it": "Annulla la selezione", "pt": "Cancelar a seleção", "ja": "選択をやめる", "ko": "선택 취소"},
+    "proSelGo": {"ru": "Растяните рамку на карте мышью.", "en": "Drag a frame on the map.", "cs": "Natáhněte na mapě myší rámeček.", "de": "Ziehen Sie auf der Karte einen Rahmen auf.", "fr": "Tracez un cadre sur la carte avec la souris.", "es": "Arrastra un recuadro sobre el mapa.", "it": "Trascini un riquadro sulla mappa.", "pt": "Arraste um retângulo no mapa.", "ja": "地図上でドラッグして枠を描いてください。", "ko": "지도에서 드래그해 영역을 그리세요."},
+    "proSelN": {"ru": "Выделено точек: {n}", "en": "Points selected: {n}", "cs": "Vybraných bodů: {n}", "de": "Ausgewählte Punkte: {n}", "fr": "Points sélectionnés : {n}", "es": "Puntos seleccionados: {n}", "it": "Punti selezionati: {n}", "pt": "Pontos selecionados: {n}", "ja": "選択した地点：{n}", "ko": "선택한 지점: {n}"},
+    "proSelClear": {"ru": "Снять выделение", "en": "Clear selection", "cs": "Zrušit výběr", "de": "Auswahl aufheben", "fr": "Effacer la sélection", "es": "Quitar la selección", "it": "Togli la selezione", "pt": "Limpar a seleção", "ja": "選択を解除", "ko": "선택 해제"},
+    "proSelDel": {"ru": "Удалить выделенные точки", "en": "Delete the selected points", "cs": "Smazat vybrané body", "de": "Ausgewählte Punkte löschen", "fr": "Supprimer les points sélectionnés", "es": "Eliminar los puntos seleccionados", "it": "Elimina i punti selezionati", "pt": "Excluir os pontos selecionados", "ja": "選択した地点を削除", "ko": "선택한 지점 삭제"},
+    "proSelDelT": {"ru": "Удалить выделенные точки?", "en": "Delete the selected points?", "cs": "Smazat vybrané body?", "de": "Ausgewählte Punkte löschen?", "fr": "Supprimer les points sélectionnés ?", "es": "¿Eliminar los puntos seleccionados?", "it": "Eliminare i punti selezionati?", "pt": "Excluir os pontos selecionados?", "ja": "選択した地点を削除しますか？", "ko": "선택한 지점을 삭제할까요?"},
+    "proSelDelX": {"ru": "Выделенные точки ({n}) уйдут в корзину и перестанут учитываться. Вернуть их можно в течение 30 дней в блоке «Устройства».", "en": "The selected points ({n}) will go to the bin and stop counting. You can restore them for 30 days in Devices.", "cs": "Vybrané body ({n}) se přesunou do koše a přestanou se započítávat. Vrátit je můžete do 30 dnů v části „Zařízení“.", "de": "Die ausgewählten Punkte ({n}) kommen in den Papierkorb und zählen nicht mehr. Wiederherstellen können Sie sie 30 Tage lang unter „Geräte“.", "fr": "Les points sélectionnés ({n}) iront à la corbeille et ne seront plus comptés. Vous pourrez les restaurer pendant 30 jours dans « Appareils ».", "es": "Los puntos seleccionados ({n}) irán a la papelera y dejarán de contar. Puedes recuperarlos durante 30 días en «Dispositivos».", "it": "I punti selezionati ({n}) andranno nel cestino e non verranno più contati. Può ripristinarli per 30 giorni in «Dispositivi».", "pt": "Os pontos selecionados ({n}) irão para a lixeira e deixarão de contar. Você pode restaurá-los por 30 dias em “Dispositivos”.", "ja": "選択した地点（{n}）はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "선택한 지점({n})은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."},
+    "proSelLbl": {"ru": "Выделенные точки ({n})", "en": "Selected points ({n})", "cs": "Vybrané body ({n})", "de": "Ausgewählte Punkte ({n})", "fr": "Points sélectionnés ({n})", "es": "Puntos seleccionados ({n})", "it": "Punti selezionati ({n})", "pt": "Pontos selecionados ({n})", "ja": "選択した地点（{n}）", "ko": "선택한 지점({n})"},
+    "proExpH": {"ru": "Выгрузка", "en": "Export", "cs": "Export", "de": "Export", "fr": "Export", "es": "Exportar", "it": "Esporta", "pt": "Exportar", "ja": "書き出し", "ko": "내보내기"},
+    "proExpX": {"ru": "Файл собирается на этом компьютере и никуда не отправляется. С выделением выгружается выделенное, без него — всё, что на карте.", "en": "The file is made on this computer and is not sent anywhere. With a selection, the selection is exported; without one, everything on the map.", "cs": "Soubor vzniká v tomto počítači a nikam se neodesílá. S výběrem se exportuje výběr, bez něj vše, co je na mapě.", "de": "Die Datei entsteht auf diesem Computer und wird nirgendwohin gesendet. Mit Auswahl wird die Auswahl exportiert, ohne sie alles auf der Karte.", "fr": "Le fichier est créé sur cet ordinateur et n’est envoyé nulle part. Avec une sélection, seule la sélection est exportée ; sinon, tout ce qui est sur la carte.", "es": "El archivo se crea en este ordenador y no se envía a ningún sitio. Con una selección se exporta lo seleccionado; sin ella, todo lo que hay en el mapa.", "it": "Il file viene creato su questo computer e non viene inviato da nessuna parte. Con una selezione si esporta la selezione; senza, tutto ciò che è sulla mappa.", "pt": "O arquivo é criado neste computador e não é enviado a lugar nenhum. Com uma seleção, exporta-se a seleção; sem ela, tudo o que está no mapa.", "ja": "ファイルはこのコンピューターで作られ、どこにも送信されません。選択があれば選択した地点を、なければ地図上のすべてを書き出します。", "ko": "파일은 이 컴퓨터에서 만들어지며 어디로도 전송되지 않습니다. 선택 영역이 있으면 선택한 지점을, 없으면 지도의 모든 지점을 내보냅니다."},
+    "proReset": {"ru": "Сбросить отбор", "en": "Reset filters", "cs": "Zrušit filtry", "de": "Filter zurücksetzen", "fr": "Réinitialiser les filtres", "es": "Restablecer filtros", "it": "Azzera i filtri", "pt": "Limpar filtros", "ja": "絞り込みを解除", "ko": "필터 초기화"},
+    "ptHere": {"ru": "Точек здесь: {n}", "en": "Points here: {n}", "cs": "Bodů zde: {n}", "de": "Punkte hier: {n}", "fr": "Points ici : {n}", "es": "Puntos aquí: {n}", "it": "Punti qui: {n}", "pt": "Pontos aqui: {n}", "ja": "この場所の地点：{n}", "ko": "이곳의 지점: {n}"},
+    "ptMore": {"ru": "Ещё: {n}", "en": "More: {n}", "cs": "Další: {n}", "de": "Weitere: {n}", "fr": "Autres : {n}", "es": "Más: {n}", "it": "Altri: {n}", "pt": "Mais: {n}", "ja": "ほか：{n}", "ko": "더 있음: {n}"},
+    "ptBack": {"ru": "Все точки здесь", "en": "All points here", "cs": "Všechny body zde", "de": "Alle Punkte hier", "fr": "Tous les points ici", "es": "Todos los puntos aquí", "it": "Tutti i punti qui", "pt": "Todos os pontos aqui", "ja": "この場所のすべての地点", "ko": "이곳의 모든 지점"},
+    "ptOpen": {"ru": "Открыть", "en": "Open", "cs": "Otevřít", "de": "Öffnen", "fr": "Ouvrir", "es": "Abrir", "it": "Apri", "pt": "Abrir", "ja": "開く", "ko": "열기"},
+    "ptNoOpen": {"ru": "Браузер не показывает файлы этого вида — откройте файл по пути.", "en": "The browser cannot show files of this type: open the file by its path.", "cs": "Prohlížeč soubory tohoto typu nezobrazí — otevřete soubor podle cesty.", "de": "Der Browser zeigt Dateien dieses Typs nicht an: Öffnen Sie die Datei über ihren Pfad.", "fr": "Le navigateur n’affiche pas ce type de fichier : ouvrez-le par son chemin.", "es": "El navegador no muestra archivos de este tipo: abre el archivo por su ruta.", "it": "Il browser non mostra file di questo tipo: apra il file dal suo percorso.", "pt": "O navegador não mostra arquivos deste tipo: abra o arquivo pelo caminho.", "ja": "この種類のファイルはブラウザーで表示できません。パスから開いてください。", "ko": "브라우저는 이 형식의 파일을 표시할 수 없습니다. 경로로 파일을 여세요."},
+    "ptPick": {"ru": "Выбрать папку «{name}» снова", "en": "Choose the folder “{name}” again", "cs": "Znovu vybrat složku „{name}“", "de": "Ordner „{name}“ erneut wählen", "fr": "Choisir à nouveau le dossier « {name} »", "es": "Elegir de nuevo la carpeta «{name}»", "it": "Scegli di nuovo la cartella «{name}»", "pt": "Escolher de novo a pasta “{name}”", "ja": "フォルダー「{name}」をもう一度選ぶ", "ko": "‘{name}’ 폴더 다시 선택"},
+    "ptPickX": {"ru": "Браузер помнит выбранные файлы, пока открыта вкладка. Выберите папку снова — страница найдёт в ней этот файл по имени.", "en": "The browser remembers the chosen files only while the tab is open. Choose the folder again and the page will find this file in it by name.", "cs": "Prohlížeč si vybrané soubory pamatuje, jen dokud je karta otevřená. Vyberte složku znovu a stránka v ní tento soubor najde podle názvu.", "de": "Der Browser merkt sich die gewählten Dateien nur, solange der Tab offen ist. Wählen Sie den Ordner erneut, dann findet die Seite diese Datei darin anhand des Namens.", "fr": "Le navigateur ne garde les fichiers choisis que tant que l’onglet est ouvert. Choisissez à nouveau le dossier : la page y retrouvera ce fichier par son nom.", "es": "El navegador recuerda los archivos elegidos solo mientras la pestaña está abierta. Elige de nuevo la carpeta y la página encontrará en ella este archivo por su nombre.", "it": "Il browser ricorda i file scelti solo finché la scheda è aperta. Scelga di nuovo la cartella e la pagina vi troverà questo file per nome.", "pt": "O navegador lembra os arquivos escolhidos só enquanto a aba está aberta. Escolha a pasta de novo e a página encontrará nela este arquivo pelo nome.", "ja": "選んだファイルは、タブを開いている間だけブラウザーが覚えています。フォルダーをもう一度選ぶと、ページが名前でこのファイルを見つけます。", "ko": "브라우저는 탭이 열려 있는 동안만 선택한 파일을 기억합니다. 폴더를 다시 선택하면 페이지가 이름으로 이 파일을 찾습니다."},
+    "ptNotFound": {"ru": "В выбранной папке этого файла нет.", "en": "This file is not in the chosen folder.", "cs": "Ve vybrané složce tento soubor není.", "de": "Diese Datei ist nicht im gewählten Ordner.", "fr": "Ce fichier n’est pas dans le dossier choisi.", "es": "Este archivo no está en la carpeta elegida.", "it": "Questo file non è nella cartella scelta.", "pt": "Este arquivo não está na pasta escolhida.", "ja": "選んだフォルダーにこのファイルはありません。", "ko": "선택한 폴더에 이 파일이 없습니다."},
+    "ptCopy": {"ru": "Копировать путь", "en": "Copy path", "cs": "Kopírovat cestu", "de": "Pfad kopieren", "fr": "Copier le chemin", "es": "Copiar la ruta", "it": "Copia il percorso", "pt": "Copiar caminho", "ja": "パスをコピー", "ko": "경로 복사"},
+    "ptCopied": {"ru": "Путь скопирован", "en": "Path copied", "cs": "Cesta zkopírována", "de": "Pfad kopiert", "fr": "Chemin copié", "es": "Ruta copiada", "it": "Percorso copiato", "pt": "Caminho copiado", "ja": "パスをコピーしました", "ko": "경로를 복사했습니다"},
+    "ptOsX": {"ru": "Вставьте путь в адресную строку Проводника — файл откроется в своей программе.", "en": "Paste the path into the File Explorer address bar and the file will open in its own program.", "cs": "Vložte cestu do adresního řádku Průzkumníka a soubor se otevře ve svém programu.", "de": "Fügen Sie den Pfad in die Adressleiste des Datei-Explorers ein, dann öffnet sich die Datei in ihrem Programm.", "fr": "Collez le chemin dans la barre d’adresse de l’Explorateur de fichiers : le fichier s’ouvrira dans son programme.", "es": "Pega la ruta en la barra de direcciones del Explorador de archivos y el archivo se abrirá en su programa.", "it": "Incolli il percorso nella barra degli indirizzi di Esplora file e il file si aprirà nel suo programma.", "pt": "Cole o caminho na barra de endereço do Explorador de Arquivos e o arquivo abrirá no programa dele.", "ja": "パスをエクスプローラーのアドレスバーに貼り付けると、ファイルが対応するプログラムで開きます。", "ko": "경로를 파일 탐색기 주소 표시줄에 붙여 넣으면 파일이 해당 프로그램에서 열립니다."},
+    "ptBase": {"ru": "Указать, где лежит папка «{name}»", "en": "Tell where the folder “{name}” is", "cs": "Uvést, kde je složka „{name}“", "de": "Angeben, wo der Ordner „{name}“ liegt", "fr": "Indiquer où se trouve le dossier « {name} »", "es": "Indicar dónde está la carpeta «{name}»", "it": "Indica dove si trova la cartella «{name}»", "pt": "Indicar onde fica a pasta “{name}”", "ja": "フォルダー「{name}」の場所を指定", "ko": "‘{name}’ 폴더 위치 지정"},
+    "ptBaseEdit": {"ru": "Изменить расположение папки «{name}»", "en": "Change where the folder “{name}” is", "cs": "Změnit umístění složky „{name}“", "de": "Ort des Ordners „{name}“ ändern", "fr": "Modifier l’emplacement du dossier « {name} »", "es": "Cambiar la ubicación de la carpeta «{name}»", "it": "Cambia la posizione della cartella «{name}»", "pt": "Alterar o local da pasta “{name}”", "ja": "フォルダー「{name}」の場所を変更", "ko": "‘{name}’ 폴더 위치 변경"},
+    "ptBasePh": {"ru": "Путь к папке из адресной строки Проводника", "en": "The folder path from the File Explorer address bar", "cs": "Cesta ke složce z adresního řádku Průzkumníka", "de": "Ordnerpfad aus der Adressleiste des Datei-Explorers", "fr": "Chemin du dossier depuis la barre d’adresse de l’Explorateur", "es": "Ruta de la carpeta desde la barra de direcciones del Explorador", "it": "Percorso della cartella dalla barra degli indirizzi di Esplora file", "pt": "Caminho da pasta na barra de endereço do Explorador", "ja": "エクスプローラーのアドレスバーにあるフォルダーのパス", "ko": "파일 탐색기 주소 표시줄의 폴더 경로"},
+    "ptBaseOk": {"ru": "Сохранить", "en": "Save", "cs": "Uložit", "de": "Speichern", "fr": "Enregistrer", "es": "Guardar", "it": "Salva", "pt": "Salvar", "ja": "保存", "ko": "저장"},
+    "ptAcc": {"ru": "Точка из учётной записи: имя её файла хранится только в браузере, где шла проверка.", "en": "A point from your account: its file name is kept only in the browser where the check ran.", "cs": "Bod z účtu: název jeho souboru je uložen jen v prohlížeči, kde kontrola proběhla.", "de": "Ein Punkt aus Ihrem Konto: Der Dateiname ist nur in dem Browser gespeichert, in dem die Prüfung lief.", "fr": "Point issu de votre compte : le nom de son fichier n’est conservé que dans le navigateur où l’analyse a eu lieu.", "es": "Un punto de tu cuenta: el nombre de su archivo solo se guarda en el navegador donde se hizo la revisión.", "it": "Un punto del Suo account: il nome del file è conservato solo nel browser in cui è stata fatta la verifica.", "pt": "Um ponto da sua conta: o nome do arquivo fica guardado só no navegador onde a verificação foi feita.", "ja": "アカウントの地点です。ファイル名は、確認を行ったブラウザーにだけ保存されています。", "ko": "계정의 지점입니다. 파일 이름은 확인을 진행한 브라우저에만 저장됩니다."},
+    "ptDel": {"ru": "Удалить точку", "en": "Delete the point", "cs": "Smazat bod", "de": "Punkt löschen", "fr": "Supprimer le point", "es": "Eliminar el punto", "it": "Elimina il punto", "pt": "Excluir o ponto", "ja": "地点を削除", "ko": "지점 삭제"},
+    "ptDelT": {"ru": "Удалить точку?", "en": "Delete the point?", "cs": "Smazat bod?", "de": "Punkt löschen?", "fr": "Supprimer le point ?", "es": "¿Eliminar el punto?", "it": "Eliminare il punto?", "pt": "Excluir o ponto?", "ja": "地点を削除しますか？", "ko": "지점을 삭제할까요?"},
+    "ptDelX": {"ru": "Точка уйдёт в корзину и перестанет учитываться. Вернуть её можно в течение 30 дней в блоке «Устройства».", "en": "The point will go to the bin and stop counting. You can restore it for 30 days in Devices.", "cs": "Bod se přesune do koše a přestane se započítávat. Vrátit ho můžete do 30 dnů v části „Zařízení“.", "de": "Der Punkt kommt in den Papierkorb und zählt nicht mehr. Wiederherstellen können Sie ihn 30 Tage lang unter „Geräte“.", "fr": "Le point ira à la corbeille et ne sera plus compté. Vous pourrez le restaurer pendant 30 jours dans « Appareils ».", "es": "El punto irá a la papelera y dejará de contar. Puedes recuperarlo durante 30 días en «Dispositivos».", "it": "Il punto andrà nel cestino e non verrà più contato. Può ripristinarlo per 30 giorni in «Dispositivi».", "pt": "O ponto irá para a lixeira e deixará de contar. Você pode restaurá-lo por 30 dias em “Dispositivos”.", "ja": "地点はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "지점은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -625,7 +767,9 @@ main.pc{position:relative}
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
       hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
       appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify",
-      pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList" };
+      pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList",
+      proT: "zPro", proDaysH: "proDaysH", proViewH: "proViewH", proLinesL: "proLines", proTimeH: "proTimeH", proDevH: "hDevs", proCcH: "sCountries",
+      proSelH: "proSelH", proSelGo: "proSelGo", proSelClear: "proSelClear", proSelDel: "proSelDel", proExpH: "proExpH", proExpX: "proExpX", proReset: "proReset" };
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
@@ -636,6 +780,8 @@ main.pc{position:relative}
     $("phoneX").textContent = t(FROM_APP ? "phoneApp" : ANDROID ? "phoneA" : "phoneI");
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
+    $("proX").setAttribute("aria-label", t("zProOff")); $("proX").title = t("zProOff");
+    PRO && (proIcon(), PRO.on && proRender(), CARD.cur || CARD.list.length ? cardView(CARD.cur) : 0);
     $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); TACC.repaint && TACC.repaint();
     $("over").textContent = t("dropHere");
     errKey && err(errKey, errArgs);
@@ -958,6 +1104,9 @@ main.pc{position:relative}
     if (exI) {
       var ex = exI, dt = asc(ex[0x9003] || ex[0x9004]) || dt0, off = asc(ex[0x9011] || ex[0x9010]);
       ex[0xa431] && (r.sn = cl(ex[0xa431]) || r.sn);
+      // Размер снимка по EXIF (PixelXDimension, PixelYDimension) — запасной к заголовку кадра.
+      var pxd = function (x) { return !x ? 0 : x.type === 3 ? dv.getUint16(o + x.vo, le) : x.type === 4 ? dv.getUint32(o + x.vo, le) : 0; };
+      r.pw = pxd(ex[0xa002]); r.ph = pxd(ex[0xa003]);
       var m = /^(\d{4}):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/.exec(dt);
       if (m) {
         r.cam = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5], +m[6]).getTime();
@@ -983,17 +1132,21 @@ main.pc{position:relative}
     }
     return r;
   }
+  // Размер картинки (22.11.2026, план Андрея) — из заголовка кадра (SOF) после раздела EXIF: значок или миниатюра меньше
+  // 320 пикселей по длинной стороне — не снимок.
   function jpeg(f) {
     return u8(f, 0, 196608).then(function (a) {
       if (a[0] !== 0xff || a[1] !== 0xd8) return null;
-      for (var i = 2; i + 4 < a.length; ) {
-        if (a[i] !== 0xff) return null;
+      var r = null;
+      for (var i = 2; i + 9 < a.length; ) {
+        if (a[i] !== 0xff) break;
         var mk = a[i + 1], len = be16(a, i + 2);
-        if (mk === 0xe1 && str(a, i + 4, 6) === "Exif\0\0") return tiff(a, i + 10);
-        if (mk === 0xda) return null;
+        if (mk === 0xe1 && !r && str(a, i + 4, 6) === "Exif\0\0") r = tiff(a, i + 10);
+        else if (r && mk >= 0xc0 && mk <= 0xcf && mk !== 0xc4 && mk !== 0xc8 && mk !== 0xcc) { r.h = be16(a, i + 5); r.w = be16(a, i + 7); break; }
+        if (mk === 0xda) break;
         i += 2 + len;
       }
-      return null;
+      return r;
     });
   }
   // RAW на основе TIFF (DNG, CR2, NEF, ARW, PEF, SRW, ORF, RW2 и другие): заголовок TIFF в начале файла (17.11.2026); у RW2 место
@@ -1028,7 +1181,7 @@ main.pc{position:relative}
       if (be32(a, 0) !== 0x89504e47) return null;
       for (var i = 8; i + 8 <= a.length; ) {
         var n = be32(a, i), ty = str(a, i + 4, 4);
-        if (ty === "eXIf") return tiff(a, i + 8);
+        if (ty === "eXIf") { var r = tiff(a, i + 8); r && ((r.w = be32(a, 16)), (r.h = be32(a, 20))); return r; }
         if (ty === "IEND") return null;
         i += 12 + n;
       }
@@ -1045,7 +1198,12 @@ main.pc{position:relative}
         return step(at + 8 + n + (n & 1), k + 1);
       });
     };
-    return u8(f, 0, 12).then(function (h) { return str(h, 0, 4) === "RIFF" && str(h, 8, 4) === "WEBP" ? step(12, 0) : null; });
+    return u8(f, 0, 30).then(function (h) {
+      if (str(h, 0, 4) !== "RIFF" || str(h, 8, 4) !== "WEBP") return null;
+      // Размер картинки — из блока VP8X (он есть у каждого WebP с EXIF).
+      var vx = str(h, 12, 4) === "VP8X", w = vx ? 1 + h[24] + (h[25] << 8) + (h[26] << 16) : 0, hh = vx ? 1 + h[27] + (h[28] << 8) + (h[29] << 16) : 0;
+      return step(12, 0).then(function (r) { r && w && ((r.w = w), (r.h = hh)); return r; });
+    });
   }
   // HEIC и AVIF: ISO BMFF — блок meta, в нём номер записи Exif (iinf) и её место в файле (iloc).
   function heic(f) {
@@ -1053,6 +1211,9 @@ main.pc{position:relative}
       var box = function (s, e, want) { for (var i = s; i + 8 <= e; ) { var n = be32(a, i), ty = str(a, i + 4, 4), hl = 8; if (n === 1) { n = be32(a, i + 12); hl = 16; } if (n < hl) return null; if (ty === want) return { s: i + hl, e: Math.min(e, i + n) }; i += n; } return null; };
       var meta = box(0, a.length, "meta");
       if (!meta) return null;
+      // Размер картинки — наибольший из блоков ispe (у снимка из плиток есть и размер каждой плитки).
+      var W = 0, H = 0;
+      for (var q = meta.s; q + 16 <= meta.e; q++) if (a[q] === 0x69 && a[q + 1] === 0x73 && a[q + 2] === 0x70 && a[q + 3] === 0x65) { var iw = be32(a, q + 8), ih = be32(a, q + 12); iw * ih > W * H && ((W = iw), (H = ih)); }
       var ms = meta.s + 4, iinf = box(ms, meta.e, "iinf"), iloc = box(ms, meta.e, "iloc"), id = -1;
       if (!iinf || !iloc) return null;
       var v = a[iinf.s], p = iinf.s + 4 + (v === 0 ? 2 : 4);
@@ -1073,7 +1234,7 @@ main.pc{position:relative}
         rd(2);
         var base = rd(bs), ec = rd(2), first = null;
         for (var x = 0; x < ec; x++) { if (is) rd(is); var off = rd(os), ln = rd(lsz); first = first || { off: base + off, len: ln }; }
-        if (item === id && first) return u8(f, first.off, first.off + Math.min(first.len, 262144)).then(function (b) { var skip = 4 + be32(b, 0); return skip + 8 < b.length ? tiff(b, skip) : null; });
+        if (item === id && first) return u8(f, first.off, first.off + Math.min(first.len, 262144)).then(function (b) { var skip = 4 + be32(b, 0); return skip + 8 < b.length ? tiff(b, skip) : null; }).then(function (r) { r && W && ((r.w = W), (r.h = H)); return r; });
       }
       return null;
     });
@@ -1206,7 +1367,7 @@ main.pc{position:relative}
         gi[j] = varint(tb, p); pop[j] = varint(tb, p); ci[j] = tb[p.i++];
         var len = tb[p.i++]; no[j] = p.i; nl[j] = len; p.i += len;
       }
-      G = { w: w.c || {}, rings: rings, arcs: arcs, lv: [], dots: bj.d || {}, cell: new Map(), t: { la: la, ln: ln, pop: pop, ci: ci, no: no, nl: nl, gi: gi, b: tb, codes: codes, n: n } };
+      G = { w: w.c || {}, rings: rings, arcs: arcs, lv: [], dots: bj.d || {}, cell: new Map(), known: new Set(Object.keys(bj.c).concat(Object.keys(bj.d || {}))), t: { la: la, ln: ln, pop: pop, ci: ci, no: no, nl: nl, gi: gi, b: tb, codes: codes, n: n } };
       mapDirty = true;
       return G;
     });
@@ -1220,9 +1381,24 @@ main.pc{position:relative}
     }
     return c;
   }
-  // Страна точки — чётно-нечётно по кольцам, из двух стран — меньшая (анклав), микрогосударства — по точке (как у телефона).
+  // Страна точки — чётно-нечётно по кольцам, из двух стран — меньшая (анклав), микрогосударства — по точке (как у телефона,
+  // CountryLocator). Точка вне всех стран (22.11.2026, слово Андрея: границы упрощены примерно до 300 м, и пляж, гавань или
+  // лагуна прибрежного города лежат «в море» — центры 2537 городов словаря) получает страну города словаря, в круге
+  // которого лежит; сервер принимает её, если граница этой страны ближе 30 км. Коды словаря, которых нет среди границ, —
+  // к своей стране (tools/borders_build.py: TOWN_ALIAS и MERGE). Клетка памяти — 1/2000 градуса (около 55 м): прежняя
+  // клетка в 2,8 км отдавала всем точкам клетки страну первой из них, и у границы снимки уходили соседней стране.
+  var TOWN_ALIAS = { bq: "nl", gf: "fr", gp: "fr", mq: "fr", re: "fr", yt: "fr", cc: "au", cx: "au", sj: "no", tk: "nz", ax: "fi", fo: "dk", gg: "gb", je: "gb", im: "gb", gi: "gb", hk: "cn", mo: "cn" };
   function countryAt(lat, lng) {
-    var key = Math.round(lat * 40) + ":" + Math.round(lng * 40);
+    var cc = ringsAt(lat, lng);
+    if (cc) return cc;
+    var ti = townPick(lat, lng);
+    if (ti < 0) return null;
+    cc = G.t.codes[G.t.ci[ti]];
+    cc = TOWN_ALIAS[cc] || cc;
+    return G.known.has(cc) ? cc : null;
+  }
+  function ringsAt(lat, lng) {
+    var key = Math.round(lat * 2000) + ":" + Math.round(lng * 2000);
     if (G.cell.has(key)) return G.cell.get(key);
     var k = Math.cos((lat * Math.PI) / 180), best = null;
     for (var d in G.dots) { var c = G.dots[d]; if (Math.hypot((c[0] - lng) * k, c[1] - lat) < 0.012) { best = d; break; } }
@@ -1262,16 +1438,26 @@ main.pc{position:relative}
     return null;
   }
   // Город точки — правило телефона (GeoRules.townRadiusM, pickCity): радиус 2 км + 20 м на корень из населения, не больше
-  // 25 км; из городов, чей радиус накрывает точку, — тот, у кого доля расстояния от радиуса меньше.
-  function cityAt(lat, lng) {
+  // 25 км; из городов, чей радиус накрывает точку, — тот, у кого доля расстояния от радиуса меньше (townPick, как
+  // Towns.at телефона; им же страна точки вне всех стран).
+  function townBand(lat) {
     var tw = G.t, y = Math.round(lat * 1e5), dy = 23000, lo = 0, hi = tw.n;
     while (lo < hi) { var mid = (lo + hi) >> 1; tw.la[mid] < y - dy ? (lo = mid + 1) : (hi = mid); }
+    return lo;
+  }
+  function townPick(lat, lng) {
+    var tw = G.t, y = Math.round(lat * 1e5), dy = 23000, lo = townBand(lat);
     var k = Math.max(0.05, Math.cos((lat * Math.PI) / 180)), dx = dy / k, x = Math.round(lng * 1e5), best = -1, br = 2;
     for (var i = lo; i < tw.n && tw.la[i] <= y + dy; i++) {
       if (Math.abs(tw.ln[i] - x) > dx) continue;
       var d = dist(lat, lng, tw.la[i] / 1e5, tw.ln[i] / 1e5), r = Math.min(25000, 2000 + 20 * Math.sqrt(tw.pop[i]));
       if (d <= r && d / r < br) { br = d / r; best = i; }
     }
+    return best;
+  }
+  function cityAt(lat, lng) {
+    var tw = G.t, y = Math.round(lat * 1e5), dy = 23000, lo = townBand(lat), best = townPick(lat, lng);
+    var k = Math.max(0.05, Math.cos((lat * Math.PI) / 180)), dx = dy / k, x = Math.round(lng * 1e5);
     if (best >= 0) {
       var bla = tw.la[best] / 1e5, bln = tw.ln[best] / 1e5, host = -1, hp = 0;
       for (var j = lo; j < tw.n && tw.la[j] <= y + dy; j++) {
@@ -1296,7 +1482,7 @@ main.pc{position:relative}
   // мессенджер или соцсеть, сведения удалены, только время без камеры, видео без места, форматы без места; side — место
   // взято из описаний Google Фото (.json рядом со снимком).
   var WHY = { cam: {}, camN: 0, shot: 0, msg: 0, gone: 0, edit: 0, video: 0, fmt: {}, side: 0, files: 0, place: 0 }, resort = false;
-  var A = { files: 0, pts: [], shown: 0, none: false },
+  var A = { files: 0, pts: [], shown: 0, none: false, held: [] },
     DEV = { list: [], by: {} },
     DIR = { list: [], by: {} },
     seenPt = new Set(),
@@ -1316,6 +1502,28 @@ main.pc{position:relative}
     if (DIR.by[d] == null) { DIR.by[d] = DIR.list.length; DIR.list.push(d); }
     return DIR.by[d];
   }
+
+  // Точка и её файл (22.11.2026, план Андрея: нажатие на точку — какой это снимок, и открыть его): имя файла и путь в
+  // выбранной папке хранятся только в этом браузере (итог в IndexedDB) и на сервер не уходят; сам файл — в памяти вкладки,
+  // пока она открыта. Путь — папка точки (DIR) и имя; длинный путь, который папка точки обрезает, — целиком (fp).
+  var FILES = new Map();
+  function relOf(f) { return String(f.webkitRelativePath || f.tabiPath || f.name || "").replace(/^\/+/, ""); }
+  function mkPt(la, lo, ms, dev, dir, f) {
+    var p = [la, lo, ms, dev, dir], rp = relOf(f);
+    p.fn = String(f.name || "").slice(0, 255);
+    rp !== p.fn && (DIR.list[dir] || "") + "/" + p.fn !== rp && (p.fp = rp.slice(0, 1024));
+    f.tabiSys ? (p.sys = 1) : RUN.own && RUN.own.add(dev);
+    FILES.set(rp, f);
+    return p;
+  }
+  function ptPath(p) { return p.fp || (p.fn ? (DIR.list[p[4]] ? DIR.list[p[4]] + "/" : "") + p.fn : ""); }
+  // Найденное только в папках программ (22.11.2026, план Андрея; прежнее решение 19.11.2026 — учитывать всё — изменено его
+  // словом): устройство, у которого ни в этой проверке, ни в итоге нет точек вне папок программ, и снимки без камеры из
+  // папок программ — это образцы программ, кэши и присланное в мессенджерах. Они не идут в итог и на сервер: видны в
+  // «Устройствах» с пометкой и учитываются по «Учесть».
+  function noMake(i) { var d = DEV.list[i]; return !(d && (d.mk || d.md)); }
+  function holdIt(p) { return !!p.sys && (noMake(p[3]) || !(RUN.own && RUN.own.has(p[3]))); }
+  function heldKey(p) { var d = DEV.list[p[3]]; return d && (d.mk || d.md) ? devKey(d, p[3]) : "x"; }
 
   function shell() {
     var any = revealing || found.countries.length || found.cities.length;
@@ -1413,6 +1621,9 @@ main.pc{position:relative}
   var cv = $("map"), cx = cv.getContext("2d"), mapDirty = true, MV = null, PC = null, CW = 0, CH = 0, DPR = 1,
     land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
   var D2R = Math.PI / 180, userMoved = false;
+  // Профессиональный режим и карточка точки (22.11.2026; устройство — у proOpen ниже).
+  var PRO = { on: false, lines: true, offDev: new Set(), offCc: new Set(), ia: 0, ib: -1, a: 0, b: 0, sel: null, selMode: false, ver: 0, allDays: false, n: null },
+    VIS = { ver: -1, src: null, len: -1, list: [] }, CARD = { list: [], cur: null, miss: null }, MAPN = { card: 0, open: 0, copy: 0 };
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
   // Проекция Меркатора — та же, что у карт приложения (20.11.2026, Андрей: в Natural Earth и Паттерсоне Россия и Европа
   // сплющены): формы стран верные, северные страны крупнее, чем в жизни, как в приложении. Широта ограничена 85°, как у
@@ -1648,7 +1859,8 @@ main.pc{position:relative}
     (land.width !== cv.width || land.height !== cv.height) && (land.width = cv.width, land.height = cv.height);
     // Цвета — один раз на тему (applyTheme и смена темы системы сбрасывают COL), а не getComputedStyle в каждом кадре.
     var g = land.getContext("2d"), visited = {}, C = COL || cols();
-    found.countries.forEach(function (c) { visited[c.cc] = 1; });
+    // В профессиональном режиме с отбором закрашены страны того, что на карте (22.11.2026).
+    proFilt() ? PTS().forEach(function (p) { p.cc && (visited[p.cc] = 1); }) : found.countries.forEach(function (c) { visited[c.cc] = 1; });
     g.fillStyle = C.bg; g.fillRect(0, 0, land.width, land.height);
     if (!G || !MV) return;
     var pd = ppd(), arcs = landArcs(), byCc = {}, order = [];
@@ -1702,12 +1914,12 @@ main.pc{position:relative}
   function ptXY(p) { pq(p); return [sxL(p._l + shiftOf(p[1]) * D2R), syF(p._f, p._y)]; }
   var dotGrid = null, dotStamp = 0;
   function drawPts(from, to) {
-    var pts = A.pts, R = Math.min(5.5, 2.6 + Math.max(0, Math.log(MV.s / fitS) / Math.LN2) * 0.35) * DPR, k, i, t = MV.t, m = 8 * DPR;
+    var pts = PTS(), lines = !PRO.on || PRO.lines, R = Math.min(5.5, 2.6 + Math.max(0, Math.log(MV.s / fitS) / Math.LN2) * 0.35) * DPR, k, i, t = MV.t, m = 8 * DPR;
     var near = [], far = [], dots = [];
     for (k = 0; k < BINS; k++) { near.push([]); far.push([]); dots.push([]); }
     // На виде мира (t = 0) мир один, с краями: отрезок не выходит за край карты. Ближе края нет.
     var xa = t > 0 ? -m : Math.max(-m, sxL(-Math.PI)), xb = t > 0 ? CW + m : Math.min(CW + m, sxL(Math.PI));
-    for (i = Math.max(1, from); i < to && i < pts.length; i++) {
+    for (i = Math.max(1, from); lines && i < to && i < pts.length; i++) {
       var a = pq(pts[i - 1]), b = pq(pts[i]);
       if (b[2] - a[2] > 36 * 3600000) continue;
       b._pa !== a && ((b._pa = a), (b._far = dist(a[0], a[1], b[0], b[1]) > 300000));
@@ -1758,6 +1970,20 @@ main.pc{position:relative}
       for (var n = 0; n < D2.length; n += 2) { cx.moveTo(D2[n] + R, D2[n + 1]); cx.arc(D2[n], D2[n + 1], R, 0, 6.2832); }
       cx.fill();
     }
+    // Выделенное и точка карточки — кольцом поверх точек (22.11.2026).
+    if (whole && (CARD.cur || (PRO.on && PRO.sel))) {
+      var C = COL || cols(), ring = function (list, col, w) {
+        cx.strokeStyle = col; cx.lineWidth = w; cx.beginPath();
+        list.forEach(function (p) {
+          var q = ptXY(p);
+          if (q[0] < -R || q[1] < -R || q[0] > CW + R || q[1] > CH + R) return;
+          cx.moveTo(q[0] + R + 2 * DPR, q[1]); cx.arc(q[0], q[1], R + 2 * DPR, 0, 6.2832);
+        });
+        cx.stroke();
+      };
+      PRO.on && PRO.sel && ring(PRO.sel, C.ink, 1.5 * DPR);
+      CARD.cur && ring([CARD.cur], C.acc || "#B3341F", 2.6 * DPR);
+    }
   }
   // Названия найденных городов — при приближении, без наложения, по одной строке на город.
   function drawLabels() {
@@ -1776,9 +2002,9 @@ main.pc{position:relative}
   }
   function buildHits() {
     hitGrid = new Map();
-    var cell = 18 * DPR;
-    for (var i = 0; i < A.shown && i < A.pts.length; i++) {
-      var qh = ptXY(A.pts[i]), x = qh[0], y = qh[1];
+    var P = PTS(), n = revealing ? A.shown : P.length, cell = 18 * DPR;
+    for (var i = 0; i < n && i < P.length; i++) {
+      var qh = ptXY(P[i]), x = qh[0], y = qh[1];
       if (x < 0 || y < 0 || x > CW || y > CH) continue;
       var k = Math.floor(x / cell) + ":" + Math.floor(y / cell);
       hitGrid.has(k) ? hitGrid.get(k).push(i) : hitGrid.set(k, [i]);
@@ -1793,7 +2019,7 @@ main.pc{position:relative}
     else if (CW !== W || CH !== H) { MV.s *= W / CW; CW = W; CH = H; clampView(); mapDirty = true; }
     prep();
     mapDirty && (ACC = hexRgb((COL || cols()).acc || "#B3341F"));
-    var to = revealing ? upto : A.pts.length;
+    var to = revealing ? upto : PTS().length;
     if (mapDirty || drawnTo > to) { drawLand(); cx.drawImage(land, 0, 0); drawnTo = 0; mapDirty = false; drawPts(0, to); }
     else drawPts(Math.max(0, drawnTo - 1), to);
     drawnTo = to;
@@ -1808,19 +2034,33 @@ main.pc{position:relative}
     var r = cv.getBoundingClientRect();
     zoomAt(Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0018)), (e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR);
   }, { passive: false });
-  cv.addEventListener("dblclick", function (e) { var r = cv.getBoundingClientRect(); zoomAt(2, (e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR); });
+  cv.addEventListener("dblclick", function (e) { clearTimeout(cardT); var r = cv.getBoundingClientRect(); zoomAt(2, (e.clientX - r.left) * DPR, (e.clientY - r.top) * DPR); });
   $("zIn").onclick = function () { zoomAt(2, CW / 2, CH / 2); };
   $("zOut").onclick = function () { zoomAt(0.5, CW / 2, CH / 2); };
-  $("zAll").onclick = function () { userMoved = false; fit(A.pts); mapDirty = true; schedule(); };
-  var ptrs = new Map(), pinch0 = 0;
+  $("zAll").onclick = function () { userMoved = false; fit(PTS()); mapDirty = true; schedule(); };
+  // Нажатие без сдвига (меньше 5 точек) — карточка точки; в режиме выделения перетаскивание растягивает рамку.
+  var ptrs = new Map(), pinch0 = 0, DOWN = null, SEL = null;
   cv.addEventListener("pointerdown", function (e) {
+    if (PRO.selMode && !ptrs.size) {
+      var r0 = cv.getBoundingClientRect();
+      cv.setPointerCapture(e.pointerId);
+      SEL = { id: e.pointerId, x0: e.clientX - r0.left, y0: e.clientY - r0.top };
+      SEL.x1 = SEL.x0; SEL.y1 = SEL.y0;
+      return;
+    }
     cv.setPointerCapture(e.pointerId);
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
     ptrs.size === 1 && cv.classList.add("drag");
+    DOWN = ptrs.size === 1 ? { x: e.clientX, y: e.clientY } : null;
     if (ptrs.size === 2) { var q = Array.from(ptrs.values()); pinch0 = Math.hypot(q[0].x - q[1].x, q[0].y - q[1].y); }
     $("tip").hidden = true;
   });
   cv.addEventListener("pointermove", function (e) {
+    if (SEL && e.pointerId === SEL.id) {
+      var r1 = cv.getBoundingClientRect();
+      SEL.x1 = Math.max(0, Math.min(r1.width, e.clientX - r1.left)); SEL.y1 = Math.max(0, Math.min(r1.height, e.clientY - r1.top));
+      return void selBoxShow();
+    }
     var p = ptrs.get(e.pointerId);
     if (!p) return void tipAt(e);
     if (ptrs.size === 2) {
@@ -1833,27 +2073,33 @@ main.pc{position:relative}
     if (MV) { panBy((e.clientX - p.x) * DPR, (e.clientY - p.y) * DPR); mapDirty = true; schedule(); }
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   });
-  var ptrEnd = function (e) { ptrs.delete(e.pointerId); ptrs.size || cv.classList.remove("drag"); pinch0 = 0; };
+  var ptrEnd = function (e) {
+    if (SEL && e.pointerId === SEL.id) return void (e.type === "pointerup" ? selFinish() : selEnd());
+    var click = DOWN && e.type === "pointerup" && ptrs.size === 1 && Math.hypot(e.clientX - DOWN.x, e.clientY - DOWN.y) < 5;
+    DOWN = null;
+    ptrs.delete(e.pointerId); ptrs.size || cv.classList.remove("drag"); pinch0 = 0;
+    click && cardSoon(e);
+  };
   cv.addEventListener("pointerup", ptrEnd); cv.addEventListener("pointercancel", ptrEnd);
   cv.addEventListener("pointerleave", function () { $("tip").hidden = true; });
   // Подсказка у точки: дата и время снимка и город.
+  function ptWhen(p) { try { return new Date(p[2]).toLocaleString(L, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (x) { return new Date(p[2]).toISOString(); } }
+  function ptPlace(p) { return [p.ct != null && p.ct >= 0 ? townName(p.ct) : "", p.cc ? countryName(p.cc) : ""].filter(Boolean).join(", "); }
   function tipAt(e) {
-    if (!MV || revealing || e.pointerType === "touch") return;
+    if (!MV || revealing || e.pointerType === "touch" || SEL) return;
     hitGrid || buildHits();
-    var r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * DPR, my = (e.clientY - r.top) * DPR, cell = 18 * DPR, best = -1, bd = 10 * DPR;
+    var P = PTS(), r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * DPR, my = (e.clientY - r.top) * DPR, cell = 18 * DPR, best = -1, bd = 10 * DPR;
     for (var gx = -1; gx <= 1; gx++) for (var gy = -1; gy <= 1; gy++) {
       (hitGrid.get((Math.floor(mx / cell) + gx) + ":" + (Math.floor(my / cell) + gy)) || []).forEach(function (i) {
-        var qd = ptXY(A.pts[i]), d = Math.hypot(qd[0] - mx, qd[1] - my);
+        var qd = ptXY(P[i]), d = Math.hypot(qd[0] - mx, qd[1] - my);
         d < bd && ((bd = d), (best = i));
       });
     }
     var tip = $("tip");
     if (best < 0) return void (tip.hidden = true);
-    var p = A.pts[best], when;
-    try { when = new Date(p[2]).toLocaleString(L, { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (x) { when = new Date(p[2]).toISOString(); }
-    var place = [p.ct != null && p.ct >= 0 ? townName(p.ct) : "", p.cc ? countryName(p.cc) : ""].filter(Boolean).join(", ");
+    var p = P[best];
     tip.innerHTML = "<b></b><span></span>";
-    tip.children[0].textContent = when; tip.children[1].textContent = place;
+    tip.children[0].textContent = ptWhen(p); tip.children[1].textContent = ptPlace(p);
     tip.hidden = false;
     // Подсказка не выходит за края карты.
     var hw = tip.offsetWidth / 2, bw = cv.clientWidth, qt = ptXY(p), px = Math.max(hw + 6, Math.min(bw - hw - 6, qt[0] / DPR)), py = qt[1] / DPR;
@@ -1868,10 +2114,380 @@ main.pc{position:relative}
     $("lgBar").style.background = "linear-gradient(90deg," + colorAt(T0) + "," + colorAt((T0 + T1) / 2) + "," + colorAt(T1) + ")";
   }
 
+
+  // ===== Профессиональный режим карты и карточка точки (22.11.2026, слово Андрея) =====
+  // Значок у кнопок карты (+, −, весь маршрут) открывает карту на всё окно с панелью работы со своими точками: что сейчас
+  // на карте (числа и дни по странам), линии между точками, отбор по периоду, устройствам и странам, выделение области и
+  // удаление ошибочных точек в корзину, выгрузка в GPX, KML и CSV. Отбор и выделение действуют только в этом режиме:
+  // обычная карта всегда показывает всё. Всё считается в этом браузере; на сервер уходят только удаление уже сохранённых
+  // точек (как у «Удалить» устройства) и строка статистики при выходе из режима.
+  // Нажатие на точку (в любом режиме) — карточка: дата, место, устройство и путь файла. «Открыть» показывает сам файл с
+  // диска в новой вкладке браузера: страница его не читает и никуда не отправляет. Открыть файл в программе компьютера не
+  // может ни одна страница — браузеры этого не позволяют, — поэтому «Копировать путь»: в адресной строке Проводника файл
+  // откроется в своей программе. Полный путь с буквой диска браузер даёт, только когда выбран весь диск; иначе путь
+  // начинается с выбранной папки, и человек может один раз указать, где она лежит (хранится только в этом браузере).
+  var PRO_IN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>',
+    PRO_OUT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg>',
+    XSVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+    OPEN_X = { jpg: 1, jpeg: 1, jpe: 1, jfif: 1, png: 1, webp: 1, gif: 1, avif: 1, bmp: 1, mp4: 1, m4v: 1, mov: 1, webm: 1 },
+    WINP = /win/i.test(navigator.platform || "") || /Windows/.test(UA), OPENED = [], RE = { want: null }, cardT = 0, proRaf = 0;
+  function proKeep(p) {
+    return !(PRO.a && p[2] < PRO.a) && !(PRO.b && p[2] > PRO.b) && !(PRO.offDev.size && PRO.offDev.has(p._k || "x")) && !(PRO.offCc.size && PRO.offCc.has(p.cc || ""));
+  }
+  function proFilt() { return PRO.on && !!(PRO.offDev.size || PRO.offCc.size || PRO.a || PRO.b); }
+  // Точки, которые видит карта: в обычном виде — все, в профессиональном — по отбору.
+  function PTS() {
+    if (!proFilt()) return A.pts;
+    if (VIS.ver !== PRO.ver || VIS.src !== A.pts || VIS.len !== A.pts.length) VIS = { ver: PRO.ver, src: A.pts, len: A.pts.length, list: A.pts.filter(proKeep) };
+    return VIS.list;
+  }
+  function elm(tag, cls, text, parent) {
+    var x = document.createElement(tag);
+    cls && (x.className = cls); text != null && (x.textContent = text); tag === "button" && (x.type = "button");
+    parent && parent.appendChild(x);
+    return x;
+  }
+  function devName(p) { var d = DEV.list[p[3]]; return p._n || (d && (d.mk || d.md) ? camName(d) : t("devNone")); }
+  function proIcon() {
+    var b = $("zPro"), k = PRO.on ? "zProOff" : "zPro";
+    b.innerHTML = PRO.on ? PRO_OUT : PRO_IN; b.setAttribute("aria-label", t(k)); b.title = t(k);
+  }
+  function proOpen() {
+    if (PRO.on || revealing || !A.pts.length) return;
+    renderDevs();
+    PRO.on = true; PRO.n = { t0: Date.now(), sel: 0, del: 0, exp: 0, open: 0, card: 0, filt: 0 };
+    var box = $("mapBox");
+    PRO.home = box.parentNode; PRO.next = box.nextSibling;
+    $("proMap").appendChild(box);
+    $("pro").hidden = false;
+    document.documentElement.classList.add("pc-pro-on");
+    $("tip").hidden = true;
+    proIcon(); proRender();
+    mapDirty = true; schedule();
+  }
+  function proClose() {
+    if (!PRO.on) return;
+    selEnd();
+    PRO.on = false; PRO.sel = null; PRO.lines = true; $("proLines").checked = true;
+    PRO.offDev.clear(); PRO.offCc.clear(); PRO.ia = 0; PRO.ib = -1; PRO.a = PRO.b = 0; PRO.ver++;
+    PRO.home.insertBefore($("mapBox"), PRO.next);
+    $("pro").hidden = true;
+    document.documentElement.classList.remove("pc-pro-on");
+    var n = PRO.n;
+    PRO.n = null;
+    n && statSend({ k: "pro", s: Math.round((Date.now() - n.t0) / 1000), sel: n.sel, del: n.del, exp: n.exp, open: n.open, card: n.card, filt: n.filt, pts: A.pts.length });
+    proIcon(); cardClose();
+    mapDirty = true; schedule();
+  }
+  $("zPro").onclick = function () { PRO.on ? proClose() : proOpen(); };
+  $("proX").onclick = proClose;
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" || document.querySelector("dialog[open]")) return;
+    if (!$("ptCard").hidden) return void cardClose();
+    if (PRO.selMode) return void selEnd();
+    PRO.on && proClose();
+  });
+  var monthOf = function (ms) { var d = new Date(ms); return d.getFullYear() * 12 + d.getMonth(); },
+    monthStart = function (m) { return new Date(Math.floor(m / 12), m % 12, 1).getTime(); };
+  function proRender() {
+    if (!PRO.on) return;
+    // Период — ползунок с двумя концами по месяцам всего итога.
+    var m0 = monthOf(T0), M = Math.max(0, monthOf(T1) - m0), ib = PRO.ib < 0 || PRO.ib > M ? M : PRO.ib, ia = Math.min(PRO.ia, ib);
+    $("proRa").max = $("proRb").max = String(M);
+    $("proRa").value = String(ia); $("proRb").value = String(ib);
+    show("proTimeBox", M > 0);
+    proRange(m0, M, ia, ib);
+    // Устройства и страны — по всем точкам итога, с числом точек.
+    var devs = {}, dOrder = [], ccs = {}, cOrder = [];
+    A.pts.forEach(function (p) {
+      var k = p._k || "x", c = p.cc || "";
+      devs[k] || ((devs[k] = { name: "", n: 0 }), dOrder.push(k));
+      devs[k].n++; p._n && !devs[k].name && (devs[k].name = p._n);
+      ccs[c] || ((ccs[c] = 0), cOrder.push(c));
+      ccs[c]++;
+    });
+    dOrder.sort(function (a, b) { return a === "x" ? 1 : b === "x" ? -1 : devs[b].n - devs[a].n; });
+    cOrder.sort(function (a, b) { return a === "" ? 1 : b === "" ? -1 : ccs[b] - ccs[a]; });
+    proList($("proDevs"), dOrder.map(function (k) { return { key: k, name: devs[k].name || t("devNone"), n: devs[k].n }; }), PRO.offDev);
+    proList($("proCcs"), cOrder.map(function (c) { return { key: c, name: c ? countryName(c) : t("ccNone"), n: ccs[c], flag: c ? flagUrl(c) : "" }; }), PRO.offCc);
+    proStats();
+  }
+  function proList(box, rows, off) {
+    box.innerHTML = "";
+    rows.forEach(function (r) {
+      var lb = elm("label", "pc-pro-row", null, box), cb = elm("input", "", null, lb), nm = elm("span", "nm", null, lb);
+      cb.type = "checkbox"; cb.checked = !off.has(r.key);
+      if (r.flag) { var im = elm("img", "", null, nm); im.src = r.flag; im.alt = ""; }
+      nm.appendChild(document.createTextNode(r.name));
+      elm("span", "n", num(r.n), lb);
+      cb.onchange = function () { cb.checked ? off.delete(r.key) : off.add(r.key); proApply(); };
+    });
+  }
+  function proApply() {
+    PRO.ver++; PRO.n && PRO.n.filt++;
+    PRO.sel && (PRO.sel = PRO.sel.filter(proKeep), PRO.sel.length || (PRO.sel = null));
+    cardClose();
+    mapDirty = true; schedule(); proStats();
+  }
+  function proRange(m0, M, a, b) {
+    $("proRA").textContent = monthYear(monthStart(m0 + a)); $("proRB").textContent = monthYear(monthStart(m0 + b));
+    $("proRf").style.left = (M ? (a / M) * 100 : 0) + "%"; $("proRf").style.right = (M ? 100 - (b / M) * 100 : 0) + "%";
+  }
+  ["proRa", "proRb"].forEach(function (id) {
+    $(id).oninput = function () {
+      var M = +$("proRa").max, a = +$("proRa").value, b = +$("proRb").value, m0 = monthOf(T0);
+      if (a > b) id === "proRa" ? ($("proRa").value = String((a = b))) : ($("proRb").value = String((b = a)));
+      PRO.ia = a; PRO.ib = b === M ? -1 : b;
+      PRO.a = a > 0 ? monthStart(m0 + a) : 0; PRO.b = b < M ? monthStart(m0 + b + 1) - 1 : 0;
+      proRange(m0, M, a, b);
+      proRaf || (proRaf = requestAnimationFrame(function () { proRaf = 0; proApply(); }));
+    };
+  });
+  // Числа того, что на карте (или выделено), и дни по странам — сколько разных дней в каждой стране есть точки.
+  function proStats() {
+    var sel = PRO.sel && PRO.sel.length ? PRO.sel : null, P = sel || PTS(), days = new Set(), cc = {}, ct = new Set(), byCc = {};
+    P.forEach(function (p) {
+      var d = new Date(p[2]).toDateString();
+      days.add(d);
+      if (p.cc) { cc[p.cc] = 1; (byCc[p.cc] || (byCc[p.cc] = new Set())).add(d); }
+      p.ct != null && p.ct >= 0 && ct.add(p.ct);
+    });
+    $("proStH").textContent = t(sel ? "proSelH2" : "proStH");
+    var tl = $("proSt");
+    tl.innerHTML = "";
+    [[P.length, "proPts"], [days.size, "sDays"], [Object.keys(cc).length, "sCountries"], [ct.size, "sCities"], [Math.round(kmOf(P) / 1000), "sKm"]].forEach(function (x) {
+      var d = elm("div", "", null, tl);
+      elm("b", "", num(x[0]), d); elm("span", "", t(x[1]), d);
+    });
+    var a = P.length ? monthYear(P[0][2]) : "", b = P.length ? monthYear(P[P.length - 1][2]) : "";
+    $("proSpan").textContent = a === b ? a : a + " — " + b;
+    var rows = Object.keys(byCc).sort(function (x, y) { return byCc[y].size - byCc[x].size || (countryName(x) < countryName(y) ? -1 : 1); }), box = $("proDays");
+    box.innerHTML = "";
+    rows.slice(0, PRO.allDays ? rows.length : 8).forEach(function (c) {
+      var r = elm("div", "pc-pro-row nb", null, box), lead = elm("span", "", null, r), fu = flagUrl(c);
+      if (fu) { var im = elm("img", "", null, lead); im.src = fu; im.alt = ""; }
+      elm("span", "nm", countryName(c), r); elm("span", "n", num(byCc[c].size), r);
+    });
+    show("proDaysBox", rows.length > 0);
+    show("proDaysMore", rows.length > 8);
+    $("proDaysMore").textContent = PRO.allDays ? t("proDaysLess") : t("proDaysAll", { n: num(rows.length) });
+    proSelRender();
+    show("proReset", proFilt() || !!sel);
+  }
+  function proSelRender() {
+    var sel = PRO.sel && PRO.sel.length ? PRO.sel : null;
+    $("proSel").textContent = t(PRO.selMode ? "proSelCancel" : "proSel");
+    show("proSelGo", PRO.selMode);
+    show("proSelBox", !!sel);
+    if (!sel) return;
+    $("proSelN").textContent = t("proSelN", { n: num(sel.length) });
+    var ul = $("proSelList");
+    ul.innerHTML = "";
+    sel.slice(-60).reverse().forEach(function (p) {
+      var b = elm("button", "pc-pro-file", null, ul);
+      elm("b", "", p.fn || ptWhen(p), b); elm("span", "", p.fn ? ptWhen(p) : ptPlace(p), b);
+      b.onclick = function () { cardOpen([p]); };
+    });
+    show("proSelMore", sel.length > 60);
+    $("proSelMore").textContent = t("ptMore", { n: num(sel.length - 60) });
+  }
+  $("proLines").onchange = function () { PRO.lines = this.checked; mapDirty = true; schedule(); };
+  $("proDaysMore").onclick = function () { PRO.allDays = !PRO.allDays; proStats(); };
+  $("proSel").onclick = function () { PRO.selMode ? selEnd() : selStart(); };
+  $("proSelClear").onclick = function () { PRO.sel = null; mapDirty = true; schedule(); proStats(); };
+  $("proSelDel").onclick = function () {
+    var sel = (PRO.sel || []).slice();
+    if (!sel.length) return;
+    ask(t("proSelDelT"), t("proSelDelX", { n: num(sel.length) }), t("delDev"), function () {
+      winClose("dlg"); PRO.n && (PRO.n.del += sel.length);
+      dropPts(sel, t("proSelLbl", { n: num(sel.length) }), null);
+    });
+  };
+  $("proReset").onclick = function () {
+    PRO.offDev.clear(); PRO.offCc.clear(); PRO.ia = 0; PRO.ib = -1; PRO.a = PRO.b = 0; PRO.sel = null;
+    proRender(); proApply();
+  };
+  ["gpx", "kml", "csv"].forEach(function (k) { $("proExp" + k.toUpperCase()).onclick = function () { proExport(k); }; });
+  // Выделение области: рамка мышью или пальцем по точкам экрана.
+  function selStart() { PRO.selMode = true; cardClose(); cv.classList.add("sel"); proSelRender(); }
+  function selEnd() { PRO.selMode = false; SEL = null; cv.classList.remove("sel"); $("selBox").hidden = true; PRO.on && proSelRender(); }
+  function selBoxShow() {
+    var b = $("selBox");
+    b.style.left = Math.min(SEL.x0, SEL.x1) + "px"; b.style.top = Math.min(SEL.y0, SEL.y1) + "px";
+    b.style.width = Math.abs(SEL.x1 - SEL.x0) + "px"; b.style.height = Math.abs(SEL.y1 - SEL.y0) + "px";
+    b.hidden = false;
+  }
+  function selFinish() {
+    var x0 = Math.min(SEL.x0, SEL.x1) * DPR, x1 = Math.max(SEL.x0, SEL.x1) * DPR, y0 = Math.min(SEL.y0, SEL.y1) * DPR, y1 = Math.max(SEL.y0, SEL.y1) * DPR,
+      big = x1 - x0 > 4 * DPR && y1 - y0 > 4 * DPR;
+    var got = big ? PTS().filter(function (p) { var q = ptXY(p); return q[0] >= x0 && q[0] <= x1 && q[1] >= y0 && q[1] <= y1; }) : [];
+    selEnd();
+    if (!big) return;
+    PRO.sel = got.length ? got : null; PRO.n && PRO.n.sel++;
+    mapDirty = true; schedule(); proStats();
+  }
+  // Выгрузка: выделенное, без выделения — всё, что на карте; файл собирается в браузере.
+  function proExport(kind) {
+    var list = PRO.sel && PRO.sel.length ? PRO.sel : PTS();
+    if (!list.length) return;
+    var iso = function (ms) { return new Date(ms).toISOString().replace(/\.\d{3}Z$/, "Z"); },
+      xml = function (v) { return String(v).replace(/[<>&"']/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" }[c]; }); },
+      csv = function (v) { v = String(v == null ? "" : v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; },
+      parts = [], type;
+    if (kind === "csv") {
+      type = "text/csv;charset=utf-8";
+      parts.push("\ufefftime_utc,latitude,longitude,country,city,device,file\r\n");
+      list.forEach(function (p) { parts.push([iso(p[2]), p[0], p[1], csv(p.cc ? countryName(p.cc) : ""), csv(p.ct != null && p.ct >= 0 ? townName(p.ct) : ""), csv(devName(p)), csv(ptPath(p))].join(",") + "\r\n"); });
+    } else if (kind === "gpx") {
+      type = "application/gpx+xml";
+      parts.push('<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Tabi (tabimobile.com)" xmlns="http://www.topografix.com/GPX/1/1">\n<trk><name>Tabi</name>\n<trkseg>\n');
+      list.forEach(function (p, i) {
+        i && p[2] - list[i - 1][2] > 36 * 3600000 && parts.push("</trkseg>\n<trkseg>\n");
+        parts.push('<trkpt lat="' + p[0] + '" lon="' + p[1] + '"><time>' + iso(p[2]) + "</time>" + (p.fn ? "<name>" + xml(p.fn) + "</name>" : "") + "</trkpt>\n");
+      });
+      parts.push("</trkseg>\n</trk>\n</gpx>\n");
+    } else {
+      type = "application/vnd.google-earth.kml+xml";
+      parts.push('<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Tabi</name>\n');
+      list.forEach(function (p) {
+        parts.push("<Placemark><name>" + xml(p.fn || iso(p[2])) + "</name><description>" + xml([ptWhen(p), ptPlace(p), devName(p), ptPath(p)].filter(Boolean).join(" · ")) +
+          "</description><TimeStamp><when>" + iso(p[2]) + "</when></TimeStamp><Point><coordinates>" + p[1] + "," + p[0] + "</coordinates></Point></Placemark>\n");
+      });
+      parts.push("</Document></kml>\n");
+    }
+    var a = document.createElement("a"), u = URL.createObjectURL(new Blob(parts, { type: type }));
+    a.href = u; a.download = "tabi-" + new Date().toISOString().slice(0, 10) + "." + kind;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+    PRO.n && PRO.n.exp++;
+  }
+  // Карточка точки: все точки под нажатием — списком, одна — подробно.
+  function cardSoon(e) {
+    var ev = { clientX: e.clientX, clientY: e.clientY, pointerType: e.pointerType };
+    clearTimeout(cardT);
+    cardT = setTimeout(function () { cardAt(ev); }, 240);
+  }
+  function cardAt(e) {
+    if (!MV || revealing) return;
+    hitGrid || buildHits();
+    var P = PTS(), r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * DPR, my = (e.clientY - r.top) * DPR, cell = 18 * DPR,
+      rad = (e.pointerType === "touch" ? 16 : 9) * DPR, got = [];
+    for (var gx = -1; gx <= 1; gx++) for (var gy = -1; gy <= 1; gy++)
+      (hitGrid.get((Math.floor(mx / cell) + gx) + ":" + (Math.floor(my / cell) + gy)) || []).forEach(function (i) { var q = ptXY(P[i]); Math.hypot(q[0] - mx, q[1] - my) <= rad && got.push(P[i]); });
+    if (!got.length) return void cardClose();
+    got.sort(function (a, b) { return b[2] - a[2]; });
+    PRO.n ? PRO.n.card++ : MAPN.card++;
+    cardOpen(got);
+  }
+  function cardOpen(list) { CARD.list = list; CARD.miss = null; cardView(list.length === 1 ? list[0] : null); }
+  function cardClose() {
+    if ($("ptCard").hidden) return;
+    $("ptCard").hidden = true; CARD.cur = null; CARD.list = []; CARD.miss = null;
+    mapDirty = true; schedule();
+  }
+  function cardView(p) {
+    var box = $("ptCard"), all = CARD.list;
+    CARD.cur = p; box.innerHTML = ""; box.hidden = false; $("tip").hidden = true;
+    var x = elm("button", "x", null, box);
+    x.innerHTML = XSVG; x.setAttribute("aria-label", t("close")); x.title = t("close"); x.onclick = cardClose;
+    if (!p) {
+      elm("h4", "", t("ptHere", { n: num(all.length) }), box);
+      all.slice(0, 80).forEach(function (q) {
+        var b = elm("button", "li", null, box);
+        elm("b", "", q.fn || ptWhen(q), b); elm("span", "", q.fn ? ptWhen(q) : ptPlace(q), b);
+        b.onclick = function () { cardView(q); };
+      });
+      all.length > 80 && elm("p", "pc-s", t("ptMore", { n: num(all.length - 80) }), box);
+    } else {
+      all.length > 1 && (elm("button", "pc-quiet", "← " + t("ptBack"), box).onclick = function () { cardView(null); });
+      elm("h4", "", ptWhen(p), box);
+      var pl = ptPlace(p);
+      pl && elm("p", "pc-t", pl, box);
+      elm("p", "pc-s", devName(p), box);
+      var rel = ptPath(p);
+      rel ? cardFile(box, p, rel) : elm("p", "pc-s", t("ptAcc"), box);
+      elm("button", "pc-quiet", t("ptDel"), box).onclick = function () {
+        ask(t("ptDelT"), t("ptDelX"), t("delDev"), function () { winClose("dlg"); PRO.n && PRO.n.del++; dropPts([p], p.fn || ptWhen(p), null); });
+      };
+    }
+    mapDirty = true; schedule();
+  }
+  function osPath(rel) {
+    var full = rel;
+    if (!/^[A-Za-z]:(\/|$)/.test(rel)) { var base = ls.get("tabiPcBase:" + rel.split("/")[0]); base && (full = base.replace(/[\\\/]+$/, "") + "/" + rel.split("/").slice(1).join("/")); }
+    return WINP ? full.replace(/\//g, "\\") : full;
+  }
+  function cardFile(box, p, rel) {
+    var root = rel.split("/")[0], abs = /^[A-Za-z]:(\/|$)/.test(rel), base = abs ? "" : ls.get("tabiPcBase:" + root) || "",
+      ext = ((/\.([a-z0-9]{2,5})$/i.exec(p.fn || "") || [])[1] || "").toLowerCase(), f = FILES.get(rel);
+    elm("div", "pth", osPath(rel), box);
+    var row = elm("div", "pc-row2", null, box);
+    OPEN_X[ext] && f && (elm("button", "pc-btn sm", t("ptOpen"), row).onclick = function () {
+      var u = URL.createObjectURL(f);
+      OPENED.push(u); window.open(u, "_blank");
+      PRO.n ? PRO.n.open++ : MAPN.open++;
+    });
+    var cp = elm("button", "pc-btn b2 sm", t("ptCopy"), row), hint = elm("p", "pc-s", t("ptOsX"), box);
+    hint.hidden = true;
+    cp.onclick = function () {
+      var v = osPath(rel);
+      MAPN.copy++;
+      (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () { cp.textContent = t("ptCopied"); hint.hidden = !(WINP && (abs || base)); }).catch(function () { prompt("", v); });
+    };
+    if (!OPEN_X[ext]) elm("p", "pc-s", t("ptNoOpen"), box);
+    else if (!f) {
+      elm("p", "pc-s", t(CARD.miss === p ? "ptNotFound" : "ptPickX"), box);
+      elm("button", "pc-btn b2 sm", t("ptPick", { name: root }), box).onclick = function () { RE.want = p; $("fRe").click(); };
+    }
+    if (abs) return;
+    var lk = elm("button", "pc-quiet", t(base ? "ptBaseEdit" : "ptBase", { name: root }), box), form = elm("div", "pc-row2", null, box),
+      inp = elm("input", "pc-in", null, form), ok = elm("button", "pc-btn sm", t("ptBaseOk"), form);
+    form.hidden = true; inp.value = base; inp.placeholder = t("ptBasePh"); inp.spellcheck = false;
+    lk.onclick = function () { form.hidden = !form.hidden; form.hidden || inp.focus(); };
+    ok.onclick = function () {
+      var v = inp.value.trim().replace(/^"+|"+$/g, "");
+      v ? ls.set("tabiPcBase:" + root, v) : (function () { try { localStorage.removeItem("tabiPcBase:" + root); } catch (e) {} })();
+      cardView(p);
+    };
+    inp.onkeydown = function (e) { e.key === "Enter" && ok.onclick(); };
+  }
+  // Папка снова (после перезагрузки браузер забывает выбранные файлы): страница находит файлы точек по пути и имени,
+  // ничего не открывая.
+  $("fRe").onchange = function () {
+    var list = Array.prototype.slice.call(this.files || []), byName = new Map();
+    this.value = "";
+    list.forEach(function (f) { var a = byName.get(f.name); a ? a.push(f) : byName.set(f.name, [f]); });
+    A.pts.forEach(function (p) {
+      var R0 = ptPath(p);
+      if (!R0 || FILES.has(R0)) return;
+      (byName.get(p.fn) || []).some(function (f) { var r = relOf(f); if (R0 === r || R0.slice(-r.length - 1) === "/" + r) { FILES.set(R0, f); return true; } return false; });
+    });
+    var p = RE.want || CARD.cur;
+    RE.want = null;
+    if (p && CARD.cur === p) { CARD.miss = FILES.has(ptPath(p)) ? null : p; cardView(p); }
+  };
+  // Уход со страницы во время проверки (22.11.2026, слово Андрея: переход по вкладке сайта, ко входу или в Telegram
+  // прерывал проверку диска, и её приходилось начинать заново): браузер спрашивает своим окном, уйти ли со страницы, —
+  // пока он собирает список файлов, пока идёт чтение и пока итог не закрыт кнопкой «Готово». Готовый итог хранится в
+  // браузере и уходом не теряется.
+  window.addEventListener("beforeunload", function (e) {
+    if (!(picking || RUN.on || revealing)) return;
+    e.preventDefault();
+    e.returnValue = "";
+    return "";
+  });
+  window.addEventListener("pagehide", function () {
+    (MAPN.card || MAPN.open || MAPN.copy) && statSend({ k: "mapcard", card: MAPN.card, open: MAPN.open, copy: MAPN.copy });
+    MAPN = { card: 0, open: 0, copy: 0 };
+    PRO.on && proClose();
+  });
+  proIcon();
+
   // ===== Разбор папки =====
   var MSG = /^(IMG|VID|AUD|PTT)-\d{8}-WA\d+|^photo_\d{4}-\d\d-\d\d_\d\d-\d\d-\d\d|^video_\d{4}-\d\d-\d\d_\d\d-\d\d-\d\d|^FB_IMG_|^received_\d+|^IMG_\d{8}_\d{6}_\d{3}\./i,
     SHOT = /screenshot|screen shot|снимок экрана|скриншот|bildschirmfoto|capture d.écran|captura de pantalla|schermata|스크린샷|スクリーンショット/i,
-    VIDEO = { mp4: 1, mov: 1, m4v: 1, "3gp": 1, "3g2": 1 };
+    VIDEO = { mp4: 1, mov: 1, m4v: 1, "3gp": 1, "3g2": 1 },
+    PIXX = { jpg: 1, jpeg: 1, jpe: 1, jfif: 1, png: 1, webp: 1, heic: 1, heif: 1, hif: 1, avif: 1 };
   // Описание снимка Google Фото (Google Takeout): «IMG_1.JPG.json», «IMG_1.JPG.supplemental-metadata.json», имя бывает
   // обрезано до 46 знаков. Ключ — папка и имя снимка.
   function sideKey(dir, name) { return dir + "/" + String(name).toLowerCase(); }
@@ -1940,7 +2556,7 @@ main.pc{position:relative}
       $("prog").textContent = t("tlReading");
       return f.text().then(function (s) {
         var got = tlParse(JSON.parse(s)), d = dirOf(f), n = 0;
-        got.forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push([Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d]); n++; } });
+        got.forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push(mkPt(Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d, f)); n++; } });
         WHY.tl = (WHY.tl || 0) + n;
       }).catch(function () { RUN.err++; }).then(next);
     };
@@ -2007,7 +2623,7 @@ main.pc{position:relative}
       return f.text().then(function (s) {
         var cr = ext === "gpx" ? /<gpx\b[^>]*\bcreator\s*=\s*["']([^"']{1,40})/i.exec(s) : ext === "tcx" ? /<Creator\b[\s\S]*?<Name>([^<]{1,40})</i.exec(s) : null;
         var dev = devOf({ mk: cr ? cr[1].trim() : "", md: ext === "geojson" ? "GeoJSON" : ext.toUpperCase(), sn: "" }), d = dirOf(f), n = 0;
-        trkParse(s, ext).forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push([Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d]); n++; } });
+        trkParse(s, ext).forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push(mkPt(Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d, f)); n++; } });
         WHY.trk = (WHY.trk || 0) + n;
       }).catch(function () { RUN.err++; }).then(next);
     };
@@ -2108,6 +2724,8 @@ main.pc{position:relative}
     show("resNone", !info.pts);
     tiles($("resChk"), [[info.read, "lblRead"], [info.place, "lblPlace"]], false);
     renderWhy();
+    show("tinyX", WHY.tiny > 0); $("tinyX").textContent = WHY.tiny ? t("whyTiny", { n: num(WHY.tiny) }) : "";
+    show("heldX", info.held > 0); $("heldX").textContent = info.held ? t("heldX", { n: num(info.held) }) : "";
     var d = $("resDlg"), fin = function () { d.removeEventListener("close", fin); done && done(); };
     d.addEventListener("close", fin);
     d.showModal ? d.showModal() : d.setAttribute("open", "");
@@ -2129,7 +2747,10 @@ main.pc{position:relative}
     return same && first ? first : "";
   }
   function run(list, seenN) {
-    RUN.t0 = performance.now(); RUN.err = 0; RUN.on = true;
+    RUN.t0 = performance.now(); RUN.err = 0; RUN.on = true; RUN.ever = true;
+    // Устройства, у которых есть точки вне папок программ (в итоге и в этой проверке): их точки из папок программ — свои.
+    RUN.own = new Set();
+    A.pts.forEach(function (p) { p[3] >= 0 && RUN.own.add(p[3]); });
     // Причины «без места» и числа — у каждой проверки свои: окно итога говорит о выбранной папке.
     WHY = { cam: {}, camN: 0, shot: 0, msg: 0, gone: 0, edit: 0, video: 0, fmt: {}, side: 0, files: 0, place: 0 };
     var rname = runName(list);
@@ -2145,12 +2766,13 @@ main.pc{position:relative}
     whole && (list = list.filter(function (f) { return !f.tabiSkip; }));
     WHY.whole = !!(WHY.whole || whole);
     $("sysX").textContent = t("wholeX"); show("sysX", whole);
-    var side = sideMap(list), tlFiles = list.filter(isTimeline), trkFiles = list.filter(isTrack);
+    var side = sideMap(list), userFirst = function (a) { return a.filter(function (f) { return !f.tabiSys; }).concat(a.filter(function (f) { return f.tabiSys; })); },
+      tlFiles = userFirst(list.filter(isTimeline)), trkFiles = userFirst(list.filter(isTrack));
     var files = list.filter(function (f) { var x = extOf(f); return EXT[x] || OTHER[x]; });
     // Папки человека — первыми, системные — последними (порядок внутри каждой части прежний).
     files = files.filter(function (f) { return !f.tabiSys; }).concat(files.filter(function (f) { return f.tabiSys; }));
     err(null);
-    if (!files.length && !tlFiles.length && !trkFiles.length) { hintsOn(false); A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); runSay(rname, seenN || list.length, 0, 0); show("vDone", true); return; }
+    if (!files.length && !tlFiles.length && !trkFiles.length) { hintsOn(false); A.none = !A.pts.length; $("done").textContent = A.none ? t("none") : ""; show("done", A.none); runSay(rname, seenN || list.length, 0, 0); show("vDone", true); RUN.on = false; return; }
     show("vPick", false); show("vDone", false); show("vWork", true); hintsOn(true);
     $("barIn").style.width = "0%";
     $("when").textContent = "";
@@ -2201,7 +2823,7 @@ main.pc{position:relative}
     };
     var liveFlush = function () {
       liveQ = liveQ.then(function () { return geo(); }).then(function () {
-        var add = pts.slice(liveI).filter(function (p) { return !seenPt.has(p[0] + "," + p[1] + "," + p[2]) && !LOOSE.has(loose(p)); });
+        var add = pts.slice(liveI).filter(function (p) { return !seenPt.has(p[0] + "," + p[1] + "," + p[2]) && !LOOSE.has(loose(p)) && !holdIt(p); });
         liveI = pts.length;
         return liveTake(add).then(function () { add.length && liveShow(); });
       }).catch(function () {});
@@ -2209,7 +2831,7 @@ main.pc{position:relative}
     };
     var liveT = setInterval(liveFlush, 1500);
     var runEnd = function () {
-      revealing = false; statGoal = null;
+      revealing = false; statGoal = null; RUN.on = false;
       A.shown = A.pts.length;
       resort && renderLists();
       mapDirty = true; drawMap();
@@ -2235,11 +2857,15 @@ main.pc{position:relative}
         });
       }).then(function (r) {
         done++;
+        // Значок, миниатюра или тестовая картинка (22.11.2026, план Андрея): меньше 320 пикселей по длинной стороне — не
+        // снимок и не учитывается; в итоге — строка их числа.
+        var px = r && PIXX[x] ? Math.max(r.w || r.pw || 0, r.h || r.ph || 0) : 0;
+        if (px > 0 && px < 320) { WHY.tiny = (WHY.tiny || 0) + 1; done % 25 === 0 && prog(); return worker(); }
         var place = r && isFinite(r.lat) && isFinite(r.lng) && !(Math.abs(r.lat) < 1e-6 && Math.abs(r.lng) < 1e-6) && Math.abs(r.lat) <= 90 && Math.abs(r.lng) <= 180;
         var at = r ? taken(r) : 0;
         place ? (f.tabiSys ? (WHY.sysFiles = (WHY.sysFiles || 0) + 1, WHY.sysPlace = (WHY.sysPlace || 0) + 1) : (WHY.place++, WHY.files++, r.side && WHY.side++)) : why(f, x, r);
         if (place && at >= 631152000000 && at <= now + 86400000 && !(r.alt > 9000) && !(r.speed > 92))
-          pts.push([Math.round(r.lat * 1e5) / 1e5, Math.round(r.lng * 1e5) / 1e5, Math.min(at, now), devOf(r), dirOf(f)]);
+          pts.push(mkPt(Math.round(r.lat * 1e5) / 1e5, Math.round(r.lng * 1e5) / 1e5, Math.min(at, now), devOf(r), dirOf(f), f));
         done % 25 === 0 && prog();
         return worker();
       });
@@ -2260,7 +2886,11 @@ main.pc{position:relative}
       // Уже показанное — точка этого разбора или сохранённая в учётной записи (там время до секунды или минуты) — второй раз
       // не добавляется.
       kept = kept.filter(function (p) { var k = p[0] + "," + p[1] + "," + p[2], lk = loose(p); if (seenPt.has(k) || LOOSE.has(lk)) return false; seenPt.add(k); LOOSE.add(lk); return true; });
-      var info = { name: rname, read: files.length + tlFiles.length + trkFiles.length, place: pts.length, pts: kept.length };
+      // Найденное только в папках программ — в отложенное (A.held), не в итог.
+      var held = kept.filter(holdIt);
+      kept = kept.filter(function (p) { return !holdIt(p); });
+      A.held = A.held.concat(held); WHY.held = held.length;
+      var info = { name: rname, read: files.length + tlFiles.length + trkFiles.length, place: pts.length, pts: kept.length, held: held.length };
       hintsOn(false);
       // Показанное по ходу, но не вошедшее в итог (серия кадров), уходит с карты; страны и города остаются — снимок там был.
       var keptSet = new Set(kept);
@@ -2269,7 +2899,8 @@ main.pc{position:relative}
         A.shown = A.pts.length; mapDirty = true; shell(); renderStats(); schedule();
         show("vWork", false);
         statScan();
-        return showResult(info, null, function () { A.none = !A.pts.length; A.pts.length ? show("vDone", true) : show("vPick", true); });
+        held.length && (keepPut(), renderDevs());
+        return showResult(info, null, function () { RUN.on = false; A.none = !A.pts.length; A.pts.length ? show("vDone", true) : show("vPick", true); renderDevs(); });
       }
       A.none = false; show("done", false);
       $("prog").textContent = t("loadingMap");
@@ -2600,7 +3231,7 @@ main.pc{position:relative}
       k: "scan", files: WHY.files, place: WHY.place, pts: A.pts.length, cc: found.countries.map(function (c) { return c.cc; }),
       regions: found.regions, cities: found.cities.length, days: found.days.size, km: Math.round(found.km / 1000),
       y0: T0 ? new Date(T0).getFullYear() : null, y1: T1 ? new Date(T1).getFullYear() : null,
-      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0, sys: WHY.sysFiles || 0, sysPlace: WHY.sysPlace || 0, whole: !!WHY.whole },
+      why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0, sys: WHY.sysFiles || 0, sysPlace: WHY.sysPlace || 0, tiny: WHY.tiny || 0, held: WHY.held || 0, whole: !!WHY.whole },
       fmts: WHY.fmt, cams: cams, ms: Math.round(performance.now() - RUN.t0), err: RUN.err, src: RUN.src, signed: !!S
     });
     RUN.t0 = 0;
@@ -2804,7 +3435,7 @@ main.pc{position:relative}
     var box = $("devBox"), list = $("devList");
     if (!box) return;
     if (revealing) return void (box.hidden = true);
-    if (!A.shown || !A.pts.length) { $("devList").innerHTML = ""; return void (box.hidden = !renderTrash()); }
+    if (!A.shown || !A.pts.length) { list.innerHTML = ""; var h0 = heldRows(list); return void (box.hidden = !(renderTrash() + h0)); }
     var rows = {}, order = [], ownBy = {};
     A.pts.forEach(function (p) {
       var d = DEV.list[p[3]];
@@ -2871,7 +3502,43 @@ main.pc{position:relative}
       del.onclick = function () { ask(t("dlgDevT"), t("dlgDevX", { name: nm }), t("delDev"), function () { devDrop(key, r.name || ""); }); };
       list.appendChild(it);
     });
-    box.hidden = !(renderTrash() + order.length);
+    var h1 = heldRows(list);
+    box.hidden = !(renderTrash() + order.length + h1);
+  }
+  // Строки отложенного (найденного только в папках программ): устройство, число точек, годы и «Учесть».
+  function heldRows(list) {
+    if (!A.held.length) return 0;
+    var rows = {}, order = [];
+    A.held.forEach(function (p) {
+      var k = heldKey(p), r = rows[k];
+      if (!r) { r = rows[k] = { name: k === "x" ? "" : camName(DEV.list[p[3]]), n: 0, y0: 9999, y1: 0 }; order.push(k); }
+      r.n++;
+      var y = new Date(p[2]).getFullYear();
+      y < r.y0 && (r.y0 = y); y > r.y1 && (r.y1 = y);
+    });
+    order.sort(function (a, b) { return rows[b].n - rows[a].n; });
+    order.forEach(function (k) {
+      var r = rows[k], it = document.createElement("div");
+      it.className = "pc-dev held";
+      it.innerHTML = '<div class="bd"><div class="hd"><span class="nm"></span><span class="n"></span></div><div class="ln"></div></div><button class="pc-btn sm" type="button"></button>';
+      var bd = it.children[0], b = it.children[1];
+      bd.children[0].children[0].textContent = r.name || t("devNone");
+      bd.children[0].children[1].textContent = t("devPts", { n: num(r.n) });
+      bd.children[1].textContent = (r.y0 === r.y1 ? String(r.y0) : r.y0 + "–" + r.y1) + " · " + t("devSys");
+      b.textContent = t("devTake");
+      b.onclick = function () { b.disabled = true; heldTake(k); };
+      list.appendChild(it);
+    });
+    return order.length;
+  }
+  // «Учесть»: точки устройства из отложенного — в итог (плавным показом, как возврат из корзины), затем сохранение.
+  function heldTake(k) {
+    var add = A.held.filter(function (p) { return heldKey(p) === k; });
+    if (!add.length) return;
+    A.held = A.held.filter(function (p) { return heldKey(p) !== k; });
+    statSend({ k: "held", n: add.length });
+    A.pts.length || show("vPick", false);
+    geo().then(function () { return reveal(add, 500); });
   }
   // ===== Корзина удалённых устройств (21.11.2026, план Андрея: удалённое устройство можно вернуть) =====
   // Браузер хранит точки каждого удалённого устройства 30 дней (TRASH.loc, вместе с итогом); у сохранённого итога сервер
@@ -2915,7 +3582,7 @@ main.pc{position:relative}
   function trashBack(x, btn) {
     btn.disabled = true;
     var loc = x.loc || TRASH.loc.filter(function (e) { return e.sid && e.sid === x.sid; })[0] || null;
-    var pts = loc ? loc.pts.map(function (q) { var p = q.slice(0, 5); q[5] && (p.sent = true); return p; }) : [];
+    var pts = loc ? loc.pts.map(function (q) { var p = q.slice(0, 5); q[5] && (p.sent = true); q[6] && (p.fn = q[6]); q[7] && (p.fp = q[7]); return p; }) : [];
     var srv = x.sid && S ? fresh().then(function (s) {
       if (!s) throw new Error("net");
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify({ op: "restore", id: x.sid }) })
@@ -2940,15 +3607,21 @@ main.pc{position:relative}
   // сразу, числа плавно пересчитываются без перезагрузки. Устройство из реестра — «не брать» (forget); точки без устройства
   // в реестре — скрыть на сервере по ключам точек (hide), чтобы они не вернулись из учётной записи.
   function devDrop(key, label) {
-    var gone = A.pts.filter(function (p) { return p._k === key; }), left = A.pts.filter(function (p) { return p._k !== key; });
     $("dlgNo").onclick();
+    dropPts(A.pts.filter(function (p) { return p._k === key; }), label, /^r(\d+)$/.exec(key));
+  }
+  // Точки в корзину (22.11.2026: устройство, выделенная область или одна точка — один механизм). Устройство из реестра —
+  // «не брать» (forget); остальные сохранённые точки — скрыть на сервере по ключам точек (hide).
+  function dropPts(gone, label, rid) {
     if (!gone.length) return;
-    var rid = /^r(\d+)$/.exec(key), sent = gone.filter(function (p) { return p.sent || p.acc; });
+    var goneSet = new Set(gone), left = A.pts.filter(function (p) { return !goneSet.has(p); }), sent = gone.filter(function (p) { return p.sent || p.acc; });
     // В корзину (21.11.2026, план Андрея): точки этого браузера; у сохранённого итога сервер кладёт в корзину своё.
     var ent = { id: Date.now(), at: Date.now(), label: label || "", sid: 0,
-      pts: gone.filter(function (p) { return !p.acc; }).map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }) };
+      pts: gone.filter(function (p) { return !p.acc; }).map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0, p.fn || "", p.fp || ""]; }) };
     TRASH.loc = trashKeep([ent].concat(TRASH.loc));
     A.pts = left;
+    PRO.sel && (PRO.sel = PRO.sel.filter(function (p) { return !goneSet.has(p); }), PRO.sel.length || (PRO.sel = null));
+    CARD.cur && goneSet.has(CARD.cur) && cardClose();
     if (S && sent.length) fresh().then(function (s) {
       if (!s) return;
       var call = function (b) {
@@ -2987,6 +3660,7 @@ main.pc{position:relative}
     A.shown = A.pts.length;
     T0 = A.pts.length ? A.pts[0][2] : 0; T1 = A.pts.length ? A.pts[A.pts.length - 1][2] : 1;
     renderLists(); renderDevs(); renderLegend(); renderSave();
+    PRO.on && (A.pts.length ? proRender() : proClose());
     mapDirty = true; drawMap();
     if (!A.pts.length) { show("vDone", false); show("vPick", true); show("routeBox", false); }
     var to = statNums(), t0 = performance.now();
@@ -3055,7 +3729,8 @@ main.pc{position:relative}
       return new Promise(function (ok) {
         var tx = db.transaction("st", "readwrite");
         var own = A.pts.filter(function (p) { return !p.acc; });
-        tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
+        tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0, p.fn || "", p.fp || ""]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
+          held: A.held.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], 0, p.fn || "", p.fp || ""]; }),
           saved: saveSt.state === "saved", special: saveSt.special || null, trash: TRASH.loc,
           // Итог, показанный при входе, принадлежит этой учётной записи (21.11.2026): другой учётной записи и без входа он не
           // показывается и стирается.
@@ -3151,7 +3826,9 @@ main.pc{position:relative}
     DEV.by = {}; DIR.by = {};
     DEV.list.forEach(function (d, i) { DEV.by[(d.mk + "|" + d.md + "|" + d.sn).toLowerCase()] = i; });
     DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
-    var pts = (st.pts || []).map(function (p) { var q = p.slice(0, 5); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
+    var back = function (p) { var q = p.slice(0, 5); p[6] && (q.fn = p[6]); p[7] && (q.fp = p[7]); return q; };
+    A.held = (st.held || []).map(function (p) { var q = back(p); q.sys = 1; seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
+    var pts = (st.pts || []).map(function (p) { var q = back(p); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     pts = pts.concat(accMerge(j, pts));
     if (!pts.length) return Promise.resolve(false);
     st.saved && (saveSt.state = "saved");
@@ -3321,7 +3998,7 @@ main.pc{position:relative}
         })
         .then(function (shown) {
           // Пока открытие ждало учётную запись, человек мог уже выбрать файлы — тогда его разбор не трогаем.
-          if (RUN.on) return;
+          if (RUN.ever) return;
           unload(); shown || (show("vWork", false), show("vPick", true)); renderSave(); renderDevs(); appInMaybe();
         });
     }
