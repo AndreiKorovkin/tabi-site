@@ -238,6 +238,35 @@ html.pc-pro-on,html.pc-pro-on body{overflow:hidden}
 .pc-selbox[hidden]{display:none}
 .pc-map canvas.sel{cursor:crosshair}
 .pc-dev.held .nm{color:var(--sub)}
+/* Профессиональный режим, второй шаг (22.11.2026) */
+.pc-pro-side details{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.pc-pro-side details>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pc-pro-side details>summary::-webkit-details-marker{display:none}
+.pc-pro-side details>summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--sub);border-bottom:2px solid var(--sub);transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.pc-pro-side details[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+.pc-pro-side details>*+*{margin-top:10px}
+.pc-pro-file b img{width:18px;height:13px;border-radius:2px;object-fit:cover;margin-right:7px;vertical-align:-1px;display:inline-block;box-shadow:0 0 0 1px var(--line)}
+.pc-yrs{display:flex;flex-wrap:wrap;gap:6px}
+.pc-yrs[hidden]{display:none}
+.pc-yr{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 9px 3px 6px;font-variant-numeric:tabular-nums}
+.pc-yr i{width:10px;height:10px;border-radius:50%}
+.pc-tabs{display:flex;gap:6px}
+.pc-tabs button{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--sub);font:inherit;font-size:13.5px;font-weight:650;border-radius:999px;padding:6px 12px;cursor:pointer}
+.pc-tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.pc-sel{box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font:inherit;font-size:14px;background:var(--bg);color:var(--ink)}
+.pc-lbl{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;color:var(--ink)}
+.pc-183{margin-left:8px;font-size:11px;font-weight:800;color:var(--on-accent);background:var(--accent);border-radius:6px;padding:1px 5px;vertical-align:1px}
+.pc-s.warn,.pc-t.warn{color:var(--accent);font-weight:650}
+.pc-play{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:2;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:999px;padding:7px 16px;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;pointer-events:none;white-space:nowrap}
+.pc-play[hidden]{display:none}
+#stMap{position:absolute!important;inset:0;z-index:0;overflow:hidden}
+#stMap[hidden]{display:none}
+#map{position:relative;z-index:1}
+.pc-zoom{z-index:3}
+.pc-tip{z-index:4}
+.pc-attr{position:absolute;right:8px;bottom:6px;z-index:3;font-size:11px;line-height:1.4;color:var(--sub);background:color-mix(in srgb,var(--panel) 85%,transparent);border-radius:6px;padding:2px 7px}
+.pc-attr[hidden]{display:none}
+.pc-attr a{color:inherit}
 .pc-over{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(6px);font-size:24px;font-weight:800;color:var(--accent);pointer-events:none}
 @keyframes pcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* Открытие (20.11.2026, Андрей: сначала мелькал вид «до разбора» с вопросами): пока идут итог браузера и учётная запись —
@@ -369,6 +398,7 @@ main.pc{position:relative}
 <section class="pc-card pc-route" id="routeBox" hidden>
   <h2 id="hRoute"></h2>
   <div class="pc-map" id="mapBox">
+    <div class="pc-st" id="stMap" hidden></div>
     <canvas id="map"></canvas>
     <div class="pc-zoom">
       <button type="button" id="zIn">+</button>
@@ -378,6 +408,8 @@ main.pc{position:relative}
     </div>
     <div class="pc-tip" id="tip" hidden></div>
     <div class="pc-pt" id="ptCard" hidden></div>
+    <div class="pc-play" id="playLbl" hidden></div>
+    <div class="pc-attr" id="stAttr" hidden><a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></div>
     <div class="pc-selbox" id="selBox" hidden></div>
   </div>
   <div class="pc-legend" id="legend" hidden><span id="lgA"></span><i id="lgBar"></i><span id="lgB"></span></div>
@@ -450,13 +482,26 @@ main.pc{position:relative}
     <div class="pc-pro-hd"><h2 id="proT"></h2><button type="button" class="pc-pro-x" id="proX"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <section><h3 id="proStH"></h3><div class="pc-pro-st" id="proSt"></div><p class="pc-s" id="proSpan"></p></section>
     <section id="proDaysBox"><h3 id="proDaysH"></h3><div class="pc-pro-list" id="proDays"></div><button type="button" class="pc-quiet" id="proDaysMore" hidden></button></section>
-    <section><h3 id="proViewH"></h3><label class="pc-chk"><input type="checkbox" id="proLines" checked><span id="proLinesL"></span></label></section>
+    <section><h3 id="proQH"></h3><input class="pc-in" type="search" id="proQ" autocomplete="off" spellcheck="false"><p class="pc-s" id="proQN" hidden></p><div class="pc-pro-list" id="proQList"></div></section>
+    <section><h3 id="proViewH"></h3><label class="pc-chk"><input type="checkbox" id="proLines" checked><span id="proLinesL"></span></label>
+      <label class="pc-chk"><input type="checkbox" id="proHeat"><span id="proHeatL"></span></label>
+      <label class="pc-chk"><input type="checkbox" id="proByYear"><span id="proByYearL"></span></label><div class="pc-yrs" id="proYears" hidden></div>
+      <label class="pc-chk"><input type="checkbox" id="proStreets"><span id="proStreetsL"></span></label><p class="pc-s" id="proStreetsX" hidden></p></section>
+    <section><h3 id="proPlayH"></h3><div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proPlay"></button><button type="button" class="pc-quiet" id="proStop" hidden></button></div>
+      <label class="pc-lbl"><span id="proSpeedL"></span><select class="pc-sel" id="proSpeed"><option value="180000" id="proSpS"></option><option value="60000" id="proSpN" selected></option><option value="20000" id="proSpF"></option></select></label></section>
     <section id="proTimeBox"><h3 id="proTimeH"></h3><div class="pc-range"><i><b id="proRf"></b></i><input type="range" id="proRa" min="0" max="0" value="0" step="1"><input type="range" id="proRb" min="0" max="0" value="0" step="1"></div><div class="pc-range-l"><span id="proRA"></span><span id="proRB"></span></div></section>
     <section><h3 id="proDevH"></h3><div class="pc-pro-list" id="proDevs"></div></section>
     <section><h3 id="proCcH"></h3><div class="pc-pro-list" id="proCcs"></div></section>
     <section><h3 id="proSelH"></h3><button type="button" class="pc-btn b2 sm" id="proSel"></button><p class="pc-s" id="proSelGo" hidden></p>
       <div class="pc-pro-selb" id="proSelBox" hidden><p class="pc-t" id="proSelN"></p><div class="pc-pro-list" id="proSelList"></div><p class="pc-s" id="proSelMore" hidden></p>
         <div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proSelClear"></button></div><button type="button" class="pc-quiet" id="proSelDel"></button></div></section>
+    <details id="proTripsBox"><summary><h3 id="proTripsH"></h3></summary><p class="pc-s" id="proTripsX"></p><p class="pc-t" id="proTripsN"></p><div class="pc-pro-list" id="proTrips"></div></details>
+    <details id="proFirstBox"><summary><h3 id="proFirstH"></h3></summary><div id="proFirstY" style="display:grid;gap:2px"></div><div class="pc-tabs"><button type="button" id="proFirstCc" class="on"></button><button type="button" id="proFirstCt"></button></div><div class="pc-pro-list" id="proFirst"></div></details>
+    <details id="proVisaBox"><summary><h3 id="proVisaH"></h3></summary>
+      <label class="pc-lbl"><span id="proVisaYL"></span><select class="pc-sel" id="proVisaY"></select></label><div class="pc-pro-list" id="proVisa"></div>
+      <h3 id="proSchH"></h3><label class="pc-lbl"><span id="proSchAtL"></span><input class="pc-sel" type="date" id="proSchAt"></label><p class="pc-t" id="proSchN"></p><p class="pc-s" id="proSchMax"></p>
+      <p class="pc-s" id="proVisaNote"></p><button type="button" class="pc-btn b2 sm" id="proVisaCsv"></button></details>
+    <details id="proJumpBox"><summary><h3 id="proJumpH"></h3></summary><p class="pc-s" id="proJumpX"></p><p class="pc-t" id="proJumpN"></p><div class="pc-pro-list" id="proJumps"></div><button type="button" class="pc-quiet" id="proJumpDel" hidden></button></details>
     <section><h3 id="proExpH"></h3><div class="pc-row3"><button type="button" class="pc-btn b2 sm" id="proExpGPX">GPX</button><button type="button" class="pc-btn b2 sm" id="proExpKML">KML</button><button type="button" class="pc-btn b2 sm" id="proExpCSV">CSV</button></div><p class="pc-s" id="proExpX"></p></section>
     <button type="button" class="pc-quiet" id="proReset" hidden></button>
   </aside>
@@ -682,7 +727,51 @@ main.pc{position:relative}
     "ptAcc": {"ru": "Точка из учётной записи: имя её файла хранится только в браузере, где шла проверка.", "en": "A point from your account: its file name is kept only in the browser where the check ran.", "cs": "Bod z účtu: název jeho souboru je uložen jen v prohlížeči, kde kontrola proběhla.", "de": "Ein Punkt aus Ihrem Konto: Der Dateiname ist nur in dem Browser gespeichert, in dem die Prüfung lief.", "fr": "Point issu de votre compte : le nom de son fichier n’est conservé que dans le navigateur où l’analyse a eu lieu.", "es": "Un punto de tu cuenta: el nombre de su archivo solo se guarda en el navegador donde se hizo la revisión.", "it": "Un punto del Suo account: il nome del file è conservato solo nel browser in cui è stata fatta la verifica.", "pt": "Um ponto da sua conta: o nome do arquivo fica guardado só no navegador onde a verificação foi feita.", "ja": "アカウントの地点です。ファイル名は、確認を行ったブラウザーにだけ保存されています。", "ko": "계정의 지점입니다. 파일 이름은 확인을 진행한 브라우저에만 저장됩니다."},
     "ptDel": {"ru": "Удалить точку", "en": "Delete the point", "cs": "Smazat bod", "de": "Punkt löschen", "fr": "Supprimer le point", "es": "Eliminar el punto", "it": "Elimina il punto", "pt": "Excluir o ponto", "ja": "地点を削除", "ko": "지점 삭제"},
     "ptDelT": {"ru": "Удалить точку?", "en": "Delete the point?", "cs": "Smazat bod?", "de": "Punkt löschen?", "fr": "Supprimer le point ?", "es": "¿Eliminar el punto?", "it": "Eliminare il punto?", "pt": "Excluir o ponto?", "ja": "地点を削除しますか？", "ko": "지점을 삭제할까요?"},
-    "ptDelX": {"ru": "Точка уйдёт в корзину и перестанет учитываться. Вернуть её можно в течение 30 дней в блоке «Устройства».", "en": "The point will go to the bin and stop counting. You can restore it for 30 days in Devices.", "cs": "Bod se přesune do koše a přestane se započítávat. Vrátit ho můžete do 30 dnů v části „Zařízení“.", "de": "Der Punkt kommt in den Papierkorb und zählt nicht mehr. Wiederherstellen können Sie ihn 30 Tage lang unter „Geräte“.", "fr": "Le point ira à la corbeille et ne sera plus compté. Vous pourrez le restaurer pendant 30 jours dans « Appareils ».", "es": "El punto irá a la papelera y dejará de contar. Puedes recuperarlo durante 30 días en «Dispositivos».", "it": "Il punto andrà nel cestino e non verrà più contato. Può ripristinarlo per 30 giorni in «Dispositivi».", "pt": "O ponto irá para a lixeira e deixará de contar. Você pode restaurá-lo por 30 dias em “Dispositivos”.", "ja": "地点はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "지점은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."}
+    "ptDelX": {"ru": "Точка уйдёт в корзину и перестанет учитываться. Вернуть её можно в течение 30 дней в блоке «Устройства».", "en": "The point will go to the bin and stop counting. You can restore it for 30 days in Devices.", "cs": "Bod se přesune do koše a přestane se započítávat. Vrátit ho můžete do 30 dnů v části „Zařízení“.", "de": "Der Punkt kommt in den Papierkorb und zählt nicht mehr. Wiederherstellen können Sie ihn 30 Tage lang unter „Geräte“.", "fr": "Le point ira à la corbeille et ne sera plus compté. Vous pourrez le restaurer pendant 30 jours dans « Appareils ».", "es": "El punto irá a la papelera y dejará de contar. Puedes recuperarlo durante 30 días en «Dispositivos».", "it": "Il punto andrà nel cestino e non verrà più contato. Può ripristinarlo per 30 giorni in «Dispositivi».", "pt": "O ponto irá para a lixeira e deixará de contar. Você pode restaurá-lo por 30 dias em “Dispositivos”.", "ja": "地点はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "지점은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."},
+    "proSearchH": {"ru": "Поиск", "en": "Search", "cs": "Hledání", "de": "Suche", "fr": "Recherche", "es": "Búsqueda", "it": "Ricerca", "pt": "Pesquisa", "ja": "検索", "ko": "검색"},
+    "proSearchPh": {"ru": "Имя файла, город, страна или дата", "en": "File name, city, country or date", "cs": "Název souboru, město, země nebo datum", "de": "Dateiname, Stadt, Land oder Datum", "fr": "Nom de fichier, ville, pays ou date", "es": "Nombre de archivo, ciudad, país o fecha", "it": "Nome del file, città, paese o data", "pt": "Nome do arquivo, cidade, país ou data", "ja": "ファイル名、都市、国、日付", "ko": "파일 이름, 도시, 국가 또는 날짜"},
+    "proFound": {"ru": "Найдено: {n}", "en": "Found: {n}", "cs": "Nalezeno: {n}", "de": "Gefunden: {n}", "fr": "Trouvé : {n}", "es": "Encontrado: {n}", "it": "Trovati: {n}", "pt": "Encontrado: {n}", "ja": "見つかった数：{n}", "ko": "찾은 항목: {n}"},
+    "proNothing": {"ru": "Ничего не найдено.", "en": "Nothing found.", "cs": "Nic nenalezeno.", "de": "Nichts gefunden.", "fr": "Aucun résultat.", "es": "No se encontró nada.", "it": "Nessun risultato.", "pt": "Nada encontrado.", "ja": "見つかりませんでした。", "ko": "찾은 항목이 없습니다."},
+    "proHeat": {"ru": "Тепловая карта вместо точек", "en": "Heat map instead of points", "cs": "Teplotní mapa místo bodů", "de": "Heatmap statt Punkten", "fr": "Carte de chaleur à la place des points", "es": "Mapa de calor en lugar de puntos", "it": "Mappa di calore al posto dei punti", "pt": "Mapa de calor em vez de pontos", "ja": "地点の代わりにヒートマップ", "ko": "지점 대신 히트맵"},
+    "proByYear": {"ru": "Цвет по годам", "en": "Colour by year", "cs": "Barva podle let", "de": "Farbe nach Jahren", "fr": "Couleur par année", "es": "Color por año", "it": "Colore per anno", "pt": "Cor por ano", "ja": "年ごとに色分け", "ko": "연도별 색상"},
+    "proStreets": {"ru": "Улицы и местность", "en": "Streets and terrain", "cs": "Ulice a krajina", "de": "Straßen und Gelände", "fr": "Rues et relief", "es": "Calles y terreno", "it": "Strade e territorio", "pt": "Ruas e terreno", "ja": "道路と地形", "ko": "거리와 지형"},
+    "proStreetsX": {"ru": "Подложку улиц даёт сервер OpenFreeMap: он видит, какие места вы рассматриваете. Ваши файлы и точки туда не уходят.", "en": "The street layer comes from the OpenFreeMap server, which sees which places you are looking at. Your files and points are not sent there.", "cs": "Vrstvu ulic poskytuje server OpenFreeMap: vidí, která místa si prohlížíte. Vaše soubory a body se tam neodesílají.", "de": "Die Straßenebene kommt vom Server OpenFreeMap: Er sieht, welche Orte Sie betrachten. Ihre Dateien und Punkte werden nicht dorthin gesendet.", "fr": "Le fond de rues vient du serveur OpenFreeMap : il voit quels lieux vous regardez. Vos fichiers et vos points n’y sont pas envoyés.", "es": "La capa de calles la da el servidor de OpenFreeMap: ve qué lugares estás mirando. Tus archivos y puntos no se envían allí.", "it": "Lo sfondo delle strade arriva dal server OpenFreeMap: vede quali luoghi sta guardando. I Suoi file e punti non vi vengono inviati.", "pt": "A camada de ruas vem do servidor OpenFreeMap: ele vê quais lugares você está olhando. Seus arquivos e pontos não são enviados para lá.", "ja": "道路の地図は OpenFreeMap のサーバーから届きます。サーバーは見ている場所を知ることができます。ファイルや地点は送信されません。", "ko": "거리 지도는 OpenFreeMap 서버에서 받습니다. 서버는 어떤 곳을 보고 있는지 알 수 있습니다. 파일과 지점은 그곳으로 보내지지 않습니다."},
+    "proPlayH": {"ru": "Проигрывание", "en": "Playback", "cs": "Přehrání", "de": "Wiedergabe", "fr": "Lecture", "es": "Reproducción", "it": "Riproduzione", "pt": "Reprodução", "ja": "再生", "ko": "재생"},
+    "proPlay": {"ru": "Проиграть маршрут", "en": "Play the route", "cs": "Přehrát trasu", "de": "Route abspielen", "fr": "Lire l’itinéraire", "es": "Reproducir la ruta", "it": "Riproduci il percorso", "pt": "Reproduzir o trajeto", "ja": "ルートを再生", "ko": "경로 재생"},
+    "proPause": {"ru": "Пауза", "en": "Pause", "cs": "Pozastavit", "de": "Pause", "fr": "Pause", "es": "Pausa", "it": "Pausa", "pt": "Pausar", "ja": "一時停止", "ko": "일시 정지"},
+    "proResume": {"ru": "Продолжить", "en": "Continue", "cs": "Pokračovat", "de": "Fortsetzen", "fr": "Reprendre", "es": "Continuar", "it": "Continua", "pt": "Continuar", "ja": "再開", "ko": "계속"},
+    "proStop": {"ru": "Остановить", "en": "Stop", "cs": "Zastavit", "de": "Beenden", "fr": "Arrêter", "es": "Detener", "it": "Interrompi", "pt": "Parar", "ja": "停止", "ko": "정지"},
+    "proSpeed": {"ru": "Длительность", "en": "Length", "cs": "Délka", "de": "Dauer", "fr": "Durée", "es": "Duración", "it": "Durata", "pt": "Duração", "ja": "長さ", "ko": "길이"},
+    "proSlow": {"ru": "3 минуты", "en": "3 minutes", "cs": "3 minuty", "de": "3 Minuten", "fr": "3 minutes", "es": "3 minutos", "it": "3 minuti", "pt": "3 minutos", "ja": "3分", "ko": "3분"},
+    "proNormal": {"ru": "1 минута", "en": "1 minute", "cs": "1 minuta", "de": "1 Minute", "fr": "1 minute", "es": "1 minuto", "it": "1 minuto", "pt": "1 minuto", "ja": "1分", "ko": "1분"},
+    "proFast": {"ru": "20 секунд", "en": "20 seconds", "cs": "20 sekund", "de": "20 Sekunden", "fr": "20 secondes", "es": "20 segundos", "it": "20 secondi", "pt": "20 segundos", "ja": "20秒", "ko": "20초"},
+    "proTripsH": {"ru": "Поездки", "en": "Trips", "cs": "Cesty", "de": "Reisen", "fr": "Voyages", "es": "Viajes", "it": "Viaggi", "pt": "Viagens", "ja": "旅行", "ko": "여행"},
+    "proTripsX": {"ru": "Поездка — дни подряд дальше 60 км от дома; дом — город, где в этом году больше всего дней. До двух дней без точек поездку не прерывают.", "en": "A trip is a run of days more than 60 km from home; home is the city with the most days that year. Up to two days without points do not break a trip.", "cs": "Cesta jsou dny po sobě dál než 60 km od domova; domov je město, kde jste ten rok strávili nejvíc dní. Až dva dny bez bodů cestu nepřeruší.", "de": "Eine Reise sind aufeinanderfolgende Tage mehr als 60 km von zu Hause; zu Hause ist die Stadt mit den meisten Tagen in diesem Jahr. Bis zu zwei Tage ohne Punkte unterbrechen eine Reise nicht.", "fr": "Un voyage est une suite de jours à plus de 60 km de chez vous ; chez vous, c’est la ville où vous avez passé le plus de jours cette année-là. Jusqu’à deux jours sans points n’interrompent pas un voyage.", "es": "Un viaje son días seguidos a más de 60 km de casa; casa es la ciudad con más días ese año. Hasta dos días sin puntos no interrumpen el viaje.", "it": "Un viaggio sono giorni consecutivi a più di 60 km da casa; casa è la città con più giorni in quell’anno. Fino a due giorni senza punti non interrompono il viaggio.", "pt": "Uma viagem são dias seguidos a mais de 60 km de casa; casa é a cidade com mais dias naquele ano. Até dois dias sem pontos não interrompem a viagem.", "ja": "旅行とは、自宅から60 km以上離れた日が続く期間です。自宅はその年に最も多くの日を過ごした都市です。地点のない日が2日以内なら旅行は途切れません。", "ko": "여행은 집에서 60km 넘게 떨어진 날이 이어지는 기간입니다. 집은 그해 가장 많은 날을 보낸 도시입니다. 지점이 없는 날이 이틀 이내면 여행은 끊기지 않습니다."},
+    "proTripsN": {"ru": "Поездок: {n}", "en": "Trips: {n}", "cs": "Cest: {n}", "de": "Reisen: {n}", "fr": "Voyages : {n}", "es": "Viajes: {n}", "it": "Viaggi: {n}", "pt": "Viagens: {n}", "ja": "旅行：{n}", "ko": "여행: {n}"},
+    "proTripsNone": {"ru": "Поездок не найдено: нет дней вдали от дома.", "en": "No trips found: there are no days away from home.", "cs": "Žádné cesty: nejsou dny daleko od domova.", "de": "Keine Reisen gefunden: Es gibt keine Tage fern von zu Hause.", "fr": "Aucun voyage trouvé : aucun jour loin de chez vous.", "es": "No se encontraron viajes: no hay días lejos de casa.", "it": "Nessun viaggio trovato: non ci sono giorni lontano da casa.", "pt": "Nenhuma viagem encontrada: não há dias longe de casa.", "ja": "旅行は見つかりません。自宅から離れた日がありません。", "ko": "여행이 없습니다. 집에서 떨어진 날이 없습니다."},
+    "proTripDays": {"ru": "дней: {n}", "en": "days: {n}", "cs": "dní: {n}", "de": "Tage: {n}", "fr": "jours : {n}", "es": "días: {n}", "it": "giorni: {n}", "pt": "dias: {n}", "ja": "日数：{n}", "ko": "일수: {n}"},
+    "proFirstH": {"ru": "Первые посещения", "en": "First visits", "cs": "První návštěvy", "de": "Erste Besuche", "fr": "Premières visites", "es": "Primeras visitas", "it": "Prime visite", "pt": "Primeiras visitas", "ja": "初めての訪問", "ko": "첫 방문"},
+    "proFirstCc": {"ru": "Страны: {n}", "en": "Countries: {n}", "cs": "Země: {n}", "de": "Länder: {n}", "fr": "Pays : {n}", "es": "Países: {n}", "it": "Paesi: {n}", "pt": "Países: {n}", "ja": "国：{n}", "ko": "국가: {n}"},
+    "proFirstCt": {"ru": "Города: {n}", "en": "Cities: {n}", "cs": "Města: {n}", "de": "Städte: {n}", "fr": "Villes : {n}", "es": "Ciudades: {n}", "it": "Città: {n}", "pt": "Cidades: {n}", "ja": "都市：{n}", "ko": "도시: {n}"},
+    "proNewYear": {"ru": "{y}: новых стран — {a}, городов — {b}", "en": "{y}: new countries — {a}, cities — {b}", "cs": "{y}: nových zemí — {a}, měst — {b}", "de": "{y}: neue Länder — {a}, Städte — {b}", "fr": "{y} : nouveaux pays — {a}, villes — {b}", "es": "{y}: países nuevos — {a}, ciudades — {b}", "it": "{y}: nuovi paesi — {a}, città — {b}", "pt": "{y}: países novos — {a}, cidades — {b}", "ja": "{y}：新しい国 {a}、都市 {b}", "ko": "{y}: 새 국가 {a}, 도시 {b}"},
+    "proVisaH": {"ru": "Визы и налоги", "en": "Visas and taxes", "cs": "Víza a daně", "de": "Visa und Steuern", "fr": "Visas et impôts", "es": "Visados e impuestos", "it": "Visti e tasse", "pt": "Vistos e impostos", "ja": "ビザと税金", "ko": "비자와 세금"},
+    "proVisaYear": {"ru": "Дни в странах за год", "en": "Days in countries in the year", "cs": "Dny v zemích za rok", "de": "Tage in Ländern im Jahr", "fr": "Jours par pays dans l’année", "es": "Días en países en el año", "it": "Giorni nei paesi nell’anno", "pt": "Dias em países no ano", "ja": "年間の国別日数", "ko": "연간 국가별 일수"},
+    "proVisa183X": {"ru": "183 дня и больше — порог налогового резидентства во многих странах", "en": "183 days or more is the tax residence threshold in many countries", "cs": "183 dní a více je v mnoha zemích hranice daňové rezidence", "de": "183 Tage oder mehr sind in vielen Ländern die Schwelle der steuerlichen Ansässigkeit", "fr": "183 jours ou plus : le seuil de résidence fiscale dans de nombreux pays", "es": "183 días o más es el umbral de residencia fiscal en muchos países", "it": "183 giorni o più sono la soglia di residenza fiscale in molti paesi", "pt": "183 dias ou mais é o limite de residência fiscal em muitos países", "ja": "183日以上は多くの国で税法上の居住者となる目安です", "ko": "183일 이상은 많은 나라에서 세법상 거주자 기준입니다"},
+    "proSchH": {"ru": "Шенгенская зона: 90 дней из 180", "en": "Schengen area: 90 days in any 180", "cs": "Schengenský prostor: 90 dní ze 180", "de": "Schengen-Raum: 90 Tage in 180", "fr": "Espace Schengen : 90 jours sur 180", "es": "Espacio Schengen: 90 días de cada 180", "it": "Area Schengen: 90 giorni su 180", "pt": "Espaço Schengen: 90 dias em 180", "ja": "シェンゲン圏：180日中90日", "ko": "솅겐 지역: 180일 중 90일"},
+    "proSchAt": {"ru": "На дату", "en": "On the date", "cs": "K datu", "de": "Zum Datum", "fr": "À la date du", "es": "A fecha de", "it": "Alla data", "pt": "Na data", "ja": "基準日", "ko": "기준일"},
+    "proSchN": {"ru": "Дней в Шенгенской зоне за 180 дней по {d}: {n} из 90.", "en": "Days in the Schengen area in the 180 days up to {d}: {n} of 90.", "cs": "Dny v Schengenském prostoru za 180 dní do {d}: {n} z 90.", "de": "Tage im Schengen-Raum in den 180 Tagen bis {d}: {n} von 90.", "fr": "Jours dans l’espace Schengen sur les 180 jours jusqu’au {d} : {n} sur 90.", "es": "Días en el espacio Schengen en los 180 días hasta el {d}: {n} de 90.", "it": "Giorni nell’area Schengen nei 180 giorni fino al {d}: {n} su 90.", "pt": "Dias no espaço Schengen nos 180 dias até {d}: {n} de 90.", "ja": "{d}までの180日間にシェンゲン圏にいた日数：{n}／90", "ko": "{d}까지 180일 동안 솅겐 지역에 있던 날: 90일 중 {n}일"},
+    "proSchMax": {"ru": "Больше всего за любые 180 дней: {n} — в окне по {d}", "en": "Most in any 180 days: {n}, in the window up to {d}", "cs": "Nejvíce za libovolných 180 dní: {n} — v období do {d}", "de": "Höchstwert in beliebigen 180 Tagen: {n}, im Zeitraum bis {d}", "fr": "Maximum sur 180 jours quelconques : {n}, dans la période jusqu’au {d}", "es": "Máximo en cualquier periodo de 180 días: {n}, en el periodo hasta el {d}", "it": "Massimo in 180 giorni qualsiasi: {n}, nel periodo fino al {d}", "pt": "Máximo em quaisquer 180 dias: {n}, no período até {d}", "ja": "任意の180日間での最多：{n}（{d}までの期間）", "ko": "임의의 180일 중 최다: {n}일 ({d}까지의 기간)"},
+    "proSchNone": {"ru": "Точек в Шенгенской зоне нет.", "en": "There are no points in the Schengen area.", "cs": "V Schengenském prostoru nejsou žádné body.", "de": "Im Schengen-Raum gibt es keine Punkte.", "fr": "Aucun point dans l’espace Schengen.", "es": "No hay puntos en el espacio Schengen.", "it": "Non ci sono punti nell’area Schengen.", "pt": "Não há pontos no espaço Schengen.", "ja": "シェンゲン圏の地点はありません。", "ko": "솅겐 지역의 지점이 없습니다."},
+    "proVisaNote": {"ru": "Считаются только дни, в которые есть точки: дни без снимков неизвестны, поэтому настоящих дней может быть больше. День переезда считается в обеих странах. Это подсказка, а не документ.", "en": "Only days with points are counted: days without photos are unknown, so the real number of days may be higher. A travel day counts in both countries. This is a hint, not a document.", "cs": "Počítají se jen dny, kdy existují body: dny bez fotek nejsou známé, takže skutečných dní může být víc. Den přejezdu se počítá v obou zemích. Je to vodítko, ne doklad.", "de": "Gezählt werden nur Tage mit Punkten: Tage ohne Fotos sind unbekannt, die tatsächliche Zahl kann also höher sein. Ein Reisetag zählt in beiden Ländern. Das ist ein Hinweis, kein Nachweis.", "fr": "Seuls les jours avec des points sont comptés : les jours sans photos sont inconnus, le nombre réel peut donc être plus élevé. Un jour de trajet compte dans les deux pays. C’est une indication, pas un justificatif.", "es": "Solo se cuentan los días con puntos: los días sin fotos se desconocen, así que los días reales pueden ser más. Un día de viaje cuenta en ambos países. Es una orientación, no un documento.", "it": "Si contano solo i giorni con punti: i giorni senza foto sono sconosciuti, quindi i giorni reali possono essere di più. Un giorno di viaggio conta in entrambi i paesi. È un’indicazione, non un documento.", "pt": "Só contam os dias com pontos: os dias sem fotos são desconhecidos, então os dias reais podem ser mais. Um dia de viagem conta nos dois países. É uma indicação, não um documento.", "ja": "地点のある日だけを数えます。写真のない日は分からないため、実際の日数はもっと多いかもしれません。移動日は両方の国に数えます。目安であり、証明書ではありません。", "ko": "지점이 있는 날만 셉니다. 사진이 없는 날은 알 수 없으므로 실제 일수는 더 많을 수 있습니다. 이동한 날은 두 나라 모두에 셉니다. 참고용이며 증빙 자료가 아닙니다."},
+    "proVisaCsv": {"ru": "Выгрузить дни по странам (CSV)", "en": "Export days by country (CSV)", "cs": "Exportovat dny podle zemí (CSV)", "de": "Tage nach Ländern exportieren (CSV)", "fr": "Exporter les jours par pays (CSV)", "es": "Exportar días por país (CSV)", "it": "Esporta i giorni per paese (CSV)", "pt": "Exportar dias por país (CSV)", "ja": "国別の日を書き出す（CSV）", "ko": "국가별 일수 내보내기(CSV)"},
+    "proJumpH": {"ru": "Невозможные скачки", "en": "Impossible jumps", "cs": "Nemožné skoky", "de": "Unmögliche Sprünge", "fr": "Sauts impossibles", "es": "Saltos imposibles", "it": "Salti impossibili", "pt": "Saltos impossíveis", "ja": "ありえない移動", "ko": "불가능한 이동"},
+    "proJumpX": {"ru": "Точка, к которой и от которой то же устройство «долетело» бы быстрее 1000 км/ч: обычно это неверное место или неверные часы камеры. На карте такие точки обведены красным.", "en": "A point the same device would have had to reach and leave faster than 1,000 km/h: usually a wrong place or a wrong camera clock. Such points are circled in red on the map.", "cs": "Bod, ke kterému a od kterého by stejné zařízení muselo „letět“ rychleji než 1000 km/h: obvykle jde o chybné místo nebo chybné hodiny fotoaparátu. Na mapě jsou takové body zakroužkované červeně.", "de": "Ein Punkt, zu dem und von dem dasselbe Gerät schneller als 1000 km/h „geflogen“ sein müsste: meist ein falscher Ort oder eine falsche Kamerauhr. Solche Punkte sind auf der Karte rot umrandet.", "fr": "Un point vers lequel et depuis lequel le même appareil aurait dû « voler » à plus de 1 000 km/h : en général un lieu erroné ou une horloge d’appareil fausse. Ces points sont entourés de rouge sur la carte.", "es": "Un punto al que y desde el que el mismo dispositivo habría tenido que «volar» a más de 1000 km/h: suele ser un lugar erróneo o un reloj de cámara mal ajustado. En el mapa esos puntos se rodean en rojo.", "it": "Un punto verso cui e da cui lo stesso dispositivo avrebbe dovuto «volare» a più di 1000 km/h: di solito un luogo errato o un orologio della fotocamera sbagliato. Sulla mappa questi punti sono cerchiati in rosso.", "pt": "Um ponto para o qual e do qual o mesmo aparelho teria de “voar” a mais de 1000 km/h: em geral, um local errado ou o relógio da câmera errado. No mapa, esses pontos aparecem circulados em vermelho.", "ja": "同じ機器が時速1000 kmを超えて行き来しなければならない地点です。多くは場所の誤りかカメラの時計のずれです。地図では赤い丸で示します。", "ko": "같은 기기가 시속 1000km보다 빠르게 오가야 하는 지점입니다. 보통 위치 오류나 카메라 시계 오류입니다. 지도에서는 빨간 원으로 표시됩니다."},
+    "proJumpN": {"ru": "Точек со скачком: {n}", "en": "Points with a jump: {n}", "cs": "Bodů se skokem: {n}", "de": "Punkte mit Sprung: {n}", "fr": "Points avec un saut : {n}", "es": "Puntos con salto: {n}", "it": "Punti con un salto: {n}", "pt": "Pontos com salto: {n}", "ja": "ありえない移動の地点：{n}", "ko": "이동 오류 지점: {n}"},
+    "proJumpNone": {"ru": "Невозможных скачков нет.", "en": "There are no impossible jumps.", "cs": "Žádné nemožné skoky.", "de": "Keine unmöglichen Sprünge.", "fr": "Aucun saut impossible.", "es": "No hay saltos imposibles.", "it": "Nessun salto impossibile.", "pt": "Não há saltos impossíveis.", "ja": "ありえない移動はありません。", "ko": "불가능한 이동이 없습니다."},
+    "proJumpDel": {"ru": "Удалить отмеченные точки", "en": "Delete the marked points", "cs": "Smazat označené body", "de": "Markierte Punkte löschen", "fr": "Supprimer les points signalés", "es": "Eliminar los puntos marcados", "it": "Elimina i punti segnalati", "pt": "Excluir os pontos marcados", "ja": "印の付いた地点を削除", "ko": "표시된 지점 삭제"},
+    "proJumpDelT": {"ru": "Удалить точки со скачком?", "en": "Delete the points with a jump?", "cs": "Smazat body se skokem?", "de": "Punkte mit Sprung löschen?", "fr": "Supprimer les points avec un saut ?", "es": "¿Eliminar los puntos con salto?", "it": "Eliminare i punti con un salto?", "pt": "Excluir os pontos com salto?", "ja": "ありえない移動の地点を削除しますか？", "ko": "이동 오류 지점을 삭제할까요?"},
+    "proJumpDelX": {"ru": "Точки со скачком ({n}) уйдут в корзину и перестанут учитываться. Вернуть их можно в течение 30 дней в блоке «Устройства».", "en": "The points with a jump ({n}) will go to the bin and stop counting. You can restore them for 30 days in Devices.", "cs": "Body se skokem ({n}) se přesunou do koše a přestanou se započítávat. Vrátit je můžete do 30 dnů v části „Zařízení“.", "de": "Die Punkte mit Sprung ({n}) kommen in den Papierkorb und zählen nicht mehr. Wiederherstellen können Sie sie 30 Tage lang unter „Geräte“.", "fr": "Les points avec un saut ({n}) iront à la corbeille et ne seront plus comptés. Vous pourrez les restaurer pendant 30 jours dans « Appareils ».", "es": "Los puntos con salto ({n}) irán a la papelera y dejarán de contar. Puedes recuperarlos durante 30 días en «Dispositivos».", "it": "I punti con un salto ({n}) andranno nel cestino e non verranno più contati. Può ripristinarli per 30 giorni in «Dispositivi».", "pt": "Os pontos com salto ({n}) irão para a lixeira e deixarão de contar. Você pode restaurá-los por 30 dias em “Dispositivos”.", "ja": "ありえない移動の地点（{n}）はごみ箱に移り、数えられなくなります。30日以内なら「デバイス」で元に戻せます。", "ko": "이동 오류 지점({n})은 휴지통으로 이동하며 더 이상 세지 않습니다. 30일 동안 ‘기기’에서 되돌릴 수 있습니다."},
+    "proJumpLbl": {"ru": "Точки со скачком ({n})", "en": "Points with a jump ({n})", "cs": "Body se skokem ({n})", "de": "Punkte mit Sprung ({n})", "fr": "Points avec un saut ({n})", "es": "Puntos con salto ({n})", "it": "Punti con un salto ({n})", "pt": "Pontos com salto ({n})", "ja": "ありえない移動の地点（{n}）", "ko": "이동 오류 지점({n})"}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -741,6 +830,7 @@ main.pc{position:relative}
     // Цвета карт — заново с новой темой (21.11.2026, Андрей: пример маршрута в светлой теме оставался тёмным — цвета
     // запоминались один раз и обновлялись только с перерисовкой большой карты).
     COL = null;
+    ST.on && stTheme();
     mapDirty = true; schedule();
   }
   $("themeBtn").onclick = function () { theme = theme === "light" ? "dark" : "light"; ls.set("tabiTheme", theme); applyTheme(); };
@@ -769,7 +859,12 @@ main.pc{position:relative}
       appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify",
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList",
       proT: "zPro", proDaysH: "proDaysH", proViewH: "proViewH", proLinesL: "proLines", proTimeH: "proTimeH", proDevH: "hDevs", proCcH: "sCountries",
-      proSelH: "proSelH", proSelGo: "proSelGo", proSelClear: "proSelClear", proSelDel: "proSelDel", proExpH: "proExpH", proExpX: "proExpX", proReset: "proReset" };
+      proSelH: "proSelH", proSelGo: "proSelGo", proSelClear: "proSelClear", proSelDel: "proSelDel", proExpH: "proExpH", proExpX: "proExpX", proReset: "proReset",
+      proQH: "proSearchH", proHeatL: "proHeat", proByYearL: "proByYear", proStreetsL: "proStreets", proStreetsX: "proStreetsX", proPlayH: "proPlayH",
+      proStop: "proStop", proSpeedL: "proSpeed", proSpS: "proSlow", proSpN: "proNormal", proSpF: "proFast", proTripsH: "proTripsH", proTripsX: "proTripsX",
+      proFirstH: "proFirstH", proVisaH: "proVisaH", proVisaYL: "proVisaYear", proSchH: "proSchH", proSchAtL: "proSchAt", proVisaNote: "proVisaNote",
+      proVisaCsv: "proVisaCsv", proJumpH: "proJumpH", proJumpX: "proJumpX", proJumpDel: "proJumpDel" };
+    $("proQ").placeholder = t("proSearchPh");
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
     $("qr").setAttribute("aria-label", t("qrLbl"));
@@ -781,7 +876,7 @@ main.pc{position:relative}
     $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
     $("proX").setAttribute("aria-label", t("zProOff")); $("proX").title = t("zProOff");
-    PRO && (proIcon(), PRO.on && proRender(), CARD.cur || CARD.list.length ? cardView(CARD.cur) : 0);
+    PRO && (proIcon(), playUi(), PRO.on && (proRender(), proSearch()), CARD.cur || CARD.list.length ? cardView(CARD.cur) : 0);
     $("accChip").setAttribute("data-lang", L); $("accChip").setAttribute("data-in", t("accIn")); TACC.repaint && TACC.repaint();
     $("over").textContent = t("dropHere");
     errKey && err(errKey, errArgs);
@@ -1624,7 +1719,8 @@ main.pc{position:relative}
   var D2R = Math.PI / 180, userMoved = false;
   // Профессиональный режим и карточка точки (22.11.2026; устройство — у proOpen ниже).
   var PRO = { on: false, lines: true, offDev: new Set(), offCc: new Set(), ia: 0, ib: -1, a: 0, b: 0, sel: null, selMode: false, ver: 0, allDays: false, n: null },
-    VIS = { ver: -1, src: null, len: -1, list: [] }, CARD = { list: [], cur: null, miss: null }, MAPN = { card: 0, open: 0, copy: 0 };
+    VIS = { ver: -1, src: null, len: -1, list: [] }, CARD = { list: [], cur: null, miss: null }, MAPN = { card: 0, open: 0, copy: 0 },
+    ST = { on: false, map: null, lib: null, err: false }, PLAY = { on: false, i: 0, f: 0, run: false, at: 0, dur: 60000, raf: 0 }, JUMPS = null;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
   // Проекция Меркатора — та же, что у карт приложения (20.11.2026, Андрей: в Natural Earth и Паттерсоне Россия и Европа
   // сплющены): формы стран верные, северные страны крупнее, чем в жизни, как в приложении. Широта ограничена 85°, как у
@@ -1650,7 +1746,8 @@ main.pc{position:relative}
   function shiftOf(lng) { return MV.t > 0 ? 360 * Math.round((MV.lng - lng) / 360) : 0; }
   // Экран по готовым долготе (радианы, уже со сдвигом), широте (радианы) и y Меркатора — без тригонометрии в кадре.
   function sxL(l) { return (l - PC.c[0]) * MV.s + CW / 2; }
-  function syF(f, my) { return -((MV.t > 0 ? my + (PC.c[1] + (f - PC.f) * PC.ky - my) * MV.t : my) - PC.c[1]) * MV.s + CH / 2; }
+  // С подложкой улиц (22.11.2026) — чистый Меркатор при любом масштабе: точки ложатся ровно на плитки OpenFreeMap.
+  function syF(f, my) { return -((MV.t > 0 && !ST.on ? my + (PC.c[1] + (f - PC.f) * PC.ky - my) * MV.t : my) - PC.c[1]) * MV.s + CH / 2; }
   // Точка карты → точка экрана (y вниз).
   function scr(lng, lat) { var f = lat * D2R; return [sxL((lng + shiftOf(lng)) * D2R), syF(f, merY(f))]; }
   // Точек экрана на градус у центра вида — пороги регионов и подписей.
@@ -1909,12 +2006,17 @@ main.pc{position:relative}
   // Точки и отрезки — пачками по 32 оттенкам времени: десятки тысяч точек рисуются за несколько десятков путей, а не по
   // одному пути на точку.
   function binOf(ms) { return T1 > T0 ? Math.max(0, Math.min(BINS - 1, Math.floor(((ms - T0) / (T1 - T0)) * BINS))) : BINS - 1; }
-  function binColor(k) { return colorAt(T0 + ((k + 0.5) / BINS) * (T1 - T0)); }
+  function binColor(k) { return PRO.on && PRO.byYear ? YEAR_COL[k % YEAR_COL.length] : colorAt(T0 + ((k + 0.5) / BINS) * (T1 - T0)); }
+  // Цвет по годам (22.11.2026): год точки — свой цвет из двенадцати, различимых и в светлой, и в тёмной теме.
+  var YEAR_COL = ["#E69F00", "#56B4E9", "#009E73", "#D55E00", "#CC79A7", "#0072B2", "#C9B200", "#8E6CDF", "#2CA58D", "#B3341F", "#7F8C8D", "#E5739B"];
+  function yearOf(p) { return p._yr || (p._yr = new Date(p[2]).getFullYear()); }
+  function binP(p) { return PRO.on && PRO.byYear ? Math.max(0, Math.min(BINS - 1, yearOf(p) - new Date(T0).getFullYear())) : binOf(p[2]); }
   // Точка — радианы и y Меркатора один раз на точку; «дальний» ли отрезок (больше 300 км) — один раз на пару соседей.
   function pq(p) { if (p._y === undefined) { p._l = p[1] * D2R; p._f = p[0] * D2R; p._y = merY(p._f); } return p; }
   function ptXY(p) { pq(p); return [sxL(p._l + shiftOf(p[1]) * D2R), syF(p._f, p._y)]; }
   var dotGrid = null, dotStamp = 0;
   function drawPts(from, to) {
+    if (PRO.on && PRO.heat) return void drawHeat(from, to);
     var pts = PTS(), lines = !PRO.on || PRO.lines, R = Math.min(5.5, 2.6 + Math.max(0, Math.log(MV.s / fitS) / Math.LN2) * 0.35) * DPR, k, i, t = MV.t, m = 8 * DPR;
     var near = [], far = [], dots = [];
     for (k = 0; k < BINS; k++) { near.push([]); far.push([]); dots.push([]); }
@@ -1930,7 +2032,7 @@ main.pc{position:relative}
       // отрезки уходили на миллионы точек за край.
       var bl = b[1] - 360 * Math.round((b[1] - a[1]) / 360), o1 = shiftOf(a[1]),
         o2 = t > 0 ? shiftOf(bl) : bl > 180 ? -360 : bl < -180 ? 360 : 0,
-        y1 = syF(a._f, a._y), y2 = syF(b._f, b._y), set = (b._far ? far : near)[binOf(b[2])];
+        y1 = syF(a._f, a._y), y2 = syF(b._f, b._y), set = (b._far ? far : near)[binP(b)];
       for (var c = 0; c < (o2 !== o1 ? 2 : 1); c++) {
         var o = c ? o2 : o1, x1 = sxL((a[1] + o) * D2R), x2 = sxL((bl + o) * D2R);
         if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
@@ -1950,7 +2052,7 @@ main.pc{position:relative}
         if (dotGrid[gi] === dotStamp) continue;
         dotGrid[gi] = dotStamp;
       }
-      dots[binOf(p[2])].push(x, y);
+      dots[binP(p)].push(x, y);
     }
     cx.lineCap = "round"; cx.lineJoin = "round"; cx.lineWidth = 1.8 * DPR;
     [[near, 0.7, []], [far, 0.4, [5 * DPR, 6 * DPR]]].forEach(function (set) {
@@ -1972,7 +2074,7 @@ main.pc{position:relative}
       cx.fill();
     }
     // Выделенное и точка карточки — кольцом поверх точек (22.11.2026).
-    if (whole && (CARD.cur || (PRO.on && PRO.sel))) {
+    if (whole && (CARD.cur || (PRO.on && (PRO.sel || PRO.jumpsOn)))) {
       var C = COL || cols(), ring = function (list, col, w) {
         cx.strokeStyle = col; cx.lineWidth = w; cx.beginPath();
         list.forEach(function (p) {
@@ -1983,6 +2085,7 @@ main.pc{position:relative}
         cx.stroke();
       };
       PRO.on && PRO.sel && ring(PRO.sel, C.ink, 1.5 * DPR);
+      PRO.on && PRO.jumpsOn && JUMPS && JUMPS.list.length && ring(JUMPS.list, "#E5484D", 2.2 * DPR);
       CARD.cur && ring([CARD.cur], C.acc || "#B3341F", 2.6 * DPR);
     }
   }
@@ -2003,7 +2106,7 @@ main.pc{position:relative}
   }
   function buildHits() {
     hitGrid = new Map();
-    var P = PTS(), n = revealing ? A.shown : P.length, cell = 18 * DPR;
+    var P = PTS(), n = revealing ? A.shown : PLAY.on ? PLAY.i : P.length, cell = 18 * DPR;
     for (var i = 0; i < n && i < P.length; i++) {
       var qh = ptXY(P[i]), x = qh[0], y = qh[1];
       if (x < 0 || y < 0 || x > CW || y > CH) continue;
@@ -2020,8 +2123,13 @@ main.pc{position:relative}
     else if (CW !== W || CH !== H) { MV.s *= W / CW; CW = W; CH = H; clampView(); mapDirty = true; }
     prep();
     mapDirty && (ACC = hexRgb((COL || cols()).acc || "#B3341F"));
-    var to = revealing ? upto : PTS().length;
-    if (mapDirty || drawnTo > to) { drawLand(); cx.drawImage(land, 0, 0); drawnTo = 0; mapDirty = false; drawPts(0, to); }
+    var to = revealing ? upto : PLAY.on ? PLAY.i : PTS().length;
+    if (mapDirty || drawnTo > to) {
+      // С подложкой улиц холст прозрачен: под ним — карта OpenFreeMap.
+      ST.on ? cx.clearRect(0, 0, CW, CH) : (drawLand(), cx.drawImage(land, 0, 0));
+      drawnTo = 0; mapDirty = false; drawPts(0, to);
+      ST.on && stSync();
+    }
     else drawPts(Math.max(0, drawnTo - 1), to);
     drawnTo = to;
     revealing || drawLabels();
@@ -2156,7 +2264,7 @@ main.pc{position:relative}
   function proOpen() {
     if (PRO.on || revealing || !A.pts.length) return;
     renderDevs();
-    PRO.on = true; PRO.n = { t0: Date.now(), sel: 0, del: 0, exp: 0, open: 0, card: 0, filt: 0 };
+    PRO.on = true; PRO.n = { t0: Date.now(), sel: 0, del: 0, exp: 0, open: 0, card: 0, filt: 0, play: 0, streets: 0 };
     var box = $("mapBox");
     PRO.home = box.parentNode; PRO.next = box.nextSibling;
     $("proMap").appendChild(box);
@@ -2169,14 +2277,16 @@ main.pc{position:relative}
   function proClose() {
     if (!PRO.on) return;
     selEnd();
+    playStop(); ST.on && streets(false);
     PRO.on = false; PRO.sel = null; PRO.lines = true; $("proLines").checked = true;
+    PRO.heat = false; $("proHeat").checked = false; PRO.byYear = false; $("proByYear").checked = false; PRO.jumpsOn = false;
     PRO.offDev.clear(); PRO.offCc.clear(); PRO.ia = 0; PRO.ib = -1; PRO.a = PRO.b = 0; PRO.ver++;
     PRO.home.insertBefore($("mapBox"), PRO.next);
     $("pro").hidden = true;
     document.documentElement.classList.remove("pc-pro-on");
     var n = PRO.n;
     PRO.n = null;
-    n && statSend({ k: "pro", s: Math.round((Date.now() - n.t0) / 1000), sel: n.sel, del: n.del, exp: n.exp, open: n.open, card: n.card, filt: n.filt, pts: A.pts.length });
+    n && statSend({ k: "pro", s: Math.round((Date.now() - n.t0) / 1000), sel: n.sel, del: n.del, exp: n.exp, open: n.open, card: n.card, filt: n.filt, play: n.play, streets: n.streets, pts: A.pts.length });
     proIcon(); cardClose();
     mapDirty = true; schedule();
   }
@@ -2211,7 +2321,7 @@ main.pc{position:relative}
     cOrder.sort(function (a, b) { return a === "" ? 1 : b === "" ? -1 : ccs[b] - ccs[a]; });
     proList($("proDevs"), dOrder.map(function (k) { return { key: k, name: devs[k].name || t("devNone"), n: devs[k].n }; }), PRO.offDev);
     proList($("proCcs"), cOrder.map(function (c) { return { key: c, name: c ? countryName(c) : t("ccNone"), n: ccs[c], flag: c ? flagUrl(c) : "" }; }), PRO.offCc);
-    proStats();
+    proStats(); proDeep();
   }
   function proList(box, rows, off) {
     box.innerHTML = "";
@@ -2227,8 +2337,8 @@ main.pc{position:relative}
   function proApply() {
     PRO.ver++; PRO.n && PRO.n.filt++;
     PRO.sel && (PRO.sel = PRO.sel.filter(proKeep), PRO.sel.length || (PRO.sel = null));
-    cardClose();
-    mapDirty = true; schedule(); proStats();
+    cardClose(); playStop();
+    mapDirty = true; schedule(); proStats(); proDeep();
   }
   function proRange(m0, M, a, b) {
     $("proRA").textContent = monthYear(monthStart(m0 + a)); $("proRB").textContent = monthYear(monthStart(m0 + b));
@@ -2471,6 +2581,332 @@ main.pc{position:relative}
   // прерывал проверку диска, и её приходилось начинать заново): браузер спрашивает своим окном, уйти ли со страницы, —
   // пока он собирает список файлов, пока идёт чтение и пока итог не закрыт кнопкой «Готово». Готовый итог хранится в
   // браузере и уходом не теряется.
+
+  // ===== Профессиональный режим, второй шаг (22.11.2026, слово Андрея: добавить всё предложенное) =====
+  // Всё считается по тому, что на карте (PTS — с отбором по периоду, устройствам и странам), в этом браузере.
+  var dayKey = function (ms) { var d = new Date(ms); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); },
+    dayNum = function (ms) { var d = new Date(ms); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000); },
+    dayDate = function (n) { var d = new Date(n * 86400000); return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()); },
+    dayText = function (ms) { try { return new Date(ms).toLocaleDateString(L, { day: "numeric", month: "long", year: "numeric" }); } catch (e) { return dayKey(ms); } };
+  // Переход к точке: карта — на неё (не дальше, чем уже приближено), карточка точки.
+  function focusPt(p) {
+    var keep = MV && MV.s;
+    fit([p]); userMoved = true;
+    keep > MV.s && ((MV.s = keep), clampView());
+    mapDirty = true; schedule();
+    cardOpen([p]);
+  }
+  function rowBtn(box, title, sub, fn, flag) {
+    var b = elm("button", "pc-pro-file", null, box), h = elm("b", "", null, b);
+    if (flag) { var im = elm("img", "", null, h); im.src = flag; im.alt = ""; }
+    h.appendChild(document.createTextNode(title));
+    elm("span", "", sub, b);
+    b.onclick = fn;
+    return b;
+  }
+  // --- Поиск: имя файла, город, страна или дата (год, месяц, день: 2021, 2021-05, 05.2021, 2021-05-04, 4.5.2021).
+  var srchT = 0;
+  $("proQ").oninput = function () { clearTimeout(srchT); srchT = setTimeout(proSearch, 160); };
+  function proSearch() {
+    var q = $("proQ").value.trim().toLowerCase(), box = $("proQList"), P = PTS();
+    box.innerHTML = "";
+    show("proQN", false);
+    if (q.length < 2) return;
+    var m, from = 0, to = 0;
+    if ((m = /^(\d{4})$/.exec(q))) { from = new Date(+m[1], 0, 1).getTime(); to = new Date(+m[1] + 1, 0, 1).getTime(); }
+    else if ((m = /^(\d{4})-(\d{1,2})$/.exec(q) || /^(\d{1,2})[.\/](\d{4})$/.exec(q))) { var y = +(m[1].length === 4 ? m[1] : m[2]), mo = +(m[1].length === 4 ? m[2] : m[1]); from = new Date(y, mo - 1, 1).getTime(); to = new Date(y, mo, 1).getTime(); }
+    else if ((m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(q))) { from = new Date(+m[1], m[2] - 1, +m[3]).getTime(); to = from + 86400000; }
+    else if ((m = /^(\d{1,2})[.\/](\d{1,2})[.\/](\d{4})$/.exec(q))) { from = new Date(+m[3], m[2] - 1, +m[1]).getTime(); to = from + 86400000; }
+    var names = {}, hit = [];
+    for (var i = P.length - 1; i >= 0; i--) {
+      var p = P[i], ok;
+      if (from) ok = p[2] >= from && p[2] < to;
+      else {
+        var ct = p.ct != null && p.ct >= 0 ? (names["t" + p.ct] || (names["t" + p.ct] = townName(p.ct).toLowerCase())) : "",
+          cc = p.cc ? names["c" + p.cc] || (names["c" + p.cc] = countryName(p.cc).toLowerCase()) : "";
+        ok = (p.fn && p.fn.toLowerCase().indexOf(q) >= 0) || ct.indexOf(q) >= 0 || cc.indexOf(q) >= 0;
+      }
+      ok && hit.push(p);
+    }
+    $("proQN").textContent = hit.length ? t("proFound", { n: num(hit.length) }) : t("proNothing");
+    show("proQN", true);
+    hit.slice(0, 100).forEach(function (p) { rowBtn(box, p.fn || ptWhen(p), (p.fn ? ptWhen(p) + " · " : "") + ptPlace(p), function () { focusPt(p); }); });
+  }
+  // --- Вид: тепловая карта, цвет по годам, улицы.
+  $("proHeat").onchange = function () { PRO.heat = this.checked; mapDirty = true; schedule(); };
+  $("proByYear").onchange = function () { PRO.byYear = this.checked; yearLegend(); mapDirty = true; schedule(); };
+  $("proStreets").onchange = function () { streets(this.checked); };
+  function yearLegend() {
+    var box = $("proYears");
+    box.innerHTML = "";
+    show("proYears", !!PRO.byYear);
+    if (!PRO.byYear || !A.pts.length) return;
+    var y0 = new Date(T0).getFullYear(), y1 = new Date(T1).getFullYear(), n = {};
+    PTS().forEach(function (p) { n[yearOf(p)] = (n[yearOf(p)] || 0) + 1; });
+    for (var y = y1; y >= y0; y--) {
+      if (!n[y]) continue;
+      var c = elm("span", "pc-yr", null, box), i = elm("i", "", null, c);
+      i.style.background = YEAR_COL[Math.min(BINS - 1, y - y0) % YEAR_COL.length];
+      c.appendChild(document.createTextNode(y + " · " + num(n[y])));
+    }
+  }
+  // Тепловая карта: точки — в клетки экрана по 6 точек, клетка — мягкое пятно цвета оформления, тем ярче, чем больше в
+  // ней снимков (по логарифму, чтобы город с тысячами снимков не гасил остальное).
+  var heatSpr = null;
+  function drawHeat(from, to) {
+    var P = PTS(), cell = 6 * DPR, rr = 22 * DPR, grid = new Map(), mx = 1;
+    if (from > 0) return;
+    for (var i = 0; i < to && i < P.length; i++) {
+      var q = ptXY(P[i]);
+      if (q[0] < -rr || q[1] < -rr || q[0] > CW + rr || q[1] > CH + rr) continue;
+      var k = Math.floor(q[0] / cell) + Math.floor(q[1] / cell) * 100000, c = (grid.get(k) || 0) + 1;
+      grid.set(k, c); c > mx && (mx = c);
+    }
+    var acc = (COL || cols()).acc || "#B3341F";
+    if (!heatSpr || heatSpr.r !== rr || heatSpr.c !== acc) {
+      var cv2 = document.createElement("canvas"), g = cv2.getContext("2d"), gr = g.createRadialGradient(rr, rr, 0, rr, rr, rr);
+      cv2.width = cv2.height = rr * 2;
+      gr.addColorStop(0, "#FFD166"); gr.addColorStop(0.45, acc); gr.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = gr; g.fillRect(0, 0, rr * 2, rr * 2);
+      heatSpr = { cv: cv2, r: rr, c: acc };
+    }
+    var lm = Math.log(1 + mx);
+    grid.forEach(function (c, k) {
+      var x = (k % 100000) * cell + cell / 2, y = Math.floor(k / 100000) * cell + cell / 2;
+      cx.globalAlpha = Math.min(1, 0.35 + 0.65 * Math.log(1 + c) / lm);
+      cx.drawImage(heatSpr.cv, x - rr, y - rr);
+    });
+    cx.globalAlpha = 1;
+  }
+  // Улицы и местность: подложка OpenFreeMap (векторные плитки OpenStreetMap) на движке MapLibre GL — тот же, что у пробной
+  // карты приложения. Грузится только по переключателю (сервер OpenFreeMap видит, какие места рассматривают); точки и
+  // линии рисует холст страницы поверх, управление картой — его же, подложка лишь повторяет центр и масштаб.
+  var ST_BASE = "/computer/maplibre/", ST_STYLE = "https://tiles.openfreemap.org/styles/";
+  function stDark() { var a = document.documentElement.getAttribute("data-theme"); return a ? a === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
+  function streets(on) {
+    ST.on = !!on; $("proStreets").checked = ST.on;
+    show("proStreetsX", ST.on); show("stAttr", ST.on);
+    var box = $("stMap");
+    if (!ST.on) {
+      box.hidden = true;
+      ST.map && (ST.map.remove(), (ST.map = null));
+      mapDirty = true; return void schedule();
+    }
+    PRO.n && (PRO.n.streets = 1);
+    box.hidden = false;
+    mapDirty = true; schedule();
+    if (!document.getElementById("stCss")) { var l = document.createElement("link"); l.id = "stCss"; l.rel = "stylesheet"; l.href = ST_BASE + "maplibre-gl.css"; document.head.appendChild(l); }
+    (ST.lib ? Promise.resolve(ST.lib) : import(ST_BASE + "maplibre-gl.mjs")).then(function (ml) {
+      ST.lib = ml;
+      if (!ST.on || ST.map) return;
+      ST.map = new ml.Map({ container: box, style: ST_STYLE + (stDark() ? "dark" : "positron"), center: [MV.lng, MV.lat], zoom: stZoom(),
+        interactive: false, attributionControl: false, fadeDuration: 0, localIdeographFontFamily: "sans-serif" });
+      stSync();
+    }).catch(function () { streets(false); err("eNet"); });
+  }
+  function stZoom() { return Math.max(0, Math.min(22, Math.log(2 * Math.PI * MV.s / (512 * DPR)) / Math.LN2)); }
+  function stSync() {
+    if (!ST.map || !MV) return;
+    // Размер подложки — за размером карты (переход в режим, поворот окна).
+    var c = ST.map.getContainer();
+    (c.clientWidth !== ST.w || c.clientHeight !== ST.h) && ((ST.w = c.clientWidth), (ST.h = c.clientHeight), ST.map.resize());
+    ST.map.jumpTo({ center: [((MV.lng + 540) % 360) - 180, MV.lat], zoom: stZoom() });
+  }
+  function stTheme() { ST.map && ST.map.setStyle(ST_STYLE + (stDark() ? "dark" : "positron")); }
+  // --- Проигрывание маршрута: точки появляются по времени снимков (не по их числу), строка даты — над картой.
+  $("proPlay").onclick = function () { PLAY.on && PLAY.run ? playPause() : playGo(); };
+  $("proStop").onclick = function () { playStop(); };
+  $("proSpeed").onchange = function () { var f = playF(performance.now()); PLAY.dur = +this.value; PLAY.f = f; PLAY.at = performance.now(); };
+  function playF(now) { return PLAY.run ? Math.min(1, PLAY.f + (now - PLAY.at) / PLAY.dur) : PLAY.f; }
+  function playGo() {
+    var P = PTS();
+    if (P.length < 2) return;
+    cardClose();
+    if (!PLAY.on) { PLAY.on = true; PLAY.f = 0; PLAY.i = 0; mapDirty = true; PRO.n && PRO.n.play++; }
+    PLAY.run = true; PLAY.at = performance.now(); PLAY.dur = +$("proSpeed").value;
+    playUi();
+    var tick = function (now) {
+      if (!PLAY.on || !PLAY.run) return;
+      var P2 = PTS(), f = playF(now), tc = P2[0][2] + f * (P2[P2.length - 1][2] - P2[0][2]), lo = PLAY.i, hi = P2.length;
+      while (lo < hi) { var mid = (lo + hi) >> 1; P2[mid][2] <= tc ? (lo = mid + 1) : (hi = mid); }
+      PLAY.i = lo;
+      $("playLbl").textContent = dayText(tc);
+      drawMap();
+      if (f >= 1) { PLAY.run = false; PLAY.f = 1; return void playUi(); }
+      PLAY.raf = requestAnimationFrame(tick);
+    };
+    PLAY.raf = requestAnimationFrame(tick);
+  }
+  function playPause() { PLAY.f = playF(performance.now()); PLAY.run = false; cancelAnimationFrame(PLAY.raf); playUi(); }
+  function playStop() {
+    if (!PLAY.on) return;
+    cancelAnimationFrame(PLAY.raf);
+    PLAY.on = PLAY.run = false; PLAY.f = 0;
+    playUi(); mapDirty = true; schedule();
+  }
+  function playUi() {
+    $("proPlay").textContent = t(PLAY.on && PLAY.run ? "proPause" : PLAY.on && PLAY.f < 1 ? "proResume" : "proPlay");
+    show("proStop", PLAY.on);
+    show("playLbl", PLAY.on);
+  }
+  // --- Поездки, первые посещения, дни в странах, скачки — считаются, когда раздел открыт, и заново при смене набора.
+  ["proTripsBox", "proFirstBox", "proVisaBox", "proJumpBox"].forEach(function (id) { $(id).addEventListener("toggle", function () { proDeep(); id === "proJumpBox" && ((PRO.jumpsOn = this.open), (mapDirty = true), schedule()); }); });
+  function proDeep() {
+    if (!PRO.on) return;
+    yearLegend();
+    var P = PTS();
+    $("proTripsBox").open && proTrips(P);
+    $("proFirstBox").open && proFirst(P);
+    $("proVisaBox").open && proVisa(P);
+    JUMPS = null;
+    ($("proJumpBox").open || PRO.jumpsOn) && proJumps(P);
+  }
+  // Поездка — дни подряд дальше 60 км от дома (дом — город словаря, где больше всего дней в этом году; без города —
+  // страна с наибольшим числом дней), до двух дней без точек внутри поездку не прерывают. Однодневные поездки внутри
+  // страны дома не считаются.
+  function proTrips(P) {
+    var box = $("proTrips");
+    box.innerHTML = "";
+    var byYear = {}, dayPts = new Map();
+    P.forEach(function (p) {
+      var y = yearOf(p), dn = dayNum(p[2]), o = byYear[y] || (byYear[y] = { ct: {}, cc: {} });
+      if (p.ct != null && p.ct >= 0) (o.ct[p.ct] || (o.ct[p.ct] = new Set())).add(dn);
+      p.cc && (o.cc[p.cc] || (o.cc[p.cc] = new Set())).add(dn);
+      (dayPts.get(dn) || (dayPts.set(dn, []), dayPts.get(dn))).push(p);
+    });
+    var home = {};
+    Object.keys(byYear).forEach(function (y) {
+      var o = byYear[y], bt = -1, bn = 0, bc = "", bcn = 0;
+      for (var k in o.ct) o.ct[k].size > bn && ((bn = o.ct[k].size), (bt = +k));
+      for (var c in o.cc) o.cc[c].size > bcn && ((bcn = o.cc[c].size), (bc = c));
+      home[y] = bt >= 0 ? { la: G.t.la[bt] / 1e5, ln: G.t.ln[bt] / 1e5, cc: G.t.codes[G.t.ci[bt]] } : { la: NaN, ln: NaN, cc: bc };
+      home[y].cc = bc || home[y].cc;
+    });
+    var days = Array.from(dayPts.keys()).sort(function (a, b) { return a - b; }), trips = [], cur = null;
+    days.forEach(function (dn) {
+      var ps = dayPts.get(dn), h = home[yearOf(ps[0])], away = ps.some(function (p) { return isNaN(h.la) ? p.cc && p.cc !== h.cc : dist(p[0], p[1], h.la, h.ln) > 60000; });
+      if (away) {
+        if (cur && dn - cur.d1 <= 3) { cur.d1 = dn; cur.pts = cur.pts.concat(ps); }
+        else { cur && trips.push(cur); cur = { d0: dn, d1: dn, pts: ps.slice(), home: h }; }
+      } else if (cur) { trips.push(cur); cur = null; }
+    });
+    cur && trips.push(cur);
+    trips = trips.filter(function (tr) { return tr.d1 > tr.d0 || tr.pts.some(function (p) { return p.cc && p.cc !== tr.home.cc; }); });
+    $("proTripsN").textContent = trips.length ? t("proTripsN", { n: num(trips.length) }) : t("proTripsNone");
+    trips.reverse().slice(0, 300).forEach(function (tr) {
+      var cc = [], ct = {};
+      tr.pts.forEach(function (p) { p.cc && cc.indexOf(p.cc) < 0 && cc.push(p.cc); p.ct != null && p.ct >= 0 && (ct[p.ct] = (ct[p.ct] || 0) + 1); });
+      var top = Object.keys(ct).sort(function (a, b) { return ct[b] - ct[a]; }).slice(0, 3).map(function (k) { return townName(+k); }),
+        a = dayDate(tr.d0).getTime(), b = dayDate(tr.d1).getTime(), n = tr.d1 - tr.d0 + 1;
+      rowBtn(box, (top.join(", ") || cc.map(countryName).join(", ")), (a === b ? dayText(a) : dayText(a) + " — " + dayText(b)) + " · " + t("proTripDays", { n: num(n) }) + (cc.length ? " · " + cc.map(countryName).join(", ") : ""), function () {
+        // Поездка — периодом на карте: остальное скрывается, карта — на поездку.
+        var m0 = monthOf(T0);
+        PRO.a = a; PRO.b = b + 86400000 - 1; PRO.ia = Math.max(0, monthOf(a) - m0); PRO.ib = monthOf(b) - m0;
+        proRange(m0, Math.max(0, monthOf(T1) - m0), PRO.ia, PRO.ib); $("proRa").value = String(PRO.ia); $("proRb").value = String(PRO.ib);
+        PRO.ver++; cardClose(); userMoved = true; fit(tr.pts); mapDirty = true; schedule(); proStats();
+      }, cc.length ? flagUrl(cc[0]) : "");
+    });
+  }
+  // Первые посещения стран и городов, новые по годам.
+  var firstTab = "cc";
+  $("proFirstCc").onclick = function () { firstTab = "cc"; proFirst(PTS()); };
+  $("proFirstCt").onclick = function () { firstTab = "ct"; proFirst(PTS()); };
+  function proFirst(P) {
+    var fc = {}, ft = {}, oc = [], ot = [], perY = {};
+    P.forEach(function (p) {
+      var y = yearOf(p), o = perY[y] || (perY[y] = { c: 0, t: 0 });
+      if (p.cc && !fc[p.cc]) { fc[p.cc] = p; oc.push(p.cc); o.c++; }
+      if (p.ct != null && p.ct >= 0 && !ft[p.ct]) { ft[p.ct] = p; ot.push(p.ct); o.t++; }
+    });
+    $("proFirstCc").textContent = t("proFirstCc", { n: num(oc.length) }); $("proFirstCt").textContent = t("proFirstCt", { n: num(ot.length) });
+    $("proFirstCc").classList.toggle("on", firstTab === "cc"); $("proFirstCt").classList.toggle("on", firstTab === "ct");
+    var yb = $("proFirstY");
+    yb.innerHTML = "";
+    Object.keys(perY).sort().reverse().forEach(function (y) { (perY[y].c || perY[y].t) && elm("div", "pc-s", t("proNewYear", { y: y, a: num(perY[y].c), b: num(perY[y].t) }), yb); });
+    var box = $("proFirst");
+    box.innerHTML = "";
+    (firstTab === "cc" ? oc : ot).slice().reverse().slice(0, 400).forEach(function (k) {
+      var p = firstTab === "cc" ? fc[k] : ft[k];
+      rowBtn(box, firstTab === "cc" ? countryName(k) : townName(k), dayText(p[2]) + (firstTab === "ct" && p.cc ? " · " + countryName(p.cc) : ""), function () { focusPt(p); }, firstTab === "cc" ? flagUrl(k) : "");
+    });
+  }
+  // Дни в странах по годам (визы и налоги): день считается в стране, если в этот день там есть точка (день переезда —
+  // в обеих). Порог 183 дней — налоговое резидентство во многих странах. Шенген — правило 90 дней в любые 180: 29
+  // стран на 22.11.2026 (Кипр и Ирландия не входят).
+  var SCHENGEN = { at: 1, be: 1, bg: 1, hr: 1, cz: 1, dk: 1, ee: 1, fi: 1, fr: 1, de: 1, gr: 1, hu: 1, is: 1, it: 1, lv: 1, li: 1, lt: 1, lu: 1, mt: 1, nl: 1, no: 1, pl: 1, pt: 1, ro: 1, sk: 1, si: 1, es: 1, se: 1, ch: 1 };
+  $("proVisaY").onchange = function () { proVisa(PTS()); };
+  $("proSchAt").onchange = function () { proVisa(PTS()); };
+  $("proVisaCsv").onclick = function () { proDaysCsv(PTS()); };
+  function proVisa(P) {
+    var ys = {}, sch = new Set();
+    P.forEach(function (p) { ys[yearOf(p)] = 1; p.cc && SCHENGEN[p.cc] && sch.add(dayNum(p[2])); });
+    var sel = $("proVisaY"), years = Object.keys(ys).sort().reverse(), want = sel.value && ys[sel.value] ? sel.value : years[0];
+    sel.innerHTML = "";
+    years.forEach(function (y) { var o = elm("option", "", y, sel); o.value = y; });
+    sel.value = want || "";
+    var dc = {};
+    P.forEach(function (p) { String(yearOf(p)) === want && p.cc && (dc[p.cc] || (dc[p.cc] = new Set())).add(dayNum(p[2])); });
+    var box = $("proVisa");
+    box.innerHTML = "";
+    Object.keys(dc).sort(function (a, b) { return dc[b].size - dc[a].size; }).forEach(function (c) {
+      var r = elm("div", "pc-pro-row nb", null, box), lead = elm("span", "", null, r), fu = flagUrl(c), nm = elm("span", "nm", countryName(c), r), n = elm("span", "n", num(dc[c].size), r);
+      if (fu) { var im = elm("img", "", null, lead); im.src = fu; im.alt = ""; }
+      if (dc[c].size >= 183) { var b = elm("b", "pc-183", "183+", nm); b.title = t("proVisa183X"); }
+      n.title = "";
+    });
+    // Шенген: дни в окне 180 дней по выбранную дату и наибольшее за любые 180 дней.
+    var sd = Array.from(sch).sort(function (a, b) { return a - b; }), atIn = $("proSchAt");
+    if (!atIn.value && P.length) atIn.value = dayKey(P[P.length - 1][2]);
+    var atMs = atIn.value ? new Date(atIn.value + "T12:00:00").getTime() : Date.now(), at = dayNum(atMs), inWin = 0, best = 0, bestEnd = 0, j = 0;
+    sd.forEach(function (d) { d <= at && d > at - 180 && inWin++; });
+    for (var i = 0; i < sd.length; i++) { while (sd[i] - sd[j] >= 180) j++; i - j + 1 > best && ((best = i - j + 1), (bestEnd = sd[i])); }
+    $("proSchN").textContent = sd.length ? t("proSchN", { d: dayText(atMs), n: num(inWin) }) : t("proSchNone");
+    $("proSchN").classList.toggle("warn", inWin > 90);
+    show("proSchMax", sd.length > 0);
+    $("proSchMax").textContent = sd.length ? t("proSchMax", { n: num(best), d: dayText(dayDate(bestEnd).getTime()) }) : "";
+    $("proSchMax").classList.toggle("warn", best > 90);
+  }
+  // Выгрузка дней для советника: дата, страна, число точек, первое и последнее время в этот день в этой стране.
+  function proDaysCsv(P) {
+    var m = new Map(), rows = ["\ufeffdate,country,points,first_local,last_local\r\n"];
+    P.forEach(function (p) { if (!p.cc) return; var k = dayKey(p[2]) + "|" + p.cc, o = m.get(k); o ? (o.n++, (o.b = p[2])) : m.set(k, { d: dayKey(p[2]), c: p.cc, n: 1, a: p[2], b: p[2] }); });
+    var hm = function (ms) { var d = new Date(ms); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); };
+    m.forEach(function (o) { rows.push([o.d, '"' + countryName(o.c).replace(/"/g, '""') + '"', o.n, hm(o.a), hm(o.b)].join(",") + "\r\n"); });
+    var a = document.createElement("a"), u = URL.createObjectURL(new Blob(rows, { type: "text/csv;charset=utf-8" }));
+    a.href = u; a.download = "tabi-days-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
+    PRO.n && PRO.n.exp++;
+  }
+  // Невозможные скачки: точка, к которой и от которой то же устройство «долетело» бы быстрее 1000 км/ч и дальше 100 км, —
+  // обычно неверное место или часы камеры.
+  function proJumps(P) {
+    var by = {}, list = [];
+    P.forEach(function (p) { (by[p._k || "x"] || (by[p._k || "x"] = [])).push(p); });
+    Object.keys(by).forEach(function (k) {
+      var s = by[k];
+      for (var i = 1; i + 1 < s.length; i++) {
+        var a = s[i - 1], p = s[i], b = s[i + 1], d1 = dist(a[0], a[1], p[0], p[1]), d2 = dist(p[0], p[1], b[0], b[1]);
+        if (d1 > 100000 && d2 > 100000 && d1 / Math.max(1, (p[2] - a[2]) / 1000) > 278 && d2 / Math.max(1, (b[2] - p[2]) / 1000) > 278) list.push(p);
+      }
+    });
+    list.sort(function (a, b) { return b[2] - a[2]; });
+    JUMPS = { list: list };
+    $("proJumpN").textContent = list.length ? t("proJumpN", { n: num(list.length) }) : t("proJumpNone");
+    show("proJumpDel", list.length > 0);
+    var box = $("proJumps");
+    box.innerHTML = "";
+    list.slice(0, 200).forEach(function (p) { rowBtn(box, p.fn || ptWhen(p), (p.fn ? ptWhen(p) + " · " : "") + ptPlace(p) + " · " + devName(p), function () { focusPt(p); }); });
+    mapDirty = true; schedule();
+  }
+  $("proJumpDel").onclick = function () {
+    var list = JUMPS ? JUMPS.list.slice() : [];
+    if (!list.length) return;
+    ask(t("proJumpDelT"), t("proJumpDelX", { n: num(list.length) }), t("delDev"), function () {
+      winClose("dlg"); PRO.n && (PRO.n.del += list.length);
+      dropPts(list, t("proJumpLbl", { n: num(list.length) }), null);
+    });
+  };
   window.addEventListener("beforeunload", function (e) {
     if (!(picking || RUN.on || revealing)) return;
     e.preventDefault();
