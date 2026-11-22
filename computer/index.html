@@ -602,7 +602,7 @@ main.pc{position:relative}
     mapDirty = true; schedule();
   }
   $("themeBtn").onclick = function () { theme = theme === "light" ? "dark" : "light"; ls.set("tabiTheme", theme); applyTheme(); };
-  window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { mapDirty = true; schedule(); });
+  window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { COL = null; mapDirty = true; schedule(); });
 
   function applyTexts() {
     document.documentElement.lang = L;
@@ -1193,7 +1193,7 @@ main.pc{position:relative}
           if (pts.length < 3) return;
           var bw = 180, be = -180, bs = 90, bn = -90;
           pts.forEach(function (p) { p[0] < bw && (bw = p[0]); p[0] > be && (be = p[0]); p[1] < bs && (bs = p[1]); p[1] > bn && (bn = p[1]); });
-          rings.push({ cc: cc, w: bw, e: be, s: bs, n: bn, p: pts, area: (be - bw) * (bn - bs) });
+          rings.push({ cc: cc, w: bw, e: be, s: bs, n: bn, p: pts, refs: refs, area: (be - bw) * (bn - bs) });
         });
       }
       // Словарь городов (towns.bin, тот же, что в APK): широта по возрастанию, единица — 1e-5 градуса.
@@ -1206,7 +1206,7 @@ main.pc{position:relative}
         gi[j] = varint(tb, p); pop[j] = varint(tb, p); ci[j] = tb[p.i++];
         var len = tb[p.i++]; no[j] = p.i; nl[j] = len; p.i += len;
       }
-      G = { w: w.c || {}, rings: rings, dots: bj.d || {}, cell: new Map(), t: { la: la, ln: ln, pop: pop, ci: ci, no: no, nl: nl, gi: gi, b: tb, codes: codes, n: n } };
+      G = { w: w.c || {}, rings: rings, arcs: arcs, lv: [], dots: bj.d || {}, cell: new Map(), t: { la: la, ln: ln, pop: pop, ci: ci, no: no, nl: nl, gi: gi, b: tb, codes: codes, n: n } };
       mapDirty = true;
       return G;
     });
@@ -1427,16 +1427,20 @@ main.pc{position:relative}
     MV.t = Math.max(0, Math.min(1, (Math.log(MV.s / worldS()) / Math.LN2 - 1.5) / 2.5));
     PC = { l: l, f: f, c: ne(l, f), ky: neKy(f), cf: Math.cos(f) };
   }
-  function proj(lng, lat) {
-    var l = lng * D2R, f = lat * D2R, a = ne(l, f);
-    if (MV.t <= 0) return a;
-    var dl = l - PC.l;
-    dl > Math.PI ? (dl -= 2 * Math.PI) : dl < -Math.PI && (dl += 2 * Math.PI);
-    var bx = PC.c[0] + dl * PC.cf * PC.ky, by = PC.c[1] + (f - PC.f) * PC.ky;
-    return [a[0] + (bx - a[0]) * MV.t, a[1] + (by - a[1]) * MV.t];
-  }
+  function merY(f) { f = Math.max(-MAXF, Math.min(MAXF, f)); return Math.log(Math.tan(Math.PI / 4 + f / 2)); }
+  // Переход к местной проекции (22.11.2026, Андрей: при приближении к Америке точки Кореи на миг появлялись в Америке).
+  // По x местная проекция и Меркатор совпадают (cos φ₀ · 1/cos φ₀ = 1) — смешивается только y. Прежде местная проекция
+  // переносила долготу точки к центру вида через сто восьмидесятый меридиан, а Меркатор — нет, и на переходе смесь двух
+  // вела точку с одного края мира на другой через середину экрана. Теперь перенос один на точку, контур или отрезок и
+  // общий для обеих проекций: shiftOf — сдвиг долготы в градусах к копии мира, ближайшей к центру вида. На виде мира
+  // (t = 0) мир один, с краями, и сдвига нет; с приближения у карты нет края, и всё за сто восьмидесятым меридианом —
+  // рядом, а не через весь мир. Шов переноса — в полумире от центра, за краем экрана.
+  function shiftOf(lng) { return MV.t > 0 ? 360 * Math.round((MV.lng - lng) / 360) : 0; }
+  // Экран по готовым долготе (радианы, уже со сдвигом), широте (радианы) и y Меркатора — без тригонометрии в кадре.
+  function sxL(l) { return (l - PC.c[0]) * MV.s + CW / 2; }
+  function syF(f, my) { return -((MV.t > 0 ? my + (PC.c[1] + (f - PC.f) * PC.ky - my) * MV.t : my) - PC.c[1]) * MV.s + CH / 2; }
   // Точка карты → точка экрана (y вниз).
-  function scr(lng, lat) { var p = proj(lng, lat); return [(p[0] - PC.c[0]) * MV.s + CW / 2, -(p[1] - PC.c[1]) * MV.s + CH / 2]; }
+  function scr(lng, lat) { var f = lat * D2R; return [sxL((lng + shiftOf(lng)) * D2R), syF(f, merY(f))]; }
   // Точек экрана на градус у центра вида — пороги регионов и подписей.
   function ppd() { return MV.s * D2R * (MV.t * PC.cf * PC.ky + (1 - MV.t)); }
   function setView(lng, lat, s) {
@@ -1520,19 +1524,12 @@ main.pc{position:relative}
     return "rgb(" + Math.round(p[0] + (q[0] - p[0]) * k) + "," + Math.round(p[1] + (q[1] - p[1]) * k) + "," + Math.round(p[2] + (q[2] - p[2]) * k) + ")";
   }
   function hexRgb(h) { var m = /^#?([0-9a-f]{6})$/i.exec(h); var v = m ? parseInt(m[1], 16) : 0xb3341f; return [v >> 16, (v >> 8) & 255, v & 255]; }
-  function ringPath(g, pts) {
-    var lx = -1e9, ly = -1e9, first = true;
-    for (var i = 0; i < pts.length; i++) {
-      var q = scr(pts[i][0], pts[i][1]), x = q[0], y = q[1];
-      if (!first && Math.abs(x - lx) < 0.8 && Math.abs(y - ly) < 0.8) continue;
-      first ? g.moveTo(x, y) : g.lineTo(x, y); first = false; lx = x; ly = y;
-    }
-    g.closePath();
-  }
   // Отрезок, обрезанный прямоугольником экрана с запасом (Лианг — Барски); целиком снаружи — null.
   // Пунктир по отрезку длиной в миллионы точек за краем экрана (вблизи точек) тормозил карту (21.11.2026).
-  function clipSeg(x1, y1, x2, y2, m) {
-    var dx = x2 - x1, dy = y2 - y1, t0 = 0, t1 = 1, P = [-dx, dx, -dy, dy], Q = [x1 + m, CW + m - x1, y1 + m, CH + m - y1];
+  // Край по x можно сузить (xa, xb): на виде мира отрезок не выходит за край карты.
+  function clipSeg(x1, y1, x2, y2, m, xa, xb) {
+    xa = xa == null ? -m : xa; xb = xb == null ? CW + m : xb;
+    var dx = x2 - x1, dy = y2 - y1, t0 = 0, t1 = 1, P = [-dx, dx, -dy, dy], Q = [x1 - xa, xb - x1, y1 + m, CH + m - y1];
     for (var i = 0; i < 4; i++) {
       if (P[i] === 0) { if (Q[i] < 0) return null; continue; }
       var r = Q[i] / P[i];
@@ -1541,14 +1538,81 @@ main.pc{position:relative}
     }
     return [x1 + t0 * dx, y1 + t0 * dy, x1 + t1 * dx, y1 + t1 * dy];
   }
-  // Контур на экране — плоский массив [x, y, …] без шагов короче 0,8 точки; проекция считается один раз и служит и заливке,
-  // и границе.
-  function ringXY(pts) {
-    var out = [], lx = -1e9, ly = -1e9;
-    for (var i = 0; i < pts.length; i++) {
-      var q = scr(pts[i][0], pts[i][1]), x = q[0], y = q[1];
-      if (out.length && Math.abs(x - lx) < 0.8 && Math.abs(y - ly) < 0.8) continue;
-      out.push(x, y); lx = x; ly = y;
+  // Подложка по масштабу (22.11.2026, Андрей: карта тормозила при отдалении). Замер: на виде мира кадр шёл 50–137 мс —
+  // каждый кадр заново проецировал 306 858 точек границ с логарифмом и тангенсом на каждую, хотя на экране шириной в
+  // тысячу точек различимы единицы процентов из них. Теперь точки дуг один раз переводятся в радианы и y Меркатора
+  // (toTri: долгота, широта, y — тройками), а дуги упрощаются (Дуглас — Пейкер) до шести уровней подробности с шагом
+  // вдвое — от 17,5 до 184 тысяч точек; общая дуга двух соседей упрощается одна на обоих, и щелей между странами не
+  // бывает. Уровень — самый грубый, чья погрешность меньше 0,9 точки экрана; ближе — полная подробность. Уровни
+  // считаются заранее, в простое страницы, частями (landPrep), чтобы первое приближение не ждало упрощения.
+  function toTri(pts) {
+    var a = new Float32Array(pts.length * 3);
+    for (var i = 0; i < pts.length; i++) { var f = pts[i][1] * D2R; a[i * 3] = pts[i][0] * D2R; a[i * 3 + 1] = f; a[i * 3 + 2] = merY(f); }
+    return a;
+  }
+  function simplify(a, tol) {
+    var n = a.length / 3;
+    if (n <= 2) return a;
+    var keep = new Uint8Array(n), st = [0, n - 1], t2 = tol * tol, m = 2;
+    keep[0] = keep[n - 1] = 1;
+    while (st.length) {
+      var j = st.pop(), i = st.pop(), ax = a[i * 3], ay = a[i * 3 + 2], dx = a[j * 3] - ax, dy = a[j * 3 + 2] - ay, L = dx * dx + dy * dy, best = -1, bd = t2;
+      for (var k = i + 1; k < j; k++) {
+        var px = a[k * 3] - ax, py = a[k * 3 + 2] - ay, u = L ? Math.max(0, Math.min(1, (px * dx + py * dy) / L)) : 0, qx = px - u * dx, qy = py - u * dy, d = qx * qx + qy * qy;
+        d > bd && ((bd = d), (best = k));
+      }
+      if (best > 0) { keep[best] = 1; m++; st.push(i, best, best, j); }
+    }
+    var out = new Float32Array(m * 3), o = 0;
+    for (var q = 0; q < n; q++) if (keep[q]) { out[o++] = a[q * 3]; out[o++] = a[q * 3 + 1]; out[o++] = a[q * 3 + 2]; }
+    return out;
+  }
+  var LAND_TOL = [0.0064, 0.0032, 0.0016, 0.0008, 0.0004, 0.0002];
+  function arcAt(i) { G.at || (G.at = new Array(G.arcs.length)); return G.at[i] || (G.at[i] = toTri(G.arcs[i])); }
+  function landArcs() {
+    var k = 0;
+    while (k < LAND_TOL.length && LAND_TOL[k] * MV.s > 0.9) k++;
+    if (G.lv[k]) return G.lv[k];
+    var all = G.arcs.map(function (a, i) { return arcAt(i); });
+    return (G.lv[k] = k < LAND_TOL.length ? all.map(function (a) { return simplify(a, LAND_TOL[k]); }) : all);
+  }
+  function landPrep() {
+    if (!G || G.prepOn) return;
+    G.prepOn = true;
+    var ric = window.requestIdleCallback || function (f) { return setTimeout(function () { f({ timeRemaining: function () { return 6; } }); }, 30); },
+      k = 0, i = 0, out = [];
+    var step = function (dl) {
+      while (k < LAND_TOL.length && dl.timeRemaining() > 1) {
+        if (G.lv[k]) { k++; i = 0; out = []; continue; }
+        for (var end = Math.min(G.arcs.length, i + 150); i < end; i++) out.push(simplify(arcAt(i), LAND_TOL[k]));
+        if (i >= G.arcs.length) { G.lv[k] || (G.lv[k] = out); k++; i = 0; out = []; }
+      }
+      k < LAND_TOL.length && ric(step);
+    };
+    ric(step);
+  }
+  // Рамка кольца или многоугольника на экране — по углам его рамки в градусах: x зависит только от долготы, y — только от
+  // широты, и обе зависимости монотонны. За краем экрана или меньше 1,2 точки — false (не рисуется).
+  function boxOn(r, sh) {
+    var b = r._b || (r._b = [r.w * D2R, r.e * D2R, r.s * D2R, r.n * D2R, merY(r.s * D2R), merY(r.n * D2R)]), m = 8 * DPR,
+      x0 = sxL(b[0] + sh * D2R), x1 = sxL(b[1] + sh * D2R), y0 = syF(b[3], b[5]), y1 = syF(b[2], b[4]);
+    if (x1 < -m || x0 > CW + m || y1 < -m || y0 > CH + m) return false;
+    return x1 - x0 >= 1.2 || y1 - y0 >= 1.2;
+  }
+  // Контур на экране — плоский массив [x, y, …] без шагов короче 0,8 точки: обход дуг кольца (refs, как в TopoJSON:
+  // ~номер — дуга в обратную сторону) со сдвигом копии мира sh. Проекция считается один раз и служит и заливке, и границе.
+  function ringXY(arcs, refs, sh) {
+    var out = [], lx = -1e9, ly = -1e9, shr = sh * D2R, t = MV.t, s = MV.s, c0 = PC.c[0], c1 = PC.c[1], f0 = PC.f, ky = PC.ky, hw = CW / 2, hh = CH / 2;
+    for (var q = 0; q < refs.length; q++) {
+      var ref = refs[q], a = arcs[ref < 0 ? ~ref : ref];
+      if (!a || !a.length) continue;
+      var n = a.length / 3, st = ref < 0 ? -1 : 1;
+      for (var i = ref < 0 ? n - 1 : 0; i >= 0 && i < n; i += st) {
+        var j = i * 3, my = a[j + 2], x = (a[j] + shr - c0) * s + hw,
+          y = -((t > 0 ? my + (c1 + (a[j + 1] - f0) * ky - my) * t : my) - c1) * s + hh;
+        if (out.length && Math.abs(x - lx) < 0.8 && Math.abs(y - ly) < 0.8) continue;
+        out.push(x, y); lx = x; ly = y;
+      }
     }
     return out;
   }
@@ -1582,31 +1646,34 @@ main.pc{position:relative}
     land = land || document.createElement("canvas");
     // Холст подложки пересоздаётся только при смене размера (прежде — каждый кадр приближения).
     (land.width !== cv.width || land.height !== cv.height) && (land.width = cv.width, land.height = cv.height);
-    var g = land.getContext("2d"), visited = {}, C = cols();
+    // Цвета — один раз на тему (applyTheme и смена темы системы сбрасывают COL), а не getComputedStyle в каждом кадре.
+    var g = land.getContext("2d"), visited = {}, C = COL || cols();
     found.countries.forEach(function (c) { visited[c.cc] = 1; });
     g.fillStyle = C.bg; g.fillRect(0, 0, land.width, land.height);
     if (!G || !MV) return;
-    var vb = viewBox(), pd = ppd(), shown = [];
+    var pd = ppd(), arcs = landArcs(), byCc = {}, order = [];
+    landPrep();
     G.rings.forEach(function (r) {
-      if (vb && (r.e < vb[0] || r.w > vb[1] || r.n < vb[2] || r.s > vb[3])) return;
-      if ((r.e - r.w) * pd < 1.2 && (r.n - r.s) * pd < 1.2) return;
-      shown.push(r);
+      var sh = shiftOf((r.w + r.e) / 2);
+      if (!boxOn(r, sh)) return;
+      var xy = ringXY(arcs, r.refs, sh);
+      xy.length >= 6 && (byCc[r.cc] || (order.push(r.cc), (byCc[r.cc] = []))).push(xy);
     });
-    // Сначала все заливки, затем все границы: заливка соседней страны больше не закрывает общую границу (21.11.2026,
-    // Андрей: между посещёнными странами не было видно границы). Контур проецируется один раз (ringXY).
-    var xys = shown.map(function (r) { return ringXY(r.p); });
-    shown.forEach(function (r, k) {
-      g.beginPath(); fillXY(g, xys[k]);
-      g.fillStyle = C.bg2; g.fill();
-      if (visited[r.cc]) { g.globalAlpha = 0.22; g.fillStyle = C.acc; g.fill(); g.globalAlpha = 1; }
+    // Заливка — один путь на страну по правилу чёт-нечет (дыры и анклавы — как в поиске страны точки), посещённая —
+    // поверх цветом оформления (прежде — по заливке на каждое из 4252 колец). Затем все границы: заливка соседней страны
+    // не закрывает общую границу (21.11.2026, Андрей: между посещёнными странами не было видно границы).
+    order.forEach(function (cc) {
+      g.beginPath(); byCc[cc].forEach(function (xy) { fillXY(g, xy); });
+      g.fillStyle = C.bg2; g.fill("evenodd");
+      if (visited[cc]) { g.globalAlpha = 0.22; g.fillStyle = C.acc; g.fill("evenodd"); g.globalAlpha = 1; }
     });
     g.lineJoin = "round";
     g.strokeStyle = C.line; g.lineWidth = 0.8 * DPR; g.beginPath();
-    shown.forEach(function (r, k) { visited[r.cc] || strokeXY(g, xys[k]); });
+    order.forEach(function (cc) { visited[cc] || byCc[cc].forEach(function (xy) { strokeXY(g, xy); }); });
     g.stroke();
     // Границы посещённых стран — цветом оформления, заметнее: видна и граница между двумя посещёнными.
     g.strokeStyle = C.acc; g.globalAlpha = 0.75; g.lineWidth = 1.1 * DPR; g.beginPath();
-    shown.forEach(function (r, k) { visited[r.cc] && strokeXY(g, xys[k]); });
+    order.forEach(function (cc) { visited[cc] && byCc[cc].forEach(function (xy) { strokeXY(g, xy); }); });
     g.stroke(); g.globalAlpha = 1;
     // Регионы посещённых стран — когда градус шире 40 точек экрана; пунктир — только по видимым кускам.
     if (pd > 40 * DPR) {
@@ -1615,8 +1682,10 @@ main.pc{position:relative}
       Object.keys(visited).forEach(function (cc) {
         (regCache[cc] || []).forEach(function (rg) {
           rg.polys.forEach(function (pg) {
-            if (vb && (pg.e < vb[0] || pg.w > vb[1] || pg.n < vb[2] || pg.s > vb[3])) return;
-            pg.rings.forEach(function (ring) { strokeXY(g, ringXY(ring)); });
+            var sh = shiftOf((pg.w + pg.e) / 2);
+            if (!boxOn(pg, sh)) return;
+            pg.tri || (pg.tri = pg.rings.map(toTri));
+            pg.tri.forEach(function (t3, k) { strokeXY(g, ringXY(pg.tri, [k], sh)); });
           });
         });
       });
@@ -1624,40 +1693,51 @@ main.pc{position:relative}
       g.setLineDash([]); g.globalAlpha = 1;
     }
   }
-  // Видимая область в градусах [запад, восток, юг, север] с запасом; вид шире полушария — null (рисуется всё).
-  function viewBox() {
-    if (MV.t < 0.3) return null;
-    var w = 999, e = -999, so = 999, n = -999;
-    [[0, 0], [CW / 2, 0], [CW, 0], [CW, CH / 2], [CW, CH], [CW / 2, CH], [0, CH], [0, CH / 2]].forEach(function (c) {
-      var g = invert(c[0], c[1]);
-      g[0] < w && (w = g[0]); g[0] > e && (e = g[0]); g[1] < so && (so = g[1]); g[1] > n && (n = g[1]);
-    });
-    if (e - w > 180) return null;
-    var mw = (e - w) * 0.1, mh = (n - so) * 0.1;
-    return [w - mw, e + mw, so - mh, n + mh];
-  }
   // Точки и отрезки — пачками по 32 оттенкам времени: десятки тысяч точек рисуются за несколько десятков путей, а не по
   // одному пути на точку.
   function binOf(ms) { return T1 > T0 ? Math.max(0, Math.min(BINS - 1, Math.floor(((ms - T0) / (T1 - T0)) * BINS))) : BINS - 1; }
   function binColor(k) { return colorAt(T0 + ((k + 0.5) / BINS) * (T1 - T0)); }
+  // Точка — радианы и y Меркатора один раз на точку; «дальний» ли отрезок (больше 300 км) — один раз на пару соседей.
+  function pq(p) { if (p._y === undefined) { p._l = p[1] * D2R; p._f = p[0] * D2R; p._y = merY(p._f); } return p; }
+  function ptXY(p) { pq(p); return [sxL(p._l + shiftOf(p[1]) * D2R), syF(p._f, p._y)]; }
+  var dotGrid = null, dotStamp = 0;
   function drawPts(from, to) {
-    var pts = A.pts, R = Math.min(5.5, 2.6 + Math.max(0, Math.log(MV.s / fitS) / Math.LN2) * 0.35) * DPR, k, i;
+    var pts = A.pts, R = Math.min(5.5, 2.6 + Math.max(0, Math.log(MV.s / fitS) / Math.LN2) * 0.35) * DPR, k, i, t = MV.t, m = 8 * DPR;
     var near = [], far = [], dots = [];
     for (k = 0; k < BINS; k++) { near.push([]); far.push([]); dots.push([]); }
+    // На виде мира (t = 0) мир один, с краями: отрезок не выходит за край карты. Ближе края нет.
+    var xa = t > 0 ? -m : Math.max(-m, sxL(-Math.PI)), xb = t > 0 ? CW + m : Math.min(CW + m, sxL(Math.PI));
     for (i = Math.max(1, from); i < to && i < pts.length; i++) {
-      var a = pts[i - 1], b = pts[i];
+      var a = pq(pts[i - 1]), b = pq(pts[i]);
       if (b[2] - a[2] > 36 * 3600000) continue;
-      var qa = scr(a[1], a[0]), qb = scr(b[1], b[0]), x1 = qa[0], y1 = qa[1], x2 = qb[0], y2 = qb[1];
-      if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
-      // Отрезок — только его видимая часть: вблизи длинные (пунктирные) отрезки уходили на миллионы точек за край.
-      var sg = clipSeg(x1, y1, x2, y2, 8 * DPR);
-      if (!sg) continue;
-      (dist(a[0], a[1], b[0], b[1]) > 300000 ? far : near)[binOf(b[2])].push(sg[0], sg[1], sg[2], sg[3]);
+      b._pa !== a && ((b._pa = a), (b._far = dist(a[0], a[1], b[0], b[1]) > 300000));
+      // Отрезок — коротким путём, через сто восьмидесятый меридиан, если так ближе (Токио — Лос-Анджелес — над Тихим
+      // океаном, а не через Европу): конец берётся в копии мира, ближайшей к началу. Рисуется в копии мира начала и в
+      // копии конца; лишнее отрежет край экрана или карты. Отрезок — только видимая часть: вблизи длинные пунктирные
+      // отрезки уходили на миллионы точек за край.
+      var bl = b[1] - 360 * Math.round((b[1] - a[1]) / 360), o1 = shiftOf(a[1]),
+        o2 = t > 0 ? shiftOf(bl) : bl > 180 ? -360 : bl < -180 ? 360 : 0,
+        y1 = syF(a._f, a._y), y2 = syF(b._f, b._y), set = (b._far ? far : near)[binOf(b[2])];
+      for (var c = 0; c < (o2 !== o1 ? 2 : 1); c++) {
+        var o = c ? o2 : o1, x1 = sxL((a[1] + o) * D2R), x2 = sxL((bl + o) * D2R);
+        if (Math.abs(x2 - x1) < 0.5 && Math.abs(y2 - y1) < 0.5) continue;
+        var sg = clipSeg(x1, y1, x2, y2, m, xa, xb);
+        sg && set.push(sg[0], sg[1], sg[2], sg[3]);
+      }
     }
-    for (i = from; i < to && i < pts.length; i++) {
-      var qp = scr(pts[i][1], pts[i][0]), x = qp[0], y = qp[1];
+    // Точки — от новых к старым; при полной перерисовке точка, чьё место (клетка в 0,6 радиуса) уже занято более новой,
+    // не рисуется: на виде мира тысячи снимков одного города — несколько кружков, а не тысячи друг на друге.
+    var whole = from === 0, cell = Math.max(1, R * 0.6), gw = Math.ceil((CW + 2 * R) / cell) + 1, gh = Math.ceil((CH + 2 * R) / cell) + 1;
+    if (whole) { (!dotGrid || dotGrid.length < gw * gh) && ((dotGrid = new Uint32Array(gw * gh)), (dotStamp = 0)); dotStamp++; }
+    for (i = Math.min(to, pts.length) - 1; i >= from; i--) {
+      var p = pq(pts[i]), x = sxL(p._l + shiftOf(p[1]) * D2R), y = syF(p._f, p._y);
       if (x < -R || y < -R || x > CW + R || y > CH + R) continue;
-      dots[binOf(pts[i][2])].push(x, y);
+      if (whole) {
+        var gi = Math.floor((x + R) / cell) + Math.floor((y + R) / cell) * gw;
+        if (dotGrid[gi] === dotStamp) continue;
+        dotGrid[gi] = dotStamp;
+      }
+      dots[binOf(p[2])].push(x, y);
     }
     cx.lineCap = "round"; cx.lineJoin = "round"; cx.lineWidth = 1.8 * DPR;
     [[near, 0.7, []], [far, 0.4, [5 * DPR, 6 * DPR]]].forEach(function (set) {
@@ -1698,7 +1778,7 @@ main.pc{position:relative}
     hitGrid = new Map();
     var cell = 18 * DPR;
     for (var i = 0; i < A.shown && i < A.pts.length; i++) {
-      var qh = scr(A.pts[i][1], A.pts[i][0]), x = qh[0], y = qh[1];
+      var qh = ptXY(A.pts[i]), x = qh[0], y = qh[1];
       if (x < 0 || y < 0 || x > CW || y > CH) continue;
       var k = Math.floor(x / cell) + ":" + Math.floor(y / cell);
       hitGrid.has(k) ? hitGrid.get(k).push(i) : hitGrid.set(k, [i]);
@@ -1712,7 +1792,7 @@ main.pc{position:relative}
     if (!MV) { CW = W; CH = H; fit(A.pts); mapDirty = true; }
     else if (CW !== W || CH !== H) { MV.s *= W / CW; CW = W; CH = H; clampView(); mapDirty = true; }
     prep();
-    mapDirty && (ACC = hexRgb(css("--accent") || "#B3341F"));
+    mapDirty && (ACC = hexRgb((COL || cols()).acc || "#B3341F"));
     var to = revealing ? upto : A.pts.length;
     if (mapDirty || drawnTo > to) { drawLand(); cx.drawImage(land, 0, 0); drawnTo = 0; mapDirty = false; drawPts(0, to); }
     else drawPts(Math.max(0, drawnTo - 1), to);
@@ -1763,7 +1843,7 @@ main.pc{position:relative}
     var r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * DPR, my = (e.clientY - r.top) * DPR, cell = 18 * DPR, best = -1, bd = 10 * DPR;
     for (var gx = -1; gx <= 1; gx++) for (var gy = -1; gy <= 1; gy++) {
       (hitGrid.get((Math.floor(mx / cell) + gx) + ":" + (Math.floor(my / cell) + gy)) || []).forEach(function (i) {
-        var qd = scr(A.pts[i][1], A.pts[i][0]), d = Math.hypot(qd[0] - mx, qd[1] - my);
+        var qd = ptXY(A.pts[i]), d = Math.hypot(qd[0] - mx, qd[1] - my);
         d < bd && ((bd = d), (best = i));
       });
     }
@@ -1776,7 +1856,7 @@ main.pc{position:relative}
     tip.children[0].textContent = when; tip.children[1].textContent = place;
     tip.hidden = false;
     // Подсказка не выходит за края карты.
-    var hw = tip.offsetWidth / 2, bw = cv.clientWidth, qt = scr(p[1], p[0]), px = Math.max(hw + 6, Math.min(bw - hw - 6, qt[0] / DPR)), py = qt[1] / DPR;
+    var hw = tip.offsetWidth / 2, bw = cv.clientWidth, qt = ptXY(p), px = Math.max(hw + 6, Math.min(bw - hw - 6, qt[0] / DPR)), py = qt[1] / DPR;
     tip.style.left = px + "px"; tip.style.top = Math.max(tip.offsetHeight + 16, py) + "px";
   }
   function renderLegend() {
@@ -3114,12 +3194,15 @@ main.pc{position:relative}
     g.fillStyle = "#121010"; g.fillRect(mx, my, mw, mh);
     var keepMV = MV && { lng: MV.lng, lat: MV.lat, s: MV.s, t: MV.t }, keepCW = CW, keepCH = CH, keepFit = fitS;
     CW = mw; CH = mh; MV = null; fit(A.pts);
-    var cvb = viewBox();
     var vis = {}; found.countries.forEach(function (q) { vis[q.cc] = 1; });
     g.translate(mx, my);
+    var arcsC = G && landArcs();
     G && G.rings.forEach(function (r) {
-      if (cvb && (r.e < cvb[0] || r.w > cvb[1] || r.n < cvb[2] || r.s > cvb[3])) return;
-      g.beginPath(); ringPath(g, r.p);
+      var sh = shiftOf((r.w + r.e) / 2);
+      if (!boxOn(r, sh)) return;
+      var xy = ringXY(arcsC, r.refs, sh);
+      if (xy.length < 6) return;
+      g.beginPath(); fillXY(g, xy);
       g.fillStyle = vis[r.cc] ? "#6e3527" : "#2a2420"; g.fill();
       g.strokeStyle = vis[r.cc] ? "#a0503b" : "#3d3531"; g.lineWidth = 1.2; g.stroke();
     });
