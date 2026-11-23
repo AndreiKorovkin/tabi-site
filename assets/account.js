@@ -121,16 +121,16 @@
     el._gis = key; el.innerHTML = "";
     GA().renderButton(el, { type: "standard", theme: th, size: "large", text: "continue_with", shape: "pill", logo_alignment: "center", width: bw, locale: GLOC[lang] || lang });
   }
-  // Своя кнопка, когда кнопка Google не загрузилась (блокировщик): в оформлении Google — белая, со знаком «G», того же размера,
-  // что кнопка Facebook (23.11.2026, Андрей: без значка Google кнопку не узнать).
+  // Своя кнопка, когда кнопка Google не загрузилась (блокировщик): тот же вид, что у кнопки Google filled_blue, — синяя, знак
+  // «G» в белом круге, того же размера, что кнопка Facebook (23.11.2026, Андрей: без значка Google кнопку не узнать).
   var GI = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.2 5.6c4.2-3.9 7.1-9.6 7.1-17z"/><path fill="#FBBC05" d="M10.5 28.5c-.5-1.4-.8-2.9-.8-4.5s.3-3.1.8-4.5l-7.9-6.2C1 16.6 0 20.2 0 24s1 7.4 2.6 10.7l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.2-5.6c-2.2 1.5-5.1 2.4-8.7 2.4-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>';
   function gisFallback(el, o) {
     el.innerHTML = "";
     var b = document.createElement("button");
-    b.type = "button"; b.className = "tgfb"; b.innerHTML = GI + "<span></span>"; b.lastChild.textContent = o.label();
+    b.type = "button"; b.className = "tgfb"; b.innerHTML = "<i>" + GI + "</i><span></span>"; b.lastChild.textContent = o.label();
     if (!document.getElementById("tgfbCss")) {
       var st = document.createElement("style"); st.id = "tgfbCss";
-      st.textContent = ".tgfb{appearance:none;border:1px solid #dadce0;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;min-width:200px;height:40px;padding:0 16px;border-radius:999px;background:#fff;color:#1f1f1f;font:500 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-sizing:border-box}.tgfb:hover{background:#f8faff;border-color:#d2e3fc}.tgfb svg{width:18px;height:18px;flex:none}";
+      st.textContent = ".tgfb{appearance:none;border:0;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;min-width:200px;height:40px;padding:0 16px 0 4px;border-radius:999px;background:#1a73e8;color:#fff;font:500 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-sizing:border-box;position:relative}.tgfb:hover{background:#1b66c9}.tgfb i{position:absolute;left:4px;top:4px;width:32px;height:32px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}.tgfb svg{width:18px;height:18px}.tgfb span{padding-left:28px}";
       document.head.appendChild(st);
     }
     b.onclick = function () { o.start && o.start(); google(o.back(), o.before); };
