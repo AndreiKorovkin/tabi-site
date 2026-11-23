@@ -4,8 +4,8 @@
 <meta name="description" content="We will check the media files on your computer and show the statistics of your life: the countries, regions and cities you have visited. The files themselves are not viewed and never leave your device: only their metadata are collected, above all the place and time of shooting. We value your privacy.">
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css?v=63cbd493f4">
-<script src="/assets/account.js?v=9f0fb6ffa3"></script>
+<link rel="stylesheet" href="/assets/site.css?v=c402b2d950">
+<script src="/assets/account.js?v=e4ceba3c72"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -162,6 +162,8 @@ dialog.win.pc-qrw{width:min(400px,calc(100vw - 32px))}
 #vApp.pc-leave{animation:pcOut .25s ease forwards}
 /* Кнопки рядом с кодом — одна под другой: подписи не переносятся ни на одном языке. */
 #vApp .pc-row{grid-template-columns:minmax(0,1fr);gap:10px}
+#doneRow .pc-btn[hidden]{display:none}
+#doneRow:has(#bCard[hidden]){grid-template-columns:minmax(0,1fr)}
 .pc-col{display:grid;gap:14px;align-content:start;min-width:0}
 .pc-col:not(:has(>:not([hidden]))){display:none}
 .pc-tier::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--tc)}
@@ -374,13 +376,13 @@ main.pc{position:relative}
     <!-- Итог -->
     <div id="vDone" hidden style="display:grid;gap:12px">
       <p class="pc-t" id="done" hidden></p>
-      <button class="pc-btn b2" id="bMore"></button>
+      <!-- «Проверить ещё» и «Скачать картинку» (23.11.2026, слово Андрея) — одной строкой, одного вида -->
+      <div class="pc-row" id="doneRow"><button class="pc-btn b2" id="bMore" type="button"></button><button class="pc-btn b2" id="bCard" type="button" hidden></button></div>
     </div>
-    <!-- Сохранение (20.11.2026, Андрей): «Сохранить итог» или «Перенести на телефон», затем только «Войти через Google» -->
+    <!-- Сохранение (23.11.2026, слово Андрея: две кнопки вели к одному — входу): сразу вход Google, под ним Facebook -->
     <div id="vSave" hidden class="pc-box">
       <h2 id="saveT"></h2>
       <p class="pc-t" id="saveX"></p>
-      <div class="pc-row" id="saveWays"><button class="pc-btn" id="bSaveAcc" type="button"></button><button class="pc-btn b2" id="bSavePhone" type="button"></button></div>
       <div class="gis" id="bGoogle" hidden></div>
       <div class="gis" id="bFb" hidden></div>
     </div>
@@ -600,14 +602,14 @@ main.pc{position:relative}
     "orMail": {"en": "Or with a code sent to your email:", "ru": "Или по коду на почту:", "cs": "Nebo kódem zaslaným na e-mail:", "de": "Oder mit einem Code per E-Mail:", "fr": "Ou avec un code envoyé par e-mail :", "es": "O con un código enviado a tu correo:", "it": "Oppure con un codice inviato via e-mail:", "pt": "Ou com um código enviado ao seu e-mail:", "ja": "またはメールに届くコードで：", "ko": "또는 이메일로 받은 코드로:"},
     "install": {"en": "Install the app", "ru": "Установить приложение", "cs": "Nainstalovat aplikaci", "de": "App installieren", "fr": "Installer l’application", "es": "Instalar la aplicación", "it": "Installa l’app", "pt": "Instalar o aplicativo", "ja": "アプリをインストール", "ko": "앱 설치"},
     "saveT": {"en": "Save the result", "ru": "Сохраните результат", "cs": "Uložte si výsledek", "de": "Ergebnis speichern", "fr": "Enregistrez le résultat", "es": "Guarda el resultado", "it": "Salvi il risultato", "pt": "Salve o resultado", "ja": "結果を保存", "ko": "결과 저장"},
-    "saveX": {"en": "Without signing in, the result is kept in this browser. Save it or move it to your phone.", "ru": "Без входа результат хранится в этом браузере. Сохраните его или перенесите на телефон.", "cs": "Bez přihlášení je výsledek uložen v tomto prohlížeči. Uložte si ho, nebo ho přeneste do telefonu.", "de": "Ohne Anmeldung wird das Ergebnis in diesem Browser gespeichert. Speichern Sie es oder übertragen Sie es auf Ihr Telefon.", "fr": "Sans connexion, le résultat est conservé dans ce navigateur. Enregistrez-le ou transférez-le sur votre téléphone.", "es": "Sin iniciar sesión, el resultado se guarda en este navegador. Guárdalo o pásalo a tu teléfono.", "it": "Senza accesso, il risultato resta in questo browser. Lo salvi o lo trasferisca sul telefono.", "pt": "Sem entrar, o resultado fica guardado neste navegador. Salve-o ou passe-o para o celular.", "ja": "ログインしない場合、結果はこのブラウザーに保存されます。保存するか、スマートフォンに移してください。", "ko": "로그인하지 않으면 결과는 이 브라우저에 보관됩니다. 저장하거나 휴대폰으로 옮기세요."},
+    "saveX": {"en": "Without signing in, the result is kept only in this browser. Sign in to save it to your account and move it to the Tabi app on your phone.", "ru": "Без входа результат хранится только в этом браузере. Войдите — он сохранится в учётной записи и перенесётся на телефон в приложение Tabi.", "cs": "Bez přihlášení zůstane výsledek jen v tomto prohlížeči. Přihlaste se a uloží se do účtu a přenese do aplikace Tabi v telefonu.", "de": "Ohne Anmeldung bleibt das Ergebnis nur in diesem Browser. Melden Sie sich an, dann wird es in Ihrem Konto gespeichert und in die App Tabi auf Ihrem Telefon übertragen.", "fr": "Sans connexion, le résultat reste uniquement dans ce navigateur. Connectez-vous pour l’enregistrer dans votre compte et le transférer dans l’application Tabi sur votre téléphone.", "es": "Sin iniciar sesión, el resultado se guarda solo en este navegador. Inicia sesión para guardarlo en tu cuenta y pasarlo a la aplicación Tabi en tu teléfono.", "it": "Senza accesso il risultato resta solo in questo browser. Acceda per salvarlo nel Suo account e trasferirlo nell’app Tabi sul telefono.", "pt": "Sem entrar, o resultado fica apenas neste navegador. Entre para salvá-lo na sua conta e passá-lo para o aplicativo Tabi no celular.", "ja": "ログインしない場合、結果はこのブラウザーにだけ保存されます。ログインすると、アカウントに保存され、スマートフォンのTabiアプリに移せます。", "ko": "로그인하지 않으면 결과는 이 브라우저에만 보관됩니다. 로그인하면 계정에 저장되고 휴대폰의 Tabi 앱으로 옮겨집니다."},
     "eLimit": {"en": "Enough points have been saved today. The rest can be saved tomorrow.", "ru": "На сегодня сохранено достаточно точек. Остальное можно сохранить завтра.", "cs": "Pro dnešek je uloženo dost bodů. Zbytek můžete uložit zítra.", "de": "Für heute sind genug Punkte gespeichert. Den Rest können Sie morgen speichern.", "fr": "Assez de points ont été enregistrés aujourd’hui. Le reste pourra l’être demain.", "es": "Por hoy se han guardado suficientes puntos. El resto puedes guardarlo mañana.", "it": "Per oggi sono stati salvati abbastanza punti. Il resto potrà salvarlo domani.", "pt": "Por hoje, já foram salvos pontos suficientes. O restante pode ser salvo amanhã.", "ja": "今日はこれ以上保存できません。残りは明日保存できます。", "ko": "오늘은 충분한 지점이 저장되었습니다. 나머지는 내일 저장할 수 있습니다."},
     "eFull": {"en": "The largest number of points is already waiting to be checked. Open the app on your phone to check them.", "ru": "Наибольшее число точек уже ждёт проверки. Откройте приложение на телефоне, чтобы проверить их.", "cs": "Na kontrolu už čeká největší možný počet bodů. Otevřete aplikaci v telefonu a zkontrolujte je.", "de": "Die größte Zahl an Punkten wartet bereits auf die Prüfung. Öffnen Sie die App auf Ihrem Telefon, um sie zu prüfen.", "fr": "Le nombre maximal de points attend déjà d’être vérifié. Ouvrez l’application sur votre téléphone pour les vérifier.", "es": "Ya hay el número máximo de puntos esperando revisión. Abre la aplicación en tu teléfono para revisarlos.", "it": "Il numero massimo di punti è già in attesa di verifica. Apra l’app sul telefono per verificarli.", "pt": "O número máximo de pontos já aguarda verificação. Abra o aplicativo no celular para verificá-los.", "ja": "確認待ちの地点がすでに上限に達しています。スマートフォンでアプリを開いて確認してください。", "ko": "확인을 기다리는 지점이 이미 최대입니다. 휴대폰에서 앱을 열어 확인하세요."},
     "none": {"en": "None of the chosen files contains a shooting location. Choose another folder.", "ru": "Ни в одном из выбранных файлов нет места съёмки. Выберите другую папку.", "cs": "V žádném z vybraných souborů není místo pořízení. Vyberte jinou složku.", "de": "Keine der gewählten Dateien enthält einen Aufnahmeort. Wählen Sie einen anderen Ordner.", "fr": "Aucun des fichiers choisis ne contient de lieu de prise de vue. Choisissez un autre dossier.", "es": "Ninguno de los archivos elegidos contiene el lugar de captura. Elige otra carpeta.", "it": "Nessuno dei file scelti contiene il luogo di scatto. Scelga un’altra cartella.", "pt": "Nenhum dos arquivos escolhidos contém o local da captura. Escolha outra pasta.", "ja": "選んだファイルのどれにも撮影場所がありません。別のフォルダを選んでください。", "ko": "선택한 파일 중 촬영 장소가 있는 파일이 없습니다. 다른 폴더를 선택하세요."},
     "share": {"en": "Share", "ru": "Поделиться", "cs": "Sdílet", "de": "Teilen", "fr": "Partager", "es": "Compartir", "it": "Condividi", "pt": "Compartilhar", "ja": "共有", "ko": "공유"},
     "shareDl": {"en": "Download the picture", "ru": "Скачать картинку", "cs": "Stáhnout obrázek", "de": "Bild herunterladen", "fr": "Télécharger l’image", "es": "Descargar la imagen", "it": "Scarica l’immagine", "pt": "Baixar a imagem", "ja": "画像をダウンロード", "ko": "이미지 다운로드"},
-    "cardT": {"en": "My travel history", "ru": "Моя история путешествий", "cs": "Moje historie cest", "de": "Meine Reisegeschichte", "fr": "Mon histoire de voyages", "es": "Mi historia de viajes", "it": "La mia storia di viaggi", "pt": "Minha história de viagens", "ja": "私の旅の記録", "ko": "나의 여행 기록"},
-    "cardBy": {"en": "From my photos · tabimobile.com/computer", "ru": "По моим снимкам · tabimobile.com/computer", "cs": "Podle mých snímků · tabimobile.com/computer", "de": "Nach meinen Fotos · tabimobile.com/computer", "fr": "D’après mes photos · tabimobile.com/computer", "es": "Según mis fotos · tabimobile.com/computer", "it": "Dalle mie foto · tabimobile.com/computer", "pt": "Pelas minhas fotos · tabimobile.com/computer", "ja": "私の写真から · tabimobile.com/computer", "ko": "내 사진으로 · tabimobile.com/computer"},
+    "cardT": {"en": "My travel map", "ru": "Моя карта путешествий", "cs": "Moje mapa cest", "de": "Meine Reisekarte", "fr": "Ma carte de voyages", "es": "Mi mapa de viajes", "it": "La mia mappa dei viaggi", "pt": "Meu mapa de viagens", "ja": "わたしの旅の地図", "ko": "나의 여행 지도"},
+    "cardBy": {"en": "From my photos · tabimobile.com", "ru": "По моим фото · tabimobile.com", "cs": "Podle mých fotek · tabimobile.com", "de": "Aus meinen Fotos · tabimobile.com", "fr": "D’après mes photos · tabimobile.com", "es": "Según mis fotos · tabimobile.com", "it": "Dalle mie foto · tabimobile.com", "pt": "Pelas minhas fotos · tabimobile.com", "ja": "写真から · tabimobile.com", "ko": "내 사진으로 · tabimobile.com"},
     "phoneT": {"en": "Open this page on a computer", "ru": "Откройте эту страницу на компьютере", "cs": "Otevřete tuto stránku v počítači", "de": "Öffnen Sie diese Seite auf einem Computer", "fr": "Ouvrez cette page sur un ordinateur", "es": "Abre esta página en un ordenador", "it": "Apra questa pagina su un computer", "pt": "Abra esta página em um computador", "ja": "このページはパソコンで開いてください", "ko": "이 페이지를 컴퓨터에서 여세요"},
     "phoneA": {"en": "Open tabimobile.com/computer on a computer: there you can analyse the media files stored on it. The media files on this phone are analysed by the app.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся. Медиафайлы этого телефона разберёт приложение.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené. Mediální soubory tohoto telefonu projde aplikace.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer — dort lassen sich die darauf gespeicherten Mediendateien auswerten. Die Mediendateien dieses Telefons wertet die App aus.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur : vous pourrez y analyser les fichiers multimédias qu’il contient. Ceux de ce téléphone sont analysés par l’application.", "es": "Abre tabimobile.com/computer en un ordenador: allí puedes analizar los archivos multimedia que guarda. Los de este teléfono los analiza la aplicación.", "it": "Apra tabimobile.com/computer su un computer: lì può analizzare i file multimediali che contiene. Quelli di questo telefono li analizza l’app.", "pt": "Abra tabimobile.com/computer em um computador: lá você pode analisar os arquivos de mídia guardados nele. Os deste celular são analisados pelo aplicativo.", "ja": "パソコンで tabimobile.com/computer を開くと、そこに保存されたメディアファイルを分析できます。このスマートフォンのメディアファイルはアプリが分析します。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 그 안의 미디어 파일을 분석할 수 있습니다. 이 휴대폰의 미디어 파일은 앱이 분석합니다."},
     "phoneI": {"en": "Open tabimobile.com/computer on a computer to scan the media files kept on it.", "ru": "Откройте tabimobile.com/computer на компьютере — там можно разобрать медиафайлы, которые на нём хранятся.", "cs": "Otevřete tabimobile.com/computer v počítači — tam lze projít mediální soubory, které jsou v něm uložené.", "de": "Öffnen Sie tabimobile.com/computer auf einem Computer, um die dort gespeicherten Mediendateien auszuwerten.", "fr": "Ouvrez tabimobile.com/computer sur un ordinateur pour analyser les fichiers multimédias qui s’y trouvent.", "es": "Abre tabimobile.com/computer en un ordenador para analizar los archivos multimedia que guarda.", "it": "Apra tabimobile.com/computer su un computer per analizzare i file multimediali che vi sono conservati.", "pt": "Abra tabimobile.com/computer em um computador para analisar os arquivos de mídia guardados nele.", "ja": "パソコンでtabimobile.com/computerを開くと、パソコンに保存されたメディアファイルを分析できます。", "ko": "컴퓨터에서 tabimobile.com/computer를 열면 컴퓨터에 저장된 미디어 파일을 분석할 수 있습니다."},
@@ -642,7 +644,6 @@ main.pc{position:relative}
     "moreFolder": {"en": "Check files", "ru": "Проверить файлы", "cs": "Zkontrolovat soubory", "de": "Dateien prüfen", "fr": "Vérifier les fichiers", "es": "Comprobar archivos", "it": "Controlla i file", "pt": "Verificar arquivos", "ja": "ファイルを確認", "ko": "파일 확인"},
     "runNoPlace": {"ru": "В этих файлах нет места съёмки: камера его не записала.", "en": "These files contain no shooting location: the camera did not record it.", "cs": "Tyto soubory neobsahují místo pořízení: fotoaparát ho nezaznamenal.", "de": "Diese Dateien enthalten keinen Aufnahmeort: Die Kamera hat ihn nicht gespeichert.", "fr": "Ces fichiers ne contiennent pas de lieu de prise de vue : l’appareil ne l’a pas enregistré.", "es": "Estos archivos no contienen lugar de captura: la cámara no lo registró.", "it": "Questi file non contengono il luogo di scatto: la fotocamera non lo ha registrato.", "pt": "Estes arquivos não contêm local da captura: a câmera não o registrou.", "ja": "これらのファイルには撮影場所がありません。カメラが記録していません。", "ko": "이 파일에는 촬영 장소가 없습니다. 카메라가 기록하지 않았습니다."},
     "runNoNew": {"ru": "Новых точек нет: все эти места съёмки уже есть в результате.", "en": "No new points: all these shooting locations were already in the result.", "cs": "Žádné nové body: všechna tato místa pořízení už ve výsledku byla.", "de": "Keine neuen Punkte: Alle diese Aufnahmeorte waren bereits im Ergebnis.", "fr": "Aucun nouveau point : tous ces lieux de prise de vue figuraient déjà dans le résultat.", "es": "No hay puntos nuevos: todos estos lugares de captura ya estaban en el resultado.", "it": "Nessun punto nuovo: tutti questi luoghi di scatto erano già nel risultato.", "pt": "Nenhum ponto novo: todos esses locais da captura já estavam no resultado.", "ja": "新しい地点はありません。これらの撮影場所はすべて結果に含まれています。", "ko": "새 지점이 없습니다. 이 촬영 장소는 모두 이미 결과에 있습니다."},
-    "saveAcc": {"en": "Save the result", "ru": "Сохранить результат", "cs": "Uložit výsledek", "de": "Ergebnis speichern", "fr": "Enregistrer le résultat", "es": "Guardar el resultado", "it": "Salva il risultato", "pt": "Salvar o resultado", "ja": "結果を保存", "ko": "결과 저장"},
     "savePhone": {"en": "Move to my phone", "ru": "Перенести на телефон", "cs": "Přenést do telefonu", "de": "Aufs Telefon übertragen", "fr": "Transférer sur mon téléphone", "es": "Pasar a mi teléfono", "it": "Trasferisci sul telefono", "pt": "Passar para o celular", "ja": "スマートフォンに移す", "ko": "휴대폰으로 옮기기"},
     "openPlay": {"en": "Open Google Play", "ru": "Открыть Google Play", "cs": "Otevřít Google Play", "de": "Google Play öffnen", "fr": "Ouvrir Google Play", "es": "Abrir Google Play", "it": "Apri Google Play", "pt": "Abrir o Google Play", "ja": "Google Playを開く", "ko": "Google Play 열기"},
     "qrLbl": {"en": "Code with a link to the app on Google Play", "ru": "Код со ссылкой на приложение в Google Play", "cs": "Kód s odkazem na aplikaci v Google Play", "de": "Code mit einem Link zur App in Google Play", "fr": "Code avec un lien vers l’application sur Google Play", "es": "Código con un enlace a la aplicación en Google Play", "it": "Codice con il link all’app su Google Play", "pt": "Código com o link para o aplicativo no Google Play", "ja": "Google Playのアプリへのリンクのコード", "ko": "Google Play 앱 링크 코드"},
@@ -663,7 +664,6 @@ main.pc{position:relative}
     "delDev": {"en": "Delete", "ru": "Удалить", "cs": "Smazat", "de": "Löschen", "fr": "Supprimer", "es": "Eliminar", "it": "Elimina", "pt": "Excluir", "ja": "削除", "ko": "삭제"},
     "dlgDevT": {"en": "Delete the device?", "ru": "Удалить устройство?", "cs": "Smazat zařízení?", "de": "Gerät löschen?", "fr": "Supprimer l’appareil ?", "es": "¿Eliminar el dispositivo?", "it": "Eliminare il dispositivo?", "pt": "Excluir o aparelho?", "ja": "機器を削除しますか？", "ko": "기기를 삭제할까요?"},
     "dlgDevX": {"en": "The points of {name} will disappear from this result. For 30 days you can bring the device back from the list of deleted devices.", "ru": "Точки устройства {name} исчезнут из результата. Устройство можно вернуть в течение 30 дней из списка удалённых.", "cs": "Body zařízení {name} z tohoto výsledku zmizí. Po dobu 30 dnů ho můžete vrátit ze seznamu smazaných zařízení.", "de": "Die Punkte von {name} verschwinden aus diesem Ergebnis. 30 Tage lang können Sie das Gerät aus der Liste der gelöschten Geräte zurückholen.", "fr": "Les points de {name} disparaîtront de ce résultat. Pendant 30 jours, vous pourrez récupérer l’appareil dans la liste des appareils supprimés.", "es": "Los puntos de {name} desaparecerán de este resultado. Durante 30 días puedes recuperar el dispositivo desde la lista de dispositivos eliminados.", "it": "I punti di {name} spariranno da questo risultato. Per 30 giorni potrà recuperare il dispositivo dall’elenco dei dispositivi eliminati.", "pt": "Os pontos de {name} vão desaparecer deste resultado. Durante 30 dias, você pode recuperar o dispositivo na lista de dispositivos excluídos.", "ja": "{name}の地点がこの結果から消えます。30日間は、削除した機器の一覧から元に戻せます。", "ko": "{name}의 지점이 이 결과에서 사라집니다. 30일 동안 삭제된 기기 목록에서 되돌릴 수 있습니다."},
-    "eAnonLimit": {"en": "Today the server no longer accepts results without signing in. The result is kept in this browser; save it so that it is not lost.", "ru": "Сегодня сервер больше не принимает результаты без входа. Результат хранится в этом браузере — сохраните его, чтобы он не потерялся.", "cs": "Dnes už server nepřijímá výsledky bez přihlášení. Výsledek je uložen v tomto prohlížeči — uložte si ho, aby se neztratil.", "de": "Heute nimmt der Server keine Ergebnisse ohne Anmeldung mehr an. Das Ergebnis ist in diesem Browser gespeichert — speichern Sie es, damit es nicht verloren geht.", "fr": "Aujourd’hui, le serveur n’accepte plus de résultats sans connexion. Le résultat est conservé dans ce navigateur : enregistrez-le pour ne pas le perdre.", "es": "Hoy el servidor ya no acepta resultados sin iniciar sesión. El resultado está guardado en este navegador: guárdalo para no perderlo.", "it": "Oggi il server non accetta più risultati senza accesso. Il risultato è conservato in questo browser: lo salvi per non perderlo.", "pt": "Hoje o servidor não aceita mais resultados sem login. O resultado está guardado neste navegador: salve-o para não perdê-lo.", "ja": "本日はログインなしの結果をサーバーが受け付けられません。結果はこのブラウザーに保存されています。失わないように保存してください。", "ko": "오늘은 서버가 로그인 없는 결과를 더 받지 않습니다. 결과는 이 브라우저에 보관되어 있으니, 잃지 않도록 저장하세요."},
     "eLimitAll": {"en": "Today the server no longer accepts new results. The result stays in this browser; save it tomorrow.", "ru": "Сегодня сервер больше не принимает новые результаты. Результат останется в этом браузере, сохраните его завтра.", "cs": "Dnes už server nepřijímá nové výsledky. Výsledek zůstane v tomto prohlížeči, uložte si ho zítra.", "de": "Heute nimmt der Server keine neuen Ergebnisse mehr an. Das Ergebnis bleibt in diesem Browser; speichern Sie es morgen.", "fr": "Aujourd’hui, le serveur n’accepte plus de nouveaux résultats. Le résultat reste dans ce navigateur ; enregistrez-le demain.", "es": "Hoy el servidor ya no acepta resultados nuevos. El resultado se queda en este navegador; guárdalo mañana.", "it": "Oggi il server non accetta più nuovi risultati. Il risultato resta in questo browser; lo salvi domani.", "pt": "Hoje o servidor não aceita mais novos resultados. O resultado continua neste navegador; salve-o amanhã.", "ja": "本日はサーバーが新しい結果を受け付けられません。結果はこのブラウザーに残りますので、明日保存してください。", "ko": "오늘은 서버가 새 결과를 더 받지 않습니다. 결과는 이 브라우저에 남아 있으니 내일 저장하세요."},
     "menu": {"en": "Menu", "ru": "Меню", "cs": "Menu", "de": "Menü", "fr": "Menu", "es": "Menú", "it": "Menu", "pt": "Menu", "ja": "メニュー", "ko": "메뉴"},
     "runTitleDir": {"en": "Folder “{name}”", "ru": "Папка «{name}»", "cs": "Složka „{name}“", "de": "Ordner „{name}“", "fr": "Dossier « {name} »", "es": "Carpeta «{name}»", "it": "Cartella «{name}»", "pt": "Pasta “{name}”", "ja": "フォルダー「{name}」", "ko": "폴더 ‘{name}’"},
@@ -674,7 +674,7 @@ main.pc{position:relative}
     "navHome": {"en": "Home", "ru": "Главная", "cs": "Domů", "de": "Startseite", "fr": "Accueil", "es": "Inicio", "it": "Home", "pt": "Início", "ja": "ホーム", "ko": "홈"},
     "navPc": {"en": "Media files from my computer", "ru": "Медиафайлы с моего компьютера", "cs": "Mediální soubory z mého počítače", "de": "Mediendateien von meinem Computer", "fr": "Fichiers multimédias de mon ordinateur", "es": "Archivos multimedia de mi ordenador", "it": "File multimediali dal mio computer", "pt": "Arquivos de mídia do meu computador", "ja": "自分のパソコンのメディアファイル", "ko": "내 컴퓨터의 미디어 파일"},
     "q1": {"en": "What data does the site collect, and where is it stored?", "ru": "Какие данные собирает сайт и где они хранятся?", "cs": "Jaká data web shromažďuje a kde jsou uložena?", "de": "Welche Daten erfasst die Website und wo werden sie gespeichert?", "fr": "Quelles données le site collecte-t-il et où sont-elles conservées ?", "es": "¿Qué datos recoge el sitio y dónde se guardan?", "it": "Quali dati raccoglie il sito e dove vengono conservati?", "pt": "Quais dados o site coleta e onde eles ficam guardados?", "ja": "サイトはどんなデータを集め、どこに保存しますか？", "ko": "사이트는 어떤 데이터를 수집하고 어디에 보관하나요?"},
-    "a1": {"en": "Media files never leave your computer: the browser reads only their metadata — the place, time and device of shooting.\n\nWithout signing in, the result of the check is kept in this browser. Right after the check, a copy of it is sent to our server without a name or email address, under a random key of this browser. The copy contains “place and time” points, device details, the names of the folders with the files, and the name of the operating system and browser. If you sign in, the copy moves to your account; without signing in, the server deletes it after 30 days.\n\nAfter you sign in, the result is kept in your account: it will not be lost, and you can return to it on any computer. You can delete your account together with its data on the account page.\n\nAfter each check, the server also receives an anonymised summary without coordinates, for the site’s statistics. We do not sell your data and do not pass your location or route to advertising networks.", "ru": "Медиафайлы не покидают ваш компьютер: браузер читает в них только метаданные — место, время и устройство съёмки.\n\nБез входа результат проверки хранится в этом браузере. Сразу после проверки его копия передаётся на наш сервер без имени и адреса почты, под случайным ключом этого браузера. В копию входят точки «место и время», сведения об устройствах, названия папок с файлами, название системы и браузера. Если вы войдёте, копия перейдёт в вашу учётную запись; без входа сервер удаляет её через 30 дней.\n\nПосле входа результат хранится в вашей учётной записи: он не потеряется, и к нему можно вернуться на любом компьютере. Удалить учётную запись вместе с данными можно на её странице.\n\nПосле каждой проверки сервер получает также обезличенную сводку без координат — для статистики сайта. Мы не продаём ваши данные и не передаём ваше местоположение и маршрут рекламным сетям.", "cs": "Mediální soubory váš počítač neopouštějí: prohlížeč z nich čte jen metadata — místo, čas a zařízení pořízení.\n\nBez přihlášení je výsledek kontroly uložen v tomto prohlížeči. Hned po kontrole se jeho kopie odešle na náš server bez jména a e-mailové adresy, pod náhodným klíčem tohoto prohlížeče. Kopie obsahuje body „místo a čas“, údaje o zařízeních, názvy složek se soubory a název systému a prohlížeče. Když se přihlásíte, kopie přejde do vašeho účtu; bez přihlášení ji server smaže po 30 dnech.\n\nPo přihlášení je výsledek uložen ve vašem účtu: neztratí se a můžete se k němu vrátit na kterémkoli počítači. Účet i s daty můžete smazat na jeho stránce.\n\nPo každé kontrole server dostává také anonymizovaný souhrn bez souřadnic — pro statistiku webu. Vaše data neprodáváme a vaši polohu ani trasu nepředáváme reklamním sítím.", "de": "Mediendateien verlassen Ihren Computer nicht: Der Browser liest nur ihre Metadaten – Ort, Zeit und Gerät der Aufnahme.\n\nOhne Anmeldung wird das Ergebnis der Prüfung in diesem Browser gespeichert. Gleich nach der Prüfung wird eine Kopie davon ohne Namen und E-Mail-Adresse unter einem zufälligen Schlüssel dieses Browsers an unseren Server übertragen. Die Kopie enthält Punkte „Ort und Zeit“, Angaben zu den Geräten, die Namen der Ordner mit den Dateien sowie den Namen von Betriebssystem und Browser. Wenn Sie sich anmelden, geht die Kopie in Ihr Konto über; ohne Anmeldung löscht der Server sie nach 30 Tagen.\n\nNach der Anmeldung wird das Ergebnis in Ihrem Konto gespeichert: Es geht nicht verloren, und Sie können auf jedem Computer darauf zurückgreifen. Ihr Konto samt Daten können Sie auf seiner Seite löschen.\n\nNach jeder Prüfung erhält der Server außerdem eine anonymisierte Zusammenfassung ohne Koordinaten – für die Statistik der Website. Wir verkaufen Ihre Daten nicht und geben Ihren Standort und Ihre Route nicht an Werbenetzwerke weiter.", "fr": "Les fichiers multimédias ne quittent pas votre ordinateur : le navigateur n’y lit que les métadonnées — le lieu, l’heure et l’appareil de prise de vue.\n\nSans connexion, le résultat de la vérification est conservé dans ce navigateur. Juste après la vérification, une copie est envoyée à notre serveur sans nom ni adresse e-mail, sous une clé aléatoire propre à ce navigateur. La copie contient les points « lieu et heure », des informations sur les appareils, les noms des dossiers contenant les fichiers et le nom du système et du navigateur. Si vous vous connectez, la copie passe dans votre compte ; sans connexion, le serveur la supprime au bout de 30 jours.\n\nAprès connexion, le résultat est conservé dans votre compte : il ne se perdra pas et vous pourrez le retrouver sur n’importe quel ordinateur. Vous pouvez supprimer votre compte avec ses données sur la page du compte.\n\nAprès chaque vérification, le serveur reçoit aussi un résumé anonymisé sans coordonnées, pour les statistiques du site. Nous ne vendons pas vos données et ne transmettons ni votre position ni votre itinéraire aux régies publicitaires.", "es": "Los archivos multimedia no salen de tu ordenador: el navegador solo lee sus metadatos (el lugar, la hora y el dispositivo de la toma).\n\nSin iniciar sesión, el resultado de la comprobación se guarda en este navegador. Justo después de la comprobación, se envía una copia a nuestro servidor sin nombre ni dirección de correo, con una clave aleatoria de este navegador. La copia incluye los puntos «lugar y hora», datos de los dispositivos, los nombres de las carpetas con los archivos y el nombre del sistema y del navegador. Si inicias sesión, la copia pasa a tu cuenta; sin iniciar sesión, el servidor la borra a los 30 días.\n\nTras iniciar sesión, el resultado se guarda en tu cuenta: no se perderá y podrás volver a él en cualquier ordenador. Puedes eliminar tu cuenta junto con sus datos en la página de la cuenta.\n\nDespués de cada comprobación, el servidor recibe también un resumen anonimizado sin coordenadas, para las estadísticas del sitio. No vendemos tus datos ni cedemos tu ubicación ni tu ruta a redes publicitarias.", "it": "I file multimediali non lasciano il Suo computer: il browser ne legge solo i metadati, cioè il luogo, l’ora e il dispositivo dello scatto.\n\nSenza accesso, il risultato del controllo resta in questo browser. Subito dopo il controllo, una sua copia viene inviata al nostro server senza nome né indirizzo e-mail, con una chiave casuale di questo browser. La copia contiene i punti «luogo e ora», i dati dei dispositivi, i nomi delle cartelle con i file e il nome del sistema e del browser. Se accede, la copia passa nel Suo account; senza accesso il server la cancella dopo 30 giorni.\n\nDopo l’accesso il risultato resta nel Suo account: non andrà perso e potrà ritrovarlo su qualsiasi computer. Può eliminare l’account insieme ai dati nella sua pagina.\n\nDopo ogni controllo il server riceve anche un riepilogo anonimizzato senza coordinate, per le statistiche del sito. Non vendiamo i Suoi dati e non cediamo la Sua posizione né il Suo percorso a reti pubblicitarie.", "pt": "Os arquivos de mídia não saem do seu computador: o navegador lê neles apenas os metadados — o local, a hora e o aparelho da captura.\n\nSem entrar, o resultado da verificação fica guardado neste navegador. Logo após a verificação, uma cópia dele é enviada ao nosso servidor sem nome nem endereço de e-mail, sob uma chave aleatória deste navegador. A cópia contém os pontos “local e hora”, dados dos aparelhos, os nomes das pastas com os arquivos e o nome do sistema e do navegador. Se você entrar, a cópia passa para a sua conta; sem entrar, o servidor a apaga depois de 30 dias.\n\nDepois de entrar, o resultado fica guardado na sua conta: ele não se perde, e você pode voltar a ele em qualquer computador. Você pode excluir a conta junto com os dados na página da conta.\n\nApós cada verificação, o servidor recebe também um resumo anonimizado sem coordenadas, para as estatísticas do site. Não vendemos os seus dados e não repassamos a sua localização nem o seu trajeto a redes de publicidade.", "ja": "メディアファイルがパソコンの外に出ることはありません。ブラウザーが読み取るのはメタデータ、つまり撮影場所・撮影時刻・撮影機器だけです。\n\nログインしない場合、確認の結果はこのブラウザーに保存されます。確認の直後、そのコピーが氏名やメールアドレスなしで、このブラウザーのランダムなキーのもとに当社のサーバーへ送られます。コピーに含まれるのは「場所と時刻」の地点、機器の情報、ファイルのあるフォルダー名、OSとブラウザーの名前です。ログインするとコピーはアカウントに移ります。ログインしない場合、サーバーは30日後にコピーを削除します。\n\nログイン後は、結果がアカウントに保存されます。失われることはなく、どのパソコンからでも戻ってこられます。アカウントはデータとともに、アカウントのページで削除できます。\n\n確認のたびに、サーバーは座標を含まない匿名化された集計も受け取ります。サイトの統計のためです。データを販売することはなく、位置情報やルートを広告ネットワークに渡すこともありません。", "ko": "미디어 파일은 컴퓨터 밖으로 나가지 않습니다. 브라우저는 메타데이터, 즉 촬영 장소와 시간, 촬영 기기만 읽습니다.\n\n로그인하지 않으면 확인 결과는 이 브라우저에 보관됩니다. 확인 직후 그 사본이 이름이나 이메일 주소 없이 이 브라우저의 무작위 키로 저희 서버에 전송됩니다. 사본에는 ‘장소와 시간’ 지점, 기기 정보, 파일이 있는 폴더 이름, 운영체제와 브라우저 이름이 들어 있습니다. 로그인하면 사본은 계정으로 옮겨지고, 로그인하지 않으면 서버가 30일 뒤에 삭제합니다.\n\n로그인한 뒤에는 결과가 계정에 보관됩니다. 사라지지 않으며 어느 컴퓨터에서든 다시 볼 수 있습니다. 계정은 데이터와 함께 계정 페이지에서 삭제할 수 있습니다.\n\n확인할 때마다 서버는 좌표가 없는 익명 요약도 받습니다. 사이트 통계를 위한 것입니다. 저희는 데이터를 판매하지 않으며 위치나 경로를 광고 네트워크에 넘기지 않습니다."},
+    "a1": {"en": "Media files never leave your computer: the browser reads only their metadata — the place, time and device of shooting.\n\nWithout signing in, the result is kept only in this browser: neither the points nor any data about the files reach our server.\n\nAfter you sign in, the result is kept in your account: it will not be lost, and you can return to it on any computer. You can delete your account together with its data on the account page.\n\nAfter each check, the server also receives an anonymised summary without coordinates, for the site’s statistics. We do not sell your data and do not pass your location or route to advertising networks.", "ru": "Медиафайлы не покидают ваш компьютер: браузер читает в них только метаданные — место, время и устройство съёмки.\n\nБез входа результат проверки хранится только в этом браузере: ни точки, ни сведения о файлах на наш сервер не уходят.\n\nПосле входа результат хранится в вашей учётной записи: он не потеряется, и к нему можно вернуться на любом компьютере. Удалить учётную запись вместе с данными можно на её странице.\n\nПосле каждой проверки сервер получает также обезличенную сводку без координат — для статистики сайта. Мы не продаём ваши данные и не передаём ваше местоположение и маршрут рекламным сетям.", "cs": "Mediální soubory váš počítač neopouštějí: prohlížeč z nich čte jen metadata — místo, čas a zařízení pořízení.\n\nBez přihlášení zůstává výsledek kontroly jen v tomto prohlížeči: na náš server neodcházejí body ani žádné údaje o souborech.\n\nPo přihlášení je výsledek uložen ve vašem účtu: neztratí se a můžete se k němu vrátit na kterémkoli počítači. Účet i s daty můžete smazat na jeho stránce.\n\nPo každé kontrole server dostává také anonymizovaný souhrn bez souřadnic — pro statistiku webu. Vaše data neprodáváme a vaši polohu ani trasu nepředáváme reklamním sítím.", "de": "Mediendateien verlassen Ihren Computer nicht: Der Browser liest nur ihre Metadaten – Ort, Zeit und Gerät der Aufnahme.\n\nOhne Anmeldung bleibt das Ergebnis nur in diesem Browser: Weder Punkte noch Angaben zu den Dateien gelangen auf unseren Server.\n\nNach der Anmeldung wird das Ergebnis in Ihrem Konto gespeichert: Es geht nicht verloren, und Sie können auf jedem Computer darauf zurückgreifen. Ihr Konto samt Daten können Sie auf seiner Seite löschen.\n\nNach jeder Prüfung erhält der Server außerdem eine anonymisierte Zusammenfassung ohne Koordinaten – für die Statistik der Website. Wir verkaufen Ihre Daten nicht und geben Ihren Standort und Ihre Route nicht an Werbenetzwerke weiter.", "fr": "Les fichiers multimédias ne quittent pas votre ordinateur : le navigateur n’y lit que les métadonnées — le lieu, l’heure et l’appareil de prise de vue.\n\nSans connexion, le résultat reste uniquement dans ce navigateur : ni les points ni aucune donnée sur les fichiers n’arrivent sur notre serveur.\n\nAprès connexion, le résultat est conservé dans votre compte : il ne se perdra pas et vous pourrez le retrouver sur n’importe quel ordinateur. Vous pouvez supprimer votre compte avec ses données sur la page du compte.\n\nAprès chaque vérification, le serveur reçoit aussi un résumé anonymisé sans coordonnées, pour les statistiques du site. Nous ne vendons pas vos données et ne transmettons ni votre position ni votre itinéraire aux régies publicitaires.", "es": "Los archivos multimedia no salen de tu ordenador: el navegador solo lee sus metadatos (el lugar, la hora y el dispositivo de la toma).\n\nSin iniciar sesión, el resultado se guarda solo en este navegador: ni los puntos ni ningún dato sobre los archivos llegan a nuestro servidor.\n\nTras iniciar sesión, el resultado se guarda en tu cuenta: no se perderá y podrás volver a él en cualquier ordenador. Puedes eliminar tu cuenta junto con sus datos en la página de la cuenta.\n\nDespués de cada comprobación, el servidor recibe también un resumen anonimizado sin coordenadas, para las estadísticas del sitio. No vendemos tus datos ni cedemos tu ubicación ni tu ruta a redes publicitarias.", "it": "I file multimediali non lasciano il Suo computer: il browser ne legge solo i metadati, cioè il luogo, l’ora e il dispositivo dello scatto.\n\nSenza accesso il risultato resta solo in questo browser: né i punti né alcun dato sui file arrivano al nostro server.\n\nDopo l’accesso il risultato resta nel Suo account: non andrà perso e potrà ritrovarlo su qualsiasi computer. Può eliminare l’account insieme ai dati nella sua pagina.\n\nDopo ogni controllo il server riceve anche un riepilogo anonimizzato senza coordinate, per le statistiche del sito. Non vendiamo i Suoi dati e non cediamo la Sua posizione né il Suo percorso a reti pubblicitarie.", "pt": "Os arquivos de mídia não saem do seu computador: o navegador lê neles apenas os metadados — o local, a hora e o aparelho da captura.\n\nSem entrar na conta, o resultado fica apenas neste navegador: nem os pontos nem nenhum dado sobre os arquivos chegam ao nosso servidor.\n\nDepois de entrar, o resultado fica guardado na sua conta: ele não se perde, e você pode voltar a ele em qualquer computador. Você pode excluir a conta junto com os dados na página da conta.\n\nApós cada verificação, o servidor recebe também um resumo anonimizado sem coordenadas, para as estatísticas do site. Não vendemos os seus dados e não repassamos a sua localização nem o seu trajeto a redes de publicidade.", "ja": "メディアファイルがパソコンの外に出ることはありません。ブラウザーが読み取るのはメタデータ、つまり撮影場所・撮影時刻・撮影機器だけです。\n\nログインしない場合、結果はこのブラウザーにだけ保存され、地点もファイルに関する情報も当社のサーバーには送られません。\n\nログイン後は、結果がアカウントに保存されます。失われることはなく、どのパソコンからでも戻ってこられます。アカウントはデータとともに、アカウントのページで削除できます。\n\n確認のたびに、サーバーは座標を含まない匿名化された集計も受け取ります。サイトの統計のためです。データを販売することはなく、位置情報やルートを広告ネットワークに渡すこともありません。", "ko": "미디어 파일은 컴퓨터 밖으로 나가지 않습니다. 브라우저는 메타데이터, 즉 촬영 장소와 시간, 촬영 기기만 읽습니다.\n\n로그인하지 않으면 결과는 이 브라우저에만 보관되며, 지점도 파일에 관한 어떤 정보도 저희 서버로 보내지지 않습니다.\n\n로그인한 뒤에는 결과가 계정에 보관됩니다. 사라지지 않으며 어느 컴퓨터에서든 다시 볼 수 있습니다. 계정은 데이터와 함께 계정 페이지에서 삭제할 수 있습니다.\n\n확인할 때마다 서버는 좌표가 없는 익명 요약도 받습니다. 사이트 통계를 위한 것입니다. 저희는 데이터를 판매하지 않으며 위치나 경로를 광고 네트워크에 넘기지 않습니다."},
     "q2": {"en": "Which files are suitable?", "ru": "Какие файлы подходят?", "cs": "Jaké soubory jsou vhodné?", "de": "Welche Dateien eignen sich?", "fr": "Quels fichiers conviennent ?", "es": "¿Qué archivos sirven?", "it": "Quali file sono adatti?", "pt": "Quais arquivos servem?", "ja": "どんなファイルが使えますか？", "ko": "어떤 파일이 적합한가요?"},
     "a2": {"en": "Media files (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google location history (a Google Takeout or Timeline export) and route files in GPX, KML, TCX and GeoJSON. Only files with a recorded location give a result.", "ru": "Медиафайлы (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), история местоположений Google (выгрузка Google Takeout или «Хронологии») и файлы маршрута GPX, KML, TCX и GeoJSON. Результат дают только файлы, в которых записано место.", "cs": "Mediální soubory (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), historie polohy Google (export z Google Takeout nebo z Časové osy) a soubory trasy GPX, KML, TCX a GeoJSON. Výsledek dávají jen soubory, v nichž je zaznamenáno místo.", "de": "Mediendateien (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), der Google-Standortverlauf (Export aus Google Takeout oder der Zeitachse) und Routendateien im Format GPX, KML, TCX und GeoJSON. Ein Ergebnis liefern nur Dateien, in denen ein Ort gespeichert ist.", "fr": "Les fichiers multimédias (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), l’historique des positions Google (export Google Takeout ou de la Chronologie) et les fichiers d’itinéraire GPX, KML, TCX et GeoJSON. Seuls les fichiers où un lieu est enregistré donnent un résultat.", "es": "Archivos multimedia (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), el historial de ubicaciones de Google (exportación de Google Takeout o de Cronología) y archivos de ruta GPX, KML, TCX y GeoJSON. Solo dan resultado los archivos que tienen el lugar grabado.", "it": "File multimediali (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), la cronologia delle posizioni di Google (esportazione di Google Takeout o della Cronologia) e file di percorso GPX, KML, TCX e GeoJSON. Danno un risultato solo i file in cui è registrato il luogo.", "pt": "Arquivos de mídia (JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), o histórico de localização do Google (exportação do Google Takeout ou da Linha do tempo) e arquivos de trajeto GPX, KML, TCX e GeoJSON. Só dão resultado os arquivos que têm o local gravado.", "ja": "メディアファイル（JPEG、HEIC、PNG、WebP、MP4、MOV、RAW）、Googleのロケーション履歴（Google Takeoutまたはタイムラインの書き出し）、GPX・KML・TCX・GeoJSONのルートファイルです。結果が出るのは、場所が記録されているファイルだけです。", "ko": "미디어 파일(JPEG, HEIC, PNG, WebP, MP4, MOV, RAW), Google 위치 기록(Google 테이크아웃 또는 타임라인 내보내기), GPX, KML, TCX, GeoJSON 경로 파일입니다. 위치가 기록된 파일만 결과를 줍니다."},
     "q3": {"en": "Why do some files have no location?", "ru": "Почему у части файлов нет места съёмки?", "cs": "Proč některé soubory nemají místo pořízení?", "de": "Warum haben manche Dateien keinen Aufnahmeort?", "fr": "Pourquoi certains fichiers n’ont-ils pas de lieu de prise de vue ?", "es": "¿Por qué algunos archivos no tienen lugar de captura?", "it": "Perché alcuni file non hanno il luogo di scatto?", "pt": "Por que alguns arquivos não têm local de captura?", "ja": "撮影場所がないファイルがあるのはなぜですか？", "ko": "일부 파일에 촬영 위치가 없는 이유는 무엇인가요?"},
@@ -821,7 +821,10 @@ main.pc{position:relative}
     "tN_dangerous": {"en": "one:{n} dangerous place|other:{n} dangerous places", "ru": "one:{n} опасное место|few:{n} опасных места|many:{n} опасных мест|other:{n} опасного места", "cs": "one:{n} nebezpečné místo|few:{n} nebezpečná místa|other:{n} nebezpečných míst", "de": "one:{n} gefährlicher Ort|other:{n} gefährliche Orte", "fr": "one:{n} lieu dangereux|other:{n} lieux dangereux", "es": "one:{n} lugar peligroso|other:{n} lugares peligrosos", "it": "one:{n} luogo pericoloso|other:{n} luoghi pericolosi", "pt": "one:{n} lugar perigoso|other:{n} lugares perigosos", "ja": "other:「危険」の場所 {n}か所", "ko": "other:위험 등급 장소 {n}곳"},
     "tGet": {"en": "Your route shows that you have been there. The Tabi app will show names, photos and descriptions: install it on your phone and sign in with the same account, {mail}. The app will receive your route and mark what was found in your collection.", "ru": "Ваш маршрут показывает, что вы там побывали. Названия, снимки и описания покажет приложение Tabi: установите его на телефон и войдите с той же учётной записью — {mail}. Приложение получит ваш маршрут и отметит найденное в коллекции.", "cs": "Vaše trasa ukazuje, že jste tam byli. Názvy, fotografie a popisy ukáže aplikace Tabi: nainstalujte si ji do telefonu a přihlaste se stejným účtem – {mail}. Aplikace převezme vaši trasu a nalezené označí ve sbírce.", "de": "Ihre Route zeigt, dass Sie dort waren. Namen, Fotos und Beschreibungen zeigt die App Tabi: Installieren Sie sie auf dem Telefon und melden Sie sich mit demselben Konto an – {mail}. Die App übernimmt Ihre Route und markiert das Gefundene in Ihrer Sammlung.", "fr": "Votre itinéraire montre votre passage sur place. Les noms, photos et descriptions s’affichent dans l’application Tabi : installez-la sur votre téléphone et connectez-vous avec le même compte, {mail}. L’application recevra votre itinéraire et marquera les lieux trouvés dans votre collection.", "es": "Tu ruta muestra que estuviste allí. Los nombres, las fotos y las descripciones te los mostrará la aplicación Tabi: instálala en tu teléfono e inicia sesión con la misma cuenta, {mail}. La aplicación recibirá tu ruta y marcará lo encontrado en tu colección.", "it": "Lo indica il Suo percorso. Nomi, foto e descrizioni Glieli mostrerà l’app Tabi: la installi sul telefono e acceda con lo stesso account, {mail}. L’app riceverà il Suo percorso e segnerà nella Sua collezione ciò che è stato trovato.", "pt": "O seu trajeto mostra que você esteve lá. Os nomes, as fotos e as descrições aparecem no aplicativo Tabi: instale-o no celular e entre com a mesma conta, {mail}. O aplicativo vai receber o seu trajeto e marcar na sua coleção o que foi encontrado.", "ja": "ルートから、あなたがそこを訪れたことがわかります。名前・写真・説明はTabiアプリで見られます。スマートフォンにインストールし、同じアカウント（{mail}）でログインしてください。アプリがルートを受け取り、見つかった場所をコレクションに記録します。", "ko": "경로를 보면 그곳에 다녀오신 것을 알 수 있습니다. 이름과 사진, 설명은 Tabi 앱에서 볼 수 있습니다. 휴대폰에 앱을 설치하고 같은 계정({mail})으로 로그인하세요. 앱이 경로를 받아 찾은 장소를 컬렉션에 표시합니다."},
     "tHas": {"en": "Your route shows that you have been there. Names, photos and descriptions are in the Tabi app: open it on your phone, and what was found on your route will appear in your collection.", "ru": "Ваш маршрут показывает, что вы там побывали. Названия, снимки и описания — в приложении Tabi: откройте его на телефоне, и найденное по маршруту появится в коллекции.", "cs": "Vaše trasa ukazuje, že jste tam byli. Názvy, fotografie a popisy najdete v aplikaci Tabi: otevřete ji v telefonu a nalezené podle trasy se objeví ve sbírce.", "de": "Ihre Route zeigt, dass Sie dort waren. Namen, Fotos und Beschreibungen finden Sie in der App Tabi: Öffnen Sie sie auf dem Telefon, dann erscheint das auf Ihrer Route Gefundene in Ihrer Sammlung.", "fr": "Votre itinéraire montre votre passage sur place. Les noms, photos et descriptions sont dans l’application Tabi : ouvrez-la sur votre téléphone, et les lieux trouvés sur votre itinéraire apparaîtront dans votre collection.", "es": "Tu ruta muestra que estuviste allí. Los nombres, las fotos y las descripciones están en la aplicación Tabi: ábrela en tu teléfono y lo encontrado en tu ruta aparecerá en tu colección.", "it": "Lo indica il Suo percorso. Nomi, foto e descrizioni sono nell’app Tabi: la apra sul telefono, e ciò che è stato trovato sul Suo percorso comparirà nella Sua collezione.", "pt": "O seu trajeto mostra que você esteve lá. Os nomes, as fotos e as descrições estão no aplicativo Tabi: abra-o no celular, e o que foi encontrado no seu trajeto aparecerá na sua coleção.", "ja": "ルートから、あなたがそこを訪れたことがわかります。名前・写真・説明はTabiアプリにあります。スマートフォンでアプリを開くと、ルートで見つかった場所がコレクションに表示されます。", "ko": "경로를 보면 그곳에 다녀오신 것을 알 수 있습니다. 이름과 사진, 설명은 Tabi 앱에 있습니다. 휴대폰에서 앱을 열면 경로에서 찾은 장소가 컬렉션에 나타납니다."},
-    "eOauth": {"en": "Sign-in did not work. Try again or sign in with a code sent to your email.", "ru": "Войти не удалось. Попробуйте ещё раз или войдите по коду на почту.", "cs": "Přihlášení se nezdařilo. Zkuste to znovu nebo se přihlaste kódem zaslaným e-mailem.", "de": "Die Anmeldung hat nicht geklappt. Versuchen Sie es erneut oder melden Sie sich mit einem Code per E-Mail an.", "fr": "La connexion n’a pas abouti. Réessayez ou connectez-vous avec un code envoyé par e-mail.", "es": "No se pudo iniciar sesión. Inténtalo de nuevo o inicia sesión con un código enviado a tu correo.", "it": "L’accesso non è riuscito. Riprovi oppure acceda con un codice inviato per e-mail.", "pt": "Não foi possível entrar. Tente de novo ou entre com um código enviado ao seu e-mail.", "ja": "ログインできませんでした。もう一度試すか、メールに届くコードでログインしてください。", "ko": "로그인하지 못했습니다. 다시 시도하거나 이메일로 받은 코드로 로그인하세요."}
+    "eOauth": {"en": "Sign-in did not work. Try again or sign in with a code sent to your email.", "ru": "Войти не удалось. Попробуйте ещё раз или войдите по коду на почту.", "cs": "Přihlášení se nezdařilo. Zkuste to znovu nebo se přihlaste kódem zaslaným e-mailem.", "de": "Die Anmeldung hat nicht geklappt. Versuchen Sie es erneut oder melden Sie sich mit einem Code per E-Mail an.", "fr": "La connexion n’a pas abouti. Réessayez ou connectez-vous avec un code envoyé par e-mail.", "es": "No se pudo iniciar sesión. Inténtalo de nuevo o inicia sesión con un código enviado a tu correo.", "it": "L’accesso non è riuscito. Riprovi oppure acceda con un codice inviato per e-mail.", "pt": "Não foi possível entrar. Tente de novo ou entre com um código enviado ao seu e-mail.", "ja": "ログインできませんでした。もう一度試すか、メールに届くコードでログインしてください。", "ko": "로그인하지 못했습니다. 다시 시도하거나 이메일로 받은 코드로 로그인하세요."},
+    "cardQ": {"en": "What does your map look like?", "ru": "А какая карта у тебя?", "cs": "A jaká je tvoje mapa?", "de": "Und wie sieht deine Karte aus?", "fr": "Et ta carte, elle ressemble à quoi ?", "es": "¿Y cómo es tu mapa?", "it": "E com’è la tua mappa?", "pt": "E como é o seu mapa?", "ja": "あなたの地図は？", "ko": "당신의 지도는 어떤가요?"},
+    "cardHow": {"en": "Make yours for free from your photos. The photos never leave your computer.", "ru": "Собери свою бесплатно по своим фото. Сами фото с компьютера никуда не отправляются.", "cs": "Vytvoř si ji zdarma ze svých fotek. Fotky z počítače se nikam neposílají.", "de": "Erstelle deine kostenlos aus deinen Fotos. Die Fotos verlassen deinen Computer nicht.", "fr": "Crée la tienne gratuitement à partir de tes photos. Les photos ne quittent pas ton ordinateur.", "es": "Crea el tuyo gratis con tus fotos. Las fotos no salen de tu ordenador.", "it": "Crea la tua gratis dalle tue foto. Le foto non lasciano il computer.", "pt": "Crie o seu de graça com as suas fotos. As fotos não saem do seu computador.", "ja": "写真から無料で作れます。写真がパソコンの外に出ることはありません。", "ko": "내 사진으로 무료로 만들어 보세요. 사진은 컴퓨터 밖으로 나가지 않습니다."},
+    "cardFile": {"en": "map", "ru": "karta", "cs": "mapa", "de": "karte", "fr": "carte", "es": "mapa", "it": "mappa", "pt": "mapa", "ja": "map", "ko": "map"}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -912,7 +915,7 @@ main.pc{position:relative}
     var set = { title: "title", lead: "lead", bFolder: "folder", bMore: "moreFolder",
       drop: "drop", hCountries: "hCountries", hCities: "hCities", hRoute: "hRoute", saveT: "saveT", saveX: "saveX", phoneT: "phoneT",
       bPlay: "install", bPlay2: "openPlay", bCopy: "copyLink", bCopy2: "copyLink", bClear: "clearBtn", slow: "slow",
-      hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bSaveAcc: "saveAcc", bSavePhone: "savePhone", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
+      hDevs: "hDevs", resNewH: "resNewH", resChkH: "resChkH", resCcH: "resCcH", resOk: "resOk", bCard: "shareDl", spApp: "spApp", spGet: "spGet", dlgNo: "dlgNo", hFaq: "hFaq",
       bLater: "later", bToPhone: "savePhone", qrT: "qrT",
       appInT: "appInT", appInX: "appInX", appInOr: "orMail", appInCode: "getCode", appInGo: "verify",
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList",
@@ -1028,7 +1031,7 @@ main.pc{position:relative}
     };
     var dsOf = (j.ds || []).map(function (d) { var m = /^pc:(\d+)/.exec(String(d)); return m ? +m[1] : 0; }), add = [];
     (j.p || []).forEach(function (q) {
-      if (near(q)) return;
+      if (near(q) || (Math.abs(q[0]) < 1e-6 && Math.abs(q[1]) < 1e-6)) return;
       var p = [q[0], q[1], q[2], -1, -1];
       p.rd = dsOf[q[3]] || 0; p.sent = true; p.acc = true;
       have.add(accKey(q[0], q[1], q[2]));
@@ -1073,7 +1076,8 @@ main.pc{position:relative}
   }
   // Сайт не показывает ничего из учётной записи (20.11.2026, Андрей): только разбор этого браузера и после сохранения —
   // число особых мест на снимках. WAY — путь сохранения: «acc» — сохранить итог, «phone» — перенести на телефон.
-  var LOOSE = new Set(), WAY = "", ME = null, meAsked = false;
+  // Путь сохранения один — вход, затем блок особых мест (23.11.2026: «Сохранить итог» и «Перенести на телефон» вели к одному).
+  var LOOSE = new Set(), WAY = "phone", ME = null, meAsked = false;
   var loose = function (p) { return Math.round(p[0] * 1e3) + ":" + Math.round(p[1] * 1e3) + ":" + Math.floor(p[2] / 60000); };
 
   // Пока браузер собирает список выбранной папки (на десятках тысяч файлов — полминуты и дольше), страница показывает, что
@@ -1156,8 +1160,6 @@ main.pc{position:relative}
   };
   // Два пути (20.11.2026, Андрей): «Сохранить итог» и «Перенести на телефон» — затем одна кнопка «Войти через Google»; после
   // сохранения путь «на телефон» сразу показывает блок особых мест и приложения.
-  $("bSaveAcc").onclick = function () { WAY = "acc"; renderSave(); };
-  $("bSavePhone").onclick = function () { WAY = "phone"; renderSave(); };
   $("bCopy2").onclick = function () {
     var u = PLAY + "&hl=" + L;
     APPN.copy++;
@@ -3446,7 +3448,7 @@ main.pc{position:relative}
       mapDirty = true; drawMap();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
-      S ? (doSave(), loadSaved()) : (renderSave(), anonPut());
+      S ? (doSave(), loadSaved()) : renderSave();
     };
     var worker = function () {
       if (next >= files.length) return Promise.resolve();
@@ -3615,7 +3617,7 @@ main.pc{position:relative}
       keepPut();
       show("vWork", false); show("vDone", true); keepPut(); renderWhy(); statScan();
       renderStats(); renderLegend(); shell(); renderDevs(); loadNames();
-      S ? (doSave(), loadSaved()) : (renderSave(), anonPut());
+      S ? (doSave(), loadSaved()) : renderSave();
     });
   }
 
@@ -3823,11 +3825,19 @@ main.pc{position:relative}
   // ===== Статистика разборов (18.11.2026, Андрей: сервер знает о каждом разборе, и без сохранения) =====
   // Без координат и адреса почты: числа, коды стран, модели камер, причины «без места», язык, система, время разбора.
   var RUN = { t0: 0, err: 0, src: "", tl: 0 };
+  // Метка ссылки (23.11.2026, слово Андрея: знать, какая площадка приводит людей): tabimobile.com/computer?src=reddit —
+  // латиница, цифры и дефис, до 32 знаков; помнится до конца посещения и уходит в обезличенную сводку полем ref.
+  var REF = (function () {
+    var v = new URLSearchParams(location.search).get("src") || "";
+    v = /^[a-z0-9-]{1,32}$/i.test(v) ? v.toLowerCase() : "";
+    try { v ? sessionStorage.setItem("tabiRef", v) : (v = sessionStorage.getItem("tabiRef") || ""); } catch (e) {}
+    return v;
+  })();
   function statSend(data) {
     try {
       // Без ключа входа: сводка обезличена, признак «вошёл» — полем signed.
       var h = { apikey: KEY, "Content-Type": "application/json" };
-      data.signed = !!S; data.lang = L; data.os = pcLabel(); data.v = 1;
+      data.signed = !!S; data.lang = L; data.os = pcLabel(); data.v = 1; REF && (data.ref = REF);
       fetch(FN, { method: "POST", headers: h, keepalive: true, body: JSON.stringify({ op: "stat", data: data }) }).catch(function () {});
     } catch (e) {}
   }
@@ -3838,9 +3848,10 @@ main.pc{position:relative}
     top.forEach(function (k) { cams[k] = WHY.cam[k]; });
     var fmtN = Object.keys(WHY.fmt).reduce(function (s, k) { return s + WHY.fmt[k]; }, 0);
     statSend({
-      k: "scan", files: WHY.files, place: WHY.place, pts: A.pts.length, cc: found.countries.map(function (c) { return c.cc; }),
+      // Без входа — только числа (23.11.2026, решение Андрея): ни кодов стран, ни лет поездок.
+      k: "scan", files: WHY.files, place: WHY.place, pts: A.pts.length, ncc: found.countries.length, cc: S ? found.countries.map(function (c) { return c.cc; }) : undefined,
       regions: found.regions, cities: found.cities.length, days: found.days.size, km: Math.round(found.km / 1000),
-      y0: T0 ? new Date(T0).getFullYear() : null, y1: T1 ? new Date(T1).getFullYear() : null,
+      y0: S && T0 ? new Date(T0).getFullYear() : undefined, y1: S && T1 ? new Date(T1).getFullYear() : undefined,
       why: { cam: WHY.camN, shot: WHY.shot, msg: WHY.msg, gone: WHY.gone, edit: WHY.edit, video: WHY.video, fmt: fmtN, side: WHY.side, tl: WHY.tl || 0, trk: WHY.trk || 0, sys: WHY.sysFiles || 0, sysPlace: WHY.sysPlace || 0, tiny: WHY.tiny || 0, held: WHY.held || 0, whole: !!WHY.whole },
       fmts: WHY.fmt, cams: cams, ms: Math.round(performance.now() - RUN.t0), err: RUN.err, src: RUN.src, signed: !!S
     });
@@ -3851,12 +3862,12 @@ main.pc{position:relative}
   function renderSave() {
     var has = A.shown > 0 && !revealing, st = saveSt.state;
     show("vSave", has && !S && st !== "saved" && st !== "saving" && !PHONE);
-    show("saveWays", !S && !WAY);
-    show("bGoogle", !S && !!WAY);
-    show("bFb", !S && !!WAY);
+    show("bGoogle", !S);
+    show("bFb", !S);
     // Сохранение идёт само и молча (20.11.2026, Андрей): ни строки «Сохраняем», ни «Повторить»; сбой связи или сервера —
     // повтор сам (saveLater), человеку сообщаются только пределы сервера.
     show("endBox", !PHONE && !S && !revealing && (A.shown > 0 || A.none));
+    show("bCard", !PHONE && !revealing && A.shown > 0 && found.countries.length > 0);
     $("under").classList.toggle("idle", !(A.shown > 0) || PHONE);
     renderApp();
   }
@@ -3955,12 +3966,12 @@ main.pc{position:relative}
     saveSt.state = "saving"; renderSave();
     // Серийный номер камеры не уходит с компьютера: только шесть знаков его отпечатка SHA-256 — их хватает, чтобы различить
     // две камеры одной модели, а восстановить по ним номер нельзя (одним шести знакам отвечают десятки тысяч номеров).
-    var DEVH = [], CARD = "", AKS = anonKey(false);
+    var DEVH = [], CARD = "";
     devHashes().then(function (dh) { DEVH = dh; return saveSt.mailed ? "" : cardB64(); }).then(function (png) { CARD = png; return fresh(); }).then(function (s) {
       if (!s) return { auth: true };
       // Папка — своя у каждого устройства: пары «устройство и папка» собирает функция pc-media; здесь папка — по номеру.
       var body = { op: "put", pcl: pcLabel(), pk: PK || undefined, devs: DEVH, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
-        special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined, anon: AKS || undefined };
+        special: true, sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }), card: CARD || undefined };
       return fetch(FN, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { status: r.status, j: j }; }); });
     }).then(function (res) {
@@ -3980,8 +3991,6 @@ main.pc{position:relative}
       // Номер каждого устройства в реестре учётной записи: блок «Устройства» сводит его со строками сохранённого итога.
       (j.rid || []).forEach(function (r, i) { r > 0 && DEV.list[i] && (DEV.list[i].rid = r); });
       renderDevs();
-      // Копия до входа перешла в учётную запись и стёрта сервером.
-      AKS && AKS === anonKey(false) && anonForget();
       saveSt.state = "saved"; saveSt.n = (saveSt.n || 0) + (j.n || 0); saveSt.pending = j.pending; saveSt.err = null;
       j.special && j.special.n != null && (saveSt.special = j.special);
       j.letter === "sent" && (saveSt.mailed = S && S.mail);
@@ -4008,41 +4017,9 @@ main.pc{position:relative}
       }) : "";
     })).then(function (hs) { return DEV.list.map(function (d, i) { return { mk: d.mk, md: d.md, sn: hs[i] }; }); });
   }
-  // Точки разбора до входа (18.11.2026, слово Андрея): сразу после разбора — на сервер Tabi, без учётной записи, под
-  // случайным ключом этого браузера (сервер знает только его отпечаток). Войдёт человек — точки уходят в учётную запись
-  // (doSave с anon), копия до входа стирается; без входа сервер стирает её через 30 дней; «Начать заново» её не трогает (21.11.2026, Андрей).
-  var AK = "tabiPcAnon";
-  function anonKey(make) {
-    var k = ls.get(AK);
-    if (!k && make) {
-      k = Array.prototype.map.call(crypto.getRandomValues(new Uint8Array(16)), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
-      ls.set(AK, k);
-    }
-    return k || null;
-  }
-  function anonForget() { try { localStorage.removeItem(AK); localStorage.removeItem(AK + "N"); } catch (e) {} }
-  function anonPut() {
-    if (S) return;
-    var todo = A.pts.filter(function (p) { return !p.sent; });
-    // Та же копия уже на сервере (итог восстановлен из браузера без новых точек) — повторно не отправляется.
-    if (!todo.length || (anonKey(false) && ls.get(AK + "N") === String(todo.length))) return;
-    devHashes().then(function (dh) {
-      var body = { op: "anon", key: anonKey(true), pcl: pcLabel(), pk: PK || undefined, devs: dh, dirs: DIR.list.map(function (d) { return [-1, d]; }), lang: L,
-        sum: summary(), p: todo.map(function (p) { return [p[0], p[1], p[2], p[3], p[4]]; }) };
-      return fetch(FN, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
-        .then(function (r) { return r.json().catch(function () { return null; }); })
-        .then(function (j) {
-          if (j && j.ok) return void ls.set(AK + "N", String(todo.length));
-          j && (j.reason === "limit" || j.reason === "full") && err("eAnonLimit");
-        });
-    }).catch(function () {});
-  }
-  function anonDrop() {
-    var k = anonKey(false);
-    if (!k) return;
-    anonForget();
-    fetch(FN, { method: "POST", keepalive: true, headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ op: "anon_drop", key: k }) }).catch(function () {});
-  }
+  // Без входа страница ничего не отправляет на сервер (23.11.2026, решение Андрея): прежние копии до входа сняты и стёрты;
+  // ключ прежней копии, оставшийся в браузере, забывается.
+  try { localStorage.removeItem("tabiPcAnon"); localStorage.removeItem("tabiPcAnonN"); } catch (e) {}
   // Знак этого компьютера (19.11.2026, слово Андрея: каждое устройство на сайте помечено компьютером, через который оно
   // пришло). Подпись «Windows · Edge» не различает два компьютера с одной системой и браузером, поэтому браузер хранит
   // постоянное случайное число (localStorage «tabiPcId», «Начать заново» его не стирает), а на сервер уходят только
@@ -4270,8 +4247,6 @@ main.pc{position:relative}
         loadSpecial();
       });
     });
-    // Копия до входа перезапишется оставшимся при открытии (anonPut), а без оставшегося — стирается.
-    left.length ? ls.set(AK + "N", "") : anonDrop();
     keepPut();
     rebuild();
   }
@@ -4388,11 +4363,8 @@ main.pc{position:relative}
       return new Promise(function (ok) { var rq = db.transaction("st", "readonly").objectStore("st").get("result"); rq.onsuccess = function () { ok(rq.result || null); }; rq.onerror = function () { ok(null); }; });
     }).catch(function () { return null; });
   }
-  // «Начать заново» (keepServer, 21.11.2026, слово Андрея: кнопка ничего не удаляет) очищает страницу и браузер, копию до входа
-  // на сервере не трогает — браузер лишь забывает её ключ, и следующая проверка ложится новой копией, не заменяя прежнюю;
-  // сервер стирает копию сам через 30 дней. Выход и чужая учётная запись по-прежнему стирают и копию.
-  function keepDrop(keepServer) {
-    keepServer ? anonForget() : anonDrop();
+  // «Начать заново», выход и чужая учётная запись очищают итог браузера (на сервере без входа ничего нет).
+  function keepDrop() {
     return idb().then(function (db) {
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
@@ -4473,7 +4445,7 @@ main.pc{position:relative}
     DIR.list.forEach(function (d, i) { DIR.by[d] = i; });
     var back = function (p) { var q = p.slice(0, 5); p[6] && (q.fn = p[6]); p[7] && (q.fp = p[7]); p.length > 10 && ((q._cc = p[8]), (q._ct = p[9]), (q._rg = p[10])); return q; };
     A.held = (st.held || []).map(function (p) { var q = back(p); q.sys = 1; seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
-    var pts = (st.pts || []).map(function (p) { var q = back(p); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
+    var pts = (st.pts || []).filter(function (p) { return Math.abs(p[0]) > 1e-6 || Math.abs(p[1]) > 1e-6; }).map(function (p) { var q = back(p); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     pts = pts.concat(accMerge(j, pts));
     if (!pts.length) return (restoring = false), Promise.resolve(false);
     st.saved && (saveSt.state = "saved");
@@ -4504,86 +4476,127 @@ main.pc{position:relative}
   function canShareFiles() {
     try { return !!(navigator.canShare && navigator.canShare({ files: [new File([""], "x.png", { type: "image/png" })] })); } catch (e) { return false; }
   }
+  // Картинка «Моя карта путешествий» (23.11.2026, Андрей одобрил вид: числа по центру плиток, карта Меркатора только
+  // посещённых стран с линией маршрута, страны с флагами и годами, призыв со ссылкой): 1080×1350, тёмная, на языке
+  // страницы; её отдаёт кнопка «Скачать картинку» и она же уходит в письмо после сохранения.
   function card() {
-    var fonts = document.fonts && document.fonts.load ? Promise.all([document.fonts.load("64px TabiWord"), document.fonts.load("800 58px Onest"), document.fonts.load("500 30px Onest")]).catch(function () {}) : Promise.resolve();
-    return fonts.then(cardDraw);
+    var fonts = document.fonts && document.fonts.load ? Promise.all([document.fonts.load("60px TabiWord"), document.fonts.load("800 70px Onest"), document.fonts.load("600 22px Onest"), document.fonts.load("500 17px Onest")]).catch(function () {}) : Promise.resolve();
+    var cs = found.countries.slice();
+    return fonts.then(function () {
+      return Promise.all(cs.map(function (c) { var u = flagUrl(c.cc); return u ? new Promise(function (ok) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { ok(null); }; im.src = u; }) : Promise.resolve(null); }));
+    }).then(function (flags) { return cardDraw(cs, flags); });
   }
-  function cardDraw() {
-    var W = 1080, H = 1350, c = document.createElement("canvas"), g = c.getContext("2d");
+  function rrect(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
+  function fitText(g, s, w) { if (g.measureText(s).width <= w) return s; while (s.length > 1 && g.measureText(s + "…").width > w) s = s.slice(0, -1); return s + "…"; }
+  function cardDraw(cs, flags) {
+    var W = 1080, H = 1350, P = 48, c = document.createElement("canvas"), g = c.getContext("2d");
     c.width = W; c.height = H;
-    var bg = g.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0, "#1b1412"); bg.addColorStop(1, "#2b1a14");
-    g.fillStyle = bg; g.fillRect(0, 0, W, H);
-    var glow = g.createRadialGradient(W * 0.85, 0, 0, W * 0.85, 0, 700);
-    glow.addColorStop(0, "rgba(224,96,63,.35)"); glow.addColorStop(1, "rgba(224,96,63,0)");
-    g.fillStyle = glow; g.fillRect(0, 0, W, H);
-    g.fillStyle = "#E0603F"; g.font = "64px TabiWord, Georgia, serif"; g.textBaseline = "alphabetic";
-    g.fillText("Tabi", 64, 120);
-    g.fillStyle = "#EFE9DF"; g.font = "800 58px Onest, system-ui, sans-serif";
-    g.fillText(t("cardT"), 64, 214);
-    g.fillStyle = "#A69E94"; g.font = "500 30px Onest, system-ui, sans-serif";
-    g.fillText(monthYear(T0) + " — " + monthYear(T1), 64, 262);
-    // Маршрут — на всю ширину, своим окном.
-    var mx = 64, my = 300, mw = W - 128, mh = 560;
-    g.save(); g.beginPath(); g.roundRect ? g.roundRect(mx, my, mw, mh, 28) : g.rect(mx, my, mw, mh); g.clip();
-    g.fillStyle = "#121010"; g.fillRect(mx, my, mw, mh);
-    var keepMV = MV && { lng: MV.lng, lat: MV.lat, s: MV.s, t: MV.t }, keepCW = CW, keepCH = CH, keepFit = fitS;
-    CW = mw; CH = mh; MV = null; fit(A.pts);
-    var vis = {}; found.countries.forEach(function (q) { vis[q.cc] = 1; });
-    g.translate(mx, my);
-    var arcsC = G && landArcs();
-    G && G.rings.forEach(function (r) {
-      var sh = shiftOf((r.w + r.e) / 2);
-      if (!boxOn(r, sh)) return;
-      var xy = ringXY(arcsC, r.refs, sh);
-      if (xy.length < 6) return;
-      g.beginPath(); fillXY(g, xy);
-      g.fillStyle = vis[r.cc] ? "#6e3527" : "#2a2420"; g.fill();
-      g.strokeStyle = vis[r.cc] ? "#a0503b" : "#3d3531"; g.lineWidth = 1.2; g.stroke();
+    var ON = "Onest, system-ui, sans-serif", INK = "#EFE9DF", SUB = "#A69E94", PANEL = "#1E1B19", LINE = "#332E2A", ACCN = "#E0603F";
+    g.fillStyle = "#121010"; g.fillRect(0, 0, W, H);
+    var gl = g.createRadialGradient(W * 0.92, -0.08 * H, 0, W * 0.92, -0.08 * H, 900);
+    gl.addColorStop(0, "rgba(224,96,63,.34)"); gl.addColorStop(1, "rgba(224,96,63,0)"); g.fillStyle = gl; g.fillRect(0, 0, W, H);
+    gl = g.createRadialGradient(-0.05 * W, 1.05 * H, 0, -0.05 * W, 1.05 * H, 700);
+    gl.addColorStop(0, "rgba(124,58,237,.2)"); gl.addColorStop(1, "rgba(124,58,237,0)"); g.fillStyle = gl; g.fillRect(0, 0, W, H);
+    g.textBaseline = "alphabetic";
+    g.fillStyle = ACCN; g.font = "60px TabiWord, Georgia, serif"; g.textAlign = "left"; g.fillText("Tabi", P, 104);
+    g.fillStyle = SUB; g.font = "600 22px " + ON; g.textAlign = "right"; g.fillText(t("cardBy"), W - P, 98);
+    g.fillStyle = INK; g.font = "800 70px " + ON; g.textAlign = "left"; g.fillText(fitText(g, t("cardT"), W - 2 * P), P - 2, 194);
+    // Числа — плитки по центру, ширина по числу (как строка итога страницы).
+    var nums = statNums(), keys = ["sCountries", "sRegions", "sCities", "sDays", "sKm"], tiles = [];
+    for (var i = 0; i < keys.length; i++) nums[i] > 0 && tiles.push([num(nums[i]), t(keys[i])]);
+    var y = 228, th = 96, gap = 10, ws = tiles.map(function (x) { g.font = "800 40px " + ON; var a = g.measureText(x[0]).width; g.font = "500 17px " + ON; return Math.max(a, g.measureText(x[1]).width) + 28; });
+    var extra = (W - 2 * P - gap * (tiles.length - 1) - ws.reduce(function (s, v) { return s + v; }, 0)) / Math.max(1, tiles.length), x = P;
+    tiles.forEach(function (tl, k) {
+      var w = ws[k] + Math.max(0, extra);
+      rrect(g, x, y, w, th, 18); g.fillStyle = PANEL; g.fill(); g.strokeStyle = LINE; g.lineWidth = 1; g.stroke();
+      g.textAlign = "center"; g.fillStyle = INK; g.font = "800 40px " + ON; g.fillText(tl[0], x + w / 2, y + 54);
+      g.fillStyle = SUB; g.font = "500 17px " + ON; g.fillText(tl[1], x + w / 2, y + 80);
+      x += w + gap;
     });
-    var pts = A.pts;
-    g.lineCap = "round";
-    for (var i = 1; i < pts.length; i++) {
-      var a = pts[i - 1], b = pts[i];
-      if (b[2] - a[2] > 36 * 3600000) continue;
-      if (dist(a[0], a[1], b[0], b[1]) > 300000) continue;
-      g.strokeStyle = colorAt(b[2]); g.globalAlpha = 0.85; g.lineWidth = 4;
-      var ca = scr(a[1], a[0]), cb = scr(b[1], b[0]);
-      g.beginPath(); g.moveTo(ca[0], ca[1]); g.lineTo(cb[0], cb[1]); g.stroke();
-    }
-    g.globalAlpha = 1;
-    pts.forEach(function (p) { g.fillStyle = colorAt(p[2]); g.strokeStyle = "rgba(255,255,255,.85)"; g.lineWidth = 1.5; var cp = scr(p[1], p[0]); g.beginPath(); g.arc(cp[0], cp[1], 7, 0, 6.2832); g.fill(); g.stroke(); });
-    g.restore();
-    MV = keepMV; CW = keepCW; CH = keepCH; fitS = keepFit; MV && prep();
-    // Числа.
-    var rows = [["sCountries", found.countries.length], ["sCities", found.cities.length], ["sRegions", found.regions], ["sDays", found.days.size], ["sKm", Math.round(found.km / 1000)]];
-    var tw = (W - 128 - 4 * 16) / 5;
-    rows.forEach(function (r, k) {
-      var x = 64 + k * (tw + 16), y = 900;
-      g.fillStyle = "rgba(255,255,255,.06)";
-      g.beginPath(); g.roundRect ? g.roundRect(x, y, tw, 150, 22) : g.rect(x, y, tw, 150); g.fill();
-      g.fillStyle = "#EFE9DF"; g.font = "800 " + (String(num(r[1])).length > 6 ? 38 : 48) + "px Onest, system-ui, sans-serif";
-      g.fillText(num(r[1]), x + 20, y + 72);
-      g.fillStyle = "#A69E94"; g.font = "500 22px Onest, system-ui, sans-serif";
-      var words = t(r[0]).split(" "), line = "", ly = y + 110;
-      words.forEach(function (w) { var tst = line ? line + " " + w : w; if (g.measureText(tst).width > tw - 36 && line) { g.fillText(line, x + 20, ly); ly += 26; line = w; } else line = tst; });
-      g.fillText(line, x + 20, ly);
-    });
-    g.fillStyle = "#A69E94"; g.font = "600 28px Onest, system-ui, sans-serif";
-    g.fillText(t("cardBy"), 64, H - 70);
-    // Флаги посещённых стран — строкой под числами.
-    var flags = found.countries.slice(0, 16).map(function (q) { return flagUrl(q.cc); }).filter(Boolean);
-    return Promise.all(flags.map(function (u) { return new Promise(function (ok) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { ok(null); }; im.src = u; }); })).then(function (ims) {
-      var x = 64;
-      ims.forEach(function (im) {
-        if (!im || x + 66 > W - 64) return;
-        g.save(); g.beginPath(); g.roundRect ? g.roundRect(x, 1090, 58, 40, 8) : g.rect(x, 1090, 58, 40); g.clip();
-        g.drawImage(im, x, 1090, 58, 40); g.restore();
-        x += 66;
+    // Карта: Меркатор, как у сайта и приложения; только посещённые страны и линия маршрута; рамка — по точкам маршрута.
+    // Высота карты — всё место, которое не заняли страны (пустоты под списком нет при любом их числе).
+    var ch = 132, cy = H - P - ch, rowH = 66, cols = 3, my = y + th + 20, mw = W - 2 * P;
+    var rowsAll = Math.ceil(cs.length / cols), rowsFit = Math.max(1, Math.floor((cy - 20 - (my + 330 + 20) + 10) / (rowH + 10))), rowsUse = Math.max(1, Math.min(rowsAll, rowsFit));
+    var mh = Math.max(330, cy - 20 - rowsUse * (rowH + 10) + 10 - 20 - my);
+    rrect(g, P, my, mw, mh, 22); g.fillStyle = PANEL; g.fill(); g.strokeStyle = LINE; g.stroke();
+    var pts = A.pts.filter(function (p) { return Math.abs(p[0]) > 1e-6 || Math.abs(p[1]) > 1e-6; });
+    if (pts.length && G) {
+      var merc = function (lat) { lat = Math.max(-85, Math.min(85, lat)); return Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) * 180 / Math.PI; };
+      var x0 = 180, x1 = -180, la0 = 90, la1 = -90;
+      pts.forEach(function (p) { p[1] < x0 && (x0 = p[1]); p[1] > x1 && (x1 = p[1]); p[0] < la0 && (la0 = p[0]); p[0] > la1 && (la1 = p[0]); });
+      var y0 = merc(la0), y1 = merc(la1), px = Math.max(2, (x1 - x0) * 0.05), py = Math.max(2, (y1 - y0) * 0.05);
+      x0 -= px; x1 += px; y0 -= py * 0.7; y1 += py * 0.9;
+      var iw = mw - 2, ih = mh - 2, kk = Math.min(iw / (x1 - x0), ih / (y1 - y0)), ox = P + 1 + (iw - (x1 - x0) * kk) / 2, oy = my + 1 + (ih - (y1 - y0) * kk) / 2;
+      var PX = function (lng, lat) { return [ox + (lng - x0) * kk, oy + (y1 - merc(lat)) * kk]; };
+      g.save(); rrect(g, P + 1, my + 1, iw, ih, 21); g.clip();
+      var vis = {}; cs.forEach(function (q) { vis[q.cc] = 1; });
+      g.beginPath();
+      G.rings.forEach(function (r) {
+        if (!vis[r.cc]) return;
+        var last = null;
+        r.p.forEach(function (q, n) { var xy = PX(q[0], q[1]); if (last && Math.abs(xy[0] - last[0]) < 0.5 && Math.abs(xy[1] - last[1]) < 0.5) return; n === 0 ? g.moveTo(xy[0], xy[1]) : g.lineTo(xy[0], xy[1]); last = xy; });
+        g.closePath();
       });
-      return new Promise(function (ok) { c.toBlob(ok, "image/png"); });
+      g.fillStyle = "rgba(179,64,31,.78)"; g.fill("evenodd"); g.strokeStyle = "#F08A6A"; g.lineWidth = 1; g.stroke();
+      g.beginPath();
+      for (i = 1; i < pts.length; i++) {
+        var a = pts[i - 1], b = pts[i];
+        if (b[2] - a[2] > 36 * 3600000 || Math.abs(b[1] - a[1]) > 180) continue;
+        var pa = PX(a[1], a[0]), pb = PX(b[1], b[0]);
+        if (Math.abs(pb[0] - pa[0]) + Math.abs(pb[1] - pa[1]) < 0.8) continue;
+        g.moveTo(pa[0], pa[1]); g.lineTo(pb[0], pb[1]);
+      }
+      g.strokeStyle = "rgba(255,227,216,.55)"; g.lineWidth = 1.3; g.lineCap = "round"; g.stroke();
+      g.fillStyle = "#FFF3EC"; var seen = {};
+      pts.forEach(function (p) { var xy = PX(p[1], p[0]), key = Math.round(xy[0] / 3) + ":" + Math.round(xy[1] / 3); if (seen[key]) return; seen[key] = 1; g.beginPath(); g.arc(xy[0], xy[1], 2.6, 0, 6.2832); g.fill(); });
+      g.restore();
+    }
+    // Призыв со ссылкой — внизу.
+    var gr = g.createLinearGradient(P, cy, W - P, cy + ch); gr.addColorStop(0, ACCN); gr.addColorStop(1, "#c4452a");
+    rrect(g, P, cy, W - 2 * P, ch, 24); g.fillStyle = gr; g.fill();
+    g.font = "800 24px " + ON; var url = "tabimobile.com/computer", uw = g.measureText(url).width + 32, ux = W - P - 26 - uw;
+    rrect(g, ux, cy + ch / 2 - 24, uw, 48, 14); g.fillStyle = "rgba(0,0,0,.2)"; g.fill();
+    g.fillStyle = "#fff"; g.textAlign = "left"; g.fillText(url, ux + 16, cy + ch / 2 + 9);
+    var tw = ux - P - 26 - 20;
+    g.font = "800 32px " + ON; g.fillText(fitText(g, t("cardQ"), tw), P + 26, cy + 50);
+    g.fillStyle = "#FFE9E2"; g.font = "500 19px " + ON;
+    var words = t("cardHow").split(" "), line = "", ly = cy + 82;
+    words.forEach(function (w) { var tst = line ? line + " " + w : w; if (g.measureText(tst).width > tw && line) { g.fillText(line, P + 26, ly); ly += 25; line = w; } else line = tst; });
+    line && g.fillText(line, P + 26, ly);
+    // Страны — по три в строке с флагом и годами; не помещаются все — последняя плитка «+N».
+    var gy = my + mh + 20, cw = (W - 2 * P - 20) / cols, rows = rowsUse;
+    var cap = rows * cols, show = cs.length > cap ? cs.slice(0, cap - 1) : cs;
+    show.forEach(function (q, k) {
+      var cx = P + (k % cols) * (cw + 10), ry = gy + Math.floor(k / cols) * (rowH + 10), im = flags[k];
+      rrect(g, cx, ry, cw, rowH, 14); g.fillStyle = PANEL; g.fill(); g.strokeStyle = LINE; g.stroke();
+      if (im) { g.save(); rrect(g, cx + 11, ry + 19, 38, 27, 5); g.clip(); var sc = Math.max(38 / im.width, 27 / im.height), dw = im.width * sc, dh = im.height * sc; g.drawImage(im, cx + 11 + (38 - dw) / 2, ry + 19 + (27 - dh) / 2, dw, dh); g.restore(); }
+      g.textAlign = "left"; g.fillStyle = INK; g.font = "700 19px " + ON; g.fillText(fitText(g, countryName(q.cc), cw - 70), cx + 59, ry + 29);
+      g.fillStyle = SUB; g.font = "500 14.5px " + ON; g.fillText(fitText(g, yearsOf(q), cw - 70), cx + 59, ry + 50);
     });
+    if (cs.length > cap) {
+      var kq = cap - 1, qx = P + (kq % cols) * (cw + 10), qy = gy + Math.floor(kq / cols) * (rowH + 10);
+      rrect(g, qx, qy, cw, rowH, 14); g.fillStyle = PANEL; g.fill(); g.strokeStyle = LINE; g.stroke();
+      g.textAlign = "center"; g.fillStyle = INK; g.font = "800 24px " + ON; g.fillText("+" + num(cs.length - kq), qx + cw / 2, qy + 42);
+    }
+    return new Promise(function (ok) { c.toBlob(ok, "image/png"); });
   }
+  // «Скачать картинку» (23.11.2026, слово Андрея): файл PNG на компьютер; на сервер ничего не уходит.
+  var CARDN = 0;
+  $("bCard").onclick = function () {
+    var b = $("bCard");
+    if (b.disabled) return;
+    b.disabled = true;
+    card().then(function (blob) {
+      b.disabled = false;
+      if (!blob) return;
+      var a = document.createElement("a"), u = URL.createObjectURL(blob);
+      a.href = u; a.download = "tabi-" + t("cardFile") + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+      CARDN++;
+    }).catch(function () { b.disabled = false; });
+  };
+  window.addEventListener("pagehide", function () { CARDN && (statSend({ k: "carddl", n: CARDN }), (CARDN = 0)); });
   // Картинка маршрута — только в письме после сохранения (18.11.2026, Андрей: бесплатно страница её не отдаёт).
   function cardB64() {
     return card().then(function (blob) {
@@ -4626,6 +4639,8 @@ main.pc{position:relative}
 
   // ===== Начало =====
   applyTexts();
+  // Открытие страницы — один раз за посещение (с меткой ссылки): сколько людей пришло с каждой площадки.
+  try { sessionStorage.getItem("tabiOpenSent") || (sessionStorage.setItem("tabiOpenSent", "1"), statSend({ k: "open", phone: PHONE })); } catch (e) {}
   if (PHONE) {
     show("vPhone", true); show("bPlay", ANDROID && !FROM_APP); statSend({ k: "phone", ios: IOS });
     FROM_APP && ($("phoneX").textContent = t("phoneApp"));

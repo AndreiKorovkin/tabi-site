@@ -113,7 +113,9 @@
   function gisDraw(el) {
     var w = el.clientWidth;
     if (!w || el._fb || !GA()) return;
-    var th = gisLight() ? "outline" : "filled_black", lang = (document.documentElement.lang || "en").slice(0, 2),
+    // Google — синей кнопкой в обеих темах (23.11.2026, Андрей: тёмная кнопка Google терялась рядом с синей Facebook, а
+    // Google для Tabi предпочтительнее); Facebook — спокойной кнопкой под ней.
+    var th = "filled_blue", lang = (document.documentElement.lang || "en").slice(0, 2),
       bw = Math.max(200, Math.min(400, w)), key = bw + th + lang;
     if (el._gis === key) return;
     el._gis = key; el.innerHTML = "";
@@ -156,19 +158,20 @@
     });
   }
   function google(back, before) { return oauth("google", back, before); }
-  // Кнопка Facebook (22.11.2026, слово Андрея) — под кнопкой Google, той же высоты и формы, в цветах Facebook (правила
-  // оформления Meta: синий #1877F2, белый знак «f»); подпись — на языке страницы. o — то же, что у gis: back, before, start.
+  // Кнопка Facebook (22.11.2026, слово Андрея) — под кнопкой Google, той же высоты и формы; с 23.11.2026 спокойная (цвет
+  // панели, рамка, синий знак «f» Facebook), чтобы главной оставалась Google; подпись — на языке страницы. o — то же, что у
+  // gis: back, before, start.
   var FBL = { en: "Continue with Facebook", ru: "Вход с аккаунтом Facebook", cs: "Pokračovat s účtem Facebook", de: "Weiter mit Facebook",
     fr: "Continuer avec Facebook", es: "Continuar con Facebook", it: "Continua con Facebook", pt: "Continuar com o Facebook",
     ja: "Facebookで続行", ko: "Facebook으로 계속하기" };
-  var FBI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>';
+  var FBI = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>';
   var fbEls = [];
   function fbLabel(b) { b.lastChild.textContent = FBL[(document.documentElement.lang || "en").slice(0, 2)] || FBL.en; }
   function fb(el, o) {
     if (!document.getElementById("tfbCss")) {
       var st = document.createElement("style"); st.id = "tfbCss";
-      st.textContent = ".tfb{appearance:none;border:0;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;min-width:200px;height:40px;padding:0 16px;border-radius:999px;background:#1877F2;color:#fff;font:500 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-sizing:border-box}" +
-        ".tfb:hover{background:#166FE5}.tfb:focus-visible{outline:2px solid #1877F2;outline-offset:2px}.tfb svg{width:20px;height:20px;flex:none}";
+      st.textContent = ".tfb{appearance:none;border:1px solid var(--line,#dadce0);display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:400px;min-width:200px;height:40px;min-height:40px;padding:0 16px;border-radius:999px;background:var(--panel,#fff);color:var(--ink,#1f1f1f);font:500 14px/1 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;cursor:pointer;box-sizing:border-box}" +
+        ".tfb:hover{border-color:#1877F2}.tfb:focus-visible{outline:2px solid #1877F2;outline-offset:2px}.tfb svg{width:20px;height:20px;flex:none}";
       document.head.appendChild(st);
     }
     el.innerHTML = "";
