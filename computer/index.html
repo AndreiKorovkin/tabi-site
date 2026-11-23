@@ -565,7 +565,7 @@ main.pc{position:relative}
     CAPTCHA = "0x4AAAAAAFWBXZyDQ9TZ6MkF",
     FN = SB + "/functions/v1/pc-media",
     BACK = location.origin + location.pathname,
-    PLAY = "https://play.google.com/store/apps/details?id=app.tabi.mobile",
+    PLAY_URL = "https://play.google.com/store/apps/details?id=app.tabi.mobile",
     DATA = "/computer/data/";
   var T = {
     "title": {"en": "Recover your travels!", "ru": "Восстановите свои путешествия!", "cs": "Obnovte své cesty!", "de": "Holen Sie Ihre Reisen zurück!", "fr": "Retrouvez vos voyages !", "es": "¡Recupera tus viajes!", "it": "Ritrovi i Suoi viaggi!", "pt": "Recupere suas viagens!", "ja": "旅の記録を取り戻しましょう！", "ko": "여행을 되찾아 보세요!"},
@@ -933,7 +933,7 @@ main.pc{position:relative}
     renderFaq(); renderPick();
     [].forEach.call(document.querySelectorAll("dialog.win [data-close]"), function (b) { b.setAttribute("aria-label", t("close")); b.title = t("close"); });
     $("phoneX").textContent = t(FROM_APP ? "phoneApp" : ANDROID ? "phoneA" : "phoneI");
-    $("bPlay").href = $("bPlay2").href = PLAY + "&hl=" + L;
+    $("bPlay").href = $("bPlay2").href = PLAY_URL + "&hl=" + L;
     [["zIn", "zIn"], ["zOut", "zOut"], ["zAll", "zAll"]].forEach(function (p) { $(p[0]).setAttribute("aria-label", t(p[1])); $(p[0]).title = t(p[1]); });
     $("proX").setAttribute("aria-label", t("zProOff")); $("proX").title = t("zProOff");
     PRO && (proIcon(), playUi(), PRO.on && (proRender(), proSearch()), CARD.cur || CARD.list.length ? cardView(CARD.cur) : 0);
@@ -1161,7 +1161,7 @@ main.pc{position:relative}
   // Два пути (20.11.2026, Андрей): «Сохранить итог» и «Перенести на телефон» — затем одна кнопка «Войти через Google»; после
   // сохранения путь «на телефон» сразу показывает блок особых мест и приложения.
   $("bCopy2").onclick = function () {
-    var u = PLAY + "&hl=" + L;
+    var u = PLAY_URL + "&hl=" + L;
     APPN.copy++;
     (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { $("bCopy2").textContent = t("copied"); }).catch(function () { prompt("", u); });
   };
@@ -1873,7 +1873,7 @@ main.pc{position:relative}
   // Подложка — границы стран и, при приближении, регионов посещённых стран из тех же данных; чужих карт страница не
   // грузит: адреса плиток выдали бы стороннему серверу, где сделаны снимки.
   var cv = $("map"), cx = cv.getContext("2d"), mapDirty = true, MV = null, PC = null, CW = 0, CH = 0, DPR = 1,
-    land = null, drawnTo = 0, raf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
+    land = null, drawnTo = 0, mapRaf = 0, upto = 0, fitS = 1, regCache = {}, hitGrid = null, T0 = 0, T1 = 1, ACC = [179, 52, 31], BINS = 32;
   var D2R = Math.PI / 180, userMoved = false;
   // Профессиональный режим и карточка точки (22.11.2026; устройство — у proOpen ниже).
   var PRO = { on: false, lines: true, offDev: new Set(), offCc: new Set(), ia: 0, ib: -1, a: 0, b: 0, sel: null, selMode: false, ver: 0, allDays: false, n: null },
@@ -1982,7 +1982,7 @@ main.pc{position:relative}
     var c = invert(CW / 2 - dx, CH / 2 - dy);
     MV.lng = ((c[0] + 540) % 360) - 180; MV.lat = c[1]; clampView();
   }
-  function schedule() { if (!raf) raf = requestAnimationFrame(function () { raf = 0; drawMap(); }); }
+  function schedule() { if (!mapRaf) mapRaf = requestAnimationFrame(function () { mapRaf = 0; drawMap(); }); }
   function colorAt(ms) {
     var f = T1 > T0 ? Math.max(0, Math.min(1, (ms - T0) / (T1 - T0))) : 1;
     // От синего (ранние снимки) через фиолетовый к цвету оформления сайта (недавние).
@@ -2321,7 +2321,7 @@ main.pc{position:relative}
   $("zOut").onclick = function () { zoomAt(0.5, CW / 2, CH / 2); };
   $("zAll").onclick = function () { userMoved = false; fit(PTS()); mapDirty = true; schedule(); };
   // Нажатие без сдвига (меньше 5 точек) — карточка точки; в режиме выделения перетаскивание растягивает рамку.
-  var ptrs = new Map(), pinch0 = 0, DOWN = null, SEL = null;
+  var ptrs = new Map(), pinch0 = 0, PDOWN = null, SEL = null;
   cv.addEventListener("pointerdown", function (e) {
     if (PRO.selMode && !ptrs.size) {
       var r0 = cv.getBoundingClientRect();
@@ -2333,7 +2333,7 @@ main.pc{position:relative}
     cv.setPointerCapture(e.pointerId);
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
     ptrs.size === 1 && cv.classList.add("drag");
-    DOWN = ptrs.size === 1 ? { x: e.clientX, y: e.clientY } : null;
+    PDOWN = ptrs.size === 1 ? { x: e.clientX, y: e.clientY } : null;
     if (ptrs.size === 2) { var q = Array.from(ptrs.values()); pinch0 = Math.hypot(q[0].x - q[1].x, q[0].y - q[1].y); }
     $("tip").hidden = true;
   });
@@ -2357,8 +2357,8 @@ main.pc{position:relative}
   });
   var ptrEnd = function (e) {
     if (SEL && e.pointerId === SEL.id) return void (e.type === "pointerup" ? selFinish() : selEnd());
-    var click = DOWN && e.type === "pointerup" && ptrs.size === 1 && Math.hypot(e.clientX - DOWN.x, e.clientY - DOWN.y) < 5;
-    DOWN = null;
+    var click = PDOWN && e.type === "pointerup" && ptrs.size === 1 && Math.hypot(e.clientX - PDOWN.x, e.clientY - PDOWN.y) < 5;
+    PDOWN = null;
     ptrs.delete(e.pointerId); ptrs.size || cv.classList.remove("drag"); pinch0 = 0;
     click && cardSoon(e);
   };
@@ -3902,7 +3902,6 @@ main.pc{position:relative}
     });
     show("appGet", !hasApp);
   }
-  function winOpen(id) { var d = $(id); d.showModal ? d.showModal() : d.setAttribute("open", ""); }
   // Окно редкости: сколько таких мест на маршруте, что значит редкость, как увидеть сами места.
   function tierOpen(x, n) {
     $("tierDlg").style.setProperty("--tc", x[1]);
@@ -3933,7 +3932,7 @@ main.pc{position:relative}
   });
   // Вопросы и ответы (21.11.2026, Андрей): окно, одно для всех; вопросы — кнопками (.qa в assets/site.css), нажатие
   // раскрывает ответ; значок раскрытия — из tools/site_build.py. Первый — о данных, последний — о числе точек; абзацы ответа — «\n\n».
-  var DOWN = "<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg>";
+  var FAQ_ICON = "<svg class=\"ic\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg>";
   function renderFaq() {
     var box = $("faqList"), open = {};
     Array.prototype.forEach.call(box.children, function (d, i) { d.open && (open[i] = 1); });
@@ -3941,7 +3940,7 @@ main.pc{position:relative}
     for (var i = 1; i <= 5; i++) {
       var d = document.createElement("details"), sm = document.createElement("summary"), q = document.createElement("span");
       q.className = "q"; q.textContent = t("q" + i);
-      sm.appendChild(q); sm.insertAdjacentHTML("beforeend", DOWN); d.appendChild(sm);
+      sm.appendChild(q); sm.insertAdjacentHTML("beforeend", FAQ_ICON); d.appendChild(sm);
       t("a" + i).split("\n\n").forEach(function (x) { var p = document.createElement("p"); p.textContent = x; d.appendChild(p); });
       if (i === 1) {
         var pp = document.createElement("p"), a = document.createElement("a");
