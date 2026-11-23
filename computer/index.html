@@ -2167,6 +2167,8 @@ main.pc{position:relative}
     var pd = ppd(), arcs = landArcs(), byCc = {}, order = [];
     landPrep();
     G.rings.forEach(function (r) {
+      // Антарктида не рисуется, пока в ней нет точек (23.11.2026, Андрей: огромная пустая суша мешает карте маршрута).
+      if (!visited[r.cc] && /^aq$/i.test(r.cc)) return;
       var sh = shiftOf((r.w + r.e) / 2);
       if (!boxOn(r, sh)) return;
       var xy = ringXY(arcs, r.refs, sh);
