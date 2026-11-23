@@ -322,6 +322,15 @@ main.pc{position:relative}
 .pc-quiet{appearance:none;background:none;border:0;padding:0;cursor:pointer;font:inherit;font-size:14px;color:var(--sub);text-decoration:underline;text-underline-offset:3px;justify-self:start}
 .pc-quiet:hover{color:var(--ink)}
 [hidden]{display:none!important}
+.pc-day-nav{display:grid;grid-template-columns:auto 1fr auto;gap:8px;margin:8px 0}
+.pc-day-nav input{width:100%}
+.pc-day-mv{display:flex;gap:8px;align-items:center;padding:2px 12px 2px 22px;color:var(--sub);font-size:13px}
+.pc-day-mv .md{font-weight:700;color:var(--ink)}
+dialog.win.pc-ph{width:min(94vw,1100px);max-height:94vh}
+.pc-ph-hd{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pc-ph-box{min-height:120px;display:grid;place-items:center;margin:10px 0}
+.pc-ph-box img,.pc-ph-box video{max-width:100%;max-height:72vh;border-radius:12px;display:block}
+.pc-ph-nav{display:grid;grid-template-columns:auto 1fr auto;gap:8px}
 </style></head>
 <body>
 <!-- Живой фон (21.11.2026, Андрей): фиолетовые, синие и оранжевые огни переливаются, как отражения гирлянды -->
@@ -524,6 +533,11 @@ main.pc{position:relative}
   <aside class="pc-pro-side" aria-labelledby="proT">
     <div class="pc-pro-hd"><h2 id="proT"></h2><button type="button" class="pc-pro-x" id="proX"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <section><h3 id="proStH"></h3><div class="pc-pro-st" id="proSt"></div><p class="pc-s" id="proSpan"></p></section>
+    <details id="proDayBox"><summary><h3 id="proDayH"></h3></summary>
+      <div class="pc-day-nav"><button type="button" class="pc-btn b2 sm" id="proDayPrev" aria-label="&larr;">&larr;</button><input class="pc-sel" type="date" id="proDayIn"><button type="button" class="pc-btn b2 sm" id="proDayNext" aria-label="&rarr;">&rarr;</button></div>
+      <p class="pc-t" id="proDaySum"></p><div class="pc-pro-list" id="proDayList"></div></details>
+    <details id="proSumBox"><summary><h3 id="proSumH"></h3></summary><label class="pc-lbl"><span id="proSumPL"></span><select class="pc-sel" id="proSumP"></select></label>
+      <div class="pc-pro-st" id="proSumSt"></div><div class="pc-pro-list" id="proSumList"></div></details>
     <section id="proDaysBox"><h3 id="proDaysH"></h3><div class="pc-pro-list" id="proDays"></div><button type="button" class="pc-quiet" id="proDaysMore" hidden></button></section>
     <section><h3 id="proQH"></h3><input class="pc-in" type="search" id="proQ" autocomplete="off" spellcheck="false"><p class="pc-s" id="proQN" hidden></p><div class="pc-pro-list" id="proQList"></div></section>
     <section><h3 id="proViewH"></h3><label class="pc-chk"><input type="checkbox" id="proLines" checked><span id="proLinesL"></span></label>
@@ -540,16 +554,15 @@ main.pc{position:relative}
         <div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proSelClear"></button></div><button type="button" class="pc-quiet" id="proSelDel"></button></div></section>
     <details id="proTripsBox"><summary><h3 id="proTripsH"></h3></summary><p class="pc-s" id="proTripsX"></p><p class="pc-t" id="proTripsN"></p><div class="pc-pro-list" id="proTrips"></div></details>
     <details id="proFirstBox"><summary><h3 id="proFirstH"></h3></summary><div id="proFirstY" style="display:grid;gap:2px"></div><div class="pc-tabs"><button type="button" id="proFirstCc" class="on"></button><button type="button" id="proFirstCt"></button></div><div class="pc-pro-list" id="proFirst"></div></details>
-    <details id="proVisaBox"><summary><h3 id="proVisaH"></h3></summary>
-      <label class="pc-lbl"><span id="proVisaYL"></span><select class="pc-sel" id="proVisaY"></select></label><div class="pc-pro-list" id="proVisa"></div>
-      <h3 id="proSchH"></h3><label class="pc-lbl"><span id="proSchAtL"></span><input class="pc-sel" type="date" id="proSchAt"></label><p class="pc-t" id="proSchN"></p><p class="pc-s" id="proSchMax"></p>
-      <p class="pc-s" id="proVisaNote"></p><button type="button" class="pc-btn b2 sm" id="proVisaCsv"></button></details>
     <details id="proJumpBox"><summary><h3 id="proJumpH"></h3></summary><p class="pc-s" id="proJumpX"></p><p class="pc-t" id="proJumpN"></p><div class="pc-pro-list" id="proJumps"></div><button type="button" class="pc-quiet" id="proJumpDel" hidden></button></details>
     <section><h3 id="proExpH"></h3><div class="pc-row3"><button type="button" class="pc-btn b2 sm" id="proExpGPX">GPX</button><button type="button" class="pc-btn b2 sm" id="proExpKML">KML</button><button type="button" class="pc-btn b2 sm" id="proExpCSV">CSV</button></div><p class="pc-s" id="proExpX"></p></section>
     <button type="button" class="pc-quiet" id="proReset" hidden></button>
   </aside>
   <div class="pc-pro-map" id="proMap"></div>
 </div>
+<dialog class="win pc-ph" id="phDlg" aria-labelledby="phT"><div class="pc-ph-hd"><p class="pc-t" id="phT"></p><button type="button" class="pc-pro-x" id="phX" aria-label="&times;"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+  <div class="pc-ph-box" id="phBox"></div><p class="pc-s" id="phS"></p>
+  <div class="pc-ph-nav"><button type="button" class="pc-btn b2 sm" id="phPrev" aria-label="&larr;">&larr;</button><button type="button" class="pc-btn b2 sm" id="phNew" hidden></button><button type="button" class="pc-btn b2 sm" id="phNext" aria-label="&rarr;">&rarr;</button></div></dialog>
 <div id="foot"></div>
 <div class="pc-over" id="over" hidden></div>
 <script>
@@ -788,20 +801,10 @@ main.pc{position:relative}
     "proTripsN": {"ru": "Поездок: {n}", "en": "Trips: {n}", "cs": "Cest: {n}", "de": "Reisen: {n}", "fr": "Voyages : {n}", "es": "Viajes: {n}", "it": "Viaggi: {n}", "pt": "Viagens: {n}", "ja": "旅行：{n}", "ko": "여행: {n}"},
     "proTripsNone": {"ru": "Поездок не найдено: нет дней вдали от дома.", "en": "No trips found: there are no days away from home.", "cs": "Žádné cesty: nejsou dny daleko od domova.", "de": "Keine Reisen gefunden: Es gibt keine Tage fern von zu Hause.", "fr": "Aucun voyage trouvé : aucun jour loin de chez vous.", "es": "No se encontraron viajes: no hay días lejos de casa.", "it": "Nessun viaggio trovato: non ci sono giorni lontano da casa.", "pt": "Nenhuma viagem encontrada: não há dias longe de casa.", "ja": "旅行は見つかりません。自宅から離れた日がありません。", "ko": "여행이 없습니다. 집에서 떨어진 날이 없습니다."},
     "proTripDays": {"ru": "дней: {n}", "en": "days: {n}", "cs": "dní: {n}", "de": "Tage: {n}", "fr": "jours : {n}", "es": "días: {n}", "it": "giorni: {n}", "pt": "dias: {n}", "ja": "日数：{n}", "ko": "일수: {n}"},
-    "proFirstH": {"ru": "Первые посещения", "en": "First visits", "cs": "První návštěvy", "de": "Erste Besuche", "fr": "Premières visites", "es": "Primeras visitas", "it": "Prime visite", "pt": "Primeiras visitas", "ja": "初めての訪問", "ko": "첫 방문"},
+    "proFirstH": {"en": "Cities and countries", "ru": "Города и страны", "cs": "Města a země", "de": "Städte und Länder", "fr": "Villes et pays", "es": "Ciudades y países", "it": "Città e paesi", "pt": "Cidades e países", "ja": "都市と国", "ko": "도시와 국가"},
     "proFirstCc": {"ru": "Страны: {n}", "en": "Countries: {n}", "cs": "Země: {n}", "de": "Länder: {n}", "fr": "Pays : {n}", "es": "Países: {n}", "it": "Paesi: {n}", "pt": "Países: {n}", "ja": "国：{n}", "ko": "국가: {n}"},
     "proFirstCt": {"ru": "Города: {n}", "en": "Cities: {n}", "cs": "Města: {n}", "de": "Städte: {n}", "fr": "Villes : {n}", "es": "Ciudades: {n}", "it": "Città: {n}", "pt": "Cidades: {n}", "ja": "都市：{n}", "ko": "도시: {n}"},
     "proNewYear": {"ru": "{y}: новых стран — {a}, городов — {b}", "en": "{y}: new countries — {a}, cities — {b}", "cs": "{y}: nových zemí — {a}, měst — {b}", "de": "{y}: neue Länder — {a}, Städte — {b}", "fr": "{y} : nouveaux pays — {a}, villes — {b}", "es": "{y}: países nuevos — {a}, ciudades — {b}", "it": "{y}: nuovi paesi — {a}, città — {b}", "pt": "{y}: países novos — {a}, cidades — {b}", "ja": "{y}：新しい国 {a}、都市 {b}", "ko": "{y}: 새 국가 {a}, 도시 {b}"},
-    "proVisaH": {"ru": "Визы и налоги", "en": "Visas and taxes", "cs": "Víza a daně", "de": "Visa und Steuern", "fr": "Visas et impôts", "es": "Visados e impuestos", "it": "Visti e tasse", "pt": "Vistos e impostos", "ja": "ビザと税金", "ko": "비자와 세금"},
-    "proVisaYear": {"ru": "Дни в странах за год", "en": "Days in countries in the year", "cs": "Dny v zemích za rok", "de": "Tage in Ländern im Jahr", "fr": "Jours par pays dans l’année", "es": "Días en países en el año", "it": "Giorni nei paesi nell’anno", "pt": "Dias em países no ano", "ja": "年間の国別日数", "ko": "연간 국가별 일수"},
-    "proVisa183X": {"ru": "183 дня и больше — порог налогового резидентства во многих странах", "en": "183 days or more is the tax residence threshold in many countries", "cs": "183 dní a více je v mnoha zemích hranice daňové rezidence", "de": "183 Tage oder mehr sind in vielen Ländern die Schwelle der steuerlichen Ansässigkeit", "fr": "183 jours ou plus : le seuil de résidence fiscale dans de nombreux pays", "es": "183 días o más es el umbral de residencia fiscal en muchos países", "it": "183 giorni o più sono la soglia di residenza fiscale in molti paesi", "pt": "183 dias ou mais é o limite de residência fiscal em muitos países", "ja": "183日以上は多くの国で税法上の居住者となる目安です", "ko": "183일 이상은 많은 나라에서 세법상 거주자 기준입니다"},
-    "proSchH": {"ru": "Шенгенская зона: 90 дней из 180", "en": "Schengen area: 90 days in any 180", "cs": "Schengenský prostor: 90 dní ze 180", "de": "Schengen-Raum: 90 Tage in 180", "fr": "Espace Schengen : 90 jours sur 180", "es": "Espacio Schengen: 90 días de cada 180", "it": "Area Schengen: 90 giorni su 180", "pt": "Espaço Schengen: 90 dias em 180", "ja": "シェンゲン圏：180日中90日", "ko": "솅겐 지역: 180일 중 90일"},
-    "proSchAt": {"ru": "На дату", "en": "On the date", "cs": "K datu", "de": "Zum Datum", "fr": "À la date du", "es": "A fecha de", "it": "Alla data", "pt": "Na data", "ja": "基準日", "ko": "기준일"},
-    "proSchN": {"ru": "Дней в Шенгенской зоне за 180 дней по {d}: {n} из 90.", "en": "Days in the Schengen area in the 180 days up to {d}: {n} of 90.", "cs": "Dny v Schengenském prostoru za 180 dní do {d}: {n} z 90.", "de": "Tage im Schengen-Raum in den 180 Tagen bis {d}: {n} von 90.", "fr": "Jours dans l’espace Schengen sur les 180 jours jusqu’au {d} : {n} sur 90.", "es": "Días en el espacio Schengen en los 180 días hasta el {d}: {n} de 90.", "it": "Giorni nell’area Schengen nei 180 giorni fino al {d}: {n} su 90.", "pt": "Dias no espaço Schengen nos 180 dias até {d}: {n} de 90.", "ja": "{d}までの180日間にシェンゲン圏にいた日数：{n}／90", "ko": "{d}까지 180일 동안 솅겐 지역에 있던 날: 90일 중 {n}일"},
-    "proSchMax": {"ru": "Наибольшее число дней за любые 180 дней — {n}; это окно заканчивается {d}.", "en": "The most days in any 180 days: {n}; that window ends on {d}.", "cs": "Nejvíce dní za libovolných 180 dní je {n}; toto období končí {d}.", "de": "Die meisten Tage in beliebigen 180 Tagen sind {n}; dieser Zeitraum endet am {d}.", "fr": "Le plus grand nombre de jours sur une période de 180 jours est de {n} ; cette période se termine le {d}.", "es": "El mayor número de días en cualquier periodo de 180 días es {n}; ese periodo termina el {d}.", "it": "Il numero massimo di giorni in un periodo di 180 giorni è {n}; quel periodo termina il {d}.", "pt": "O maior número de dias em qualquer período de 180 dias é {n}; esse período termina em {d}.", "ja": "任意の180日間で最も多い日数は{n}日で、その期間は{d}に終わります。", "ko": "임의의 180일 가운데 가장 많은 일수는 {n}일이며, 그 기간은 {d}에 끝납니다."},
-    "proSchNone": {"ru": "Точек в Шенгенской зоне нет.", "en": "There are no points in the Schengen area.", "cs": "V Schengenském prostoru nejsou žádné body.", "de": "Im Schengen-Raum gibt es keine Punkte.", "fr": "Aucun point dans l’espace Schengen.", "es": "No hay puntos en el espacio Schengen.", "it": "Non ci sono punti nell’area Schengen.", "pt": "Não há pontos no espaço Schengen.", "ja": "シェンゲン圏の地点はありません。", "ko": "솅겐 지역의 지점이 없습니다."},
-    "proVisaNote": {"ru": "Считаются только дни, в которые есть точки: дни без снимков неизвестны, поэтому настоящих дней может быть больше. День переезда считается в обеих странах. Это подсказка, а не документ.", "en": "Only days with points are counted: days without photos are unknown, so the real number of days may be higher. A travel day counts in both countries. This is a hint, not a document.", "cs": "Počítají se jen dny, kdy existují body: dny bez fotek nejsou známé, takže skutečných dní může být víc. Den přejezdu se počítá v obou zemích. Je to vodítko, ne doklad.", "de": "Gezählt werden nur Tage mit Punkten: Tage ohne Fotos sind unbekannt, die tatsächliche Zahl kann also höher sein. Ein Reisetag zählt in beiden Ländern. Das ist ein Hinweis, kein Nachweis.", "fr": "Seuls les jours avec des points sont comptés : les jours sans photos sont inconnus, le nombre réel peut donc être plus élevé. Un jour de trajet compte dans les deux pays. C’est une indication, pas un justificatif.", "es": "Solo se cuentan los días con puntos: los días sin fotos se desconocen, así que los días reales pueden ser más. Un día de viaje cuenta en ambos países. Es una orientación, no un documento.", "it": "Si contano solo i giorni con punti: i giorni senza foto sono sconosciuti, quindi i giorni reali possono essere di più. Un giorno di viaggio conta in entrambi i paesi. È un’indicazione, non un documento.", "pt": "Só contam os dias com pontos: os dias sem fotos são desconhecidos, então os dias reais podem ser mais. Um dia de viagem conta nos dois países. É uma indicação, não um documento.", "ja": "地点のある日だけを数えます。写真のない日は分からないため、実際の日数はもっと多いかもしれません。移動日は両方の国に数えます。目安であり、証明書ではありません。", "ko": "지점이 있는 날만 셉니다. 사진이 없는 날은 알 수 없으므로 실제 일수는 더 많을 수 있습니다. 이동한 날은 두 나라 모두에 셉니다. 참고용이며 증빙 자료가 아닙니다."},
-    "proVisaCsv": {"ru": "Выгрузить дни по странам (CSV)", "en": "Export days by country (CSV)", "cs": "Exportovat dny podle zemí (CSV)", "de": "Tage nach Ländern exportieren (CSV)", "fr": "Exporter les jours par pays (CSV)", "es": "Exportar días por país (CSV)", "it": "Esporta i giorni per paese (CSV)", "pt": "Exportar dias por país (CSV)", "ja": "国別の日を書き出す（CSV）", "ko": "국가별 일수 내보내기(CSV)"},
     "proJumpH": {"ru": "Невозможные скачки", "en": "Impossible jumps", "cs": "Nemožné skoky", "de": "Unmögliche Sprünge", "fr": "Sauts impossibles", "es": "Saltos imposibles", "it": "Salti impossibili", "pt": "Saltos impossíveis", "ja": "ありえない移動", "ko": "불가능한 이동"},
     "proJumpX": {"ru": "Скачок — это точка, к которой и от которой то же устройство «долетело» бы быстрее 1000 км/ч. Обычно такая точка означает неверное место или неверные часы камеры. На карте такие точки обведены красным.", "en": "A jump is a point that the same device would have had to reach and leave faster than 1,000 km/h. Such a point usually means a wrong place or a wrong camera clock. The map circles such points in red.", "cs": "Skok je bod, ke kterému a od kterého by stejné zařízení muselo „letět“ rychleji než 1000 km/h. Takový bod obvykle znamená chybné místo nebo chybné hodiny fotoaparátu. Mapa takové body zakroužkuje červeně.", "de": "Ein Sprung ist ein Punkt, den dasselbe Gerät schneller als mit 1000 km/h erreichen und wieder verlassen müsste. Ein solcher Punkt bedeutet meist einen falschen Ort oder eine falsch gehende Kamerauhr. Die Karte umkreist solche Punkte rot.", "fr": "Un saut est un point que le même appareil aurait dû atteindre et quitter à plus de 1 000 km/h. Un tel point signale généralement un lieu erroné ou une horloge d’appareil photo déréglée. La carte entoure ces points en rouge.", "es": "Un salto es un punto al que el mismo dispositivo habría tenido que llegar y del que habría tenido que salir a más de 1000 km/h. Un punto así suele indicar un lugar erróneo o un reloj de cámara mal ajustado. El mapa rodea estos puntos en rojo.", "it": "Un salto è un punto che lo stesso dispositivo avrebbe dovuto raggiungere e lasciare a più di 1000 km/h. Un punto così indica di solito un luogo sbagliato o un orologio della fotocamera sbagliato. La mappa cerchia questi punti in rosso.", "pt": "Um salto é um ponto que o mesmo dispositivo teria de alcançar e deixar a mais de 1000 km/h. Um ponto assim costuma indicar um local errado ou um relógio da câmera errado. O mapa contorna esses pontos em vermelho.", "ja": "ジャンプとは、同じデバイスが時速1000 kmを超える速さで到着し、離れなければならない地点です。このような地点は、たいてい場所の誤りかカメラの時計のずれを意味します。地図ではこのような地点が赤い丸で囲まれます。", "ko": "도약은 같은 기기가 시속 1000km보다 빠르게 도착하고 떠나야 했을 지점입니다. 이런 지점은 대개 잘못된 장소나 틀린 카메라 시계를 뜻합니다. 지도는 이런 지점을 빨간 원으로 표시합니다."},
     "proJumpN": {"ru": "Точек со скачком: {n}", "en": "Points with a jump: {n}", "cs": "Bodů se skokem: {n}", "de": "Punkte mit Sprung: {n}", "fr": "Points avec un saut : {n}", "es": "Puntos con salto: {n}", "it": "Punti con un salto: {n}", "pt": "Pontos com salto: {n}", "ja": "ありえない移動の地点：{n}", "ko": "이동 오류 지점: {n}"},
@@ -834,7 +837,24 @@ main.pc{position:relative}
     "proBaseN": {"en": "Tabi scheme", "ru": "Схема Tabi", "cs": "Schéma Tabi", "de": "Tabi-Schema", "fr": "Schéma Tabi", "es": "Esquema Tabi", "it": "Schema Tabi", "pt": "Esquema Tabi", "ja": "Tabiの地図", "ko": "Tabi 지도"},
     "proBaseS": {"en": "Streets", "ru": "Улицы", "cs": "Ulice", "de": "Straßen", "fr": "Rues", "es": "Calles", "it": "Strade", "pt": "Ruas", "ja": "道路", "ko": "도로"},
     "proBaseSat": {"en": "Satellite", "ru": "Спутник", "cs": "Satelit", "de": "Satellit", "fr": "Satellite", "es": "Satélite", "it": "Satellite", "pt": "Satélite", "ja": "衛星写真", "ko": "위성"},
-    "proBaseR": {"en": "Terrain", "ru": "Рельеф", "cs": "Terén", "de": "Gelände", "fr": "Relief", "es": "Relieve", "it": "Rilievo", "pt": "Relevo", "ja": "地形", "ko": "지형"}
+    "proBaseR": {"en": "Terrain", "ru": "Рельеф", "cs": "Terén", "de": "Gelände", "fr": "Relief", "es": "Relieve", "it": "Rilievo", "pt": "Relevo", "ja": "地形", "ko": "지형"},
+    "proDayH": {"en": "Day", "ru": "День", "cs": "Den", "de": "Tag", "fr": "Journée", "es": "Día", "it": "Giorno", "pt": "Dia", "ja": "1日", "ko": "하루"},
+    "proSumH": {"en": "Summary", "ru": "Итоги", "cs": "Souhrn", "de": "Übersicht", "fr": "Bilan", "es": "Resumen", "it": "Riepilogo", "pt": "Resumo", "ja": "まとめ", "ko": "요약"},
+    "proSumP": {"en": "Period", "ru": "Период", "cs": "Období", "de": "Zeitraum", "fr": "Période", "es": "Periodo", "it": "Periodo", "pt": "Período", "ja": "期間", "ko": "기간"},
+    "proVisits": {"en": "First visit: {a}. Last visit: {b}. Days: {n}.", "ru": "Впервые: {a}. Последний раз: {b}. Дней: {n}.", "cs": "Poprvé: {a}. Naposledy: {b}. Dní: {n}.", "de": "Zuerst: {a}. Zuletzt: {b}. Tage: {n}.", "fr": "Première visite : {a}. Dernière visite : {b}. Jours : {n}.", "es": "Primera visita: {a}. Última visita: {b}. Días: {n}.", "it": "Prima visita: {a}. Ultima visita: {b}. Giorni: {n}.", "pt": "Primeira visita: {a}. Última visita: {b}. Dias: {n}.", "ja": "初めて：{a}。最後：{b}。日数：{n}。", "ko": "처음: {a}. 마지막: {b}. 일수: {n}."},
+    "proDaySum": {"en": "Stops: {s}. On the move: {km}. Photos: {n}.", "ru": "Остановок: {s}. В пути: {km}. Снимков: {n}.", "cs": "Zastávek: {s}. Na cestě: {km}. Fotek: {n}.", "de": "Stopps: {s}. Unterwegs: {km}. Fotos: {n}.", "fr": "Arrêts : {s}. En route : {km}. Photos : {n}.", "es": "Paradas: {s}. En camino: {km}. Fotos: {n}.", "it": "Soste: {s}. In viaggio: {km}. Foto: {n}.", "pt": "Paradas: {s}. Em deslocamento: {km}. Fotos: {n}.", "ja": "立ち寄り：{s}。移動：{km}。写真：{n}。", "ko": "머문 곳: {s}. 이동: {km}. 사진: {n}."},
+    "mode_w": {"en": "On foot", "ru": "Пешком", "cs": "Pěšky", "de": "Zu Fuß", "fr": "À pied", "es": "A pie", "it": "A piedi", "pt": "A pé", "ja": "徒歩", "ko": "도보"},
+    "mode_b": {"en": "By bike", "ru": "На велосипеде", "cs": "Na kole", "de": "Mit dem Rad", "fr": "À vélo", "es": "En bici", "it": "In bici", "pt": "De bicicleta", "ja": "自転車", "ko": "자전거"},
+    "mode_c": {"en": "By transport", "ru": "На транспорте", "cs": "Dopravou", "de": "Mit Verkehrsmitteln", "fr": "En transport", "es": "En transporte", "it": "Coi mezzi", "pt": "De transporte", "ja": "交通機関", "ko": "교통수단"},
+    "mode_f": {"en": "By plane", "ru": "Перелёт", "cs": "Letadlem", "de": "Flug", "fr": "En avion", "es": "En avión", "it": "In aereo", "pt": "De avião", "ja": "飛行機", "ko": "비행기"},
+    "kmShort": {"en": "km", "ru": "км", "cs": "km", "de": "km", "fr": "km", "es": "km", "it": "km", "pt": "km", "ja": "km", "ko": "km"},
+    "minShort": {"en": "{n} min", "ru": "{n} мин", "cs": "{n} min", "de": "{n} Min.", "fr": "{n} min", "es": "{n} min", "it": "{n} min", "pt": "{n} min", "ja": "{n}分", "ko": "{n}분"},
+    "hShort": {"en": "{h} h {m} min", "ru": "{h} ч {m} мин", "cs": "{h} h {m} min", "de": "{h} Std. {m} Min.", "fr": "{h} h {m} min", "es": "{h} h {m} min", "it": "{h} h {m} min", "pt": "{h} h {m} min", "ja": "{h}時間{m}分", "ko": "{h}시간 {m}분"},
+    "proSumTop": {"en": "The cities where you spent the most days in this period are listed below.", "ru": "Ниже — города, где вы провели больше всего дней за этот период.", "cs": "Níže jsou města, kde jste v tomto období strávili nejvíc dní.", "de": "Unten stehen die Städte, in denen Sie in diesem Zeitraum die meisten Tage verbracht haben.", "fr": "Voici les villes où vous avez passé le plus de jours pendant cette période.", "es": "Abajo están las ciudades donde pasaste más días en este periodo.", "it": "Qui sotto ci sono le città in cui ha trascorso più giorni in questo periodo.", "pt": "Abaixo estão as cidades onde você passou mais dias neste período.", "ja": "この期間に最も多くの日を過ごした都市を下に示します。", "ko": "이 기간에 가장 많은 날을 보낸 도시가 아래에 있습니다."},
+    "proSumDays": {"en": "Days: {n}", "ru": "Дней: {n}", "cs": "Dní: {n}", "de": "Tage: {n}", "fr": "Jours : {n}", "es": "Días: {n}", "it": "Giorni: {n}", "pt": "Dias: {n}", "ja": "日数：{n}", "ko": "일수: {n}"},
+    "phNew": {"en": "Open in a new tab", "ru": "Открыть в новой вкладке", "cs": "Otevřít na nové kartě", "de": "In neuem Tab öffnen", "fr": "Ouvrir dans un nouvel onglet", "es": "Abrir en una pestaña nueva", "it": "Apri in una nuova scheda", "pt": "Abrir em nova aba", "ja": "新しいタブで開く", "ko": "새 탭에서 열기"},
+    "phAccessX": {"en": "The browser does not remember the folder «{name}». Allow access to it, and the photo will open.", "ru": "Браузер не помнит папку «{name}». Разрешите ему доступ к ней, и снимок откроется.", "cs": "Prohlížeč si složku „{name}“ nepamatuje. Povolte mu k ní přístup a fotka se otevře.", "de": "Der Browser kennt den Ordner „{name}“ nicht mehr. Erlauben Sie ihm den Zugriff, dann öffnet sich das Foto.", "fr": "Le navigateur ne se souvient pas du dossier « {name} ». Autorisez-lui l’accès, et la photo s’ouvrira.", "es": "El navegador no recuerda la carpeta «{name}». Permítele el acceso y la foto se abrirá.", "it": "Il browser non ricorda la cartella «{name}». Gli consenta l’accesso e la foto si aprirà.", "pt": "O navegador não lembra a pasta «{name}». Permita o acesso a ela, e a foto será aberta.", "ja": "ブラウザーはフォルダー「{name}」を覚えていません。アクセスを許可すると写真が開きます。", "ko": "브라우저가 '{name}' 폴더를 기억하지 못합니다. 접근을 허용하면 사진이 열립니다."},
+    "phAccess": {"en": "Allow access to the folder «{name}»", "ru": "Разрешить доступ к папке «{name}»", "cs": "Povolit přístup ke složce „{name}“", "de": "Zugriff auf den Ordner „{name}“ erlauben", "fr": "Autoriser l’accès au dossier « {name} »", "es": "Permitir el acceso a la carpeta «{name}»", "it": "Consenti l’accesso alla cartella «{name}»", "pt": "Permitir acesso à pasta «{name}»", "ja": "フォルダー「{name}」へのアクセスを許可", "ko": "'{name}' 폴더 접근 허용"}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -933,8 +953,7 @@ main.pc{position:relative}
       proSelH: "proSelH", proSelGo: "proSelGo", proSelClear: "proSelClear", proSelDel: "proSelDel", proExpH: "proExpH", proExpX: "proExpX", proReset: "proReset",
       proQH: "proSearchH", proHeatL: "proHeat", proByYearL: "proByYear", proStreetsL: "proStreets", proStreetsX: "proStreetsX", proBaseN: "proBaseN", proBaseS: "proBaseS", proBaseSat: "proBaseSat", proBaseR: "proBaseR", proPlayH: "proPlayH",
       proStop: "proStop", proSpeedL: "proSpeed", proSpS: "proSlow", proSpN: "proNormal", proSpF: "proFast", proTripsH: "proTripsH", proTripsX: "proTripsX",
-      proFirstH: "proFirstH", proVisaH: "proVisaH", proVisaYL: "proVisaYear", proSchH: "proSchH", proSchAtL: "proSchAt", proVisaNote: "proVisaNote",
-      proVisaCsv: "proVisaCsv", proJumpH: "proJumpH", proJumpX: "proJumpX", proJumpDel: "proJumpDel" };
+      proFirstH: "proFirstH", proDayH: "proDayH", proSumH: "proSumH", proSumPL: "proSumP", phNew: "phNew", proJumpH: "proJumpH", proJumpX: "proJumpX", proJumpDel: "proJumpDel" };
     $("proQ").placeholder = t("proSearchPh");
     $("appInMail").placeholder = t("mailPh"); $("appInPin").placeholder = t("codePh");
     for (var id in set) $(id).textContent = t(set[id]);
@@ -1166,6 +1185,7 @@ main.pc{position:relative}
   $("dlgNo").onclick = function () { DLG = null; winClose("dlg"); };
   $("dlgYes").onclick = function () { $("dlgYes").disabled = true; DLG && DLG(); };
   $("bClear").onclick = function () {
+    TLX = { v: [], a: [] };
     ask(t("dlgT"), t("dlgX"), t("clearBtn"), function () { keepDrop(true).then(function () { location.replace(location.pathname + "?lang=" + L); }); });
   };
   // Два пути (20.11.2026, Андрей): «Сохранить итог» и «Перенести на телефон» — затем одна кнопка «Войти через Google»; после
@@ -1190,8 +1210,9 @@ main.pc{position:relative}
     dragN = 0; $("over").hidden = true;
     if (!canDrop()) return;
     e.preventDefault();
-    var items = Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.items) || []),
-      entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; }).filter(Boolean);
+    var items = Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.items) || []);
+    items.forEach(function (it) { it.kind === "file" && it.getAsFileSystemHandle && it.getAsFileSystemHandle().then(function (hd) { hd && hd.kind === "directory" && dirPut(hd.name, hd); }).catch(function () {}); });
+    var entries = items.map(function (it) { return it.webkitGetAsEntry ? it.webkitGetAsEntry() : null; }).filter(Boolean);
     // Обход перетащенного идёт долго (весь диск — десятки минут): уход со страницы и тогда спрашивается (picking).
     if (entries.length) { RUN.src = "drop"; picking = true; busy(t("collecting", { n: 0 })); dropWalk(entries).then(function (r) { unbusy(); run(r.out, r.seen); }); }
     else run(Array.prototype.slice.call((e.dataTransfer && e.dataTransfer.files) || []));
@@ -1808,6 +1829,9 @@ main.pc{position:relative}
   // выбранной папке хранятся только в этом браузере (итог в IndexedDB) и на сервер не уходят; сам файл — в памяти вкладки,
   // пока она открыта. Путь — папка точки (DIR) и имя; длинный путь, который папка точки обрезает, — целиком (fp).
   var FILES = new Map();
+  // Остановки и переезды из выгрузки Google (23.11.2026): v — [начало, конец, широта, долгота, название, адрес],
+  // a — [начало, конец, способ, метры]. Хранятся в итоге браузера вместе с точками.
+  var TLX = { v: [], a: [] };
   function relOf(f) { return String(f.webkitRelativePath || f.tabiPath || f.name || "").replace(/^\/+/, ""); }
   function mkPt(la, lo, ms, dev, dir, f) {
     var p = [la, lo, ms, dev, dir], rp = relOf(f);
@@ -2500,6 +2524,7 @@ main.pc{position:relative}
     document.documentElement.classList.add("pc-pro-on");
     $("tip").hidden = true;
     proIcon(); proRender();
+    ST.kind !== "none" && streets(true);
     mapDirty = true; schedule();
   }
   function proClose() {
@@ -2761,10 +2786,9 @@ main.pc{position:relative}
       ext = ((/\.([a-z0-9]{2,5})$/i.exec(p.fn || "") || [])[1] || "").toLowerCase(), f = FILES.get(rel);
     elm("div", "pth", osPath(rel), box);
     var row = elm("div", "pc-row2", null, box);
-    OPEN_X[ext] && f && (elm("button", "pc-btn sm", t("ptOpen"), row).onclick = function () {
-      var u = URL.createObjectURL(f);
-      OPENED.push(u); window.open(u, "_blank");
-      PRO.n ? PRO.n.open++ : MAPN.open++;
+    OPEN_X[ext] && (elm("button", "pc-btn sm", t("ptOpen"), row).onclick = function () {
+      var all = PTS().filter(function (q) { return q.fn && ptPath(q); });
+      phOpen(all, all.indexOf(p));
     });
     var cp = elm("button", "pc-btn b2 sm", t("ptCopy"), row), hint = elm("p", "pc-s", t("ptOsX"), box);
     hint.hidden = true;
@@ -2774,10 +2798,6 @@ main.pc{position:relative}
       (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () { cp.textContent = t("ptCopied"); hint.hidden = !(WINP && (abs || base)); }).catch(function () { prompt("", v); });
     };
     if (!OPEN_X[ext]) elm("p", "pc-s", t("ptNoOpen"), box);
-    else if (!f) {
-      elm("p", "pc-s", t(CARD.miss === p ? "ptNotFound" : "ptPickX"), box);
-      elm("button", "pc-btn b2 sm", t("ptPick", { name: root }), box).onclick = function () { RE.want = p; $("fRe").click(); };
-    }
     if (abs) return;
     var lk = elm("button", "pc-quiet", t(base ? "ptBaseEdit" : "ptBase", { name: root }), box), form = elm("div", "pc-row2", null, box),
       inp = elm("input", "pc-in", null, form), ok = elm("button", "pc-btn sm", t("ptBaseOk"), form);
@@ -3009,14 +3029,14 @@ main.pc{position:relative}
     show("playLbl", PLAY.on);
   }
   // --- Поездки, первые посещения, дни в странах, скачки — считаются, когда раздел открыт, и заново при смене набора.
-  ["proTripsBox", "proFirstBox", "proVisaBox", "proJumpBox"].forEach(function (id) { $(id).addEventListener("toggle", function () { proDeep(); id === "proJumpBox" && ((PRO.jumpsOn = this.open), (mapDirty = true), schedule()); }); });
+  ["proTripsBox", "proFirstBox", "proSumBox", "proJumpBox"].forEach(function (id) { $(id).addEventListener("toggle", function () { proDeep(); id === "proJumpBox" && ((PRO.jumpsOn = this.open), (mapDirty = true), schedule()); }); });
   function proDeep() {
     if (!PRO.on) return;
     yearLegend();
     var P = PTS();
     $("proTripsBox").open && proTrips(P);
     $("proFirstBox").open && proFirst(P);
-    $("proVisaBox").open && proVisa(P);
+    $("proSumBox").open && proSum();
     JUMPS = null;
     ($("proJumpBox").open || PRO.jumpsOn) && proJumps(P);
   }
@@ -3059,21 +3079,213 @@ main.pc{position:relative}
         a = dayDate(tr.d0).getTime(), b = dayDate(tr.d1).getTime(), n = tr.d1 - tr.d0 + 1;
       rowBtn(box, (top.join(", ") || cc.map(countryName).join(", ")), (a === b ? dayText(a) : dayText(a) + " — " + dayText(b)) + " · " + t("proTripDays", { n: num(n) }) + (cc.length ? " · " + cc.map(countryName).join(", ") : ""), function () {
         // Поездка — периодом на карте: остальное скрывается, карта — на поездку.
-        var m0 = monthOf(T0);
-        PRO.a = a; PRO.b = b + 86400000 - 1; PRO.ia = Math.max(0, monthOf(a) - m0); PRO.ib = monthOf(b) - m0;
-        proRange(m0, Math.max(0, monthOf(T1) - m0), PRO.ia, PRO.ib); $("proRa").value = String(PRO.ia); $("proRb").value = String(PRO.ib);
-        PRO.ver++; cardClose(); userMoved = true; fit(tr.pts); mapDirty = true; schedule(); proStats();
+        periodSet(a, b + 86400000 - 1); fit(tr.pts); mapDirty = true; schedule(); proStats();
       }, cc.length ? flagUrl(cc[0]) : "");
     });
+  }
+  // Период на карте — от a до b (мс): ползунок месяцев встаёт на эти месяцы, остальное скрывается.
+  function periodSet(a, b) {
+    var m0 = monthOf(T0);
+    PRO.a = a; PRO.b = b; PRO.ia = Math.max(0, monthOf(a) - m0); PRO.ib = monthOf(b) - m0;
+    proRange(m0, Math.max(0, monthOf(T1) - m0), PRO.ia, PRO.ib); $("proRa").value = String(PRO.ia); $("proRb").value = String(PRO.ib);
+    PRO.ver++; cardClose(); userMoved = true;
+  }
+  // ===== Как хронология Google (23.11.2026, план Андрея) =====
+  // Способ передвижения: из выгрузки Google, если она покрывает переезд; иначе по скорости — пешком до 7 км/ч, перелёт от
+  // 250 км/ч (и от 300 км при скорости от 150 км/ч), между ними — транспорт.
+  var MODE_G = { WALKING: "w", ON_FOOT: "w", RUNNING: "w", HIKING: "w", CYCLING: "b", IN_BICYCLE: "b", FLYING: "f", IN_PLANE: "f" };
+  function modeOf(a, b, d) {
+    var best = null, bo = 0;
+    TLX.a.forEach(function (x) { var o = Math.min(b, x[1]) - Math.max(a, x[0]); o > bo && ((bo = o), (best = x)); });
+    if (best && bo > 0.5 * Math.max(1, b - a)) return MODE_G[best[2]] || (best[2] && best[2] !== "UNKNOWN_ACTIVITY_TYPE" ? "c" : speedMode(a, b, d));
+    return speedMode(a, b, d);
+  }
+  function speedMode(a, b, d) {
+    var h = Math.max(1, b - a) / 3600000, v = d / 1000 / h;
+    // Пешком — только до 5 км: медленный долгий переезд (стоянки, ночь) — транспорт, а не ходьба.
+    return v < 7 && d <= 5000 ? "w" : v >= 250 || (d > 300000 && v >= 150) ? "f" : "c";
+  }
+  function placeOf(stop) {
+    var nm = "";
+    TLX.v.some(function (v) { if (v[0] <= stop.b + 600000 && v[1] >= stop.a - 600000 && isFinite(v[2]) && dist(v[2], v[3], stop.la, stop.ln) < 500 && v[4]) { nm = v[4]; return true; } return false; });
+    return nm || ptPlace(stop.pts[0]) || t("ccNone");
+  }
+  // Остановки дня: точки подряд ближе 300 м от первой точки остановки.
+  function dayStops(P) {
+    var out = [], cur = null;
+    P.slice().sort(function (x, y) { return x[2] - y[2]; }).forEach(function (p) {
+      if (cur && dist(p[0], p[1], cur.la, cur.ln) <= 300) { cur.pts.push(p); cur.b = p[2]; return; }
+      cur = { la: p[0], ln: p[1], a: p[2], b: p[2], pts: [p] }; out.push(cur);
+    });
+    return out;
+  }
+  var hhmm = function (ms) { try { return new Date(ms).toLocaleTimeString(L, { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } },
+    kmText = function (m) { return num(m >= 10000 ? Math.round(m / 1000) : Math.round(m / 100) / 10) + " " + t("kmShort"); },
+    durText = function (ms) { var mn = Math.round(ms / 60000); return mn < 60 ? t("minShort", { n: num(mn) }) : t("hShort", { h: num(Math.floor(mn / 60)), m: num(mn % 60) }); };
+  // --- День: календарь, остановки и переезды, снимки.
+  var DAY = { dn: null };
+  function dayPool() { return A.pts.filter(function (p) { return !(PRO.offDev.size && PRO.offDev.has(p._k || "x")) && !(PRO.offCc.size && PRO.offCc.has(p.cc || "")); }); }
+  function dayDays() { var x = new Set(); dayPool().forEach(function (p) { x.add(dayNum(p[2])); }); return Array.from(x).sort(function (a, b) { return a - b; }); }
+  // Раздел закрыт — снова весь период и весь маршрут.
+  $("proDayBox").addEventListener("toggle", function () {
+    if (this.open) return void proDayGo(DAY.dn);
+    if (!PRO.a && !PRO.b) return;
+    PRO.a = PRO.b = 0; PRO.ia = 0; PRO.ib = -1; PRO.ver++; proRender(); fit(PTS()); mapDirty = true; schedule();
+  });
+  $("proDayPrev").onclick = function () { var d = dayDays(), i = d.indexOf(DAY.dn); i > 0 && proDayGo(d[i - 1]); };
+  $("proDayNext").onclick = function () { var d = dayDays(), i = d.indexOf(DAY.dn); i >= 0 && i < d.length - 1 && proDayGo(d[i + 1]); };
+  $("proDayIn").onchange = function () { this.value && proDayGo(dayNum(new Date(this.value + "T12:00:00").getTime())); };
+  function proDayGo(dn) {
+    var days = dayDays();
+    if (!days.length) return;
+    if (dn == null || days.indexOf(dn) < 0) {
+      var best = days[days.length - 1];
+      dn != null && days.forEach(function (d) { Math.abs(d - dn) < Math.abs(best - dn) && (best = d); });
+      dn = best;
+    }
+    DAY.dn = dn;
+    var a = dayDate(dn).getTime();
+    periodSet(a, a + 86400000 - 1);
+    var P = PTS();
+    P.length && fit(P); mapDirty = true; schedule(); proStats();
+    $("proDayIn").value = dayKey(a); $("proDayIn").min = dayKey(dayDate(days[0]).getTime()); $("proDayIn").max = dayKey(dayDate(days[days.length - 1]).getTime());
+    var i = days.indexOf(dn);
+    $("proDayPrev").disabled = i <= 0; $("proDayNext").disabled = i >= days.length - 1;
+    var st = dayStops(P), box = $("proDayList"), km = 0, files = P.filter(function (p) { return p.fn && ptPath(p); });
+    box.innerHTML = "";
+    st.forEach(function (s, k) {
+      if (k > 0) {
+        var pr = st[k - 1], d = dist(pr.pts[pr.pts.length - 1][0], pr.pts[pr.pts.length - 1][1], s.pts[0][0], s.pts[0][1]), m = modeOf(pr.b, s.a, d);
+        km += d;
+        var mv = elm("div", "pc-day-mv", null, box);
+        elm("span", "md md-" + m, t("mode_" + m), mv); elm("span", "", kmText(d) + " · " + durText(s.a - pr.b), mv);
+      }
+      var ph = s.pts.filter(function (p) { return p.fn && ptPath(p); });
+      rowBtn(box, placeOf(s), (s.a === s.b ? hhmm(s.a) : hhmm(s.a) + " – " + hhmm(s.b)) + " · " + t("devPts", { n: num(s.pts.length) }), function () {
+        ph.length ? phOpen(files, files.indexOf(ph[0])) : focusPt(s.pts[0]);
+      }, s.pts[0].cc ? flagUrl(s.pts[0].cc) : "");
+    });
+    $("proDaySum").textContent = t("proDaySum", { s: num(st.length), km: kmText(km), n: num(files.length) });
+    PRO.n && (PRO.n.day = (PRO.n.day || 0) + 1);
+  }
+  // --- Итоги месяца и года: километры по способам передвижения, страны, города, дни, самые частые города.
+  $("proSumP").onchange = function () { proSum(); };
+  function proSum() {
+    var pool = dayPool(), sel = $("proSumP"), per = {}, keep = sel.value;
+    pool.forEach(function (p) { var d = new Date(p[2]); per["y" + d.getFullYear()] = 1; per["m" + d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2)] = 1; });
+    var keys = Object.keys(per).sort(function (a, b) { var ya = a.slice(1, 5), yb = b.slice(1, 5); return ya !== yb ? (yb > ya ? 1 : -1) : a[0] === "y" ? -1 : b[0] === "y" ? 1 : b > a ? 1 : -1; });
+    sel.innerHTML = "";
+    keys.forEach(function (k) { var o = elm("option", "", k[0] === "y" ? k.slice(1) : monthYear(new Date(+k.slice(1, 5), +k.slice(6) - 1, 15).getTime()), sel); o.value = k; });
+    sel.value = per[keep] ? keep : keys[0] || "";
+    var k = sel.value;
+    if (!k) return;
+    var inP = k[0] === "y" ? function (p) { return new Date(p[2]).getFullYear() === +k.slice(1); } : function (p) { var d = new Date(p[2]); return d.getFullYear() === +k.slice(1, 5) && d.getMonth() + 1 === +k.slice(6); };
+    var P = pool.filter(inP).sort(function (x, y) { return x[2] - y[2]; }), mk = { w: 0, b: 0, c: 0, f: 0 }, days = new Set(), cc = new Set(), ctD = {};
+    P.forEach(function (p, i) {
+      var dn = dayNum(p[2]);
+      days.add(dn); p.cc && cc.add(p.cc);
+      p.ct != null && p.ct >= 0 && (ctD[p.ct] || (ctD[p.ct] = new Set())).add(dn);
+      if (i) { var q = P[i - 1]; if (p[2] - q[2] <= 36 * 3600000) { var d = dist(q[0], q[1], p[0], p[1]); mk[modeOf(q[2], p[2], d)] += d; } }
+    });
+    var tl = $("proSumSt");
+    tl.innerHTML = "";
+    [[kmText(mk.w), "mode_w"], [kmText(mk.c + mk.b), "mode_c"], [kmText(mk.f), "mode_f"], [num(cc.size), "sCountries"], [num(Object.keys(ctD).length), "sCities"], [num(days.size), "sDays"]].forEach(function (x) {
+      var d = elm("div", "", null, tl); elm("b", "", x[0], d); elm("span", "", t(x[1]), d);
+    });
+    var box = $("proSumList");
+    box.innerHTML = "";
+    elm("p", "pc-s", t("proSumTop"), box);
+    Object.keys(ctD).sort(function (a, b) { return ctD[b].size - ctD[a].size; }).slice(0, 10).forEach(function (c) {
+      var p = P.filter(function (q) { return q.ct === +c; })[0];
+      rowBtn(box, townName(+c), t("proSumDays", { n: num(ctD[c].size) }) + (p && p.cc ? " · " + countryName(p.cc) : ""), function () { focusPt(p); }, p && p.cc ? flagUrl(p.cc) : "");
+    });
+  }
+  // --- Снимок по точке: окно страницы со стрелками к соседним снимкам. Файл — из этой проверки, а после перезагрузки —
+  // через доступ к папке, который браузер помнит (Chrome и Edge; в других браузерах — «Выбрать папку снова»).
+  var PH = { list: [], i: 0, url: "" };
+  $("phX").onclick = function () { winClose("phDlg"); };
+  $("phPrev").onclick = function () { PH.i > 0 && (PH.i--, phShow()); };
+  $("phNext").onclick = function () { PH.i < PH.list.length - 1 && (PH.i++, phShow()); };
+  $("phDlg").addEventListener("close", function () { PH.url && URL.revokeObjectURL(PH.url); PH.url = ""; $("phBox").innerHTML = ""; });
+  $("phDlg").addEventListener("keydown", function (e) { e.key === "ArrowLeft" ? $("phPrev").onclick() : e.key === "ArrowRight" && $("phNext").onclick(); });
+  function phOpen(list, i) {
+    if (!list.length) return;
+    PH.list = list; PH.i = Math.max(0, Math.min(list.length - 1, i));
+    $("phDlg").open || winOpen("phDlg");
+    phShow();
+    PRO.n ? PRO.n.open++ : MAPN.open++;
+  }
+  function phShow() {
+    var p = PH.list[PH.i], box = $("phBox");
+    box.innerHTML = ""; PH.url && URL.revokeObjectURL(PH.url); PH.url = "";
+    $("phT").textContent = ptWhen(p);
+    $("phS").textContent = [ptPlace(p), p.fn].filter(Boolean).join(" · ");
+    $("phPrev").disabled = PH.i <= 0; $("phNext").disabled = PH.i >= PH.list.length - 1;
+    $("phNew").hidden = true;
+    fileOf(p).then(function (f) {
+      if (PH.list[PH.i] !== p) return;
+      if (!f) return void phAsk(box, p);
+      var ext = ((/\.([a-z0-9]{2,5})$/i.exec(p.fn || "") || [])[1] || "").toLowerCase(), u = URL.createObjectURL(f);
+      PH.url = u;
+      if (/^(mp4|m4v|mov|webm)$/.test(ext)) { var v = elm("video", "", null, box); v.src = u; v.controls = true; }
+      else if (OPEN_X[ext]) { var im = elm("img", "", null, box); im.alt = p.fn; im.src = u; im.onerror = function () { box.innerHTML = ""; elm("p", "pc-s", t("ptNoOpen"), box); }; }
+      else elm("p", "pc-s", t("ptNoOpen"), box);
+      $("phNew").hidden = false;
+      $("phNew").onclick = function () { window.open(u, "_blank"); };
+    });
+  }
+  function phAsk(box, p) {
+    var root = ptPath(p).split("/")[0];
+    elm("p", "pc-t", t(window.showDirectoryPicker ? "phAccessX" : "ptPickX", { name: root }), box);
+    if (window.showDirectoryPicker) {
+      elm("button", "pc-btn sm", t("phAccess", { name: root }), box).onclick = function () {
+        dirAsk(root).then(function (ok) { ok ? phShow() : (box.lastChild.textContent = t("ptNotFound")); });
+      };
+    } else elm("button", "pc-btn b2 sm", t("ptPick", { name: root }), box).onclick = function () { RE.want = p; $("fRe").click(); };
+  }
+  // Доступ к папкам: ручка папки хранится в браузере («dir:<имя>»); браузер спрашивает разрешение при первом открытии после
+  // перезагрузки.
+  function dirGet(root) {
+    return idb().then(function (db) { return new Promise(function (ok) { var rq = db.transaction("st").objectStore("st").get("dir:" + root); rq.onsuccess = function () { ok(rq.result || null); }; rq.onerror = function () { ok(null); }; }); }).catch(function () { return null; });
+  }
+  function dirPut(root, hd) {
+    return idb().then(function (db) { return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").put(hd, "dir:" + root); tx.oncomplete = ok; tx.onerror = ok; }); }).catch(function () {});
+  }
+  function walkTo(hd, parts) {
+    return parts.reduce(function (pr, name, i) {
+      return pr.then(function (d) { return d && (i === parts.length - 1 ? d.getFileHandle(name).then(function (fh) { return fh.getFile(); }) : d.getDirectoryHandle(name)); });
+    }, Promise.resolve(hd)).catch(function () { return null; });
+  }
+  function fileOf(p) {
+    var rel = ptPath(p);
+    if (!rel) return Promise.resolve(null);
+    if (FILES.has(rel)) return Promise.resolve(FILES.get(rel));
+    var parts = rel.split("/");
+    return dirGet(parts[0]).then(function (hd) {
+      if (!hd || !hd.queryPermission) return null;
+      return hd.queryPermission({ mode: "read" }).then(function (st) { return st === "granted" ? walkTo(hd, parts.slice(1)) : null; });
+    }).then(function (f) { f && FILES.set(rel, f); return f || null; }).catch(function () { return null; });
+  }
+  // Разрешение по нажатию: сохранённая ручка — запрос разрешения; иначе — выбор папки (та же папка или папка над ней).
+  function dirAsk(root) {
+    return dirGet(root).then(function (hd) {
+      if (hd && hd.requestPermission) return hd.requestPermission({ mode: "read" }).then(function (st) { return st === "granted"; });
+      return window.showDirectoryPicker({ id: "tabi-pc", mode: "read" }).then(function (pick) {
+        if (pick.name === root) return dirPut(root, pick).then(function () { return true; });
+        return pick.getDirectoryHandle(root).then(function (sub) { return dirPut(root, sub).then(function () { return true; }); }, function () { return false; });
+      });
+    }).catch(function () { return false; });
   }
   // Первые посещения стран и городов, новые по годам.
   var firstTab = "cc";
   $("proFirstCc").onclick = function () { firstTab = "cc"; proFirst(PTS()); };
   $("proFirstCt").onclick = function () { firstTab = "ct"; proFirst(PTS()); };
   function proFirst(P) {
-    var fc = {}, ft = {}, oc = [], ot = [], perY = {};
+    var fc = {}, ft = {}, oc = [], ot = [], perY = {}, lc = {}, lt = {}, dc = {}, dt = {};
     P.forEach(function (p) {
-      var y = yearOf(p), o = perY[y] || (perY[y] = { c: 0, t: 0 });
+      var y = yearOf(p), o = perY[y] || (perY[y] = { c: 0, t: 0 }), dn = dayNum(p[2]);
+      p.cc && ((lc[p.cc] = p), (dc[p.cc] || (dc[p.cc] = new Set())).add(dn));
+      p.ct != null && p.ct >= 0 && ((lt[p.ct] = p), (dt[p.ct] || (dt[p.ct] = new Set())).add(dn));
       if (p.cc && !fc[p.cc]) { fc[p.cc] = p; oc.push(p.cc); o.c++; }
       if (p.ct != null && p.ct >= 0 && !ft[p.ct]) { ft[p.ct] = p; ot.push(p.ct); o.t++; }
     });
@@ -3085,57 +3297,9 @@ main.pc{position:relative}
     var box = $("proFirst");
     box.innerHTML = "";
     (firstTab === "cc" ? oc : ot).slice().reverse().slice(0, 400).forEach(function (k) {
-      var p = firstTab === "cc" ? fc[k] : ft[k];
-      rowBtn(box, firstTab === "cc" ? countryName(k) : townName(k), dayText(p[2]) + (firstTab === "ct" && p.cc ? " · " + countryName(p.cc) : ""), function () { focusPt(p); }, firstTab === "cc" ? flagUrl(k) : "");
+      var p = firstTab === "cc" ? fc[k] : ft[k], q = firstTab === "cc" ? lc[k] : lt[k], nd = (firstTab === "cc" ? dc[k] : dt[k]).size;
+      rowBtn(box, firstTab === "cc" ? countryName(k) : townName(k), t("proVisits", { a: dayText(p[2]).replace(/\.$/, ""), b: dayText(q[2]).replace(/\.$/, ""), n: num(nd) }) + (firstTab === "ct" && p.cc ? " · " + countryName(p.cc) : ""), function () { focusPt(q); }, firstTab === "cc" ? flagUrl(k) : p.cc ? flagUrl(p.cc) : "");
     });
-  }
-  // Дни в странах по годам (визы и налоги): день считается в стране, если в этот день там есть точка (день переезда —
-  // в обеих). Порог 183 дней — налоговое резидентство во многих странах. Шенген — правило 90 дней в любые 180: 29
-  // стран на 22.11.2026 (Кипр и Ирландия не входят).
-  var SCHENGEN = { at: 1, be: 1, bg: 1, hr: 1, cz: 1, dk: 1, ee: 1, fi: 1, fr: 1, de: 1, gr: 1, hu: 1, is: 1, it: 1, lv: 1, li: 1, lt: 1, lu: 1, mt: 1, nl: 1, no: 1, pl: 1, pt: 1, ro: 1, sk: 1, si: 1, es: 1, se: 1, ch: 1 };
-  $("proVisaY").onchange = function () { proVisa(PTS()); };
-  $("proSchAt").onchange = function () { proVisa(PTS()); };
-  $("proVisaCsv").onclick = function () { proDaysCsv(PTS()); };
-  function proVisa(P) {
-    var ys = {}, sch = new Set();
-    P.forEach(function (p) { ys[yearOf(p)] = 1; p.cc && SCHENGEN[p.cc] && sch.add(dayNum(p[2])); });
-    var sel = $("proVisaY"), years = Object.keys(ys).sort().reverse(), want = sel.value && ys[sel.value] ? sel.value : years[0];
-    sel.innerHTML = "";
-    years.forEach(function (y) { var o = elm("option", "", y, sel); o.value = y; });
-    sel.value = want || "";
-    var dc = {};
-    P.forEach(function (p) { String(yearOf(p)) === want && p.cc && (dc[p.cc] || (dc[p.cc] = new Set())).add(dayNum(p[2])); });
-    var box = $("proVisa");
-    box.innerHTML = "";
-    Object.keys(dc).sort(function (a, b) { return dc[b].size - dc[a].size; }).forEach(function (c) {
-      var r = elm("div", "pc-pro-row nb", null, box), lead = elm("span", "", null, r), fu = flagUrl(c), nm = elm("span", "nm", countryName(c), r), n = elm("span", "n", num(dc[c].size), r);
-      if (fu) { var im = elm("img", "", null, lead); im.src = fu; im.alt = ""; }
-      if (dc[c].size >= 183) { var b = elm("b", "pc-183", "183+", nm); b.title = t("proVisa183X"); }
-      n.title = "";
-    });
-    // Шенген: дни в окне 180 дней по выбранную дату и наибольшее за любые 180 дней.
-    var sd = Array.from(sch).sort(function (a, b) { return a - b; }), atIn = $("proSchAt");
-    if (!atIn.value && P.length) atIn.value = dayKey(P[P.length - 1][2]);
-    var atMs = atIn.value ? new Date(atIn.value + "T12:00:00").getTime() : Date.now(), at = dayNum(atMs), inWin = 0, best = 0, bestEnd = 0, j = 0;
-    sd.forEach(function (d) { d <= at && d > at - 180 && inWin++; });
-    for (var i = 0; i < sd.length; i++) { while (sd[i] - sd[j] >= 180) j++; i - j + 1 > best && ((best = i - j + 1), (bestEnd = sd[i])); }
-    $("proSchN").textContent = sd.length ? t("proSchN", { d: dayText(atMs), n: num(inWin) }) : t("proSchNone");
-    $("proSchN").classList.toggle("warn", inWin > 90);
-    show("proSchMax", sd.length > 0);
-    $("proSchMax").textContent = sd.length ? t("proSchMax", { n: num(best), d: dayText(dayDate(bestEnd).getTime()) }) : "";
-    $("proSchMax").classList.toggle("warn", best > 90);
-  }
-  // Выгрузка дней для советника: дата, страна, число точек, первое и последнее время в этот день в этой стране.
-  function proDaysCsv(P) {
-    var m = new Map(), rows = ["\ufeffdate,country,points,first_local,last_local\r\n"];
-    P.forEach(function (p) { if (!p.cc) return; var k = dayKey(p[2]) + "|" + p.cc, o = m.get(k); o ? (o.n++, (o.b = p[2])) : m.set(k, { d: dayKey(p[2]), c: p.cc, n: 1, a: p[2], b: p[2] }); });
-    var hm = function (ms) { var d = new Date(ms); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); };
-    m.forEach(function (o) { rows.push([o.d, '"' + countryName(o.c).replace(/"/g, '""') + '"', o.n, hm(o.a), hm(o.b)].join(",") + "\r\n"); });
-    var a = document.createElement("a"), u = URL.createObjectURL(new Blob(rows, { type: "text/csv;charset=utf-8" }));
-    a.href = u; a.download = "tabi-days-" + new Date().toISOString().slice(0, 10) + ".csv";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function () { URL.revokeObjectURL(u); }, 60000);
-    PRO.n && PRO.n.exp++;
   }
   // Невозможные скачки: точка, к которой и от которой то же устройство «долетело» бы быстрее 1000 км/ч и дальше 100 км, —
   // обычно неверное место или часы камеры.
@@ -3225,6 +3389,8 @@ main.pc{position:relative}
       var n = +v; if (isFinite(n) && n > 1e11) return n;
       var d = Date.parse(v); return isFinite(d) ? d : 0;
     };
+    var vis = [], act = [], E7 = function (v) { return v == null ? NaN : Number(v) / 1e7; };
+    var span = function (o) { o = o || {}; return [ms(o.startTimestamp || o.startTimestampMs || o.startTime), ms(o.endTimestamp || o.endTimestampMs || o.endTime)]; };
     var push = function (la, lo, t) {
       if (out.length < cap && isFinite(la) && isFinite(lo) && t > 0 && Math.abs(la) <= 90 && Math.abs(lo) <= 180 && !(Math.abs(la) < 1e-6 && Math.abs(lo) < 1e-6)) out.push([la, lo, t]);
     };
@@ -3233,6 +3399,20 @@ main.pc{position:relative}
       if (Array.isArray(x)) { for (var i = 0; i < x.length; i++) walk(x[i], t0); return; }
       var t = ms(x.timestamp || x.timestampMs || x.time || x.startTime || (x.duration && (x.duration.startTimestamp || x.duration.startTimestampMs))) || t0;
       x.durationMinutesOffsetFromStartTime != null && t0 && (t = t0 + Number(x.durationMinutesOffsetFromStartTime) * 60000);
+      // Остановка и переезд: прежняя выгрузка Takeout (placeVisit, activitySegment) и выгрузка с телефона (visit, activity).
+      if (vis.length < 50000 && x.placeVisit && typeof x.placeVisit === "object") {
+        var pv = x.placeVisit, lc = pv.location || {}, sp = span(pv.duration);
+        sp[0] && vis.push([sp[0], sp[1] || sp[0], E7(lc.latitudeE7), E7(lc.longitudeE7), String(lc.name || "").slice(0, 120), String(lc.address || "").slice(0, 200)]);
+      }
+      if (act.length < 50000 && x.activitySegment && typeof x.activitySegment === "object") {
+        var as = x.activitySegment, sa = span(as.duration);
+        sa[0] && act.push([sa[0], sa[1] || sa[0], String(as.activityType || ""), Number(as.distance) || 0]);
+      }
+      if (x.startTime && x.endTime && (x.visit || x.activity)) {
+        var s0 = ms(x.startTime), s1 = ms(x.endTime);
+        if (x.visit && vis.length < 50000) { var tc = (x.visit.topCandidate || {}), g0 = geo((tc.placeLocation && (tc.placeLocation.latLng || tc.placeLocation)) || ""); g0 && vis.push([s0, s1, g0[0], g0[1], "", ""]); }
+        if (x.activity && act.length < 50000) act.push([s0, s1, String((x.activity.topCandidate || {}).type || ""), Number(x.activity.distanceMeters) || 0]);
+      }
       if (x.latitudeE7 != null && x.longitudeE7 != null) push(x.latitudeE7 / 1e7, x.longitudeE7 / 1e7, t);
       else if (x.latE7 != null && x.lngE7 != null) push(x.latE7 / 1e7, x.lngE7 / 1e7, t);
       for (var k in x) {
@@ -3242,6 +3422,7 @@ main.pc{position:relative}
       }
     };
     walk(o, 0);
+    out.vis = vis; out.act = act;
     return out;
   }
   function tlRead(list, pts, now) {
@@ -3255,6 +3436,9 @@ main.pc{position:relative}
         var got = tlParse(JSON.parse(s)), d = dirOf(f), n = 0;
         got.forEach(function (q) { if (q[2] >= 631152000000 && q[2] <= now + 86400000) { pts.push(mkPt(Math.round(q[0] * 1e5) / 1e5, Math.round(q[1] * 1e5) / 1e5, Math.min(q[2], now), dev, d, f)); n++; } });
         WHY.tl = (WHY.tl || 0) + n;
+        var vk = new Set(TLX.v.map(function (v) { return v[0] + ":" + v[1]; })), ak = new Set(TLX.a.map(function (v) { return v[0] + ":" + v[1]; }));
+        (got.vis || []).forEach(function (v) { vk.has(v[0] + ":" + v[1]) || (vk.add(v[0] + ":" + v[1]), TLX.v.push(v)); });
+        (got.act || []).forEach(function (v) { ak.has(v[0] + ":" + v[1]) || (ak.add(v[0] + ":" + v[1]), TLX.a.push(v)); });
       }).catch(function () { RUN.err++; }).then(next);
     };
     return next();
@@ -4435,7 +4619,7 @@ main.pc{position:relative}
         tx.objectStore("st").put({ at: Date.now(), pts: own.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], p.sent ? 1 : 0, p.fn || "", p.fp || "", p.cc || "", p.ct != null ? p.ct : -1, p.rg ? String(p.rg.id) : ""]; }), devs: DEV.list, dirs: DIR.list, why: WHY,
           gv: geoVer(),
           held: A.held.map(function (p) { return [p[0], p[1], p[2], p[3], p[4], 0, p.fn || "", p.fp || ""]; }),
-          saved: saveSt.state === "saved", special: saveSt.special || null, trash: TRASH.loc,
+          saved: saveSt.state === "saved", special: saveSt.special || null, trash: TRASH.loc, tlx: TLX,
           // Итог, показанный при входе, принадлежит этой учётной записи (21.11.2026): другой учётной записи и без входа он не
           // показывается и стирается.
           owner: S ? uidOf(S) : KEEP_OWNER || null }, "result");
@@ -4537,6 +4721,7 @@ main.pc{position:relative}
     if (!pts.length) return (restoring = false), Promise.resolve(false);
     st.saved && (saveSt.state = "saved");
     st.special && st.special.n != null && (saveSt.special = st.special);
+    st.tlx && Array.isArray(st.tlx.v) && (TLX = st.tlx);
     show("vPick", false);
     // Границы и регионы найденных стран — до показа: пустых рамок до прихода данных не видно, итог появляется сразу.
     // Страна, регион и город точки хранятся с итогом (22.11.2026, замер: на 94 тысячах точек их пересчёт занимал
