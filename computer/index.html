@@ -530,7 +530,7 @@ main.pc{position:relative}
       <label class="pc-chk"><input type="checkbox" id="proHeat"><span id="proHeatL"></span></label>
       <label class="pc-chk"><input type="checkbox" id="proByYear"><span id="proByYearL"></span></label><div class="pc-yrs" id="proYears" hidden></div>
       <label class="pc-chk"><input type="checkbox" id="proStreets"><span id="proStreetsL"></span></label><p class="pc-s" id="proStreetsX" hidden></p></section>
-    <section><h3 id="proPlayH"></h3><div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proPlay"></button><button type="button" class="pc-quiet" id="proStop" hidden></button></div>
+    <section><h3 id="proPlayH"></h3><div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proPlay"></button><button type="button" class="pc-btn b2 sm" id="proStop" hidden></button></div>
       <label class="pc-lbl"><span id="proSpeedL"></span><select class="pc-sel" id="proSpeed"><option value="180000" id="proSpS"></option><option value="60000" id="proSpN" selected></option><option value="20000" id="proSpF"></option></select></label></section>
     <section id="proTimeBox"><h3 id="proTimeH"></h3><div class="pc-range"><i><b id="proRf"></b></i><input type="range" id="proRa" min="0" max="0" value="0" step="1"><input type="range" id="proRb" min="0" max="0" value="0" step="1"></div><div class="pc-range-l"><span id="proRA"></span><span id="proRB"></span></div></section>
     <section><h3 id="proDevH"></h3><div class="pc-pro-list" id="proDevs"></div></section>
@@ -1921,7 +1921,7 @@ main.pc{position:relative}
   // Профессиональный режим и карточка точки (22.11.2026; устройство — у proOpen ниже).
   var PRO = { on: false, lines: true, offDev: new Set(), offCc: new Set(), ia: 0, ib: -1, a: 0, b: 0, sel: null, selMode: false, ver: 0, allDays: false, n: null },
     VIS = { ver: -1, src: null, len: -1, list: [] }, CARD = { list: [], cur: null, miss: null }, MAPN = { card: 0, open: 0, copy: 0 },
-    ST = { on: false, map: null, lib: null, err: false }, PLAY = { on: false, i: 0, f: 0, run: false, at: 0, dur: 60000, raf: 0 }, JUMPS = null;
+    ST = { on: false, map: null, lib: null, err: false }, PLAY = { on: false, i: 0, f: 0, run: false, at: 0, dur: 60000, raf: 0, cc: null }, JUMPS = null;
   function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
   // Проекция Меркатора — та же, что у карт приложения (20.11.2026, Андрей: в Natural Earth и Паттерсоне Россия и Европа
   // сплющены): формы стран верные, северные страны крупнее, чем в жизни, как в приложении. Широта ограничена 85°, как у
@@ -2159,7 +2159,9 @@ main.pc{position:relative}
     // Цвета — один раз на тему (applyTheme и смена темы системы сбрасывают COL), а не getComputedStyle в каждом кадре.
     var g = land.getContext("2d"), visited = {}, C = COL || cols();
     // В профессиональном режиме с отбором закрашены страны того, что на карте (22.11.2026).
-    proFilt() ? PTS().forEach(function (p) { p.cc && (visited[p.cc] = 1); }) : found.countries.forEach(function (c) { visited[c.cc] = 1; });
+    // Во время проигрывания — только страны уже показанных точек (23.11.2026, Андрей: страны выделяются по мере маршрута).
+    PLAY.on && PLAY.cc ? PLAY.cc.forEach(function (cc) { visited[cc] = 1; })
+      : proFilt() ? PTS().forEach(function (p) { p.cc && (visited[p.cc] = 1); }) : found.countries.forEach(function (c) { visited[c.cc] = 1; });
     g.fillStyle = C.bg; g.fillRect(0, 0, land.width, land.height);
     if (!G || !MV) return;
     var pd = ppd(), arcs = landArcs(), byCc = {}, order = [];
@@ -2929,7 +2931,8 @@ main.pc{position:relative}
     ST.map.jumpTo({ center: [((MV.lng + 540) % 360) - 180, MV.lat], zoom: stZoom() });
   }
   function stTheme() { ST.map && ST.map.setStyle(ST_STYLE + (stDark() ? "dark" : "positron")); }
-  // --- Проигрывание маршрута: точки появляются по времени снимков (не по их числу), строка даты — над картой.
+  // --- Проигрывание маршрута (23.11.2026, Андрей): по точкам — каждая точка получает равную долю времени, и долгие месяцы
+  // без снимков не тянутся пустыми; страна выделяется, когда в ней появилась первая точка; строка даты — над картой.
   $("proPlay").onclick = function () { PLAY.on && PLAY.run ? playPause() : playGo(); };
   $("proStop").onclick = function () { playStop(); };
   $("proSpeed").onchange = function () { var f = playF(performance.now()); PLAY.dur = +this.value; PLAY.f = f; PLAY.at = performance.now(); };
@@ -2938,15 +2941,15 @@ main.pc{position:relative}
     var P = PTS();
     if (P.length < 2) return;
     cardClose();
-    if (!PLAY.on) { PLAY.on = true; PLAY.f = 0; PLAY.i = 0; mapDirty = true; PRO.n && PRO.n.play++; }
+    if (!PLAY.on) { PLAY.on = true; PLAY.f = 0; PLAY.i = 0; PLAY.cc = new Set(); mapDirty = true; PRO.n && PRO.n.play++; }
     PLAY.run = true; PLAY.at = performance.now(); PLAY.dur = +$("proSpeed").value;
     playUi();
     var tick = function (now) {
       if (!PLAY.on || !PLAY.run) return;
-      var P2 = PTS(), f = playF(now), tc = P2[0][2] + f * (P2[P2.length - 1][2] - P2[0][2]), lo = PLAY.i, hi = P2.length;
-      while (lo < hi) { var mid = (lo + hi) >> 1; P2[mid][2] <= tc ? (lo = mid + 1) : (hi = mid); }
-      PLAY.i = lo;
-      $("playLbl").textContent = dayText(tc);
+      var P2 = PTS(), f = playF(now), n = P2.length, to = Math.min(n, Math.max(1, Math.ceil(f * n)));
+      for (var k = PLAY.i; k < to; k++) P2[k].cc && !PLAY.cc.has(P2[k].cc) && (PLAY.cc.add(P2[k].cc), (mapDirty = true));
+      PLAY.i = to;
+      $("playLbl").textContent = dayText(P2[to - 1][2]);
       drawMap();
       if (f >= 1) { PLAY.run = false; PLAY.f = 1; return void playUi(); }
       PLAY.raf = requestAnimationFrame(tick);
@@ -2957,7 +2960,7 @@ main.pc{position:relative}
   function playStop() {
     if (!PLAY.on) return;
     cancelAnimationFrame(PLAY.raf);
-    PLAY.on = PLAY.run = false; PLAY.f = 0;
+    PLAY.on = PLAY.run = false; PLAY.f = 0; PLAY.cc = null;
     playUi(); mapDirty = true; schedule();
   }
   function playUi() {
