@@ -5,7 +5,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css?v=63cbd493f4">
-<script src="/assets/account.js?v=22279a2405"></script>
+<script src="/assets/account.js?v=9f0fb6ffa3"></script>
 <script>
 // Тема и язык — до первой отрисовки, чтобы страница не мигала (17.11.2026).
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -964,13 +964,14 @@ main.pc{position:relative}
   // этом браузере до «Выйти», шапка показывает, кто вошёл. =====
   // Имя TACC: ACC на этой странице — цвет акцента карты.
   var TACC = window.TabiAcc, S = TACC.get();
-  // Выход из учётной записи (22.11.2026, слово Андрея: выход не стирает данные — они обезличиваются и остаются в этом
-  // браузере): страница открывается заново без учётной записи — с итогом этого браузера, без точек, пришедших из учётной
-  // записи (их браузер не хранит). Сохранённое остаётся в учётной записи.
+  // Выход из учётной записи (21.11.2026, план Андрея; подтверждено им 23.11.2026 как критическое правило): данные учётной
+  // записи остаются в ней целиком, а из браузера уходят — не обезличиваются и никуда не переносятся; страница открывается
+  // заново без учётной записи и без итога. Несохранённое (нет сети, предел) откладывается под ключом этой учётной записи
+  // (keepAway) и возвращается, когда она снова войдёт. Другая учётная запись видит только свои данные.
   TACC.on(function (s) {
     var was = S;
     S = s;
-    was && !s && location.replace(location.pathname + "?lang=" + L);
+    was && !s && keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
   });
   var keep = function (s) { TACC.keep(s); S = TACC.get(); },
     fresh = function () { return TACC.fresh().then(function (s) { S = s; return s; }); };
@@ -1061,14 +1062,9 @@ main.pc{position:relative}
   }
   function signedIn() {
     err(null);
-    // Итог этого браузера был сохранён в другую учётную запись, а вошла эта (22.11.2026, слово Андрея: после выхода итог —
-    // обезличенный, как разбор без входа) — он сохраняется и в неё; точки, пришедшие из прежней учётной записи, браузер не
-    // хранит, поэтому в новую уходит только разбор этого браузера.
-    var me = uidOf(S);
-    if (KEEP_OWNER && KEEP_OWNER !== me) {
-      A.pts.forEach(function (p) { p.acc || (p.sent = false); });
-      KEEP_OWNER = me; saveSt.state = "idle"; saveSt.special = null; saveSt.n = 0;
-    }
+    // Итог этого браузера принадлежит другой учётной записи — он убирается (несохранённое — в сторону, keepAway), страница
+    // открывается заново с данными вошедшей; из одной учётной записи в другую не переносится ничего (23.11.2026, Андрей).
+    if (KEEP_OWNER && KEEP_OWNER !== uidOf(S)) return void keepGet().then(keepAway).then(function () { return keepDrop(); }).then(function () { location.replace(location.pathname + "?lang=" + L); });
     WAY = WAY || ls.get("tabiPcWay") || "";
     ls.set("tabiPcWay", "");
     renderSave();
@@ -4401,9 +4397,26 @@ main.pc{position:relative}
       return new Promise(function (ok) { var tx = db.transaction("st", "readwrite"); tx.objectStore("st").delete("result"); tx.oncomplete = ok; tx.onerror = ok; });
     }).catch(function () {});
   }
-  // Несохранённые точки, отложенные до 22.11.2026 под ключом «away:<учётная запись>» (тогда вход другой учётной записи и
-  // выход убирали итог браузера), возвращаются в итог браузера, когда эта учётная запись снова войдёт на этой странице;
-  // устройства и папки сводятся по марке, модели, номеру и пути. Новые записи «away» больше не появляются.
+  // Несохранённые точки другой учётной записи (21.11.2026, найдено при разборе, слово Андрея): вход в другую учётную запись
+  // или выход прежде стирали итог браузера вместе с точками, которые не успели уйти на сервер (нет сети, предел). Теперь
+  // такие точки откладываются под ключом «away:<учётная запись>» — не показываются никому — и возвращаются, когда эта
+  // учётная запись снова войдёт на этой странице; затем уходят на сервер обычным сохранением.
+  function keepAway(st) {
+    var un = st && st.owner ? (st.pts || []).filter(function (q) { return !q[5]; }) : [];
+    if (!un.length) return Promise.resolve();
+    return idb().then(function (db) {
+      return new Promise(function (ok) {
+        var tx = db.transaction("st", "readwrite"), os = tx.objectStore("st"), rq = os.get("away:" + st.owner);
+        rq.onsuccess = function () {
+          var v = rq.result || { recs: [] };
+          v.recs.push({ at: Date.now(), pts: un, devs: st.devs || [], dirs: st.dirs || [] });
+          os.put(v, "away:" + st.owner);
+        };
+        tx.oncomplete = ok; tx.onerror = ok;
+      });
+    }).catch(function () {});
+  }
+  // Отложенное этой учётной записью — в её итог браузера (устройства и папки сводятся по марке, модели, номеру и пути).
   function keepBack(uid, st) {
     if (!uid) return Promise.resolve(st);
     return idb().then(function (db) {
@@ -4436,7 +4449,8 @@ main.pc{position:relative}
       });
     }).catch(function () { return st; });
   }
-  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — итог браузера сохраняется и в неё.
+  // Учётная запись, в которую сохранён разбор, хранящийся в браузере; вошла другая — чужой итог убирается со страницы
+  // (несохранённое — в сторону, keepAway).
   var KEEP_OWNER = null;
   function uidOf(s) {
     if (!s) return null;
@@ -4462,10 +4476,8 @@ main.pc{position:relative}
     var pts = (st.pts || []).map(function (p) { var q = back(p); p[5] && (q.sent = true); seenPt.add(q[0] + "," + q[1] + "," + q[2]); LOOSE.add(loose(q)); return q; });
     pts = pts.concat(accMerge(j, pts));
     if (!pts.length) return (restoring = false), Promise.resolve(false);
-    // Без входа итог не считается сохранённым: блок сохранения предлагает войти (вошедшему в ту же учётную запись нечего
-    // отправлять — сохранение сразу станет «сохранено»).
-    S && st.saved && (saveSt.state = "saved");
-    S && st.special && st.special.n != null && (saveSt.special = st.special);
+    st.saved && (saveSt.state = "saved");
+    st.special && st.special.n != null && (saveSt.special = st.special);
     show("vPick", false);
     // Границы и регионы найденных стран — до показа: пустых рамок до прихода данных не видно, итог появляется сразу.
     // Страна, регион и город точки хранятся с итогом (22.11.2026, замер: на 94 тысячах точек их пересчёт занимал
@@ -4635,14 +4647,14 @@ main.pc{position:relative}
       var accP = S ? accFetch() : Promise.resolve(null);
       keepGet()
         .then(function (st) {
-          // Итог браузера после выхода остаётся и показывается без учётной записи (22.11.2026, слово Андрея). Вошла учётная
-          // запись, в которую он не сохранялся (или записи до 21.11.2026 без отметки владельца), — итог этого браузера
-          // становится её итогом и сохраняется в неё, как разбор без входа.
+          // Итог учётной записи (владелец) — только ей: без входа и другой учётной записи он не показывается и убирается из
+          // браузера (несохранённое — в сторону); сохранённые точки без отметки владельца (записи до 21.11.2026) — тоже
+          // учётной записи, неизвестно какой: убираются, учётная запись вернёт их сама. Разбор без входа остаётся до входа и
+          // присоединяется к вошедшей учётной записи — это его собственный разбор (23.11.2026, Андрей: из одной учётной записи
+          // в другую не переносится ничего).
           var mine = S ? uidOf(S) : null, saved = st && (st.pts || []).some(function (q) { return q[5]; });
-          if (st && mine && (st.owner ? st.owner !== mine : saved)) {
-            (st.pts || []).forEach(function (q) { q[5] = 0; });
-            st.owner = mine; st.saved = false; st.special = null;
-          }
+          if (st && st.owner && st.owner !== mine) return keepAway(st).then(function () { return keepDrop(); }).then(function () { return keepBack(mine, null); });
+          if (st && !st.owner && saved) return keepDrop().then(function () { return keepBack(mine, null); });
           return keepBack(mine, st);
         })
         .then(function (st) {
