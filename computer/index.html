@@ -529,7 +529,7 @@ main.pc{position:relative}
     <section><h3 id="proViewH"></h3><label class="pc-chk"><input type="checkbox" id="proLines" checked><span id="proLinesL"></span></label>
       <label class="pc-chk"><input type="checkbox" id="proHeat"><span id="proHeatL"></span></label>
       <label class="pc-chk"><input type="checkbox" id="proByYear"><span id="proByYearL"></span></label><div class="pc-yrs" id="proYears" hidden></div>
-      <label class="pc-chk"><input type="checkbox" id="proStreets"><span id="proStreetsL"></span></label><p class="pc-s" id="proStreetsX" hidden></p></section>
+      <label class="pc-lbl"><span id="proStreetsL"></span><select class="pc-sel" id="proBase"><option value="none" id="proBaseN"></option><option value="streets" id="proBaseS"></option><option value="sat" id="proBaseSat"></option><option value="relief" id="proBaseR"></option></select></label><p class="pc-s" id="proStreetsX" hidden></p></section>
     <section><h3 id="proPlayH"></h3><div class="pc-row2"><button type="button" class="pc-btn b2 sm" id="proPlay"></button><button type="button" class="pc-btn b2 sm" id="proStop" hidden></button></div>
       <label class="pc-lbl"><span id="proSpeedL"></span><select class="pc-sel" id="proSpeed"><option value="180000" id="proSpS"></option><option value="60000" id="proSpN" selected></option><option value="20000" id="proSpF"></option></select></label></section>
     <section id="proTimeBox"><h3 id="proTimeH"></h3><div class="pc-range"><i><b id="proRf"></b></i><input type="range" id="proRa" min="0" max="0" value="0" step="1"><input type="range" id="proRb" min="0" max="0" value="0" step="1"></div><div class="pc-range-l"><span id="proRA"></span><span id="proRB"></span></div></section>
@@ -772,8 +772,8 @@ main.pc{position:relative}
     "proNothing": {"ru": "Ничего не найдено.", "en": "Nothing found.", "cs": "Nic nenalezeno.", "de": "Nichts gefunden.", "fr": "Aucun résultat.", "es": "No se encontró nada.", "it": "Nessun risultato.", "pt": "Nada encontrado.", "ja": "見つかりませんでした。", "ko": "찾은 항목이 없습니다."},
     "proHeat": {"ru": "Тепловая карта вместо точек", "en": "Heat map instead of points", "cs": "Teplotní mapa místo bodů", "de": "Heatmap statt Punkten", "fr": "Carte de chaleur à la place des points", "es": "Mapa de calor en lugar de puntos", "it": "Mappa di calore al posto dei punti", "pt": "Mapa de calor em vez de pontos", "ja": "地点の代わりにヒートマップ", "ko": "지점 대신 히트맵"},
     "proByYear": {"ru": "Цвет по годам", "en": "Colour by year", "cs": "Barva podle let", "de": "Farbe nach Jahren", "fr": "Couleur par année", "es": "Color por año", "it": "Colore per anno", "pt": "Cor por ano", "ja": "年ごとに色分け", "ko": "연도별 색상"},
-    "proStreets": {"ru": "Улицы и местность", "en": "Streets and terrain", "cs": "Ulice a krajina", "de": "Straßen und Gelände", "fr": "Rues et relief", "es": "Calles y terreno", "it": "Strade e territorio", "pt": "Ruas e terreno", "ja": "道路と地形", "ko": "거리와 지형"},
-    "proStreetsX": {"ru": "Подложку улиц даёт сервер OpenFreeMap: он видит, какие места вы рассматриваете. Ваши файлы и точки туда не уходят.", "en": "The street layer comes from the OpenFreeMap server, which sees which places you are looking at. Your files and points are not sent there.", "cs": "Vrstvu ulic poskytuje server OpenFreeMap: vidí, která místa si prohlížíte. Vaše soubory a body se tam neodesílají.", "de": "Die Straßenebene kommt vom Server OpenFreeMap: Er sieht, welche Orte Sie betrachten. Ihre Dateien und Punkte werden nicht dorthin gesendet.", "fr": "Le fond de rues vient du serveur OpenFreeMap : il voit quels lieux vous regardez. Vos fichiers et vos points n’y sont pas envoyés.", "es": "La capa de calles la da el servidor de OpenFreeMap: ve qué lugares estás mirando. Tus archivos y puntos no se envían allí.", "it": "Lo sfondo delle strade arriva dal server OpenFreeMap: vede quali luoghi sta guardando. I Suoi file e punti non vi vengono inviati.", "pt": "A camada de ruas vem do servidor OpenFreeMap: ele vê quais lugares você está olhando. Seus arquivos e pontos não são enviados para lá.", "ja": "道路の地図は OpenFreeMap のサーバーから届きます。サーバーは見ている場所を知ることができます。ファイルや地点は送信されません。", "ko": "거리 지도는 OpenFreeMap 서버에서 받습니다. 서버는 어떤 곳을 보고 있는지 알 수 있습니다. 파일과 지점은 그곳으로 보내지지 않습니다."},
+    "proStreets": {"ru": "Подложка карты", "en": "Base map", "cs": "Podkladová mapa", "de": "Kartenhintergrund", "fr": "Fond de carte", "es": "Mapa base", "it": "Mappa di base", "pt": "Mapa base", "ja": "背景地図", "ko": "배경 지도"},
+    "proStreetsX": {"ru": "Подложки улиц, спутника и рельефа дают внешние серверы, и они видят, какие места вы рассматриваете. Ваши файлы и точки туда не уходят.", "en": "External servers provide the streets, satellite and terrain base maps, and they see which places you are looking at. Your files and points are not sent there.", "cs": "Podkladové mapy ulic, satelitu a terénu poskytují externí servery a vidí, která místa si prohlížíte. Vaše soubory a body se tam neposílají.", "de": "Externe Server liefern die Hintergründe Straßen, Satellit und Gelände und sehen, welche Orte Sie betrachten. Ihre Dateien und Punkte werden dorthin nicht gesendet.", "fr": "Des serveurs externes fournissent les fonds Rues, Satellite et Relief et voient les lieux que vous regardez. Vos fichiers et vos points n’y sont pas envoyés.", "es": "Los mapas base de calles, satélite y relieve los proporcionan servidores externos, que ven qué lugares estás mirando. Tus archivos y puntos no se envían allí.", "it": "Le mappe di base Strade, Satellite e Rilievo sono fornite da server esterni, che vedono quali luoghi sta guardando. I Suoi file e i Suoi punti non vengono inviati lì.", "pt": "Os mapas base de ruas, satélite e relevo vêm de servidores externos, que veem quais lugares você está olhando. Seus arquivos e pontos não são enviados para lá.", "ja": "道路・衛星写真・地形の背景地図は外部サーバーが提供し、あなたが見ている場所はそのサーバーに伝わります。ファイルや地点は送信されません。", "ko": "도로, 위성, 지형 배경 지도는 외부 서버가 제공하며, 서버는 어떤 장소를 보고 있는지 알 수 있습니다. 파일과 지점은 그곳으로 전송되지 않습니다."},
     "proPlayH": {"ru": "Проигрывание", "en": "Playback", "cs": "Přehrání", "de": "Wiedergabe", "fr": "Lecture", "es": "Reproducción", "it": "Riproduzione", "pt": "Reprodução", "ja": "再生", "ko": "재생"},
     "proPlay": {"ru": "Проиграть маршрут", "en": "Play the route", "cs": "Přehrát trasu", "de": "Route abspielen", "fr": "Lire l’itinéraire", "es": "Reproducir la ruta", "it": "Riproduci il percorso", "pt": "Reproduzir o trajeto", "ja": "ルートを再生", "ko": "경로 재생"},
     "proPause": {"ru": "Пауза", "en": "Pause", "cs": "Pozastavit", "de": "Pause", "fr": "Pause", "es": "Pausa", "it": "Pausa", "pt": "Pausar", "ja": "一時停止", "ko": "일시 정지"},
@@ -830,7 +830,11 @@ main.pc{position:relative}
     "eOauth": {"en": "Sign-in did not work. Try again or sign in with a code sent to your email.", "ru": "Войти не удалось. Попробуйте ещё раз или войдите по коду на почту.", "cs": "Přihlášení se nezdařilo. Zkuste to znovu nebo se přihlaste kódem zaslaným e-mailem.", "de": "Die Anmeldung hat nicht geklappt. Versuchen Sie es erneut oder melden Sie sich mit einem Code per E-Mail an.", "fr": "La connexion n’a pas abouti. Réessayez ou connectez-vous avec un code envoyé par e-mail.", "es": "No se pudo iniciar sesión. Inténtalo de nuevo o inicia sesión con un código enviado a tu correo.", "it": "L’accesso non è riuscito. Riprovi oppure acceda con un codice inviato per e-mail.", "pt": "Não foi possível entrar. Tente de novo ou entre com um código enviado ao seu e-mail.", "ja": "ログインできませんでした。もう一度試すか、メールに届くコードでログインしてください。", "ko": "로그인하지 못했습니다. 다시 시도하거나 이메일로 받은 코드로 로그인하세요."},
     "cardQ": {"en": "What does your map look like?", "ru": "А какая карта у тебя?", "cs": "A jaká je tvoje mapa?", "de": "Und wie sieht deine Karte aus?", "fr": "Et ta carte, elle ressemble à quoi ?", "es": "¿Y cómo es tu mapa?", "it": "E com’è la tua mappa?", "pt": "E como é o seu mapa?", "ja": "あなたの地図は？", "ko": "당신의 지도는 어떤가요?"},
     "cardHow": {"en": "Make your own map for free from your photos. The photos never leave your computer.", "ru": "Собери свою карту бесплатно по своим фото. Сами фото с компьютера никуда не отправляются.", "cs": "Vytvoř si vlastní mapu zdarma ze svých fotek. Fotky z počítače se nikam neposílají.", "de": "Erstelle deine eigene Karte kostenlos aus deinen Fotos. Die Fotos verlassen deinen Computer nicht.", "fr": "Crée ta propre carte gratuitement à partir de tes photos. Les photos ne quittent jamais ton ordinateur.", "es": "Crea tu propio mapa gratis con tus fotos. Las fotos nunca salen de tu ordenador.", "it": "Crea la tua mappa gratis dalle tue foto. Le foto non lasciano mai il tuo computer.", "pt": "Crie o seu próprio mapa de graça a partir das suas fotos. As fotos nunca saem do seu computador.", "ja": "自分の写真から自分の地図を無料で作れます。写真がパソコンの外に送られることはありません。", "ko": "내 사진으로 나만의 지도를 무료로 만들 수 있습니다. 사진은 컴퓨터 밖으로 나가지 않습니다."},
-    "cardFile": {"en": "map", "ru": "karta", "cs": "mapa", "de": "karte", "fr": "carte", "es": "mapa", "it": "mappa", "pt": "mapa", "ja": "map", "ko": "map"}
+    "cardFile": {"en": "map", "ru": "karta", "cs": "mapa", "de": "karte", "fr": "carte", "es": "mapa", "it": "mappa", "pt": "mapa", "ja": "map", "ko": "map"},
+    "proBaseN": {"en": "Tabi scheme", "ru": "Схема Tabi", "cs": "Schéma Tabi", "de": "Tabi-Schema", "fr": "Schéma Tabi", "es": "Esquema Tabi", "it": "Schema Tabi", "pt": "Esquema Tabi", "ja": "Tabiの地図", "ko": "Tabi 지도"},
+    "proBaseS": {"en": "Streets", "ru": "Улицы", "cs": "Ulice", "de": "Straßen", "fr": "Rues", "es": "Calles", "it": "Strade", "pt": "Ruas", "ja": "道路", "ko": "도로"},
+    "proBaseSat": {"en": "Satellite", "ru": "Спутник", "cs": "Satelit", "de": "Satellit", "fr": "Satellite", "es": "Satélite", "it": "Satellite", "pt": "Satélite", "ja": "衛星写真", "ko": "위성"},
+    "proBaseR": {"en": "Terrain", "ru": "Рельеф", "cs": "Terén", "de": "Gelände", "fr": "Relief", "es": "Relieve", "it": "Rilievo", "pt": "Relevo", "ja": "地形", "ko": "지형"}
   };
   // Подвал — общий для всего сайта (21.11.2026, Андрей: один элемент, а не разные): разметку собирает tools/site_build.py
   // (foot_html) на десяти языках, страница ставит подвал своего языка; ссылки языков в подвале переключают язык здесь же.
@@ -927,7 +931,7 @@ main.pc{position:relative}
       pkT: "pkT", pkNote: "pkNote", pkDir: "pkDir", pkFiles: "pkFiles", faqT: "hFaq", bigList: "bigList", bCancelList: "cancelList",
       proT: "zPro", proDaysH: "proDaysH", proViewH: "proViewH", proLinesL: "proLines", proTimeH: "proTimeH", proDevH: "hDevs", proCcH: "sCountries",
       proSelH: "proSelH", proSelGo: "proSelGo", proSelClear: "proSelClear", proSelDel: "proSelDel", proExpH: "proExpH", proExpX: "proExpX", proReset: "proReset",
-      proQH: "proSearchH", proHeatL: "proHeat", proByYearL: "proByYear", proStreetsL: "proStreets", proStreetsX: "proStreetsX", proPlayH: "proPlayH",
+      proQH: "proSearchH", proHeatL: "proHeat", proByYearL: "proByYear", proStreetsL: "proStreets", proStreetsX: "proStreetsX", proBaseN: "proBaseN", proBaseS: "proBaseS", proBaseSat: "proBaseSat", proBaseR: "proBaseR", proPlayH: "proPlayH",
       proStop: "proStop", proSpeedL: "proSpeed", proSpS: "proSlow", proSpN: "proNormal", proSpF: "proFast", proTripsH: "proTripsH", proTripsX: "proTripsX",
       proFirstH: "proFirstH", proVisaH: "proVisaH", proVisaYL: "proVisaYear", proSchH: "proSchH", proSchAtL: "proSchAt", proVisaNote: "proVisaNote",
       proVisaCsv: "proVisaCsv", proJumpH: "proJumpH", proJumpX: "proJumpX", proJumpDel: "proJumpDel" };
@@ -1990,14 +1994,18 @@ main.pc{position:relative}
   }
   function clampView() {
     var sMin = worldS() * 0.8, sMax = CW / (0.004 * D2R);
+    // С подложкой (23.11.2026) мир не бывает ниже окна и не уходит за полюса подложки (±85°): MapLibre сам ставит такой мир по
+    // середине, и точки съезжали с подложки — точки Чехии стояли в Африке.
+    ST.on && (sMin = Math.max(sMin, CH / (2 * Math.PI)));
     MV.s = Math.max(sMin, Math.min(sMax, MV.s));
     MV.lat = Math.max(-80, Math.min(82, MV.lat));
     prep();
     // Вид мира не уезжает за край карты: мир уже окна — по середине, шире — край карты у края окна.
-    if (MV.t > 0) return;
-    var top = ne(0, NORTH * D2R)[1], bot = ne(0, SOUTH * D2R)[1], hw = Math.PI, c = PC.c, hh = CH / 2 / MV.s, ww = CW / 2 / MV.s,
+    if (MV.t > 0 && !ST.on) return;
+    var top = ST.on ? ne(0, MAXF)[1] : ne(0, NORTH * D2R)[1], bot = ST.on ? -ne(0, MAXF)[1] : ne(0, SOUTH * D2R)[1], hw = Math.PI, c = PC.c,
+      hh = CH / 2 / MV.s, ww = CW / 2 / MV.s,
       cy = top - bot <= 2 * hh ? (top + bot) / 2 : Math.max(bot + hh, Math.min(top - hh, c[1])),
-      cxp = hw <= ww ? 0 : Math.max(-hw + ww, Math.min(hw - ww, c[0]));
+      cxp = MV.t > 0 ? c[0] : hw <= ww ? 0 : Math.max(-hw + ww, Math.min(hw - ww, c[0]));
     if (Math.abs(cy - c[1]) < 1e-9 && Math.abs(cxp - c[0]) < 1e-9) return;
     // Широта по y проекции (y зависит только от широты) — Ньютоном, долгота — делением на ширину параллели.
     var f = MV.lat * D2R;
@@ -2855,7 +2863,7 @@ main.pc{position:relative}
   // --- Вид: тепловая карта, цвет по годам, улицы.
   $("proHeat").onchange = function () { PRO.heat = this.checked; mapDirty = true; schedule(); };
   $("proByYear").onchange = function () { PRO.byYear = this.checked; yearLegend(); mapDirty = true; schedule(); };
-  $("proStreets").onchange = function () { streets(this.checked); };
+  $("proBase").onchange = function () { ST.kind = this.value; try { localStorage.setItem("tabiPcBase", ST.kind); } catch (e) {} streets(ST.kind !== "none"); };
   function yearLegend() {
     var box = $("proYears");
     box.innerHTML = "";
@@ -2902,25 +2910,55 @@ main.pc{position:relative}
   // карты приложения. Грузится только по переключателю (сервер OpenFreeMap видит, какие места рассматривают); точки и
   // линии рисует холст страницы поверх, управление картой — его же, подложка лишь повторяет центр и масштаб.
   var ST_BASE = "/computer/maplibre/", ST_STYLE = "https://tiles.openfreemap.org/styles/";
+  // Подложки (23.11.2026, слово Андрея): улицы — OpenFreeMap; спутник — Sentinel-2 cloudless 2016 от EOX (CC BY 4.0: можно
+  // и в коммерческом продукте, с подписью; снимки 10 м — подробность до города); рельеф — тени гор по высотам Terrain Tiles
+  // (открытые данные Amazon и Mapzen) поверх улиц. Подпись источника — под картой у каждой подложки своя.
+  var ST_SAT = "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg",
+    ST_DEM = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+    ST_ATTR = {
+      streets: '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>',
+      sat: '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless — s2maps.eu</a> by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016 &amp; 2017)',
+      relief: '<a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Terrain Tiles (Mapzen, AWS)</a> · <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>'
+    };
+  ST.kind = (function () { try { var k = localStorage.getItem("tabiPcBase"); return ST_ATTR[k] ? k : "none"; } catch (e) { return "none"; } })();
+  function stStyle() {
+    if (ST.kind === "sat") return { version: 8, sources: { s2: { type: "raster", tiles: [ST_SAT], tileSize: 256, maxzoom: 15 } }, layers: [{ id: "s2", type: "raster", source: "s2" }] };
+    return ST_STYLE + (stDark() ? "dark" : ST.kind === "relief" ? "liberty" : "positron");
+  }
+  // Тени гор — под подписями стиля, после загрузки стиля (и после смены темы).
+  function stRelief() {
+    var m = ST.map;
+    if (!m || ST.kind !== "relief" || m.getSource("dem")) return;
+    // Тени — под водой стиля: в высотах есть и дно океанов, а тени нужны только на суше.
+    var ls = m.getStyle().layers || [], under = ls.filter(function (l) { return l.type === "fill" && /water|ocean/.test(l.id); })[0] ||
+      ls.filter(function (l) { return l.type === "symbol"; })[0];
+    m.addSource("dem", { type: "raster-dem", tiles: [ST_DEM], tileSize: 256, encoding: "terrarium", maxzoom: 15 });
+    m.addLayer({ id: "hillshade", type: "hillshade", source: "dem", minzoom: 2, paint: { "hillshade-exaggeration": 0.5 } }, under && under.id);
+  }
   function stDark() { var a = document.documentElement.getAttribute("data-theme"); return a ? a === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; }
   function streets(on) {
-    ST.on = !!on; $("proStreets").checked = ST.on;
+    ST.on = !!on && ST.kind !== "none"; $("proBase").value = ST.on ? ST.kind : "none";
     show("proStreetsX", ST.on); show("stAttr", ST.on);
+    ST.on && ($("stAttr").innerHTML = ST_ATTR[ST.kind]);
+    MV && clampView();
     var box = $("stMap");
     if (!ST.on) {
       box.hidden = true;
       ST.map && (ST.map.remove(), (ST.map = null));
       mapDirty = true; return void schedule();
     }
-    PRO.n && (PRO.n.streets = 1);
+    PRO.n && (PRO.n.streets = 1, (PRO.n["base_" + ST.kind] = 1));
+    // Подложка уже открыта — новая выбирается сменой стиля, без нового движка.
+    if (ST.map) { ST.map.setStyle(stStyle()); ST.map.once("styledata", stRelief); mapDirty = true; return void schedule(); }
     box.hidden = false;
     mapDirty = true; schedule();
     if (!document.getElementById("stCss")) { var l = document.createElement("link"); l.id = "stCss"; l.rel = "stylesheet"; l.href = ST_BASE + "maplibre-gl.css"; document.head.appendChild(l); }
     (ST.lib ? Promise.resolve(ST.lib) : import(ST_BASE + "maplibre-gl.mjs")).then(function (ml) {
       ST.lib = ml;
       if (!ST.on || ST.map) return;
-      ST.map = new ml.Map({ container: box, style: ST_STYLE + (stDark() ? "dark" : "positron"), center: [MV.lng, MV.lat], zoom: stZoom(),
+      ST.map = new ml.Map({ container: box, style: stStyle(), center: [MV.lng, MV.lat], zoom: stZoom(),
         interactive: false, attributionControl: false, fadeDuration: 0, localIdeographFontFamily: "sans-serif" });
+      ST.map.on("load", stRelief);
       stSync();
     }).catch(function () { streets(false); err("eNet"); });
   }
@@ -2932,7 +2970,7 @@ main.pc{position:relative}
     (c.clientWidth !== ST.w || c.clientHeight !== ST.h) && ((ST.w = c.clientWidth), (ST.h = c.clientHeight), ST.map.resize());
     ST.map.jumpTo({ center: [((MV.lng + 540) % 360) - 180, MV.lat], zoom: stZoom() });
   }
-  function stTheme() { ST.map && ST.map.setStyle(ST_STYLE + (stDark() ? "dark" : "positron")); }
+  function stTheme() { ST.map && ST.kind !== "sat" && (ST.map.setStyle(stStyle()), ST.map.once("styledata", stRelief)); }
   // --- Проигрывание маршрута (23.11.2026, Андрей): по точкам — каждая точка получает равную долю времени, и долгие месяцы
   // без снимков не тянутся пустыми; страна выделяется, когда в ней появилась первая точка; строка даты — над картой.
   $("proPlay").onclick = function () { PLAY.on && PLAY.run ? playPause() : playGo(); };
