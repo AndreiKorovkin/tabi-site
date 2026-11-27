@@ -572,11 +572,18 @@ var TARGETS = {
   var NO218 = "Данные появятся со сборки 218.";
   // Воронка до входа: суммы за период по дням (разные установки за сутки), доля каждого шага от предыдущего.
   // С 27.11.2026 (сборка 224) проверка медиафайлов идёт до учётной записи — безымянно; её шаги — в воронке.
-  var FUN = [["fn_first_open", "Установки"], ["fn_open", "Открыли"], ["fn_photos", "Экран медиафайлов"], ["fn_scan_done", "Проверили медиафайлы"],
-    ["fn_scan_found", "Проверка нашла места"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"], ["fn_signed", "Вошли"]];
+  // Третье поле — шаг, от которого считается доля: проверка медиафайлов — ветвь после открытия, а экран входа идёт
+  // и после неё, и после пропуска, поэтому доля экрана входа считается от открытия, а не от строки над ним. Шаг
+  // берётся по имени, а не по месту в списке: 27.11.2026 новые строки сдвинули «Вошли», и карточка «Вход после
+  // установки» читала «Проверка нашла места».
+  var FUN = [["fn_first_open", "Установки", null], ["fn_open", "Открыли", "fn_first_open"], ["fn_photos", "Экран медиафайлов", "fn_open"],
+    ["fn_scan_done", "Проверили медиафайлы", "fn_photos"], ["fn_scan_found", "Проверка нашла места", "fn_scan_done"],
+    ["fn_account", "Экран входа", "fn_open"], ["fn_auth_tap", "Нажали вход", "fn_account"], ["fn_signed", "Вошли", "fn_auth_tap"]];
   function funnel(R) {
     var ever = FUN.some(function (f) { return anyOf(f[0]); }) || anyOf("fn_auth_error");
-    return { ever: ever, steps: FUN.map(function (f) { return { k: f[0], l: f[1], v: sum(f[0], R.a, R.b) }; }), err: sum("fn_auth_error", R.a, R.b) };
+    var steps = FUN.map(function (f) { return { k: f[0], l: f[1], of: f[2], v: sum(f[0], R.a, R.b) }; }), by = {};
+    steps.forEach(function (x) { by[x.k] = x; });
+    return { ever: ever, steps: steps, by: by, err: sum("fn_auth_error", R.a, R.b) };
   }
   // Доля новых людей со страной: список людей сервера (stat_people, только настоящие люди), пришедшие за период.
   function activation(R) {
@@ -597,7 +604,7 @@ var TARGETS = {
     if (!ST.ser) return put("kpis", []);
     var a = R.a, b = R.b, fb = R.fb, full = fb - a + 1;
     var cur = ST.cur || {}, eng = good(cur.eng) || {}, ret = eng.ret || {}, money = good(cur.money), F = funnel(R), act = activation(R), db = dbNow();
-    var fo = F.steps[0].v, sg = F.steps[4].v;
+    var fo = F.by.fn_first_open.v, sg = F.by.fn_signed.v;
     var retC = function (k, days) {
       var l = lastOf(k, a, b), c = ret[k];
       return { l: "Удержание " + k.toUpperCase(), v: l ? pct(l.v) : "—", k: k,
@@ -935,14 +942,14 @@ var TARGETS = {
     if (!F.ever) return block("Воронка до входа", [line(NO218)]);
     var mx = Math.max.apply(null, F.steps.map(function (s) { return s.v; }).concat(1));
     if (!F.steps.some(function (s) { return s.v; }) && !F.err) return block("Воронка до входа", [line("За выбранный период отметок воронки нет.")]);
-    var rows = F.steps.map(function (s, i) {
-      var prev = i ? F.steps[i - 1].v : 0, fb = h("span", "fb", h("i"));
+    var rows = F.steps.map(function (s) {
+      var prev = s.of ? F.by[s.of].v : 0, fb = h("span", "fb", h("i"));
       fb.firstChild.style.width = (s.v / mx * 100) + "%";
-      return h("div", "fun-r", [h("span", null, s.l), fb, h("b", null, num(s.v)), h("span", "s", i ? (prev ? pct(s.v / prev) : "—") : "")]);
+      return h("div", "fun-r", [h("span", null, s.l), fb, h("b", null, num(s.v)), h("span", "s", s.of ? (prev ? pct(s.v / prev) : "—") : "")]);
     });
-    var fo = F.steps[0].v, sg = F.steps[4].v;
+    var fo = F.by.fn_first_open.v, sg = F.by.fn_signed.v;
     return block("Воронка до входа", [h("div", "fun", rows), h("p", "s", "От установки до входа — " + (fo ? pct(sg / fo) : "—") + ". Ошибок входа — " + num(F.err) + ".")],
-      "Шаги: установка (первое открытие), открытие до входа, экран входа, нажатие на способ входа, вход. Числа — суммы за период по дням, в каждые сутки считаются разные установки без учётной записи; справа — доля от предыдущего шага. Установка, открывшая приложение в двое суток, учтена в каждых из них, поэтому доля шага бывает выше 100 %.");
+      "Шаги: установка (первое открытие), открытие до входа, экран медиафайлов и проверка медиафайлов до входа (со сборки 224), экран входа, нажатие на способ входа, вход. Числа — суммы за период по дням, в каждые сутки считаются разные установки без учётной записи. Справа — доля от шага, из которого человек приходит на этот: экран медиафайлов и экран входа — от открытия, проверка — от экрана медиафайлов, «Нашла места» — от проверки, нажатие — от экрана входа, вход — от нажатия. Установка, открывшая приложение в двое суток, учтена в каждых из них, поэтому доля шага бывает выше 100 %. Установки считают только сборки с 218; люди из открытого теста на прежних сборках здесь не видны.");
   }
   function renderApp(R) {
     var cur = ST.cur || {}, ov = good(cur.ov), e = good(cur.eng);
