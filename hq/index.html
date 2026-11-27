@@ -1,232 +1,1173 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Tabi — штаб</title>
+<!-- Штаб владельца закрыт строже остальных страниц: сценарии — только с сайта и из библиотеки графиков, запросы — только
+     к серверу Tabi. Ключ входа лежит в этом браузере, и чужой сценарий не должен иметь возможности его унести. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://ogrdnhwfgasbgcespsou.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Штаб Tabi</title>
+<meta name="theme-color" content="#121010">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/site.css?v=c402b2d950">
+<script>try{localStorage.getItem("tabiTheme")==="light"&&document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
+<!-- Вход — общий для всего сайта (/assets/account.js, ключ входа localStorage «tabiAcc»); метку версии ставит сборка сайта. -->
+<script src="/assets/account.js?v=7587f176fb"></script>
 <style>
-/* Штаб владельца (18.11.2026, Андрей: делай): все числа в одном месте — сайт, приложение, деньги, ошибки, сервер. Данные
-   отдают функции базы только владельцу (is_owner); страница без входа пуста. Цвет ряда графика — проверенный валидатором
-   цвет сводок владельца в приложении (#2a78d6 на светлом, #3987e5 на тёмном). */
-:root{--series:#2a78d6}
-@media (prefers-color-scheme:dark){:root{--series:#3987e5}}
-body{background:var(--bg);min-height:100vh}
-.hq{max-width:1200px;margin:0 auto;padding:24px 16px 60px;display:grid;gap:18px}
-.hq h1{margin:0;font-size:28px;letter-spacing:-.02em}
-.hq h2{margin:0 0 10px;font-size:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.tile{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
-.tile b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;color:var(--ink)}
-.tile span{font-size:12.5px;color:var(--sub)}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.chip{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:7px 14px;font:inherit;font-weight:600;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
-.btn{appearance:none;border:0;border-radius:12px;padding:11px 16px;font:inherit;font-weight:700;cursor:pointer;background:var(--accent);color:var(--on-accent)}
-.btn.b2{background:var(--bg2);color:var(--ink)}
-.in{box-sizing:border-box;width:100%;max-width:360px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink)}
-.s{color:var(--sub);font-size:14px;margin:0}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
-table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
-td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
-th{color:var(--sub);font-weight:600}
-td.n{text-align:right;white-space:nowrap}
-.chart{position:relative}
-.chart svg{display:block;width:100%;height:200px}
-.tip{position:absolute;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:12.5px;box-shadow:var(--shadow);white-space:nowrap;transform:translate(-50%,-110%)}
+/* Штаб владельца Tabi (27.11.2026): ключевые числа по пути человека (привлечение, активация, удержание, активность,
+   деньги) и здоровье системы сверху, один общий график по дням, цели (OKR), сбалансированная система показателей и
+   подробные разделы, которые открываются и закрываются. Цвета рядов графика — восемь мест проверенной палитры: каждое
+   место различимо и при нарушениях цветового зрения (проверка на фоне панели сайта в обеих темах); цвет состояния —
+   всегда вместе со словом. Тема сайта по умолчанию тёмная, светлая — по переключателю (data-theme=light). */
+:root{--c1:#3987e5;--c2:#d95926;--c3:#199e70;--c4:#c98500;--c5:#d55181;--c6:#0ca30c;--c7:#9085e9;--c8:#e66767;
+  --good:#0ca30c;--warn:#fab219;--serious:#ec835a;--crit:#d03b3b;--none:#7d766e}
+:root[data-theme=light]{--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--c6:#008300;--c7:#6250d6;--c8:#e34948}
+body{background:var(--bg)}
 [hidden]{display:none!important}
+.hq{max-width:1240px;margin:0 auto;padding:22px 16px 72px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px;font-size:15px;line-height:1.5;align-content:start}
+#vData{grid-template-columns:minmax(0,1fr)}
+.hq h1{margin:0;font-size:30px;line-height:1.15;letter-spacing:-.02em}
+.hq h2{margin:0;font-size:18px;line-height:1.3;letter-spacing:-.01em}
+.hq h3{margin:0 0 8px;font-size:15px;line-height:1.3;font-weight:800}
+.hq p{margin:0}
+.s{color:var(--sub);font-size:13.5px}
+.hq-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px}
+.hq-meta{margin-top:4px;color:var(--sub);font-size:13.5px}
+.hq-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{appearance:none;border:0;background:transparent;color:var(--sub);font:inherit;font-weight:700;font-size:14px;padding:7px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+.qb{appearance:none;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:600;font-size:13.5px;padding:6px 12px;border-radius:999px;cursor:pointer}
+.qb:hover{border-color:var(--sub)}
+.qb:disabled{opacity:.55;cursor:default}
+.btn{appearance:none;border:0;display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;border-radius:999px;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.line{color:var(--sub);font-size:14px}
+.line.bad{color:var(--ink)}
+.line.bad::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--crit);margin-right:8px;vertical-align:1px}
+.wait{color:var(--sub);font-size:14px;animation:hqPulse 1.6s ease-in-out infinite}
+@keyframes hqPulse{50%{opacity:.45}}
+.busy{opacity:.55;transition:opacity .2s;pointer-events:none}
+#vIn,#vDeny,#vNet{max-width:560px;display:grid;gap:12px;justify-items:start}
+/* Ключевые числа: группы по пути человека, в группе — карточки; ширина группы — по числу её карточек (--n), группы
+   встают в строку, сколько поместится. */
+.kg{display:flex;flex-wrap:wrap;gap:14px}
+.kgrp{flex:var(--n,3) 1 calc(var(--n,3) * 150px + 30px);min-width:0;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:var(--shadow);display:grid;gap:10px;align-content:start}
+.kgrp>h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);font-weight:800}
+.kc{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px}
+.kpi{position:relative;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px 12px 8px;display:flex;flex-direction:column;min-width:0;min-height:128px}
+.kpi-h{display:flex;align-items:flex-start;gap:6px;font-size:12.5px;line-height:1.3;color:var(--sub);font-weight:600}
+.kpi-h>span{flex:1;min-width:0}
+.kpi-i{appearance:none;flex:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--sub);font:700 11px/16px Onest,system-ui,sans-serif;padding:0;cursor:help}
+.kpi-i:hover,.kpi-i[aria-expanded=true]{color:var(--ink);border-color:var(--sub)}
+.kpi-d{position:absolute;left:6px;right:6px;top:30px;z-index:6;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12.5px;line-height:1.45;font-weight:500;color:var(--ink);box-shadow:0 10px 28px rgba(0,0,0,.28);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s}
+.kpi-i:hover+.kpi-d,.kpi-i:focus-visible+.kpi-d,.kpi.open .kpi-d{opacity:1;visibility:visible}
+.kpi-v{margin-top:4px;font-size:24px;line-height:1.15;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-s{margin-top:2px;font-size:12px;line-height:1.35;color:var(--sub)}
+.kpi .sp{display:block;width:100%;height:28px;margin-top:auto;padding-top:6px}
+.st{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-weight:600}
+.st::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--k,var(--none))}
+.st.good{--k:var(--good)}.st.warn{--k:var(--warn)}.st.serious{--k:var(--serious)}.st.crit{--k:var(--crit)}
+/* Разделы — открываются и закрываются; открытые запоминаются в этом браузере. */
+details.sec{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+details.sec>summary{list-style:none;display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;border-radius:20px;user-select:none}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.sec>summary h2{flex:0 1 auto;min-width:0}
+.sum{flex:1;min-width:0;color:var(--sub);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg{flex:none;margin-left:auto;color:var(--sub);font-size:13px;font-weight:600}
+.tg::after{content:"Открыть"}
+details.sec[open]>summary .tg::after{content:"Свернуть"}
+.sec-b{overflow:hidden}
+.sec-in{padding:0 18px 18px;display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+details.sec,.obj,.bsc>div,.g2>div{min-width:0}
+.note{color:var(--sub);font-size:13px;line-height:1.5;max-width:64em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{background:var(--bg2);border-radius:14px;padding:10px 12px;min-width:0}
+.tile b{display:block;font-size:20px;line-height:1.2;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile span{display:block;font-size:12.5px;line-height:1.35;color:var(--sub)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px;align-items:start}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px}
+.tw table{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.4}
+.tw th,.tw td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tw tr:last-child td{border-bottom:0}
+.tw th{color:var(--sub);font-weight:600;background:var(--bg2);white-space:nowrap}
+.tw .n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tw td .x{display:block;color:var(--sub);font-size:12.5px;word-break:break-word}
+.tw tr.hid{display:none}
+.tw.all tr.hid{display:table-row}
+.tw .rb{all:unset;cursor:pointer;color:var(--ink);font-weight:700;border-bottom:1px dotted var(--sub)}
+.tw .rb:hover{color:var(--accent)}
+.more{margin-top:8px}
+/* Общий график */
+.chips{display:grid;gap:8px}
+.cgr{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.cg{min-width:136px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--sub)}
+@media (max-width:560px){.cg{min-width:0;width:100%}}
+.chip{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:transparent;color:var(--sub);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.chip i{width:14px;height:3px;border-radius:2px;background:var(--line)}
+.chip[aria-pressed=true]{color:var(--ink);background:var(--bg2);border-color:color-mix(in srgb,var(--ink) 30%,transparent)}
+.chip[aria-pressed=true] i{background:var(--k)}
+#chart{width:100%;height:360px}
+.tt{font:13px/1.45 Onest,system-ui,sans-serif;color:var(--ink);min-width:160px}
+.tt-d{color:var(--sub);margin-bottom:4px}
+.tt-r{display:flex;align-items:center;gap:8px}
+.tt-r i{flex:none;width:12px;height:3px;border-radius:2px}
+.tt-r b{font-variant-numeric:tabular-nums}
+.tt-r span{color:var(--sub)}
+/* Цели */
+.okr{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:14px}
+.obj{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:12px;align-content:start}
+.obj-h{display:flex;align-items:baseline;gap:10px}
+.obj-h b{font-size:12.5px;color:var(--sub);font-weight:800}
+.obj-h h3{flex:1;margin:0}
+.obj-h span{font-weight:800;font-variant-numeric:tabular-nums}
+.kr{display:grid;gap:5px}
+.kr-h{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}
+.kr-h .st{font-size:12.5px;white-space:nowrap}
+.bar{height:8px;border-radius:999px;background:color-mix(in srgb,var(--k,var(--none)) 18%,transparent);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--k,var(--none));transition:width .3s ease}
+.kr .s{font-size:12.5px}
+/* Сбалансированная система показателей */
+.bsc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px}
+.bsc>div{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:6px;align-content:start}
+.bsc p.s{margin-bottom:4px}
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:14px;border-top:1px solid var(--line);padding-top:6px}
+.kv span{color:var(--sub)}
+.kv b{font-variant-numeric:tabular-nums;text-align:right}
+/* Воронка до входа */
+.fun{display:grid;gap:6px}
+.fun-r{display:grid;grid-template-columns:minmax(110px,160px) 1fr auto auto;align-items:center;gap:10px;font-size:14px}
+.fun-r .fb{height:14px;border-radius:4px;background:color-mix(in srgb,var(--c1) 14%,transparent);overflow:hidden}
+.fun-r .fb i{display:block;height:100%;border-radius:4px;background:var(--c1)}
+.fun-r b{font-variant-numeric:tabular-nums;min-width:3em;text-align:right}
+.fun-r .s{min-width:4.5em;text-align:right}
+/* Карточка человека — окно сайта */
+dialog.win .pc-h{display:grid;gap:2px;margin:0 40px 12px 0}
+dialog.win .pc-h b{font-size:22px}
+dialog.win .pc-b{display:grid;gap:16px}
+.srch{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.srch input[type=search]{flex:1 1 220px;min-width:0;font:inherit;font-size:15px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.srch label{display:inline-flex;align-items:center;gap:8px;color:var(--sub);font-size:13.5px;cursor:pointer}
+.srch input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+@media (max-width:560px){.hq h1{font-size:25px}.kpi-v{font-size:21px}.kpi{min-height:120px}details.sec>summary{padding:14px}.sec-in{padding:0 14px 14px}.panel{padding:14px}
+  .fun-r{grid-template-columns:96px 1fr auto auto;gap:8px}.sum{display:none}}
+@media (prefers-reduced-motion:reduce){.wait{animation:none}}
 </style></head>
 <body>
-<main class="hq">
-  <div class="row" style="justify-content:space-between"><h1>Штаб Tabi</h1><div class="row"><span class="s" id="who"></span><button class="chip" id="bOut" hidden>Выйти</button></div></div>
-  <p class="s" id="wait" hidden>Проверяю доступ…</p>
-  <section class="card" id="vIn" hidden>
-    <h2>Вход владельца</h2>
-    <div style="display:grid;gap:10px;max-width:380px">
-      <button class="btn" id="bGoogle">Войти через Google</button>
-      <input class="in" id="mail" type="email" placeholder="Почта" autocomplete="email">
-      <button class="btn b2" id="bCode">Получить код</button>
-      <input class="in" id="code" placeholder="Код из письма" inputmode="numeric" hidden>
-      <button class="btn" id="bVerify" hidden>Войти</button>
-      <p class="s" id="err" hidden></p>
+<header class="top"><div class="wrap">
+<a class="wordmark" href="/ru/" aria-label="Tabi">Tabi</a>
+<div class="tools">
+<button class="thm" id="thm" type="button"></button>
+<a data-tabi-acc data-lang="ru" data-in="Войти" class="tacc in" href="/account/?lang=ru" aria-label="Войти">Войти</a>
+</div>
+</div></header>
+<main class="hq" id="main">
+  <div class="hq-top">
+    <div><h1>Штаб Tabi</h1><p class="hq-meta" id="meta">Все числа — только настоящие люди: учётные записи владельца, эмуляторы, проверка Google и тестировщики считаются отдельно.</p></div>
+    <div class="hq-ctl" id="ctl" hidden>
+      <div class="seg" role="group" aria-label="Период" id="per"></div>
+      <button class="qb" id="bRe" type="button">Обновить</button>
+      <span class="s" id="at"></span>
     </div>
-  </section>
-  <div id="vData" hidden style="display:grid;gap:18px">
-    <div class="row" id="range"></div>
-    <section class="card"><h2>Сайт: страница компьютера</h2><div class="tiles" id="siteT"></div>
-      <div class="chart" style="margin-top:14px"><p class="s" style="margin-bottom:6px">Разборы по дням</p><svg id="siteC" role="img" aria-label="Разборы по дням"></svg><div class="tip" id="tip" hidden></div></div>
-      <div class="grid2" style="margin-top:14px"><div><h2>Почему нет места</h2><table id="siteWhy"></table></div><div><h2>Страны в разборах</h2><table id="siteCc"></table></div>
-        <div><h2>Камеры</h2><table id="siteCam"></table></div><div><h2>Языки и системы</h2><table id="siteLang"></table></div></div>
-    </section>
-    <section class="card"><h2>Приложение</h2><div class="tiles" id="appT"></div>
-      <div class="grid2" style="margin-top:12px"><div><h2>Учётные записи по видам</h2><table id="appK"></table></div><div><h2>Выпуски</h2><table id="appV"></table></div></div></section>
-    <section class="card"><h2>Что делают люди в приложении</h2>
-      <p class="s">Все числа раздела — только живые люди. Учётные записи Андрея, эмуляторы Claude, проверка Google и тестировщики считаются отдельно, в таблице «Кто открывал приложение».</p>
-      <div class="tiles" id="engT"></div>
-      <div style="margin-top:14px"><h2>Люди</h2><table id="engR"></table></div>
-      <div style="margin-top:14px"><h2>Кто открывал приложение за период</h2><table id="engK"></table></div>
-      <div class="grid2" style="margin-top:14px"><div><h2>Действия</h2><table id="engA"></table></div><div><h2>На чём заканчивается сеанс</h2><table id="engX"></table></div></div>
-      <p class="s" style="margin-top:10px">Коды действий: tab — вкладка, win — окно, которое приложение открыло само, ib — «Входящие», ob и perm — вступление и разрешения, map и wm — карты, coll — коллекция, scan — проверка медиафайлов, md — устройства, net — окно о соединении.</p></section>
-    <section class="card"><h2>Деньги</h2><div class="tiles" id="moneyT"></div><div style="margin-top:12px"><table id="moneyP"></table></div></section>
-    <section class="card"><h2>Ошибки приложения за 7 дней</h2><table id="errT"></table></section>
-    <section class="card"><h2>Сервер</h2><div class="tiles" id="srvT"></div></section>
+  </div>
+  <p class="wait" id="vWait" hidden>Загружаю данные…</p>
+  <div class="panel" id="vIn" hidden>
+    <h2>Вход владельца</h2>
+    <p class="s">Штаб открывается только владельцу Tabi. Войдите учётной записью владельца на странице учётной записи; после входа сайт вернёт вас сюда.</p>
+    <a class="btn" href="/account/?lang=ru&amp;next=hq">Войти</a>
+  </div>
+  <div class="panel" id="vDeny" hidden>
+    <p class="line bad">Доступ только владельцу.</p>
+    <p class="s" id="denyWho"></p>
+  </div>
+  <div class="panel" id="vNet" hidden>
+    <p class="line bad" id="netX"></p>
+    <button class="qb" id="bNet" type="button">Обновить</button>
+  </div>
+  <div id="vData" hidden style="display:grid;gap:16px">
+    <p class="line bad" id="serErr" hidden></p>
+    <div class="kg" id="kpis"></div>
+    <details class="sec" data-k="chart" data-open="1">
+      <summary><h2>Общий график</h2><span class="sum">Показатели по дням; ряды включаются кнопками под графиком.</span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in">
+        <div id="chart" role="img" aria-label="Общий график показателей по дням"></div>
+        <p class="line bad" id="chartErr" hidden></p>
+        <div class="chips" id="chips" aria-label="Ряды графика"></div>
+        <p class="s" id="chipMsg" hidden>Одновременно показываются не больше восьми рядов: снимите один из выбранных.</p>
+        <div><button class="qb" id="bTab" type="button" aria-expanded="false">Показать значения таблицей</button></div>
+        <div id="chartTab" hidden></div>
+      </div></div>
+    </details>
+    <details class="sec" data-k="okr" data-open="1">
+      <summary><h2>Цели (OKR)</h2><span class="sum" id="sumOkr"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secOkr"></div></div>
+    </details>
+    <details class="sec" data-k="bsc">
+      <summary><h2>Сбалансированная система показателей (BSC)</h2><span class="sum">Финансы, люди, процессы, развитие.</span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secBsc"></div></div>
+    </details>
+    <details class="sec" data-k="site">
+      <summary><h2>Сайт</h2><span class="sum" id="sumSite"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secSite"></div></div>
+    </details>
+    <details class="sec" data-k="app">
+      <summary><h2>Приложение</h2><span class="sum" id="sumApp"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secApp"></div></div>
+    </details>
+    <details class="sec" data-k="err">
+      <summary><h2>Ошибки</h2><span class="sum" id="sumErr"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secErr"></div></div>
+    </details>
+    <details class="sec" data-k="srv">
+      <summary><h2>Сервер</h2><span class="sum" id="sumSrv"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secSrv"></div></div>
+    </details>
+    <details class="sec" data-k="money">
+      <summary><h2>Деньги</h2><span class="sum" id="sumMoney"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secMoney"></div></div>
+    </details>
+    <details class="sec" data-k="people">
+      <summary><h2>Люди</h2><span class="sum" id="sumPeople"></span><span class="tg"></span></summary>
+      <div class="sec-b"><div class="sec-in" id="secPeople"></div></div>
+    </details>
   </div>
 </main>
+<dialog class="win wide" id="pDlg" aria-labelledby="pName">
+  <button class="win-x" type="button" data-close aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+  <div id="pBody"></div>
+</dialog>
 <script>
+// ===== Цели (OKR) — числа задаёт владелец. Страница сама считает прогресс за выбранный период. =====
+var TARGETS = {
+  errorsPerDay: 0,          // O1 «Всё работает верно»: ошибок приложения в сутки — не больше
+  mapKeyRefusalsPerDay: 0,  // O1: отказов в ключе карты людям в сутки — не больше
+  dbShareMax: 0.8,          // O1: база занимает меньше этой доли квоты
+  newPeoplePerWeek: 20,     // O2 «Люди приходят»: новых людей в неделю — не меньше
+  d7Min: 0.2,               // O3 «Люди остаются»: удержание D7 — не ниже
+  minutesPerPersonDay: 5    // O4 «Люди активны»: минут на человека в день — не меньше
+};
+
 (function () {
   "use strict";
-  var SB = "https://ogrdnhwfgasbgcespsou.supabase.co", KEY = "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5", CAPTCHA = "0x4AAAAAAFWBXZyDQ9TZ6MkF";
-  var $ = function (id) { return document.getElementById(id); }, nf = new Intl.NumberFormat("ru-RU"), num = function (n) { return nf.format(Number(n || 0)); };
-  var S = null, DAYS = 30;
-  try { S = JSON.parse(sessionStorage.getItem("tabiHq") || "null"); } catch (e) {}
-  var keep = function (s) { S = s; try { s ? sessionStorage.setItem("tabiHq", JSON.stringify(s)) : sessionStorage.removeItem("tabiHq"); } catch (e) {} };
-  var auth = function (path, body) {
-    return fetch(SB + "/auth/v1/" + path, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) })
-      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); });
+  // Данные отдают функции базы только владельцу (is_owner); без входа и чужой учётной записи страница данных не
+  // показывает. Ключ — общий вход сайта (TabiAcc), отдельного входа у штаба нет.
+  var SB = "https://ogrdnhwfgasbgcespsou.supabase.co", KEY = "sb_publishable_lrMZwDEvMLZLgofMLje33Q_E8KB0Tq5";
+  // Библиотека графиков Apache ECharts — точной версии, с проверкой подлинности файла (SRI).
+  var EC_URL = "https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js",
+    EC_SRI = "sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR";
+  var DB_QUOTA = 500, DB_WORK = 480; // квота базы, МБ; рабочий предел записи (tools/sql.sh)
+  var ACC = window.TabiAcc;
+  var $ = function (id) { return document.getElementById(id); };
+  var ls = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
   };
-  var fromToken = function (j) { return j && j.access_token ? { at: j.access_token, rt: j.refresh_token, exp: Date.now() + (j.expires_in || 3600) * 1000, mail: (j.user && j.user.email) || "" } : null; };
-  var fresh = function () {
-    if (!S) return Promise.resolve(null);
-    if (S.exp - Date.now() > 120000) return Promise.resolve(S);
-    return auth("token?grant_type=refresh_token", { refresh_token: S.rt }).then(function (r) { var s = r.ok && fromToken(r.j); keep(s || null); return s; });
+  var jget = function (k, d) { try { var v = JSON.parse(ls.get(k) || "null"); return v == null ? d : v; } catch (e) { return d; } };
+  // Прежний вход штаба жил во вкладке (до 27.11.2026) — убираем его следы.
+  try { sessionStorage.removeItem("tabiHq"); sessionStorage.removeItem("tabiHqVer"); } catch (e) {}
+  var REDUCE = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  // ===== Числа и даты =====
+  var NF = new Intl.NumberFormat("ru-RU"), NF1 = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 1 }),
+    PF = new Intl.NumberFormat("ru-RU", { style: "percent", maximumFractionDigits: 1 }),
+    CF = new Intl.NumberFormat("ru-RU", { notation: "compact", maximumFractionDigits: 1 });
+  var ok_ = function (n) { return n != null && n !== "" && isFinite(n); };
+  var num = function (n) { return ok_(n) ? NF.format(+n) : "—"; };
+  var num1 = function (n) { return ok_(n) ? NF1.format(+n) : "—"; };
+  var pct = function (x) { return ok_(x) ? PF.format(+x) : "—"; };
+  var pl = function (n, f) { n = Math.abs(Math.round(n)) % 100; var d = n % 10; return f[n > 10 && n < 20 ? 2 : d === 1 ? 0 : d > 1 && d < 5 ? 1 : 2]; };
+  var cnt = function (n, f) { return num(n) + " " + pl(+n || 0, f); };
+  var MG = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"],
+    MS = ["янв.", "февр.", "мар.", "апр.", "мая", "июн.", "июл.", "авг.", "сент.", "окт.", "нояб.", "дек."];
+  var ymd = function (s) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || "")); return m ? [+m[1], +m[2] - 1, +m[3]] : null; };
+  var dFull = function (s) { var p = ymd(s); return p ? p[2] + " " + MG[p[1]] + " " + p[0] + " г." : "—"; };
+  var dShort = function (s) { var p = ymd(s); return p ? p[2] + " " + MS[p[1]] : ""; };
+  var dTime = function (s) {
+    var d = s ? new Date(s) : null;
+    return d && isFinite(d) ? d.toLocaleString("ru-RU", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
   };
-  var err = function (t) { $("err").hidden = !t; $("err").textContent = t || ""; };
-  // Вход через Google — окном; страница компьютера, открытая в нём после входа, отдаёт код сюда (тот же адрес возврата).
-  var b64u = function (buf) { return btoa(String.fromCharCode.apply(null, new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
-  window.addEventListener("message", function (e) {
-    if (e.origin !== location.origin || !e.data || !e.data.tabiCode) return;
-    var ver = sessionStorage.getItem("tabiHqVer");
-    auth("token?grant_type=pkce", { auth_code: e.data.tabiCode, code_verifier: ver }).then(function (r) { var s = r.ok && fromToken(r.j); s ? (keep(s), start()) : err("Вход не удался."); });
-  });
-  $("bGoogle").onclick = function () {
-    var v = b64u(crypto.getRandomValues(new Uint8Array(32)).buffer);
-    crypto.subtle.digest("SHA-256", new TextEncoder().encode(v)).then(function (d) {
-      sessionStorage.setItem("tabiHqVer", v);
-      window.open(SB + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(location.origin + "/computer/?lang=ru&w=1") + "&code_challenge=" + b64u(d) + "&code_challenge_method=s256", "tabiAuth", "width=520,height=700");
+  var dDay = function (s) { var d = s ? new Date(s) : null; return d && isFinite(d) ? d.toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" }) : "—"; };
+  var REG = null;
+  try { REG = new Intl.DisplayNames(["ru"], { type: "region" }); } catch (e) {}
+  var ccName = function (cc) { cc = String(cc || "").toUpperCase(); var n = ""; try { n = REG && /^[A-Z]{2}$/.test(cc) ? REG.of(cc) : ""; } catch (e) {} return n && n !== cc ? cc + " · " + n : cc || "—"; };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+
+  // ===== Разметка: строки ставятся только через textContent =====
+  function h(tag, cls, kids) {
+    var e = document.createElement(tag);
+    cls && (e.className = cls);
+    (Array.isArray(kids) ? kids : kids == null ? [] : [kids]).forEach(function (k) {
+      k == null || k === false || e.appendChild(typeof k === "object" ? k : document.createTextNode(String(k)));
     });
-  };
-  var captcha = function () {
-    return new Promise(function (ok, bad) {
-      var go = function () { var box = document.createElement("div"); box.style.cssText = "position:fixed;left:50%;bottom:20px;transform:translateX(-50%)"; document.body.appendChild(box);
-        window.turnstile.render(box, { sitekey: CAPTCHA, appearance: "interaction-only", callback: function (tk) { ok(tk); setTimeout(function () { box.remove(); }, 0); }, "error-callback": function () { box.remove(); bad(); } }); };
-      if (window.turnstile) return go();
-      var s = document.createElement("script"); s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; s.onload = go; s.onerror = bad; document.head.appendChild(s);
+    return e;
+  }
+  function put(id, kids) { var e = typeof id === "string" ? $(id) : id; e.textContent = ""; (Array.isArray(kids) ? kids : [kids]).forEach(function (k) { k && e.appendChild(k); }); return e; }
+  function line(t, bad) { return h("p", "line" + (bad ? " bad" : ""), t); }
+  function block(title, kids, note) { return h("div", null, [title ? h("h3", null, title) : null].concat(kids, note ? h("p", "note", note) : null)); }
+  function tiles(list) {
+    return h("div", "tiles", list.filter(Boolean).map(function (t) { return h("div", "tile", [h("b", null, t[1]), h("span", null, t[0])]); }));
+  }
+  // Таблица: первые limit строк, остальные — кнопкой «Показать все». Ячейка — текст, число или [текст, пояснение]; колонка
+  // с «#» в начале заголовка — числовая (вправо). Строка с функцией open — кнопка в первой ячейке.
+  function table(head, rows, opt) {
+    opt = opt || {};
+    var lim = opt.limit || 10, wrap = h("div", null), tw = h("div", "tw"), t = h("table"), tr = h("tr");
+    var numCol = head.map(function (x) { return x.charAt(0) === "#"; });
+    head.forEach(function (x, i) { var th = h("th", numCol[i] ? "n" : null, numCol[i] ? x.slice(1) : x); th.scope = "col"; tr.appendChild(th); });
+    var th0 = h("thead"); th0.appendChild(tr); t.appendChild(th0);
+    var tb = h("tbody");
+    rows.forEach(function (r, ri) {
+      var row = h("tr", ri >= lim ? "hid" : null), cells = r.cells || r;
+      cells.forEach(function (c, i) {
+        var td = h("td", numCol[i] ? "n" : null);
+        var main = Array.isArray(c) ? c[0] : c, sub = Array.isArray(c) ? c[1] : null;
+        if (i === 0 && r.open) { var b = h("button", "rb", main); b.type = "button"; b.onclick = r.open; td.appendChild(b); }
+        else td.appendChild(document.createTextNode(main == null ? "—" : String(main)));
+        sub && td.appendChild(h("span", "x", sub));
+        row.appendChild(td);
+      });
+      tb.appendChild(row);
     });
+    t.appendChild(tb); tw.appendChild(t); wrap.appendChild(tw);
+    if (!rows.length) { tw.remove(); wrap.appendChild(line(opt.none || "Пока нет данных.")); }
+    if (rows.length > lim) {
+      var b = h("button", "qb more", "Показать все (" + num(rows.length) + ")");
+      b.type = "button";
+      b.onclick = function () { var all = tw.classList.toggle("all"); b.textContent = all ? "Свернуть" : "Показать все (" + num(rows.length) + ")"; };
+      wrap.appendChild(b);
+    }
+    return wrap;
+  }
+  var topKV = function (o, lim, lab) {
+    return Object.keys(o || {}).sort(function (a, b) { return (+o[b] || 0) - (+o[a] || 0); }).slice(0, lim || 1000)
+      .map(function (k) { return [lab ? lab(k) : k, num(o[k])]; });
   };
-  $("bCode").onclick = function () {
-    var m = $("mail").value.trim(); if (!/^\S+@\S+\.\S+$/.test(m)) return;
-    captcha().then(function (tk) { return auth("otp", { email: m, create_user: false, gotrue_meta_security: { captcha_token: tk } }); })
-      .then(function (r) { if (!r.ok) return err("Код не отправлен."); $("code").hidden = $("bVerify").hidden = false; }).catch(function () { err("Нет связи."); });
+
+  // ===== Запросы к серверу =====
+  // Не больше четырёх запросов одновременно: сервер пускает шесть одновременных запросов от одной учётной записи, и
+  // место остаётся шапке сайта. Ответ «подождите» (429) — повтор через указанное время, не больше двух раз.
+  var Q = [], RUN = 0, MAXQ = 4, TIMES = {};
+  function rpc(fn, args) { return new Promise(function (done) { Q.push([fn, args, done]); pump(); }); }
+  function pump() { while (RUN < MAXQ && Q.length) go1(Q.shift()); }
+  function go1(it) { RUN++; call(it[0], it[1], 0).then(function (r) { RUN--; TIMES[it[0]] = r; it[2](r); pump(); }); }
+  var wait = function (ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); };
+  function call(fn, args, tries) {
+    var t0 = performance.now(), ac = window.AbortController ? new AbortController() : null, tm = ac && setTimeout(function () { ac.abort(); }, 25000);
+    return ACC.fresh().then(function (s) {
+      if (!s) return { fn: fn, st: 0, kind: "auth", ms: 0 };
+      return fetch(SB + "/rest/v1/rpc/" + fn, {
+        method: "POST", signal: ac ? ac.signal : undefined,
+        headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(args || {})
+      }).then(function (r) {
+        return r.text().then(function (x) {
+          tm && clearTimeout(tm);
+          if (r.status === 429 && tries < 2) return wait(Math.min(10, +r.headers.get("Retry-After") || 2) * 1000).then(function () { return call(fn, args, tries + 1); });
+          var j = null;
+          try { j = JSON.parse(x); } catch (e) {}
+          return { fn: fn, st: r.status, j: j, ms: Math.round(performance.now() - t0), kind: kindOf(fn, r.status, j, x) };
+        });
+      });
+    }).catch(function () { tm && clearTimeout(tm); return { fn: fn, st: 0, kind: "net", ms: Math.round(performance.now() - t0) }; });
+  }
+  // Чужой учётной записи stat_site и stat_server отвечают { ok: false }, остальные сводки — ошибкой «only the owner»;
+  // у карточки человека { ok: false } значит «не найден».
+  function kindOf(fn, st, j, x) {
+    if (st >= 200 && st < 300) return j && j.ok === false && (fn === "stat_site" || fn === "stat_server") ? "deny" : "ok";
+    if (/only the owner/i.test(x)) return "deny";
+    if (st === 426 || /TABI426/.test(x)) return "ver";
+    if (st === 401) return "auth";
+    return "srv";
+  }
+  var WHYFAIL = {
+    net: "Сервер не ответил. Проверьте связь и нажмите «Обновить».",
+    ver: "Сервер не пропустил этот запрос: проверка версии приложения на сервере пока не знает его со страницы штаба.",
+    auth: "Вход устарел. Войдите снова на странице учётной записи.",
+    deny: "Доступ только владельцу."
   };
-  $("bVerify").onclick = function () {
-    auth("verify", { type: "email", email: $("mail").value.trim(), token: $("code").value.replace(/\D/g, "") })
-      .then(function (r) { var s = r.ok && fromToken(r.j); s ? (keep(s), start()) : err("Код неверен."); });
-  };
-  var rpc = function (fn, args) {
-    return fresh().then(function (s) {
-      if (!s) return null;
-      return fetch(SB + "/rest/v1/rpc/" + fn, { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.at, "Content-Type": "application/json" }, body: JSON.stringify(args || {}) })
-        .then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { st: r.status, j: j }; }); });
-    }).catch(function () { return null; });
-  };
-  var tiles = function (id, rows) {
-    $(id).innerHTML = "";
-    rows.forEach(function (r) { var d = document.createElement("div"); d.className = "tile"; d.innerHTML = "<b></b><span></span>"; d.children[0].textContent = r[1]; d.children[1].textContent = r[0]; $(id).appendChild(d); });
-  };
-  var table = function (id, head, rows) {
-    var t = $(id); t.innerHTML = "";
-    var tr = document.createElement("tr"); head.forEach(function (h, i) { var th = document.createElement("th"); th.textContent = h; i && (th.style.textAlign = "right"); tr.appendChild(th); }); t.appendChild(tr);
-    rows.forEach(function (r) { var tr2 = document.createElement("tr"); r.forEach(function (c, i) { var td = document.createElement("td"); td.textContent = c; i && (td.className = "n"); tr2.appendChild(td); }); t.appendChild(tr2); });
-    rows.length || (t.innerHTML += '<tr><td class="s">Пока нет данных</td></tr>');
-  };
-  var top = function (o, n) { return Object.keys(o || {}).sort(function (a, b) { return o[b] - o[a]; }).slice(0, n || 12).map(function (k) { return [k, num(o[k])]; }); };
-  var WHY = { cam: "Камера не записала место", shot: "Снимки экрана и картинки", msg: "Мессенджеры и соцсети", gone: "Сведения удалены", edit: "Только время", video: "Видео без места", fmt: "Форматы без места", side: "Место из описаний Google Фото", tl: "Точки истории местоположений" };
-  // График разборов по дням: один ряд, столбцы со скруглённым верхом, подсказка при наведении.
-  function chart(days) {
-    var svg = $("siteC"), W = svg.clientWidth || 600, H = 200, pad = 24, n = days.length, max = Math.max(1, Math.max.apply(null, days.map(function (d) { return d.scans; })));
-    var bw = n ? Math.max(2, (W - pad * 2) / n - 2) : 0, ns = "http://www.w3.org/2000/svg";
-    svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.innerHTML = "";
-    var base = document.createElementNS(ns, "line"); base.setAttribute("x1", pad); base.setAttribute("x2", W - pad); base.setAttribute("y1", H - pad); base.setAttribute("y2", H - pad); base.setAttribute("stroke", "var(--line)"); svg.appendChild(base);
-    days.forEach(function (d, i) {
-      var h = Math.round(((H - pad * 2) * d.scans) / max), x = pad + i * (bw + 2), y = H - pad - h;
-      var p = document.createElementNS(ns, "path"), r = Math.min(4, bw / 2, h);
-      p.setAttribute("d", h ? "M" + x + "," + (H - pad) + "V" + (y + r) + "Q" + x + "," + y + " " + (x + r) + "," + y + "H" + (x + bw - r) + "Q" + (x + bw) + "," + y + " " + (x + bw) + "," + (y + r) + "V" + (H - pad) + "Z" : "");
-      p.setAttribute("fill", "var(--series)"); svg.appendChild(p);
-      var hit = document.createElementNS(ns, "rect"); hit.setAttribute("x", x - 1); hit.setAttribute("y", pad); hit.setAttribute("width", bw + 2); hit.setAttribute("height", H - pad * 2); hit.setAttribute("fill", "transparent");
-      hit.addEventListener("mouseenter", function () { var tp = $("tip"); tp.hidden = false; tp.textContent = d.d + ": разборов " + num(d.scans) + ", сохранений " + num(d.saved) + ", с телефона " + num(d.phones); tp.style.left = ((x + bw / 2) / W) * 100 + "%"; tp.style.top = (y / H) * 200 + "px"; });
-      hit.addEventListener("mouseleave", function () { $("tip").hidden = true; });
-      svg.appendChild(hit);
+  var failText = function (r) { return !r ? WHYFAIL.net : WHYFAIL[r.kind] || "Сервер ответил ошибкой (код " + r.st + "). Нажмите «Обновить»."; };
+  var good = function (r) { return r && r.kind === "ok" ? r.j : null; };
+
+  // ===== Период =====
+  // n — дней, заканчивая сегодняшними сутками; p — период запросов разделов; e — период ошибок (сервер отдаёт не больше 90).
+  var PER = { all: { n: 0, p: 366, e: 90, t: "С начала" }, d30: { n: 30, p: 30, e: 30, t: "30 дней" }, d7: { n: 7, p: 7, e: 7, t: "7 дней" } };
+  var ST = { period: PER[ls.get("tabiHqPeriod")] ? ls.get("tabiHqPeriod") : "all", ser: null, serR: null, srv: null, people: null, per: {}, gen: 0, at: null };
+  function range() {
+    var d = ST.ser ? ST.ser.days || [] : [], b = d.length - 1, n = PER[ST.period].n, a = n ? Math.max(0, b - n + 1) : 0;
+    // Полные сутки — без сегодняшних: средние за сутки по ним не занижаются неполным днём.
+    return { a: a, b: b, fb: b > a ? b - 1 : b, days: d, n: b - a + 1 };
+  }
+  var V = function (k) { return (ST.ser && ST.ser.series && ST.ser.series[k]) || []; };
+  function sum(k, a, b) { var v = V(k), s = 0; for (var i = a; i <= b; i++) s += +v[i] || 0; return s; }
+  function lastOf(k, a, b) { var v = V(k); for (var i = b; i >= a; i--) if (v[i] != null) return { v: +v[i], i: i }; return null; }
+  function anyOf(k) { return V(k).some(function (x) { return +x > 0; }); }
+  function maxOf(k, a, b) { var v = V(k), m = null; for (var i = a; i <= b; i++) v[i] != null && (m = m == null ? +v[i] : Math.max(m, +v[i])); return m; }
+
+  // ===== Ряды по дням (stat_series): подписи, единицы, группы =====
+  // u: n — число, pct — доля 0..1, mb — мегабайты. Ряд, которого здесь нет, но который пришёл с сервера, показывается
+  // своим именем в группе «Прочее» — ничто не теряется.
+  var SERIES = [
+    ["app", "Приложение", [["new_people", "Новые люди"], ["active_people", "Активные люди"], ["sessions", "Сеансы"], ["minutes", "Минуты в приложении"],
+      ["minutes_per_person", "Минут на человека"], ["places", "Засчитанные места"], ["countries", "Засчитанные страны"]]],
+    ["fn", "Воронка до входа", [["fn_first_open", "Установки"], ["fn_open", "Открыли до входа"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"],
+      ["fn_auth_error", "Ошибки входа"], ["fn_signed", "Вошли"]]],
+    ["site", "Сайт", [["site_visitors", "Посетители сайта"], ["site_opens", "Открытия страницы компьютера"], ["site_picks", "Выбор папки"], ["site_scans", "Проверки на сайте"],
+      ["site_saves", "Сохранения итога"], ["site_phones", "Заходы с телефона"]]],
+    ["money", "Деньги", [["coin_buys", "Покупки монет"], ["plus_buys", "Покупки Tabi Plus"], ["plus_active", "Подписчики Tabi Plus"], ["ads", "Ролики"]]],
+    ["health", "Здоровье", [["errors", "Ошибки приложения"], ["map_key_refusals", "Отказы в ключе карты"], ["map_keys", "Выданные ключи карты"]]],
+    ["ret", "Удержание, доли", [["d1", "Удержание D1", "pct"], ["d7", "Удержание D7", "pct"], ["d30", "Удержание D30", "pct"]]],
+    ["srv", "Сервер", [["db_mb", "Размер базы, МБ", "mb"]]]
+  ];
+  var SM = {};
+  SERIES.forEach(function (g) { g[2].forEach(function (s) { SM[s[0]] = { k: s[0], n: s[1], u: s[2] || "n", g: g[0] }; }); });
+  function seriesGroups() {
+    var extra = Object.keys((ST.ser && ST.ser.series) || {}).filter(function (k) { return !SM[k]; });
+    extra.forEach(function (k) { SM[k] = { k: k, n: k, u: "n", g: "other" }; });
+    return extra.length ? SERIES.concat([["other", "Прочее", extra.map(function (k) { return [k, k]; })]]) : SERIES;
+  }
+  var fmtV = function (k, v) { var u = (SM[k] || {}).u; return v == null ? "—" : u === "pct" ? pct(v) : u === "mb" ? num1(v) + " МБ" : num1(v); };
+
+  // ===== Виды ===== (ожидание, вход, нет доступа, нет связи, данные)
+  function view(v) {
+    ["vWait", "vIn", "vDeny", "vNet", "vData"].forEach(function (id) { $(id).hidden = id !== v; });
+    $("ctl").hidden = v !== "vData";
+  }
+
+  // ===== Загрузка: один параллельный проход всех функций =====
+  function perLoad(p) {
+    if (ST.per[p]) return Promise.resolve(ST.per[p]);
+    var d = PER[p].p;
+    return Promise.all([rpc("stat_site", { p_days: d }), rpc("stat_overview", { p_days: d }), rpc("stat_engage", { p_days: d }),
+      rpc("stat_money", { p_days: d }), rpc("stat_errors", { p_days: PER[p].e })]).then(function (r) {
+      var o = { site: r[0], ov: r[1], eng: r[2], money: r[3], err: r[4] };
+      // Удачный ответ хранится до «Обновить»; неудачный запрос при следующем выборе периода повторяется.
+      r.every(function (x) { return x.kind === "ok"; }) && (ST.per[p] = o);
+      return o;
     });
   }
-  // Данные показываются только после того, как сервер подтвердил владельца (18.11.2026: страница открывала экран данных до
-  // проверки и любой сбой запроса называла «не владелец»). Отказ сервера и нет связи называются своими словами.
-  var signIn = function (t) { $("wait").hidden = true; $("vData").hidden = true; $("vIn").hidden = false; $("bOut").hidden = !S; err(t); };
-  var ok = function (x) { return x && x.st === 200 ? x.j : null; };
   function load() {
-    rpc("stat_site", { p_days: DAYS }).then(function (g) {
-      if (!S) return signIn("");
-      if (!g) return signIn("Сервер не ответил. Обновите страницу.");
-      if (g.st !== 200) return signIn("Сервер отказал (код " + g.st + "). Обновите страницу.");
-      if (!g.j || g.j.ok !== true) return (keep(null), ($("who").textContent = ""), signIn("Эта учётная запись не владельца. Войдите учётной записью владельца."));
-      $("wait").hidden = true; $("vIn").hidden = true; $("vData").hidden = false; $("bOut").hidden = false; err("");
-      return Promise.all([rpc("stat_overview", { p_days: DAYS }), rpc("stat_money", { p_days: DAYS }), rpc("stat_errors", { p_days: 7 }), rpc("stat_server"), rpc("stat_engage", { p_days: DAYS })]).then(function (r) { show(g.j, ok(r[0]), ok(r[1]), ok(r[2]), ok(r[3])); eng(ok(r[4])); });
+    var S = ACC.get(), gen = ++ST.gen;
+    if (!S) return view("vIn");
+    ST.data || view("vWait");
+    $("vData").classList.add("busy");
+    ACC.me().then(function (me) {
+      if (gen !== ST.gen) return;
+      if (me && me.owner === false) return deny();
+      ecLoad();
+      var p = ST.period;
+      Promise.all([rpc("stat_series"), perLoad(p), rpc("stat_server"), rpc("stat_people", { p_q: "", p_all: false, p_limit: 300 })]).then(function (r) {
+        if (gen !== ST.gen) return;
+        var site = r[1].site, all = [r[0], r[2], r[3], site, r[1].ov, r[1].eng, r[1].money, r[1].err];
+        // Владельца подтверждает сервер: отказ хоть одной сводки — «только владельцу».
+        if (all.some(function (x) { return x && x.kind === "deny"; })) return deny();
+        if (!ACC.get()) return view("vIn");
+        if (all.every(function (x) { return !x || x.kind !== "ok"; })) {
+          $("netX").textContent = failText(r[0].kind === "ver" ? site : r[0]);
+          return view("vNet");
+        }
+        ST.serR = r[0]; ST.ser = good(r[0]); ST.srv = r[2]; ST.people = r[3]; ST.cur = r[1]; ST.at = new Date(); ST.data = true;
+        render();
+        view("vData");
+        $("vData").classList.remove("busy");
+      });
     });
   }
-  // Действия людей в приложении (18.11.2026): сеансы, удержание, частые действия и на чём сеанс заканчивается.
-  // Виды учётных записей (18.11.2026): так их называет сервер (tabi_private.account_kind).
+  function deny() {
+    var S = ACC.get();
+    $("denyWho").textContent = S && S.mail ? "Вы вошли как " + S.mail + "." : "";
+    ST.data = false;
+    view("vDeny");
+  }
+  function setPeriod(p) {
+    if (!PER[p] || p === ST.period) return;
+    ST.period = p; ls.set("tabiHqPeriod", p);
+    periodButtons();
+    // Ключевые числа и график — сразу из рядов по дням; разделы — после ответа своего периода (прежний вид остаётся
+    // приглушённым, страница не прыгает).
+    ZOOM = null;
+    var gen = ST.gen;
+    if (ST.per[p]) { ST.cur = ST.per[p]; renderTop(); return renderSections(); }
+    renderTop();
+    $("vData").classList.add("busy");
+    perLoad(p).then(function (o) {
+      if (gen !== ST.gen || p !== ST.period) return;
+      ST.cur = o; renderSections(); renderTop();
+      $("vData").classList.remove("busy");
+    });
+  }
+  function periodButtons() {
+    put("per", Object.keys(PER).map(function (k) {
+      var b = h("button", null, PER[k].t);
+      b.type = "button"; b.setAttribute("aria-pressed", k === ST.period ? "true" : "false");
+      b.onclick = function () { setPeriod(k); };
+      return b;
+    }));
+  }
+  $("bRe").onclick = $("bNet").onclick = function () { ST.per = {}; load(); };
+
+  // ===== Всё на странице =====
+  function render() { periodButtons(); renderTop(); renderSections(); }
+  function renderTop() {
+    var R = range();
+    $("meta").textContent = (ST.ser ? "Период: с " + dFull(R.days[R.a]) + " по " + dFull(R.days[R.b]) + "; сутки — по всемирному времени. " : "") +
+      "Все числа — только настоящие люди: учётные записи владельца, эмуляторы, проверка Google и тестировщики считаются отдельно.";
+    $("at").textContent = ST.at ? "Обновлено в " + ST.at.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "";
+    $("serErr").hidden = !!ST.ser;
+    ST.ser || ($("serErr").textContent = "Ряды по дням не загрузились: " + failText(ST.serR).replace(/^./, function (c) { return c.toLowerCase(); }));
+    renderKpis(R);
+    chartDraw();
+  }
+  function renderSections() {
+    var R = range();
+    renderOkr(R); renderBsc(R); renderSite(R); renderApp(R); renderErr(); renderSrv(R); renderMoney(); renderPeople();
+  }
+
+  // ===== Ключевые числа =====
+  // Карточка: подпись, значение, строка пояснения, малый график ряда за период; определение — по наведению или касанию
+  // значка «i». def — полное предложение о том, что именно считается.
+  function spark(k, R, vals) {
+    var v = vals || V(k).slice(R.a, R.b + 1);
+    if (!v.length || !v.some(function (x) { return x != null; })) return null;
+    // Счётные ряды — от нуля; размер базы — от своего наименьшего значения, иначе его изменения не видны.
+    var nn = v.filter(function (x) { return x != null; }).map(Number), mx = Math.max.apply(null, nn), mn = (SM[k] || {}).u === "mb" ? Math.min.apply(null, nn) : Math.min(0, Math.min.apply(null, nn)),
+      W = 100, H = 28, n = v.length, sx = n > 1 ? W / (n - 1) : 0, d = "", area = "", seg = [];
+    var y = function (x) { return mx === mn ? H - 2 : H - 2 - ((x - mn) / (mx - mn)) * (H - 4); };
+    v.forEach(function (x, i) {
+      if (x == null) { seg.length && (d += pathOf(seg), area += areaOf(seg)); seg = []; return; }
+      seg.push([n > 1 ? i * sx : W / 2, y(+x)]);
+    });
+    seg.length && (d += pathOf(seg), area += areaOf(seg));
+    var ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "sp"); svg.setAttribute("viewBox", "0 0 100 28"); svg.setAttribute("preserveAspectRatio", "none"); svg.setAttribute("aria-hidden", "true");
+    var a = document.createElementNS(ns, "path"); a.setAttribute("d", area); a.setAttribute("fill", "var(--c1)"); a.setAttribute("opacity", ".12"); svg.appendChild(a);
+    var p = document.createElementNS(ns, "path"); p.setAttribute("d", d); p.setAttribute("fill", "none"); p.setAttribute("stroke", "var(--c1)");
+    p.setAttribute("stroke-width", "1.75"); p.setAttribute("vector-effect", "non-scaling-stroke"); p.setAttribute("stroke-linejoin", "round"); p.setAttribute("stroke-linecap", "round");
+    svg.appendChild(p);
+    return svg;
+  }
+  function pathOf(s) { return s.length === 1 ? "M" + (s[0][0] - 0.8) + "," + s[0][1] + "H" + (s[0][0] + 0.8) : "M" + s.map(function (q) { return q[0].toFixed(2) + "," + q[1].toFixed(2); }).join("L"); }
+  function areaOf(s) { return s.length < 2 ? "" : "M" + s[0][0].toFixed(2) + ",28L" + s.map(function (q) { return q[0].toFixed(2) + "," + q[1].toFixed(2); }).join("L") + "L" + s[s.length - 1][0].toFixed(2) + ",28Z"; }
+  var KID = 0;
+  function kpi(c, R) {
+    var id = "kd" + ++KID, box = h("div", "kpi"), hd = h("div", "kpi-h", [h("span", null, c.l)]), ib = h("button", "kpi-i", "i"), dd = h("div", "kpi-d", c.def);
+    ib.type = "button"; ib.setAttribute("aria-label", "Что это: " + c.l); ib.setAttribute("aria-expanded", "false"); ib.setAttribute("aria-describedby", id);
+    dd.id = id; dd.setAttribute("role", "tooltip");
+    ib.onclick = function (e) { e.stopPropagation(); var o = !box.classList.contains("open"); closeKpis(); box.classList.toggle("open", o); ib.setAttribute("aria-expanded", o ? "true" : "false"); };
+    hd.appendChild(ib); hd.appendChild(dd);
+    box.appendChild(hd);
+    box.appendChild(h("div", "kpi-v", c.v));
+    var sub = h("div", "kpi-s");
+    c.st && sub.appendChild(h("span", "st " + c.st[0], c.st[1]));
+    c.st && c.s && sub.appendChild(document.createTextNode(" · "));
+    c.s && sub.appendChild(document.createTextNode(c.s));
+    box.appendChild(sub);
+    var sp = c.k || c.vals ? spark(c.k, R, c.vals) : null;
+    sp && box.appendChild(sp);
+    return box;
+  }
+  function closeKpis() { [].forEach.call(document.querySelectorAll(".kpi.open"), function (k) { k.classList.remove("open"); k.querySelector(".kpi-i").setAttribute("aria-expanded", "false"); }); }
+  document.addEventListener("click", function (e) { e.target.closest && !e.target.closest(".kpi") && closeKpis(); });
+  document.addEventListener("keydown", function (e) { e.key === "Escape" && closeKpis(); });
+  var NO218 = "Данные появятся со сборки 218.";
+  // Воронка до входа: суммы за период по дням (разные установки за сутки), доля каждого шага от предыдущего.
+  var FUN = [["fn_first_open", "Установки"], ["fn_open", "Открыли"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"], ["fn_signed", "Вошли"]];
+  function funnel(R) {
+    var ever = FUN.some(function (f) { return anyOf(f[0]); }) || anyOf("fn_auth_error");
+    return { ever: ever, steps: FUN.map(function (f) { return { k: f[0], l: f[1], v: sum(f[0], R.a, R.b) }; }), err: sum("fn_auth_error", R.a, R.b) };
+  }
+  // Доля новых людей со страной: список людей сервера (stat_people, только настоящие люди), пришедшие за период.
+  function activation(R) {
+    var P = good(ST.people);
+    if (!P || !Array.isArray(P) || !R.days.length) return { fail: ST.people };
+    var from = R.days[R.a], fresh = P.filter(function (p) { return String(p.created || "").slice(0, 10) >= from; }), w = fresh.filter(function (p) { return +p.countries > 0; }).length;
+    return { n: fresh.length, w: w, share: fresh.length ? w / fresh.length : null, capped: P.length >= 300 };
+  }
+  function dbNow() {
+    var s = good(ST.srv);
+    if (s && ok_(s.db_mb)) return +s.db_mb;
+    var l = lastOf("db_mb", 0, V("db_mb").length - 1);
+    return l ? l.v : null;
+  }
+  function dbState(db) { var sh = db / DB_QUOTA; return !ok_(db) ? ["", "нет данных"] : sh < TARGETS.dbShareMax ? ["good", "в норме"] : db < DB_WORK ? ["warn", "выше цели"] : ["crit", "у предела"]; }
+  function renderKpis(R) {
+    KID = 0;
+    if (!ST.ser) return put("kpis", []);
+    var a = R.a, b = R.b, fb = R.fb, full = fb - a + 1;
+    var cur = ST.cur || {}, eng = good(cur.eng) || {}, ret = eng.ret || {}, money = good(cur.money), F = funnel(R), act = activation(R), db = dbNow();
+    var fo = F.steps[0].v, sg = F.steps[4].v;
+    var retC = function (k, days) {
+      var l = lastOf(k, a, b), c = ret[k];
+      return { l: "Удержание " + k.toUpperCase(), v: l ? pct(l.v) : "—", k: k,
+        s: (l ? "за " + dShort(R.days[l.i]) : "за период нет посчитанных дней") + (c && c.of ? "; по периоду — " + pct(c.back / c.of) + " из " + num(c.of) : ""),
+        def: "Доля людей, впервые открывших приложение за " + days + " до дня, которые открыли его в этот день. Карточка показывает последний посчитанный день периода, строка ниже — итог по всем, кто пришёл за период." };
+    };
+    var act7 = sum("active_people", a, fb), errY = b >= 1 ? +V("errors")[b - 1] || 0 : 0, errT = +V("errors")[b] || 0, refP = sum("map_key_refusals", a, b);
+    // Сервер не ответил или ответил сбоем — ошибка; отказ проверки версии или устаревший вход — ответ, но не данные.
+    var calls = Object.keys(TIMES).map(function (k) { return TIMES[k]; }), bad = calls.filter(function (x) { return x.kind === "net" || x.kind === "srv"; }),
+      refused = calls.filter(function (x) { return x.kind === "ver" || x.kind === "auth"; }),
+      ms = calls.filter(function (x) { return x.kind === "ok"; }).map(function (x) { return x.ms; }).sort(function (x, y) { return x - y; });
+    var G = [
+      ["Привлечение", [
+        { l: "Посетители сайта", v: num(sum("site_visitors", a, b)), k: "site_visitors", s: "открытий страницы — " + num(sum("site_opens", a, b)),
+          def: "Сумма за период: сколько разных посетителей было на странице «Медиафайлы с компьютера» в каждые сутки (по отпечатку адреса). Человек, пришедший в разные дни, учтён в каждом из них." },
+        { l: "Проверки на сайте", v: num(sum("site_scans", a, b)), k: "site_scans", s: "сохранили итог — " + num(sum("site_saves", a, b)),
+          def: "Сколько раз страница «Медиафайлы с компьютера» проверила выбранную папку с медиафайлами за период." },
+        { l: "Установки", v: F.ever ? num(fo) : "—", k: F.ever ? "fn_first_open" : null, s: F.ever ? "вошли — " + num(sg) : NO218,
+          def: "Первые открытия приложения после установки за период. Приложение отмечает их без учётной записи, начиная со сборки 218." },
+        { l: "Новые люди в приложении", v: num(sum("new_people", a, b)), k: "new_people", s: "в среднем в неделю — " + num1(sum("new_people", a, b) / R.n * 7),
+          def: "Люди, которые впервые открыли приложение со своей учётной записью за период. Считаются только настоящие люди." }
+      ]],
+      ["Активация", [
+        { l: "Новые люди со страной", v: act.fail ? "—" : pct(act.share), s: act.fail ? "Сервер не отдал список людей; причина — в разделе «Сервер»." : act.n ? num(act.w) + " из " + num(act.n) + (act.capped ? "; список сервера — 300 человек" : "") : "за период новых людей нет",
+          def: "Доля людей, пришедших за период, у которых засчитана хотя бы одна страна — по приезду или по медиафайлам. Считается по списку людей сервера: до 300 человек, заходивших последними." },
+        { l: "Вход после установки", v: F.ever && fo ? pct(sg / fo) : "—", k: F.ever ? "fn_signed" : null, s: F.ever ? num(sg) + " из " + num(fo) + " установок" : NO218,
+          def: "Доля установок, после которых человек вошёл в учётную запись. Обе величины — суммы за период по дням; подробные шаги — в разделе «Приложение», блок «Воронка до входа»." }
+      ]],
+      ["Удержание", [retC("d1", "сутки"), retC("d7", "7 суток"), retC("d30", "30 суток")]],
+      ["Активность", [
+        { l: "Активные люди в день", v: num1(act7 / full), k: "active_people", s: "сегодня — " + num(V("active_people")[b]) + ", наибольшее — " + num(maxOf("active_people", a, b)),
+          def: "Среднее за полные сутки периода число людей, у которых был хотя бы один сеанс. Сегодняшние сутки в среднее не входят, потому что они ещё не закончились." },
+        { l: "Минут на человека в день", v: act7 ? num1(sum("minutes", a, fb) / act7) : "—", k: "minutes_per_person", s: "всего минут — " + num(Math.round(sum("minutes", a, b))),
+          def: "Сколько минут в среднем проводит в приложении человек в те сутки, когда он его открывал: все минуты полных суток периода, делённые на сумму активных людей по этим суткам." },
+        { l: "Сеансы", v: num(sum("sessions", a, b)), k: "sessions", s: "в среднем в сутки — " + num1(sum("sessions", a, fb) / full),
+          def: "Сеансы настоящих людей за период. Перерыв дольше получаса начинает новый сеанс." }
+      ]],
+      ["Деньги", [
+        { l: "Подписчики Tabi Plus", v: num(money ? money.plus_active : (lastOf("plus_active", 0, b) || {}).v), k: "plus_active", s: "сейчас",
+          def: "Люди с действующей подпиской Tabi Plus сейчас; малый график — число подписчиков по дням." },
+        { l: "Покупки", v: num(sum("coin_buys", a, b) + sum("plus_buys", a, b)), vals: V("coin_buys").slice(a, b + 1).map(function (x, i) { return (+x || 0) + (+V("plus_buys")[a + i] || 0); }),
+          s: "монеты — " + num(sum("coin_buys", a, b)) + ", Tabi Plus — " + num(sum("plus_buys", a, b)),
+          def: "Покупки пакетов монет и подписки Tabi Plus настоящими людьми за период." },
+        { l: "Ролики", v: num(sum("ads", a, b)), k: "ads", s: money && money.ads ? "монет за ролики — " + num(money.ads.coins) : "",
+          def: "Ролики с наградой, досмотренные настоящими людьми за период." }
+      ]],
+      ["Здоровье", [
+        { l: "Ошибки за сутки", v: num(errY), k: "errors", st: errY <= TARGETS.errorsPerDay && errT <= TARGETS.errorsPerDay ? ["good", "в норме"] : ["crit", "есть ошибки"],
+          s: "сегодня — " + num(errT) + ", за период — " + num(sum("errors", a, b)),
+          def: "Ошибки приложения у настоящих людей и до входа в учётную запись за прошедшие полные сутки по всемирному времени." },
+        { l: "Отказы в ключе карты", v: num(refP), k: "map_key_refusals", st: refP <= TARGETS.mapKeyRefusalsPerDay ? ["good", "в норме"] : ["crit", "есть отказы"],
+          s: "выдано ключей — " + num(sum("map_keys", a, b)),
+          def: "Сколько раз за период сервер отказал настоящим людям в ключе карты. Без ключа у человека пусты карта, коллекция и карточки мест." },
+        { l: "Размер базы", v: ok_(db) ? num1(db) + " МБ" : "—", k: "db_mb", st: dbState(db), s: ok_(db) ? pct(db / DB_QUOTA) + " из " + num(DB_QUOTA) + " МБ" : "",
+          def: "Размер базы по счёту Supabase. Квота — " + num(DB_QUOTA) + " МБ, рабочий предел записи — " + num(DB_WORK) + " МБ; цель — меньше " + pct(TARGETS.dbShareMax) + " квоты." },
+        { l: "Сервер отвечает", v: !calls.length ? "—" : bad.length ? "С ошибками" : "Да",
+          st: !calls.length ? null : bad.length ? ["crit", "не ответили: " + num(bad.length)] : refused.length ? ["warn", "отказов: " + num(refused.length)] : ["good", "в норме"],
+          s: ms.length ? "медиана ответа — " + num(ms[Math.floor((ms.length - 1) / 2)]) + " мс" : "",
+          def: "Ответили ли все запросы штаба при последней загрузке и за какое время; подробности — в разделе «Сервер»." }
+      ]]
+    ];
+    put("kpis", G.map(function (g) {
+      var e = h("div", "kgrp", [h("h2", null, g[0]), h("div", "kc", g[1].map(function (c) { return kpi(c, R); }))]);
+      e.style.setProperty("--n", g[1].length);
+      return e;
+    }));
+  }
+
+  // ===== Общий график (Apache ECharts) =====
+  // Один график по дням с переключаемыми рядами. Числа, доли удержания и размер базы — на трёх полосах одной шкалы
+  // времени с общим перекрестием и общим ползунком: у каждой полосы своя ось, а у одной полосы — одна ось. Цвет ряда —
+  // место палитры, которое ряд занял при включении: включение и выключение других рядов его не перекрашивает.
+  var ECP = null, CH = null, ZOOM = null, CHT = jget("tabiHqOn", null),
+    RO = window.ResizeObserver ? new ResizeObserver(function () { CH && !CH.isDisposed() && CH.resize(); }) : null;
+  if (!CHT || !Array.isArray(CHT.on)) CHT = { on: ["new_people", "active_people", "site_scans"], slot: { new_people: 0, active_people: 1, site_scans: 2 } };
+  function ecLoad() {
+    if (ECP) return ECP;
+    ECP = new Promise(function (ok, bad) {
+      if (window.echarts) return ok(window.echarts);
+      var s = document.createElement("script");
+      s.src = EC_URL; s.integrity = EC_SRI; s.crossOrigin = "anonymous"; s.async = true;
+      var t = setTimeout(function () { bad(); }, 20000);
+      s.onload = function () { clearTimeout(t); window.echarts ? ok(window.echarts) : bad(); };
+      s.onerror = function () { clearTimeout(t); bad(); };
+      document.head.appendChild(s);
+    });
+    ECP.catch(function () { ECP = null; });
+    return ECP;
+  }
+  function chipsDraw() {
+    var box = $("chips"); box.textContent = "";
+    seriesGroups().forEach(function (g) {
+      var ks = g[2].map(function (s) { return s[0]; }).filter(function (k) { return ST.ser && ST.ser.series && k in ST.ser.series; });
+      if (!ks.length) return;
+      var row = h("div", "cgr", h("span", "cg", g[1]));
+      box.appendChild(row);
+      ks.forEach(function (k) {
+        var on = CHT.on.indexOf(k) >= 0, b = h("button", "chip", [h("i"), SM[k].n]);
+        b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false");
+        on && b.style.setProperty("--k", "var(--c" + (CHT.slot[k] + 1) + ")");
+        b.onclick = function () { chipToggle(k); };
+        row.appendChild(b);
+      });
+    });
+  }
+  function chipToggle(k) {
+    var i = CHT.on.indexOf(k);
+    $("chipMsg").hidden = true;
+    if (i >= 0) { CHT.on.splice(i, 1); delete CHT.slot[k]; }
+    else {
+      var used = CHT.on.map(function (x) { return CHT.slot[x]; }), free = [0, 1, 2, 3, 4, 5, 6, 7].filter(function (s) { return used.indexOf(s) < 0; });
+      if (!free.length) { $("chipMsg").hidden = false; return; }
+      CHT.on.push(k); CHT.slot[k] = free[0];
+    }
+    ls.set("tabiHqOn", JSON.stringify(CHT));
+    chartDraw();
+  }
+  function chartOpen() { var d = document.querySelector('details.sec[data-k="chart"]'); return d && d.open && !d._closing; }
+  function cssv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function chartDraw() {
+    if (!ST.ser) return;
+    chipsDraw();
+    tabDraw();
+    if (!chartOpen()) return;
+    ecLoad().then(function (ec) { $("chartErr").hidden = true; drawWith(ec); }, function () {
+      $("chartErr").hidden = false;
+      $("chartErr").textContent = "Библиотека графиков не загрузилась, поэтому значения показаны таблицей. Обновите страницу, когда связь восстановится.";
+      $("chart").hidden = true;
+      tabShow(true);
+    });
+  }
+  function drawWith(ec) {
+    var el = $("chart"), days = ST.ser.days || [], R = range();
+    el.hidden = false;
+    var on = CHT.on.filter(function (k) { return SM[k] && ST.ser.series[k]; });
+    var units = ["n", "pct", "mb"].filter(function (u) { return on.some(function (k) { return SM[k].u === u; }); });
+    var Hh = { n: 230, pct: 110, mb: 90 }, top = 22, gap = 46, total = top;
+    units.forEach(function (u, i) { total += Hh[u] + (i ? gap : 0); });
+    total += 76;
+    el.style.height = (units.length ? total : 120) + "px";
+    if (!CH || CH.isDisposed()) {
+      CH = ec.init(el, null, { renderer: "canvas" });
+      CH.on("datazoom", function () { var o = CH.getOption().dataZoom; o && o[0] && (ZOOM = [o[0].startValue, o[0].endValue]); tabDraw(); });
+      RO ? RO.observe(el) : window.addEventListener("resize", function () { CH && !CH.isDisposed() && CH.resize(); });
+    }
+    // Подсказка, открытая мышью, закрывается до новой разметки графика: иначе библиотека показывает её снова уже на
+    // удалённом элементе прежней разметки (ошибка ECharts 5.5 при замене всех настроек).
+    CH.dispatchAction({ type: "hideTip" });
+    CH.resize();
+    var ink = cssv("--ink"), sub = cssv("--sub"), lineC = cssv("--line"), panel = cssv("--panel"), font = "Onest, system-ui, sans-serif";
+    if (!units.length) {
+      CH.setOption({ title: { text: "Выберите показатели под графиком.", left: "center", top: "middle", textStyle: { color: sub, fontSize: 14, fontWeight: 500, fontFamily: font } } }, { notMerge: true });
+      return;
+    }
+    var z = ZOOM || [R.a, R.b];
+    var grid = [], xA = [], yA = [], ser = [], y = top;
+    var NAME = { n: "Число", pct: "Доля", mb: "МБ" };
+    units.forEach(function (u, i) {
+      i && (y += gap);
+      grid.push({ left: 56, right: 18, top: y, height: Hh[u] });
+      y += Hh[u];
+      xA.push({ type: "category", gridIndex: i, data: days, boundaryGap: false, axisLine: { lineStyle: { color: lineC } }, axisTick: { show: false },
+        axisLabel: { show: i === units.length - 1, color: sub, fontFamily: font, hideOverlap: true, formatter: function (v) { return dShort(v); } },
+        axisPointer: { lineStyle: { color: sub, width: 1 } } });
+      // Размер базы — от ближайших круглых ниже наименьшего значения до квоты: видно, сколько осталось до предела.
+      yA.push({ type: "value", gridIndex: i, splitNumber: u === "n" ? 4 : 2, name: NAME[u], nameGap: 10,
+        min: u === "mb" ? function (v) { return Math.max(0, Math.floor((v.min - 40) / 50) * 50); } : 0,
+        max: u === "mb" ? function (v) { return Math.max(DB_QUOTA, Math.ceil(v.max / 50) * 50); } : null,
+        nameTextStyle: { color: sub, fontFamily: font, fontSize: 11, align: "right" },
+        axisLabel: { color: sub, fontFamily: font, formatter: function (v) { return u === "pct" ? Math.round(v * 100) + " %" : Math.abs(v) >= 10000 ? CF.format(v) : NF1.format(v); } },
+        splitLine: { lineStyle: { color: lineC, width: 1 } } });
+      on.filter(function (k) { return SM[k].u === u; }).forEach(function (k) {
+        var data = ST.ser.series[k].map(function (v) { return v == null ? null : +v; }), col = cssv("--c" + (CHT.slot[k] + 1)), sparse = data.some(function (v) { return v == null; });
+        ser.push({ id: k, name: SM[k].n, type: "line", xAxisIndex: i, yAxisIndex: i, data: data, connectNulls: false, showSymbol: sparse, symbol: "circle", symbolSize: 7,
+          lineStyle: { width: 2, color: col, cap: "round", join: "round" }, itemStyle: { color: col, borderColor: panel, borderWidth: 2 }, emphasis: { disabled: true }, animationDuration: REDUCE ? 0 : 300,
+          markLine: k === "db_mb" ? { silent: true, symbol: "none", animation: false, lineStyle: { color: sub, width: 1, type: "solid", opacity: 0.7 },
+            label: { position: "insideStartTop", color: sub, fontFamily: font, fontSize: 11, formatter: function (p) { return p.name; } },
+            data: [{ yAxis: DB_WORK, name: "Рабочий предел — " + num(DB_WORK) + " МБ" }, { yAxis: Math.round(DB_QUOTA * TARGETS.dbShareMax), name: "Цель — меньше " + num(Math.round(DB_QUOTA * TARGETS.dbShareMax)) + " МБ" }] } : undefined });
+      });
+    });
+    var ax = units.map(function (_, i) { return i; });
+    CH.setOption({
+      animation: !REDUCE, textStyle: { fontFamily: font, color: ink }, grid: grid, xAxis: xA, yAxis: yA, series: ser,
+      axisPointer: { link: [{ xAxisIndex: "all" }] },
+      tooltip: { trigger: "axis", confine: true, backgroundColor: panel, borderColor: lineC, borderWidth: 1, padding: [8, 10], extraCssText: "border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.25)",
+        axisPointer: { type: "line" },
+        formatter: function (ps) {
+          var i = ps && ps.length ? ps[0].dataIndex : -1;
+          if (i < 0) return "";
+          return '<div class="tt"><div class="tt-d">' + esc(dFull(days[i])) + "</div>" + on.map(function (k) {
+            return '<div class="tt-r"><i style="background:' + esc(cssv("--c" + (CHT.slot[k] + 1))) + '"></i><b>' + esc(fmtV(k, ST.ser.series[k][i])) + "</b><span>" + esc(SM[k].n) + "</span></div>";
+          }).join("") + "</div>";
+        } },
+      dataZoom: [{ type: "slider", xAxisIndex: ax, startValue: z[0], endValue: z[1], left: 56, right: 18, bottom: 8, height: 24, filterMode: "filter",
+        borderColor: lineC, backgroundColor: "transparent", fillerColor: "rgba(128,128,128,.14)", brushSelect: false,
+        dataBackground: { lineStyle: { color: sub, opacity: 0.5 }, areaStyle: { color: sub, opacity: 0.08 } },
+        selectedDataBackground: { lineStyle: { color: cssv("--c1") }, areaStyle: { color: cssv("--c1"), opacity: 0.12 } },
+        handleStyle: { color: panel, borderColor: sub }, moveHandleStyle: { color: lineC }, textStyle: { color: sub, fontFamily: font },
+        labelFormatter: function (v) { return dShort(days[v]); } }]
+    }, { notMerge: true });
+    ZOOM = [z[0], z[1]];
+  }
+  // Значения графика таблицей (для чтения без наведения и без библиотеки графиков): дни выбранного отрезка, новые сверху.
+  function tabShow(on) { $("chartTab").hidden = !on; $("bTab").setAttribute("aria-expanded", on ? "true" : "false"); $("bTab").textContent = on ? "Скрыть таблицу" : "Показать значения таблицей"; on && tabDraw(); }
+  $("bTab").onclick = function () { tabShow($("chartTab").hidden); };
+  function tabDraw() {
+    if ($("chartTab").hidden || !ST.ser) return;
+    var R = range(), z = ZOOM || [R.a, R.b], on = CHT.on.filter(function (k) { return SM[k] && ST.ser.series[k]; }), rows = [];
+    for (var i = z[1]; i >= z[0]; i--) rows.push([dFull(ST.ser.days[i])].concat(on.map(function (k) { return fmtV(k, ST.ser.series[k][i]); })));
+    put("chartTab", table(["День"].concat(on.map(function (k) { return "#" + SM[k].n; })), rows, { limit: 14, none: "Выберите показатели под графиком." }));
+  }
+  // Тема сайта сменилась — график заново в цветах новой темы (тем же экземпляром: при уничтожении графика его подсказка,
+  // которую ещё показывала мышь, обращалась к удалённому элементу).
+  new MutationObserver(function () { chartDraw(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  // ===== Цели (OKR) =====
+  var STATUS = function (p) { return p == null ? ["", "нет данных"] : p >= 1 ? ["good", "достигнуто"] : p >= 0.7 ? ["warn", "близко к цели"] : ["crit", "далеко от цели"]; };
+  function krDays(name, k, tgt, R) {
+    var v = V(k), okN = 0;
+    for (var i = R.a; i <= R.b; i++) (+v[i] || 0) <= tgt && okN++;
+    return { n: name, p: R.n ? okN / R.n : null, t: "Дней в норме — " + num(okN) + " из " + num(R.n) + "; вчера — " + num(R.b >= 1 ? +v[R.b - 1] || 0 : 0) + ", сегодня — " + num(+v[R.b] || 0) + ". Цель — не больше " + num(tgt) + " в сутки." };
+  }
+  function okrModel(R) {
+    var db = dbNow(), sh = ok_(db) ? db / DB_QUOTA : null, ret = ((good((ST.cur || {}).eng) || {}).ret || {}).d7;
+    var np = sum("new_people", R.a, R.b), rate = R.n ? np / R.n * 7 : 0, act = sum("active_people", R.a, R.fb), mpp = act ? sum("minutes", R.a, R.fb) / act : null;
+    return [
+      { id: "O1", t: "Всё работает верно", kr: [
+        krDays("Не больше " + num(TARGETS.errorsPerDay) + " ошибок приложения в сутки", "errors", TARGETS.errorsPerDay, R),
+        krDays("Не больше " + num(TARGETS.mapKeyRefusalsPerDay) + " отказов в ключе карты людям в сутки", "map_key_refusals", TARGETS.mapKeyRefusalsPerDay, R),
+        { n: "База занимает меньше " + pct(TARGETS.dbShareMax) + " квоты", p: sh == null ? null : sh < TARGETS.dbShareMax ? 1 : TARGETS.dbShareMax / sh,
+          t: sh == null ? "Размер базы не известен." : "Сейчас — " + num1(db) + " МБ, " + pct(sh) + " квоты в " + num(DB_QUOTA) + " МБ. Цель — меньше " + num(Math.round(DB_QUOTA * TARGETS.dbShareMax)) + " МБ." } ] },
+      { id: "O2", t: "Люди приходят", kr: [
+        { n: "Не меньше " + num(TARGETS.newPeoplePerWeek) + " новых людей в неделю", p: TARGETS.newPeoplePerWeek ? Math.min(1, rate / TARGETS.newPeoplePerWeek) : null,
+          t: "В среднем " + num1(rate) + " в неделю: всего " + num(np) + " за " + cnt(R.n, ["день", "дня", "дней"]) + "." } ] },
+      { id: "O3", t: "Люди остаются", kr: [
+        { n: "Удержание D7 не ниже " + pct(TARGETS.d7Min), p: ret && ret.of ? Math.min(1, ret.back / ret.of / TARGETS.d7Min) : null,
+          t: ret && ret.of ? "Вернулись через неделю " + num(ret.back) + " из " + num(ret.of) + " — " + pct(ret.back / ret.of) + "; считаются пришедшие за период, у кого неделя уже прошла."
+            : "Нет данных: ни у кого из пришедших за период неделя после первого входа ещё не прошла." } ] },
+      { id: "O4", t: "Люди активны", kr: [
+        { n: "Не меньше " + num(TARGETS.minutesPerPersonDay) + " минут на человека в день", p: mpp == null ? null : Math.min(1, mpp / TARGETS.minutesPerPersonDay),
+          t: mpp == null ? "За полные сутки периода сеансов нет." : "Сейчас — " + num1(mpp) + " мин. в сутки, когда человек открывал приложение." } ] }
+    ];
+  }
+  function renderOkr(R) {
+    if (!ST.ser) { put("secOkr", line(failText(ST.serR), true)); $("sumOkr").textContent = ""; return; }
+    var M = okrModel(R), tot = [], objs = M.map(function (o) {
+      var ps = o.kr.map(function (k) { return k.p; }).filter(function (p) { return p != null; }), op = ps.length ? ps.reduce(function (s, p) { return s + p; }, 0) / ps.length : null;
+      op != null && tot.push(op);
+      return h("div", "obj", [h("div", "obj-h", [h("b", null, o.id), h("h3", null, o.t), h("span", null, op == null ? "—" : pct(Math.floor(op * 100) / 100))])].concat(o.kr.map(function (k) {
+        var s = STATUS(k.p), bar = h("div", "bar", h("i")), box = h("div", "kr", [h("div", "kr-h", [h("span", null, k.n), h("span", "st " + s[0], s[1])]), bar, h("p", "s", k.t)]);
+        s[0] && bar.style.setProperty("--k", "var(--" + s[0] + ")");
+        bar.firstChild.style.width = (k.p == null ? 0 : Math.max(2, Math.min(100, k.p * 100))) + "%";
+        return box;
+      })));
+    });
+    $("sumOkr").textContent = tot.length ? "Цели выполнены в среднем на " + pct(Math.floor(tot.reduce(function (s, p) { return s + p; }, 0) / tot.length * 100) / 100) + "." : "";
+    put("secOkr", [h("div", "okr", objs), h("p", "note", "Цели и их числа задаёт объект TARGETS в начале сценария этой страницы. Прогресс считается за выбранный период; цель «не больше» выполнена в тот день, когда число не выше цели.")]);
+  }
+
+  // ===== Сбалансированная система показателей =====
+  function renderBsc(R) {
+    var cur = ST.cur || {}, ov = good(cur.ov) || {}, eng = good(cur.eng) || {}, money = good(cur.money) || {}, ret7 = (eng.ret || {}).d7, db = dbNow();
+    var apps = Object.keys(ov.app || {}).filter(function (k) { return /^\d+$/.test(k); }).sort(function (x, y) { return y - x; }), phones = 0;
+    Object.keys(ov.app || {}).forEach(function (k) { phones += +ov.app[k] || 0; });
+    var newest = apps[0], since = newest && ov.app_since && ov.app_since[newest] ? ov.app_since[newest].first : null;
+    var paid = (money.purchases || []).filter(function (p) { return p.state === "ok"; }).reduce(function (s, p) { return s + (+p.n || 0); }, 0);
+    var upd = (ov.updates || []).reduce(function (s, u) { return s + (+u.n || 0); }, 0);
+    var P = [
+      ["Финансы", "Сколько Tabi зарабатывает.", [["Подписчиков Tabi Plus", num(money.plus_active)], ["Платили когда-либо", num(ov.payers)], ["Оплаченных покупок за период", num(paid)],
+        ["Роликов за период", num(money.ads && money.ads.n)], ["Монет у людей", num(money.coins_total)]]],
+      ["Люди", "Сколько людей пользуются Tabi и возвращаются.", [["Людей всего", num(ov.users)], ["Заходили за 7 дней", num(ov.active7)], ["Заходили за 30 дней", num(ov.active30)],
+        ["Удержание D7 по периоду", ret7 && ret7.of ? pct(ret7.back / ret7.of) + " из " + num(ret7.of) : "—"]]],
+      ["Процессы", "Насколько надёжно работают приложение и сервер.", [["Ошибок за период", ST.ser ? num(sum("errors", R.a, R.b)) : "—"],
+        ["Отказов в ключе карты за период", ST.ser ? num(sum("map_key_refusals", R.a, R.b)) : "—"], ["Запуск приложения, медиана", ok_(eng.ready_ms) ? num(eng.ready_ms) + " мс" : "—"],
+        ["База", ok_(db) ? num1(db) + " МБ · " + pct(db / DB_QUOTA) : "—"]]],
+      ["Развитие", "Как новые выпуски доходят до людей.", [["Выпусков на телефонах", num(apps.length)], ["Самый новый у людей", newest ? newest + (since ? " · с " + dFull(since) : "") : "—"],
+        ["Телефонов на нём", newest && phones ? num(ov.app[newest]) + " из " + num(phones) + " · " + pct(ov.app[newest] / phones) : "—"], ["Обновлений за период", num(upd)]]]
+    ];
+    var fail = !cur.ov || cur.ov.kind !== "ok" ? cur.ov : null;
+    put("secBsc", [fail ? line("Часть чисел не загрузилась: " + failText(fail), true) : null, h("div", "bsc", P.map(function (p) {
+      return h("div", null, [h("h3", null, p[0]), h("p", "s", p[1])].concat(p[2].map(function (r) { return h("div", "kv", [h("span", null, r[0]), h("b", null, r[1])]); })));
+    })), h("p", "note", "Телефоны и выпуски — за последние 30 дней; подписчики, люди всего и монеты — на сейчас; остальное — за выбранный период.")]);
+  }
+
+  // ===== Сайт =====
+  // Причины, по которым у файла нет места, и откуда место пришло иначе (страница «Медиафайлы с компьютера»).
+  var WHY = { cam: "Камера не записала место", shot: "Снимки экрана и картинки", msg: "Пересланы через мессенджер или соцсеть", gone: "Сведения о съёмке удалены",
+    edit: "Только время, без камеры", video: "Видео без места", fmt: "Форматы без места", tiny: "Картинки меньше 320 точек — не учтены" };
+  var FROM = { side: "Место из описаний Google Фото", tl: "Точки истории местоположений Google", trk: "Точки из файлов маршрута (GPX, KML, TCX, GeoJSON)",
+    sys: "Файлы системных папок и папок программ", sysPlace: "Из них с местом съёмки", held: "Точки только из папок программ — отложены" };
+  var perNote = function () { return ST.period === "all" ? "с начала статистики" : "за " + PER[ST.period].t; };
+  function renderSite(R) {
+    var r = (ST.cur || {}).site, s = good(r);
+    if (!s) { $("sumSite").textContent = ""; return put("secSite", line(failText(r), true)); }
+    $("sumSite").textContent = cnt(s.scans, ["проверка", "проверки", "проверок"]) + ", " + cnt(s.saved, ["сохранение", "сохранения", "сохранений"]) + " " + perNote() + ".";
+    var why = s.why || {}, wRows = [], fRows = [];
+    Object.keys(why).forEach(function (k) { +why[k] > 0 && (FROM[k] ? fRows : wRows).push([WHY[k] || FROM[k] || k, num(why[k]), +why[k]]); });
+    var byN = function (x, y) { return y[2] - x[2]; };
+    put("secSite", [
+      tiles([["Проверок", num(s.scans)], ["Сохранений итога", num(s.saved)], ["Вошли до проверки", num(s.signed)], ["Заходов с телефона", num(s.phones)],
+        ["Файлов прочитано", num(s.files)], ["С местом съёмки", num(s.place)], ["Точек", num(s.points)], ["Секунд на проверку, медиана", num1(s.secs)], ["Ошибок чтения", num(s.errors)],
+        ST.ser ? ["Посетителей (сумма по дням)", num(sum("site_visitors", R.a, R.b))] : null, ST.ser ? ["Открытий страницы", num(sum("site_opens", R.a, R.b))] : null,
+        ST.ser ? ["Выборов папки", num(sum("site_picks", R.a, R.b))] : null]),
+      h("div", "g2", [
+        block("Почему у файлов нет места", [table(["Причина", "#Файлов"], wRows.sort(byN).map(function (x) { return [x[0], x[1]]; }))]),
+        block("Откуда ещё пришло место", [table(["Источник", "#Число"], fRows.sort(byN).map(function (x) { return [x[0], x[1]]; }))]),
+        block("Страны в проверках", [table(["Страна", "#Проверок"], topKV(s.countries, 0, ccName))]),
+        block("Камеры", [table(["Камера", "#Файлов"], topKV(s.cams))]),
+        block("Языки страницы", [table(["Язык", "#Событий"], topKV(s.langs, 0, function (k) { return k === "?" ? "не известен" : k; }))]),
+        block("Системы и браузеры", [table(["Система", "#Событий"], topKV(s.os, 0, function (k) { return k === "?" ? "не известна" : k; }))])
+      ]),
+      block("По дням", [table(["День", "#Проверок", "#Сохранений", "#С телефона"], (s.days || []).slice().reverse().map(function (d) { return [dFull(d.d), num(d.scans), num(d.saved), num(d.phones)]; }))],
+        "Дни здесь — по пражскому времени; на общем графике — по всемирному.")
+    ]);
+  }
+
+  // ===== Приложение =====
   var KIND = { person: "Люди", owner: "Андрей (три учётные записи)", emulator: "Эмуляторы и нагрузочные проверки Claude",
     google: "Проверка Google: проверяющие и устройства проверки сборок", tester: "Тестировщики Fiverr (заблокированы 06.11.2026)",
     guest: "Прежние гостевые записи", gone: "Удалённые учётные записи" };
   var KIND_ORDER = ["person", "owner", "emulator", "google", "tester", "guest", "gone"];
-  function eng(e) {
-    if (!e) return;
-    var pc = function (x) { return x && x.of ? Math.round((100 * x.back) / x.of) + "% из " + num(x.of) : "—"; }, r = e.ret || {};
-    tiles("engT", [["Сеансов", num(e.sessions)], ["Людей", num(e.people)], ["Сеанс, медиана, с", num(e.median_sec)], ["Новых за период", num(r.new)],
-      ["Вернулись через сутки", pc(r.d1)], ["Через неделю", pc(r.d7)], ["Через месяц", pc(r.d30)], ["Запуск, медиана, мс", num(e.ready_ms)]]);
-    table("engA", ["Действие", "Раз", "Людей"], (e.actions || []).slice(0, 40).map(function (a) { return [a.code, num(a.n), num(a.people)]; }));
-    table("engX", ["Последнее действие", "Сеансов"], (e.exits || []).map(function (a) { return [a.code, num(a.n)]; }));
-    var kk = e.kinds || {};
-    table("engK", ["Кто", "Учётных записей", "Сеансов"], KIND_ORDER.filter(function (k) { return kk[k]; }).map(function (k) { return [KIND[k], num(kk[k].people), num(kk[k].sessions)]; }));
-    table("engR", ["Человек", "Пришёл", "Вход", "Телефон", "Выпуск", "Сеансов", "Минут", "Вступление", "Особых мест", "По медиафайлам", "Последний раз"],
-      (e.real || []).map(function (r) {
-        return [r.mail || "—", r.created || "—", r.via || "—", r.phone || "—", r.app || "—", num(r.sessions), num(Math.round((r.seconds || 0) / 60)),
-          r.onboarded ? "пройдено" : "не пройдено", num(r.places), num(r.media), r.last ? String(r.last).slice(0, 16).replace("T", " ") : "—"];
-      }));
-  }
-  function show(st, ov, mo, er, sv) {
-    {
-      tiles("siteT", [["Разборов", num(st.scans)], ["Сохранений", num(st.saved)], ["Вошли до разбора", num(st.signed)], ["Заходов с телефона", num(st.phones)], ["Файлов", num(st.files)], ["С местом", num(st.place)], ["Точек", num(st.points)], ["Секунд на разбор (медиана)", num(Math.round(st.secs))], ["Ошибок чтения", num(st.errors)]]);
-      chart(st.days || []);
-      table("siteWhy", ["Причина", "Файлов"], Object.keys(st.why || {}).filter(function (k) { return WHY[k]; }).sort(function (a, b) { return st.why[b] - st.why[a]; }).map(function (k) { return [WHY[k], num(st.why[k])]; }));
-      table("siteCc", ["Страна", "Разборов"], top(st.countries, 20).map(function (x) { return [x[0].toUpperCase(), x[1]]; }));
-      table("siteCam", ["Камера", "Файлов"], top(st.cams, 15));
-      table("siteLang", ["Язык или система", "Разборов"], top(st.langs, 10).concat(top(st.os, 10)));
-      if (ov) {
-        tiles("appT", [["Людей всего", num(ov.users)], ["Заходили за период", num(ov.seen)], ["За 7 дней", num(ov.active7)], ["За 30 дней", num(ov.active30)], ["Платили", num(ov.payers)], ["С подпиской", num(ov.plus)]]);
-        var ak = ov.accounts || {};
-        table("appK", ["Вид", "Учётных записей"], KIND_ORDER.filter(function (k) { return ak[k]; }).map(function (k) { return [KIND[k], num(ak[k])]; }));
-        table("appV", ["Выпуск", "Телефонов"], Object.keys(ov.app || {}).sort(function (a, b) { return (+b || 0) - (+a || 0); }).slice(0, 10).map(function (k) { return [k === "?" ? "не известен" : k, num(ov.app[k])]; }));
-      }
-      if (mo) {
-        tiles("moneyT", [["Подписок сейчас", num(mo.plus_active)], ["Монет у людей", num(mo.coins_total)], ["Роликов", num(mo.ads && mo.ads.n)], ["Проверок медиафайлов", num(mo.scans)]]);
-        table("moneyP", ["Покупка", "Штук"], (mo.purchases || []).slice(0, 12).map(function (p) { return [p.product + " · " + p.state, num(p.n)]; }));
-      }
-      er && table("errT", ["Ошибка", "Раз"], (er.groups || []).slice(0, 15).map(function (g) { return [g.kind + " · " + String(g.msg || "").slice(0, 90), num(g.n)]; }));
-      sv && sv.ok !== false && tiles("srvT", [["База, МБ из 480", num(sv.db_mb)], ["Писем сегодня из 100", num(sv.mail && sv.mail.day)], ["Писем за месяц из 3000", num(sv.mail && sv.mail.month)], ["Точек сайта ждут телефона", num(sv.site_pending)], ["Учётных записей с итогом", num(sv.site_accounts)], ["Устройств в реестре", num(sv.devices)], ["Письмо с итогом", sv.letter_on ? "включено" : "выключено"]]);
-    }
-  }
-  $("bOut").onclick = function () { keep(null); $("who").textContent = ""; signIn(""); };
-  function start() {
-    $("vIn").hidden = true; $("vData").hidden = true; $("wait").hidden = false;
-    $("who").textContent = S && S.mail ? S.mail : "";
-    $("range").innerHTML = "";
-    [7, 30, 90, 365].forEach(function (d) {
-      var b = document.createElement("button"); b.className = "chip"; b.textContent = d === 365 ? "Год" : d + " дней"; b.setAttribute("aria-pressed", d === DAYS ? "true" : "false");
-      b.onclick = function () { DAYS = d; [].forEach.call($("range").children, function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); load(); }; $("range").appendChild(b);
+  var kinds = function (o, f) { return KIND_ORDER.filter(function (k) { return o && o[k]; }).concat(Object.keys(o || {}).filter(function (k) { return KIND_ORDER.indexOf(k) < 0; })).map(function (k) { return f(KIND[k] || k, o[k]); }); };
+  var LEN = { a: "Меньше 30 секунд", b: "От 30 секунд до 2 минут", c: "От 2 до 10 минут", d: "От 10 до 30 минут", e: "Полчаса и дольше" };
+  var SET = {
+    loc: ["Местоположение", { always: "Разрешено всегда", while: "Только при использовании", denied: "Запрещено" }],
+    battery: ["Батарея", { optimized: "С экономией заряда", unrestricted: "Без ограничений" }],
+    notify: ["Уведомления", { "true": "Разрешены", "false": "Запрещены" }],
+    motion: ["Распознавание движения", { "true": "Разрешено", "false": "Запрещено" }],
+    maker: ["Производитель", {}]
+  };
+  function funnelBlock(R) {
+    if (!ST.ser) return null;
+    var F = funnel(R);
+    if (!F.ever) return block("Воронка до входа", [line(NO218)]);
+    var mx = Math.max.apply(null, F.steps.map(function (s) { return s.v; }).concat(1));
+    if (!F.steps.some(function (s) { return s.v; }) && !F.err) return block("Воронка до входа", [line("За выбранный период отметок воронки нет.")]);
+    var rows = F.steps.map(function (s, i) {
+      var prev = i ? F.steps[i - 1].v : 0, fb = h("span", "fb", h("i"));
+      fb.firstChild.style.width = (s.v / mx * 100) + "%";
+      return h("div", "fun-r", [h("span", null, s.l), fb, h("b", null, num(s.v)), h("span", "s", i ? (prev ? pct(s.v / prev) : "—") : "")]);
     });
-    load();
+    var fo = F.steps[0].v, sg = F.steps[4].v;
+    return block("Воронка до входа", [h("div", "fun", rows), h("p", "s", "От установки до входа — " + (fo ? pct(sg / fo) : "—") + ". Ошибок входа — " + num(F.err) + ".")],
+      "Шаги: установка (первое открытие), открытие до входа, экран входа, нажатие на способ входа, вход. Числа — суммы за период по дням, в каждые сутки считаются разные установки без учётной записи; справа — доля от предыдущего шага. Установка, открывшая приложение в двое суток, учтена в каждых из них, поэтому доля шага бывает выше 100 %.");
   }
-  S ? start() : ($("vIn").hidden = false);
+  function renderApp(R) {
+    var cur = ST.cur || {}, ov = good(cur.ov), e = good(cur.eng);
+    var kids = [funnelBlock(R)];
+    $("sumApp").textContent = ov ? cnt(ov.users, ["человек", "человека", "человек"]) + " всего" + (e ? ", " + cnt(e.sessions, ["сеанс", "сеанса", "сеансов"]) + " " + perNote() : "") + "." : "";
+    if (ov) {
+      kids.push(block("Учётные записи", [tiles([["Людей всего", num(ov.users)], ["Открывали приложение", num(ov.seen)], ["Заходили за 7 дней", num(ov.active7)], ["Заходили за 30 дней", num(ov.active30)],
+        ["Платили когда-либо", num(ov.payers)], ["С подпиской сейчас", num(ov.plus)], ["Удалили учётную запись", num(ov.gone)], ["Выключили статистику", num(ov.opt_out)]])]));
+    } else kids.push(line("Сводка приложения не загрузилась: " + failText(cur.ov), true));
+    if (e) {
+      var r = e.ret || {}, rp = function (x) { return x && x.of ? pct(x.back / x.of) + " из " + num(x.of) : "—"; };
+      kids.push(block("Сеансы " + perNote(), [tiles([["Сеансов", num(e.sessions)], ["Людей", num(e.people)], ["Сеанс, медиана", ok_(e.median_sec) ? num(e.median_sec) + " с" : "—"],
+        ["Новых за период", num(r.new)], ["Вернулись через сутки", rp(r.d1)], ["Через неделю", rp(r.d7)], ["Через месяц", rp(r.d30)],
+        ["Запуск, медиана", ok_(e.ready_ms) ? num(e.ready_ms) + " мс" : "—"], ["Долгие задачи за сеанс, медиана", ok_(e.lag_ms) ? num(e.lag_ms) + " мс" : "—"],
+        ["Трафик за сеанс, медиана", ok_(e.kb) ? num(e.kb) + (ok_(e.kbn) ? " + " + num(e.kbn) : "") + " КБ" : "—"]])],
+        "Удержание здесь — по людям, чей первый сеанс пришёлся на период; учитываются только те, у кого срок уже прошёл. Трафик — страницы и, через «+», нативной части."));
+      kids.push(h("div", "g2", [
+        block("Длина сеанса", [table(["Длина", "#Сеансов"], ["a", "b", "c", "d", "e"].filter(function (k) { return e.len && e.len[k]; }).map(function (k) { return [LEN[k], num(e.len[k])]; }))]),
+        block("Где заканчивается сеанс", [table(["Последнее действие", "#Сеансов"], (e.exits || []).map(function (x) { return [x.code, num(x.n)]; }))])
+      ]));
+      kids.push(block("Действия", [table(["Действие", "#Раз", "#Людей"], (e.actions || []).map(function (x) { return [x.code, num(x.n), num(x.people)]; }), { limit: 12 })],
+        "Коды действий: tab — вкладка, win — окно, которое приложение открыло само, ib — «Входящие», ob и perm — вступление и разрешения, map и wm — карты, coll — коллекция, scan — проверка медиафайлов, md — устройства, net — окно о соединении, boot — этапы запуска."));
+      kids.push(h("div", "g2", Object.keys(SET).map(function (k) {
+        var m = SET[k][1];
+        return block(SET[k][0], [table(["Значение", "#Телефонов"], topKV(e[k], 0, function (v) { return m[v] || (v === "?" ? "нет сведений" : v); }))]);
+      }).concat([block("Версии Android", [table(["Версия", "#Телефонов"], topKV(ov && ov.android, 0, function (v) { return v === "?" ? "не известна" : v; }))])])));
+    } else kids.push(line("Сведения о сеансах не загрузились: " + failText(cur.eng), true));
+    if (ov) {
+      var since = ov.app_since || {};
+      kids.push(h("div", "g2", [
+        block("Выпуски на телефонах", [table(["Выпуск", "#Телефонов", "Первая установка", "Последняя"], Object.keys(ov.app || {}).sort(function (x, y) { return (+y || 0) - (+x || 0); }).map(function (k) {
+          var s0 = since[k] || {};
+          return [k === "?" ? "не известен" : k, num(ov.app[k]), s0.first ? dFull(s0.first) : "—", s0.last ? dFull(s0.last) : "—"];
+        }))], "Телефоны людей, заходившие за последние 30 дней."),
+        block("Обновления", [table(["День", "Переход", "#Телефонов"], (ov.updates || []).map(function (u) { return [dFull(u.day), u.from + " → " + u.to, num(u.n)]; }))])
+      ]));
+      kids.push(block("Итоги по суткам", [table(["Сутки", "#Людей", "#Новых", "#Сеансов", "#Минут на человека", "#D1", "#D7", "#D30", "#Покупок", "#Роликов", "#Ошибок"],
+        (ov.days || []).map(function (d) {
+          return [dFull(d.day), num(d.users), num(d.new_users), num(d.sessions), d.users ? num1(d.seconds / 60 / d.users) : "—", pct(d.d1), pct(d.d7), pct(d.d30),
+            num((+d.coin_buys || 0) + (+d.plus_buys || 0)), num(d.ads), num(d.errors)];
+        }), { limit: 10 })], "D1, D7 и D30 суток — доля людей, впервые открывших приложение за сутки, за 7 и за 30 суток до этого дня, которые открыли его в этот день."));
+    }
+    put("secApp", kids);
+  }
+
+  // ===== Ошибки =====
+  function renderErr() {
+    var r = (ST.cur || {}).err, e = good(r);
+    if (!e) { $("sumErr").textContent = ""; return put("secErr", line(failText(r), true)); }
+    var total = (e.groups || []).reduce(function (s, g) { return s + (+g.n || 0); }, 0), lab = ST.period === "all" ? "с начала статистики, но не больше чем за 90 дней" : "за " + PER[ST.period].t;
+    $("sumErr").textContent = (total ? cnt(total, ["ошибка", "ошибки", "ошибок"]) : "Ошибок нет") + " " + (ST.period === "all" ? "с начала" : "за " + PER[ST.period].t) + ".";
+    put("secErr", [
+      block("По видам и выпускам", [table(["Ошибка", "#Раз", "#Людей", "Последний раз"], (e.groups || []).map(function (g) {
+        return [[g.kind + " · выпуск " + g.app, String(g.msg || "")], num(g.n), num(g.people), dTime(g.last)];
+      }), { none: "Ошибок нет." })], "Ошибки приложения у настоящих людей и до входа в учётную запись " + lab + "."),
+      block("Последние", [table(["Когда", "Ошибка", "Кто"], (e.recent || []).map(function (x) {
+        return [dTime(x.at), [String(x.kind || "?") + " · выпуск " + (x.app || "?"), String(x.msg || "")], x.nick || (x.user ? "без ника" : "до входа")];
+      }), { none: "Ошибок нет." })])
+    ]);
+  }
+
+  // ===== Сервер =====
+  var FN = { stat_series: "Ряды по дням", stat_site: "Сайт", stat_overview: "Приложение", stat_engage: "Действия в приложении", stat_money: "Деньги",
+    stat_errors: "Ошибки", stat_server: "Сервер", stat_people: "Список людей", stat_user: "Карточка человека" };
+  function renderSrv(R) {
+    var r = ST.srv, s = good(r), db = dbNow(), dst = dbState(db);
+    var calls = Object.keys(TIMES).map(function (k) { return TIMES[k]; });
+    $("sumSrv").textContent = ok_(db) ? "База — " + num1(db) + " МБ, " + pct(db / DB_QUOTA) + " квоты." : "";
+    var kids = [];
+    if (s) {
+      var m = s.mail || {};
+      kids.push(tiles([["База, МБ из " + num(DB_QUOTA), num1(s.db_mb) + " · " + pct(s.db_mb / DB_QUOTA)], ["Рабочий предел записи, МБ", num(DB_WORK)], ["Писем сегодня из 100", num(m.day)],
+        ["Писем за месяц из 3000", num(m.month)], ["Точек сайта ждут телефона", num(s.site_pending)], ["Учётных записей с итогом сайта", num(s.site_accounts)],
+        ["Устройств медиафайлов", num(s.devices)], ["Письмо с итогом", s.letter_on ? "включено" : "выключено"], ["Последняя проверка на сайте", dTime(s.last_scan)]]));
+      kids.push(h("p", null, h("span", "st " + dst[0], "База: " + dst[1])));
+    } else kids.push(line("Сводка сервера не загрузилась: " + failText(r), true));
+    if (ST.ser) {
+      var dbs = [];
+      V("db_mb").forEach(function (v, i) { v != null && dbs.push([dFull(ST.ser.days[i]), num1(v)]); });
+      kids.push(block("Размер базы по дням", [table(["Сутки", "#МБ"], dbs.reverse(), { none: "Записей пока нет: ночное задание записывает размер базы раз в сутки." })]));
+    }
+    kids.push(block("Ответы на запросы штаба", [table(["Запрос", "Ответ", "#Время"], calls.map(function (c) {
+      return [FN[c.fn] || c.fn, c.kind === "ok" ? "в порядке" : failText(c), c.ms ? num(c.ms) + " мс" : "—"];
+    }))], "Время — от отправки запроса до ответа, вместе с ожиданием очереди этой страницы."));
+    put("secSrv", kids);
+  }
+
+  // ===== Деньги =====
+  var PSTATE = { ok: "оплачена", revoked: "деньги возвращены", pending: "ждёт оплаты", canceled: "отменена" };
+  function renderMoney() {
+    var r = (ST.cur || {}).money, m = good(r);
+    if (!m) { $("sumMoney").textContent = ""; return put("secMoney", line(failText(r), true)); }
+    var o = m.opened || {}, ad = m.ads || {}, buys = (m.purchases || []).reduce(function (s, p) { return s + (+p.n || 0); }, 0);
+    $("sumMoney").textContent = "Подписчиков — " + num(m.plus_active) + ", покупок " + perNote() + " — " + num(buys) + ".";
+    put("secMoney", [
+      tiles([["Подписок сейчас", num(m.plus_active)], ["Монет у людей", num(m.coins_total)], ["Роликов", num(ad.n)], ["Людей с роликами", num(ad.people)], ["Монет за ролики", num(ad.coins)],
+        ["Стран открыто за монеты", num(o.countries)], ["Городов открыто за монеты", num(o.cities)], ["Открыто подарком", num(o.gift)], ["Предметов куплено", num(o.items)],
+        ["Проверок медиафайлов за монеты", num(o.scans)]]),
+      block("Покупки", [table(["Покупка", "Состояние", "#Штук", "#Людей", "#Монет"], (m.purchases || []).map(function (p) {
+        return [p.product, PSTATE[p.state] || p.state, num(p.n), num(p.people), num(p.coins)];
+      }), { none: "Покупок нет." })]),
+      h("div", "g2", [
+        block("Монеты, начисленные телефоном", [table(["Вид", "#Монет"], topKV(m.earn_phone))]),
+        block("Монеты, начисленные сервером", [table(["Вид", "#Монет"], topKV(m.earn_server))])
+      ]),
+      block("Долги и возвраты", [table(["Человек", "#Монет", "#Возвратов", "Последний возврат"], (m.debts || []).map(function (d) {
+        return { cells: [(d.nick || "без ника") + (d.no ? " · " + noFmt(d.no) : ""), num(d.coins), num(d.refunds), d.last ? dTime(d.last) : "—"], open: function () { person(d.id); } };
+      }), { none: "Долгов и возвратов нет." })], "Долги и возвраты — за всё время; остальное — " + perNote() + ".")
+    ]);
+  }
+  var noFmt = function (n) { return "#" + String(n || "").replace(/\B(?=(\d{3})+(?!\d))/g, " "); };
+
+  // ===== Люди =====
+  var PQ = { q: "", all: false, res: null };
+  function renderPeople() {
+    var cur = ST.cur || {}, ov = good(cur.ov), e = good(cur.eng), kids = [];
+    var P0 = good(ST.people);
+    $("sumPeople").textContent = ov ? cnt(ov.users, ["человек", "человека", "человек"]) + "." : "";
+    kids.push(h("div", "g2", [
+      block("Учётные записи по видам", [ov ? table(["Вид", "#Учётных записей"], kinds(ov.accounts, function (n, v) { return [n, num(v)]; })) : line(failText(cur.ov), true)]),
+      block("Кто открывал приложение " + perNote(), [e ? table(["Кто", "#Учётных записей", "#Сеансов"], kinds(e.kinds, function (n, v) { return [n, num(v.people), num(v.sessions)]; })) : line(failText(cur.eng), true)])
+    ]));
+    e && kids.push(block("Пришли или заходили " + perNote(), [table(["Человек", "Пришёл", "Вход", "Телефон", "Выпуск", "#Сеансов", "#Минут", "Вступление", "#Особых мест", "#По медиафайлам", "Последний раз"],
+      (e.real || []).map(function (r) {
+        return { cells: [r.mail || "—", r.created ? dFull(r.created) : "—", r.via || "—", r.phone || "—", r.app || "—", num(r.sessions), num(Math.round((r.seconds || 0) / 60)),
+          r.onboarded ? "пройдено" : "не пройдено", num(r.places), num(r.media), r.last ? dTime(r.last) : "—"], open: r.mail ? function () { person(r.mail); } : null };
+      }), { limit: 10, none: "За период никто не приходил и не заходил." })], "Нажмите на почту, чтобы открыть карточку человека."));
+    // Поиск: ник, номер или почта; флажок — и проверочные учётные записи.
+    var inp = h("input"), chk = h("input"), go = h("button", "qb", "Найти"), lbl = h("label", null, [chk, "Проверочные учётные записи"]), out = h("div");
+    inp.type = "search"; inp.placeholder = "Ник, номер или почта"; inp.value = PQ.q; inp.setAttribute("aria-label", "Ник, номер или почта");
+    chk.type = "checkbox"; chk.checked = PQ.all; go.type = "button";
+    var run = function () {
+      PQ.q = inp.value.trim(); PQ.all = chk.checked;
+      if (!PQ.q && !PQ.all) { PQ.res = null; return list(P0 ? ST.people : null); }
+      put(out, h("p", "wait", "Ищу…"));
+      rpc("stat_people", { p_q: PQ.q, p_all: PQ.all, p_limit: 100 }).then(function (r) { PQ.res = r; list(r); });
+    };
+    go.onclick = run; chk.onchange = run;
+    inp.onkeydown = function (ev) { ev.key === "Enter" && run(); };
+    var list = function (r) {
+      var L = good(r);
+      if (!L) return put(out, line(failText(r || ST.people), true));
+      put(out, table(["Человек", "Последний раз", "Выпуск · телефон", "#Особых мест", "#Стран / городов", "#Минут", "#Монет"], L.map(function (p) {
+        return { cells: [[(p.nick || "без ника") + (p.plus ? " · Tabi Plus" : ""), (p.no ? noFmt(p.no) + " · " : "") + (p.email || "")], p.last ? dTime(p.last) : "не заходил",
+          [p.app ? "выпуск " + p.app : "—", p.model || ""], num(p.places), num(p.countries) + " / " + num(p.cities), num(p.minutes), num(p.coins)], open: function () { person(p.id); } };
+      }), { limit: 15, none: "Никого не нашлось." }));
+    };
+    kids.push(block("Поиск человека", [h("div", "srch", [inp, go, lbl]), out], "Без поиска — настоящие люди, заходившие последними. Нажмите на ник, чтобы открыть карточку человека."));
+    put("secPeople", kids);
+    list(PQ.res || ST.people);
+  }
+  // Карточка человека (stat_user): окно сайта.
+  function person(q) {
+    var d = $("pDlg"), b = $("pBody");
+    put(b, h("p", "wait", "Загружаю карточку…"));
+    d.open || (d.showModal ? d.showModal() : d.setAttribute("open", ""));
+    rpc("stat_user", { p_q: String(q) }).then(function (r) {
+      var c = good(r);
+      if (!c || c.ok === false) return put(b, [h("div", "pc-h", [h("b", null, "Карточка человека")]), line(c && c.ok === false ? "Человек не найден." : failText(r), true)]);
+      var st = c.stats || {};
+      var devs = (c.devices || []).map(function (x) {
+        var set = x.settings ? Object.keys(SET).filter(function (k) { return k !== "maker" && x.settings[k] != null; }).map(function (k) { return SET[k][0] + ": " + (SET[k][1][String(x.settings[k])] || x.settings[k]); }).join("; ") : "";
+        return [[(x.model || "?") + " · Android " + (x.os || "?"), set], x.app ? "выпуск " + x.app : "—", dTime(x.last_seen), x.revoked ? "отключён " + dDay(x.revoked) : "в работе"];
+      });
+      var ses = (c.sessions || []).map(function (s) {
+        var ev = (Array.isArray(s.ev) ? s.ev : []).filter(function (x) { return Array.isArray(x) && x[1] && !/^(kb|kbn|lag|ready|cm:rgn|strings):/.test(String(x[1])) && x[1] !== "open"; }).map(function (x) { return x[1]; }).join(" → ");
+        return [dTime(s.at), [Math.max(1, Math.round((s.sec || 0) / 60)) + " мин. · выпуск " + (s.app || "?"), ev || "—"]];
+      });
+      var SRC = { arrival: "по приезду", photo: "по медиафайлам", manual: "вручную", paid: "за монеты", gift: "подарком" };
+      put(b, [
+        h("div", "pc-h", [h("b", null, c.name || "без ника"), h("span", "s", (c.no ? noFmt(c.no) + " · " : "") + (c.email || ""))]),
+        h("div", "pc-b", [
+          tiles([["Пришёл", dDay(c.created)], ["Последний раз", dTime(st.last_seen)], ["Сеансов", num(st.sessions)], ["Минут", num(Math.round((st.seconds || 0) / 60))], ["Дней", num(st.days)],
+            ["Особых мест", num(c.places)], ["Монет", num(c.coins)], ["Tabi Plus", c.plus && c.plus.until ? "до " + dDay(c.plus.until) : "нет"], ["Роликов", num(c.ads)]]),
+          block("Телефоны", [table(["Телефон", "Выпуск", "Последний раз", "Состояние"], devs, { none: "Телефонов нет." })]),
+          block("Страны · " + num((c.countries || []).length), [table(["Страна", "Как засчитана", "Когда"], (c.countries || []).map(function (x) { return [ccName(x.cc), SRC[x.source] || x.source || "—", x.at ? dDay(x.at) : "—"]; }), { none: "Стран нет." })]),
+          block("Города · " + num((c.cities || []).length), [table(["Город", "Как засчитан", "Когда"], (c.cities || []).map(function (x) { return [(x.name || "#" + x.id) + (x.cc ? " · " + String(x.cc).toUpperCase() : ""), SRC[x.src] || x.src || "—", x.at ? dDay(x.at) : "—"]; }), { none: "Городов нет." })]),
+          block("Последние сеансы", [table(["Когда", "Сеанс"], ses, { none: "Сеансов нет." })]),
+          (c.errors || []).length ? block("Ошибки", [table(["Когда", "Ошибка"], c.errors.map(function (x) { return [dTime(x.at), [String(x.kind || "?") + " · выпуск " + (x.app || "?"), String(x.msg || "")]]; }))]) : null,
+          (c.purchases || []).length ? block("Покупки", [table(["Когда", "Покупка", "Состояние"], c.purchases.map(function (p) { return [dTime(p.at), p.product, PSTATE[p.state] || p.state]; }))]) : null
+        ])
+      ]);
+      var nm = b.querySelector(".pc-h b"); nm && (nm.id = "pName");
+    });
+  }
+
+  // ===== Разделы: плавно открываются и закрываются, открытые запоминаются =====
+  var OPEN = jget("tabiHqOpen", {});
+  [].forEach.call(document.querySelectorAll("details.sec"), function (d) {
+    var k = d.getAttribute("data-k"), sm = d.querySelector("summary"), body = d.querySelector(".sec-b");
+    d.open = k in OPEN ? !!OPEN[k] : d.hasAttribute("data-open");
+    sm.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      var opening = !d.open || !!d._closing;
+      OPEN[k] = opening; ls.set("tabiHqOpen", JSON.stringify(OPEN));
+      d._a && d._a.cancel(); d._a = null; d._closing = false; clearTimeout(d._t);
+      if (opening) {
+        d.open = true;
+        k === "chart" && chartDraw();
+        if (!REDUCE && body.animate) d._a = body.animate([{ height: "0px", opacity: 0 }, { height: body.scrollHeight + "px", opacity: 1 }], { duration: 220, easing: "ease-out" });
+      } else if (!REDUCE && body.animate) {
+        d._closing = true;
+        // Закрытие завершается концом движения, а если вкладка в это время не рисует кадров — через 260 мс.
+        var fin = function () { if (!d._closing) return; d._closing = false; d._a = null; d.open = false; };
+        d._a = body.animate([{ height: body.offsetHeight + "px", opacity: 1 }, { height: "0px", opacity: 0 }], { duration: 180, easing: "ease-in" });
+        d._a.onfinish = fin; d._t = setTimeout(fin, 260);
+      } else d.open = false;
+    });
+  });
+
+  // ===== Тема (как в шапке сайта: тёмная по умолчанию, выбор помнится) =====
+  (function () {
+    var b = $("thm"), r = document.documentElement,
+      SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+      MOON = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+    var paint = function () {
+      var l = r.getAttribute("data-theme") === "light";
+      b.innerHTML = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (l ? SUN : MOON) + "</svg>";
+      var n = l ? "Светлая тема" : "Тёмная тема"; b.setAttribute("aria-label", n); b.title = n;
+    };
+    b.onclick = function () { var l = r.getAttribute("data-theme") !== "light"; l ? r.setAttribute("data-theme", "light") : r.removeAttribute("data-theme"); ls.set("tabiTheme", l ? "light" : "dark"); paint(); };
+    paint();
+  })();
+
+  // Вход или выход в другой вкладке сайта — штаб загружается заново под новый вход.
+  var lastU = ACC.uid();
+  ACC.on(function () { var u = ACC.uid(); if (u === lastU) return; lastU = u; ST.per = {}; ST.data = false; PQ.res = null; load(); });
+  load();
 })();
 </script>
 </body></html>

@@ -266,7 +266,21 @@
     ".tacc.plus .av{background:linear-gradient(135deg,#f6d36b,#d79b20 55%,#f8e3a0);color:#5a3c00;box-shadow:0 0 0 2px #e9b949,0 0 12px rgba(233,185,73,.55)}" +
     ".tacc.plus .av::after{content:'';position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 50%,transparent 60%);animation:taccShine 3.2s ease-in-out infinite}" +
     "@keyframes taccShine{0%,55%{transform:translateX(-60%)}100%{transform:translateX(60%)}}" +
-    "@media (prefers-reduced-motion:reduce){.tacc.plus .av::after{animation:none;opacity:0}}";
+    "@media (prefers-reduced-motion:reduce){.tacc.plus .av::after{animation:none;opacity:0}}" +
+    ".thq{flex:none;display:inline-flex;align-items:center;height:40px;padding:0 14px;border-radius:999px;background:var(--panel,#fff);box-shadow:var(--shadow,0 1px 3px rgba(0,0,0,.12));color:var(--ink,#1b1715);text-decoration:none;font-weight:700;font-size:14px;white-space:nowrap}" +
+    ".thq:hover,.thq[aria-current]{color:var(--accent,#b3321f)}@media (max-width:480px){.thq{height:38px;padding:0 12px}}";
+  // Ссылка «Штаб» перед знаком учётной записи (27.11.2026): только владельцу — по признаку owner сведений учётной записи
+  // (site_me); остальные её никогда не видят. Сами данные штаба сервер отдаёт только владельцу, ссылка — лишь путь к ним.
+  // on: true — показать, false — убрать, null — сведения ещё не пришли, ссылка остаётся как была у той же учётной записи.
+  function hqLink(el, on) {
+    var a = el.previousElementSibling, has = !!(a && a.classList && a.classList.contains("thq"));
+    if (has && (on === false || a._u !== uid())) { a.remove(); has = false; }
+    if (!on || has) return;
+    a = document.createElement("a");
+    a.className = "thq"; a.href = "/hq/"; a.textContent = "Штаб"; a._u = uid();
+    location.pathname.indexOf("/hq/") === 0 && a.setAttribute("aria-current", "page");
+    el.parentNode.insertBefore(a, el);
+  }
   var repaintFn = null;
   function chips() {
     var els = document.querySelectorAll("[data-tabi-acc]");
@@ -277,6 +291,7 @@
         var lang = el.getAttribute("data-lang") || "en";
         el.href = "/account/?lang=" + lang;
         el.className = "tacc" + (S ? "" : " in") + (S && v && v.plus ? " plus" : "");
+        el.parentNode && hqLink(el, S ? (v ? v.owner === true : null) : false);
         el.textContent = "";
         // «Войти» — значок человека и подпись; на самых узких экранах подпись скрыта (site.css), название — у ссылки.
         if (!S) {

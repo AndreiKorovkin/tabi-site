@@ -5,7 +5,7 @@
 <title>Tabi</title>
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="stylesheet" href="/assets/site.css?v=c402b2d950">
-<script src="/assets/account.js?v=07920b68ee"></script>
+<script src="/assets/account.js?v=7587f176fb"></script>
 <script>
 // Тема — до первой отрисовки, чтобы страница не мигала.
 (function () { try { var th = localStorage.getItem("tabiTheme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {} })();
@@ -100,6 +100,8 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
       <div class="ac-av" id="av"></div>
       <div><p class="ac-nick" id="nick"></p><p class="ac-s" id="mailMe"></p><span class="ac-plan" id="plan"></span></div>
     </div>
+    <!-- Штаб — только владельцу (27.11.2026, признак owner сведений site_me); страница штаба — на русском. -->
+    <div class="ac-row" id="hqRow" hidden><a class="ac-btn b2" id="bHq" href="/hq/">Штаб</a></div>
   </section>
   <section class="ac-card" id="vColl" hidden>
     <h2 id="hColl"></h2>
@@ -322,6 +324,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     $("mailMe").textContent = S.mail || "";
     $("plan").className = "ac-plan" + (ME.plus ? " plus" : "");
     $("plan").textContent = ME.plus ? (ME.plus_until && Date.parse(ME.plus_until) > Date.now() ? t("planPlus", { d: day(ME.plus_until) }) : t("planPlusNow")) : t("planFree");
+    $("hqRow").hidden = ME.owner !== true;
     $("nCountries").textContent = num(ME.countries);
     $("nCities").textContent = num(ME.cities);
     $("nPlaces").textContent = num(ME.places);
@@ -351,10 +354,22 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
   }
   ACC.on(function (s) { s ? load(false) : ((ME = null), render()); });
 
+  // ===== Возврат в штаб после входа (27.11.2026) =====
+  // Штаб владельца (/hq/) ведёт на вход сюда адресом ?next=hq. Метка живёт в этой вкладке полчаса и переживает переход к
+  // Google или Facebook и обратно; после входа любым способом страница открывает штаб. Другого адреса возврата нет, и
+  // чужой адрес метка не принимает. Пришёл с меткой уже вошедший — метка снимается: войти ему не нужно.
+  var NEXT_K = "tabiNext";
+  function nextTake() {
+    var n = null;
+    try { n = JSON.parse(sessionStorage.getItem(NEXT_K) || "null"); sessionStorage.removeItem(NEXT_K); } catch (e) {}
+    return !!(n && n.to === "/hq/" && Date.now() - n.t < 1800000);
+  }
+  function signedIn() { nextTake() ? location.replace("/hq/") : load(true); }
+
   // ===== Вход =====
   // Вход через Google — кнопкой Google на месте #bGoogle (account.js, gis).
   var gisOpt = {
-    done: function (s, e) { s ? load(true) : err(e); },
+    done: function (s, e) { s ? signedIn() : err(e); },
     cls: "ac-btn", label: function () { return t("google"); }, back: function () { return BACK + "?lang=" + L; },
     start: function () { err(null); }
   };
@@ -375,7 +390,7 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
     var m = $("mail").value.trim(), c = $("code").value.replace(/\D/g, "");
     if (c.length < 6) return;
     err(null);
-    ACC.verify(m, c).then(function (s) { s ? load(true) : err("eCode"); }).catch(function () { err("eNet"); });
+    ACC.verify(m, c).then(function (s) { s ? signedIn() : err("eCode"); }).catch(function () { err("eNet"); });
   };
   // Выход — с окном подтверждения (21.11.2026, Андрей).
   var dlg = function (id, on) { var d = $(id); on ? (d.showModal ? d.showModal() : d.setAttribute("open", "")) : (d.close ? d.close() : d.removeAttribute("open")); };
@@ -453,12 +468,17 @@ details.lang li button:hover,details.lang li button[aria-current]{background:var
 
   // Возврат из Google переходом (окно не открылось): код в адресе.
   var q = new URLSearchParams(location.search), code = q.get("code");
+  if (q.get("next") === "hq") {
+    if (ACC.get()) nextTake();
+    else try { sessionStorage.setItem(NEXT_K, JSON.stringify({ to: "/hq/", t: Date.now() })); } catch (e) {}
+    code || history.replaceState(null, "", location.pathname + "?lang=" + L + location.hash);
+  }
   // Сервис входа отказал (Facebook не передал почту, человек отменил вход) — адрес без отказа и строка об ошибке.
   if (!code && (q.get("error") || /[#&]error=/.test(location.hash))) { history.replaceState(null, "", location.pathname + "?lang=" + L); setTimeout(function () { err("eOauth"); }, 0); }
   applyTexts();
   if (code && q.get("w") !== "1") {
     history.replaceState(null, "", location.pathname + "?lang=" + L);
-    ACC.exchange(code).then(function (s) { s ? load(true) : err("eCode"); });
+    ACC.exchange(code).then(function (s) { s ? signedIn() : err("eCode"); });
   } else if (!code) load(false);
   // Адрес #delete (подвал сайта, карточка Google Play) открывает удаление сразу.
   DEL.open && setTimeout(function () { renderDel(); $("delete").scrollIntoView({ block: "start" }); }, 60);
