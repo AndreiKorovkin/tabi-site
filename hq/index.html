@@ -241,7 +241,7 @@ dialog.win .pc-b{display:grid;gap:16px}
 // ===== Цели (OKR) — числа задаёт владелец. Страница сама считает прогресс за выбранный период. =====
 var TARGETS = {
   errorsPerDay: 0,          // O1 «Всё работает верно»: ошибок приложения в сутки — не больше
-  mapKeyRefusalsPerDay: 0,  // O1: отказов в ключе карты людям в сутки — не больше
+  mapKeyRefusalsPerDay: 0,  // O1: людей, оставшихся без ключа карты, в сутки — не больше
   dbShareMax: 0.8,          // O1: база занимает меньше этой доли квоты
   newPeoplePerWeek: 20,     // O2 «Люди приходят»: новых людей в неделю — не меньше
   d7Min: 0.2,               // O3 «Люди остаются»: удержание D7 — не ниже
@@ -414,7 +414,7 @@ var TARGETS = {
     ["site", "Сайт", [["site_visitors", "Посетители сайта"], ["site_opens", "Открытия страницы компьютера"], ["site_picks", "Выбор папки"], ["site_scans", "Проверки на сайте"],
       ["site_saves", "Сохранения итога"], ["site_phones", "Заходы с телефона"]]],
     ["money", "Деньги", [["coin_buys", "Покупки монет"], ["plus_buys", "Покупки Tabi Plus"], ["plus_active", "Подписчики Tabi Plus"], ["ads", "Ролики"]]],
-    ["health", "Здоровье", [["errors", "Ошибки приложения"], ["map_key_refusals", "Отказы в ключе карты"], ["map_keys", "Выданные ключи карты"]]],
+    ["health", "Здоровье", [["errors", "Ошибки приложения"], ["map_key_refusals", "Люди без ключа карты"], ["map_keys", "Выданные ключи карты"]]],
     ["ret", "Удержание, доли", [["d1", "Удержание D1", "pct"], ["d7", "Удержание D7", "pct"], ["d30", "Удержание D30", "pct"]]],
     ["srv", "Сервер", [["db_mb", "Размер базы, МБ", "mb"]]]
   ];
@@ -645,9 +645,9 @@ var TARGETS = {
         { l: "Ошибки за сутки", v: num(errY), k: "errors", st: errY <= TARGETS.errorsPerDay && errT <= TARGETS.errorsPerDay ? ["good", "в норме"] : ["crit", "есть ошибки"],
           s: "сегодня — " + num(errT) + ", за период — " + num(sum("errors", a, b)),
           def: "Ошибки приложения у настоящих людей и до входа в учётную запись за прошедшие полные сутки по всемирному времени." },
-        { l: "Отказы в ключе карты", v: num(refP), k: "map_key_refusals", st: refP <= TARGETS.mapKeyRefusalsPerDay ? ["good", "в норме"] : ["crit", "есть отказы"],
+        { l: "Люди без ключа карты", v: num(refP), k: "map_key_refusals", st: refP <= TARGETS.mapKeyRefusalsPerDay ? ["good", "в норме"] : ["crit", "есть люди без ключа"],
           s: "выдано ключей — " + num(sum("map_keys", a, b)),
-          def: "Сколько раз за период сервер отказал настоящим людям в ключе карты. Без ключа у человека пусты карта, коллекция и карточки мест." },
+          def: "Сколько настоящих людей за период получили отказ в ключе карты и не получили ключ в следующие 10 минут. Отказ, за которым через несколько секунд выдан ключ, — задуманный повтор и сюда не входит. Без ключа у человека пусты карта, коллекция и карточки мест." },
         { l: "Размер базы", v: ok_(db) ? num1(db) + " МБ" : "—", k: "db_mb", st: dbState(db), s: ok_(db) ? pct(db / DB_QUOTA) + " из " + num(DB_QUOTA) + " МБ" : "",
           def: "Размер базы по счёту Supabase. Квота — " + num(DB_QUOTA) + " МБ, рабочий предел записи — " + num(DB_WORK) + " МБ; цель — меньше " + pct(TARGETS.dbShareMax) + " квоты." },
         { l: "Сервер отвечает", v: !calls.length ? "—" : bad.length ? "С ошибками" : "Да",
@@ -824,7 +824,7 @@ var TARGETS = {
     return [
       { id: "O1", t: "Всё работает верно", kr: [
         krDays("Не больше " + num(TARGETS.errorsPerDay) + " ошибок приложения в сутки", "errors", TARGETS.errorsPerDay, R),
-        krDays("Не больше " + num(TARGETS.mapKeyRefusalsPerDay) + " отказов в ключе карты людям в сутки", "map_key_refusals", TARGETS.mapKeyRefusalsPerDay, R),
+        krDays("Не больше " + num(TARGETS.mapKeyRefusalsPerDay) + " людей без ключа карты в сутки", "map_key_refusals", TARGETS.mapKeyRefusalsPerDay, R),
         { n: "База занимает меньше " + pct(TARGETS.dbShareMax) + " квоты", p: sh == null ? null : sh < TARGETS.dbShareMax ? 1 : TARGETS.dbShareMax / sh,
           t: sh == null ? "Размер базы не известен." : "Сейчас — " + num1(db) + " МБ, " + pct(sh) + " квоты в " + num(DB_QUOTA) + " МБ. Цель — меньше " + num(Math.round(DB_QUOTA * TARGETS.dbShareMax)) + " МБ." } ] },
       { id: "O2", t: "Люди приходят", kr: [
@@ -869,7 +869,7 @@ var TARGETS = {
       ["Люди", "Сколько людей пользуются Tabi и возвращаются.", [["Людей всего", num(ov.users)], ["Заходили за 7 дней", num(ov.active7)], ["Заходили за 30 дней", num(ov.active30)],
         ["Удержание D7 по периоду", ret7 && ret7.of ? pct(ret7.back / ret7.of) + " из " + num(ret7.of) : "—"]]],
       ["Процессы", "Насколько надёжно работают приложение и сервер.", [["Ошибок за период", ST.ser ? num(sum("errors", R.a, R.b)) : "—"],
-        ["Отказов в ключе карты за период", ST.ser ? num(sum("map_key_refusals", R.a, R.b)) : "—"], ["Запуск приложения, медиана", ok_(eng.ready_ms) ? num(eng.ready_ms) + " мс" : "—"],
+        ["Людей без ключа карты за период", ST.ser ? num(sum("map_key_refusals", R.a, R.b)) : "—"], ["Запуск приложения, медиана", ok_(eng.ready_ms) ? num(eng.ready_ms) + " мс" : "—"],
         ["База", ok_(db) ? num1(db) + " МБ · " + pct(db / DB_QUOTA) : "—"]]],
       ["Развитие", "Как новые выпуски доходят до людей.", [["Выпусков на телефонах", num(apps.length)], ["Самый новый у людей", newest ? newest + (since ? " · с " + dFull(since) : "") : "—"],
         ["Телефонов на нём", newest && phones ? num(ov.app[newest]) + " из " + num(phones) + " · " + pct(ov.app[newest] / phones) : "—"], ["Обновлений за период", num(upd)]]]
