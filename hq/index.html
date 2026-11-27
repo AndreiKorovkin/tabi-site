@@ -925,7 +925,7 @@ var TARGETS = {
   // ===== Приложение =====
   var KIND = { person: "Люди", owner: "Андрей (три учётные записи)", emulator: "Эмуляторы и нагрузочные проверки Claude",
     google: "Проверка Google: проверяющие и устройства проверки сборок", tester: "Тестировщики Fiverr (заблокированы 06.11.2026)",
-    guest: "Прежние гостевые записи", gone: "Удалённые учётные записи" };
+    guest: "Безымянные записи: до регистрации (со сборки 224) и прежние гостевые", gone: "Удалённые учётные записи" };
   var KIND_ORDER = ["person", "owner", "emulator", "google", "tester", "guest", "gone"];
   var kinds = function (o, f) { return KIND_ORDER.filter(function (k) { return o && o[k]; }).concat(Object.keys(o || {}).filter(function (k) { return KIND_ORDER.indexOf(k) < 0; })).map(function (k) { return f(KIND[k] || k, o[k]); }); };
   var LEN = { a: "Меньше 30 секунд", b: "От 30 секунд до 2 минут", c: "От 2 до 10 минут", d: "От 10 до 30 минут", e: "Полчаса и дольше" };
