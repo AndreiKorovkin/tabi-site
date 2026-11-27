@@ -409,8 +409,9 @@ var TARGETS = {
   var SERIES = [
     ["app", "Приложение", [["new_people", "Новые люди"], ["active_people", "Активные люди"], ["sessions", "Сеансы"], ["minutes", "Минуты в приложении"],
       ["minutes_per_person", "Минут на человека"], ["places", "Засчитанные места"], ["countries", "Засчитанные страны"]]],
-    ["fn", "Воронка до входа", [["fn_first_open", "Установки"], ["fn_open", "Открыли до входа"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"],
-      ["fn_auth_error", "Ошибки входа"], ["fn_signed", "Вошли"]]],
+    ["fn", "Воронка до входа", [["fn_first_open", "Установки"], ["fn_open", "Открыли до входа"], ["fn_photos", "Экран медиафайлов"],
+      ["fn_scan_done", "Проверили медиафайлы до входа"], ["fn_scan_found", "Проверка нашла места"], ["fn_scan_skip", "Пропустили проверку"],
+      ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"], ["fn_auth_error", "Ошибки входа"], ["fn_signed", "Вошли"]]],
     ["site", "Сайт", [["site_visitors", "Посетители сайта"], ["site_opens", "Открытия страницы компьютера"], ["site_picks", "Выбор папки"], ["site_scans", "Проверки на сайте"],
       ["site_saves", "Сохранения итога"], ["site_phones", "Заходы с телефона"]]],
     ["money", "Деньги", [["coin_buys", "Покупки монет"], ["plus_buys", "Покупки Tabi Plus"], ["plus_active", "Подписчики Tabi Plus"], ["ads", "Ролики"]]],
@@ -570,7 +571,9 @@ var TARGETS = {
   document.addEventListener("keydown", function (e) { e.key === "Escape" && closeKpis(); });
   var NO218 = "Данные появятся со сборки 218.";
   // Воронка до входа: суммы за период по дням (разные установки за сутки), доля каждого шага от предыдущего.
-  var FUN = [["fn_first_open", "Установки"], ["fn_open", "Открыли"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"], ["fn_signed", "Вошли"]];
+  // С 27.11.2026 (сборка 224) проверка медиафайлов идёт до учётной записи — безымянно; её шаги — в воронке.
+  var FUN = [["fn_first_open", "Установки"], ["fn_open", "Открыли"], ["fn_photos", "Экран медиафайлов"], ["fn_scan_done", "Проверили медиафайлы"],
+    ["fn_scan_found", "Проверка нашла места"], ["fn_account", "Экран входа"], ["fn_auth_tap", "Нажали вход"], ["fn_signed", "Вошли"]];
   function funnel(R) {
     var ever = FUN.some(function (f) { return anyOf(f[0]); }) || anyOf("fn_auth_error");
     return { ever: ever, steps: FUN.map(function (f) { return { k: f[0], l: f[1], v: sum(f[0], R.a, R.b) }; }), err: sum("fn_auth_error", R.a, R.b) };
