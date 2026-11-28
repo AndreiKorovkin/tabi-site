@@ -285,9 +285,9 @@ var TARGETS = {
   var dShort = function (s) { var p = ymd(s); return p ? p[2] + " " + MS[p[1]] : ""; };
   var dTime = function (s) {
     var d = s ? new Date(s) : null;
-    return d && isFinite(d) ? d.toLocaleString("ru-RU", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+    return d && isFinite(d) ? d.toLocaleString("ru-RU", { timeZone: "Europe/Prague", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
   };
-  var dDay = function (s) { var d = s ? new Date(s) : null; return d && isFinite(d) ? d.toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" }) : "—"; };
+  var dDay = function (s) { var d = s ? new Date(s) : null; return d && isFinite(d) ? d.toLocaleDateString("ru-RU", { timeZone: "Europe/Prague", day: "numeric", month: "short", year: "numeric" }) : "—"; };
   var REG = null;
   try { REG = new Intl.DisplayNames(["ru"], { type: "region" }); } catch (e) {}
   var ccName = function (cc) { cc = String(cc || "").toUpperCase(); var n = ""; try { n = REG && /^[A-Z]{2}$/.test(cc) ? REG.of(cc) : ""; } catch (e) {} return n && n !== cc ? cc + " · " + n : cc || "—"; };
@@ -417,7 +417,10 @@ var TARGETS = {
     ["money", "Деньги", [["coin_buys", "Покупки монет"], ["plus_buys", "Покупки Tabi Plus"], ["plus_active", "Подписчики Tabi Plus"], ["ads", "Ролики"]]],
     ["health", "Здоровье", [["errors", "Ошибки приложения"], ["map_key_refusals", "Люди без ключа карты"], ["map_keys", "Выданные ключи карты"]]],
     ["ret", "Удержание, доли", [["d1", "Удержание D1", "pct"], ["d7", "Удержание D7", "pct"], ["d30", "Удержание D30", "pct"]]],
-    ["srv", "Сервер", [["db_mb", "Размер базы, МБ", "mb"]]]
+    ["srv", "Сервер", [["db_mb", "Размер базы, МБ", "mb"]]],
+    ["gp", "Google Play", [["gp_installs", "Установки по Google Play"], ["gp_uninstalls", "Удаления по Google Play"],
+      ["gp_device_installs", "Установки на устройства по Google Play"], ["gp_active", "Устройства с Tabi по Google Play"],
+      ["gp_visitors", "Посетители страницы в Google Play"], ["gp_acquisitions", "Установки со страницы в Google Play"]]]
   ];
   var SM = {};
   SERIES.forEach(function (g) { g[2].forEach(function (s) { SM[s[0]] = { k: s[0], n: s[1], u: s[2] || "n", g: g[0] }; }); });
@@ -510,7 +513,7 @@ var TARGETS = {
   function render() { periodButtons(); renderTop(); renderSections(); }
   function renderTop() {
     var R = range();
-    $("meta").textContent = (ST.ser ? "Период: с " + dFull(R.days[R.a]) + " по " + dFull(R.days[R.b]) + "; сутки — по всемирному времени. " : "") +
+    $("meta").textContent = (ST.ser ? "Период: с " + dFull(R.days[R.a]) + " по " + dFull(R.days[R.b]) + "; сутки — по пражскому времени, числа Google Play — по суткам Google (тихоокеанское время). " : "") +
       "Все числа — только настоящие люди: учётные записи владельца, эмуляторы, проверка Google и тестировщики считаются отдельно.";
     $("at").textContent = ST.at ? "Обновлено в " + ST.at.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" }) : "";
     $("serErr").hidden = !!ST.ser;
@@ -599,6 +602,23 @@ var TARGETS = {
     return l ? l.v : null;
   }
   function dbState(db) { var sh = db / DB_QUOTA; return !ok_(db) ? ["", "нет данных"] : sh < TARGETS.dbShareMax ? ["good", "в норме"] : db < DB_WORK ? ["warn", "выше цели"] : ["crit", "у предела"]; }
+  // Люди без ключа карты за период — разные люди: сервер отдаёт пары [день, обезличенная метка человека].
+  function nokeyPeople(R) {
+    var from = R.days[R.a], to = R.days[R.b], seen = {};
+    ((ST.ser && ST.ser.nokey) || []).forEach(function (x) { if (x[0] >= from && x[0] <= to) seen[x[1]] = 1; });
+    return Object.keys(seen).length;
+  }
+  // Установки по Google Play: сумма ежедневных отчётов Google за период и три страны с наибольшим числом установок.
+  // Сутки Google — тихоокеанские, отчёт приходит с задержкой около двух суток.
+  function gpCard(R) {
+    var has = V("gp_installs").some(function (x) { return x != null; }), from = R.days[R.a], to = R.days[R.b], cc = {};
+    ((ST.ser && ST.ser.gp_cc) || []).forEach(function (x) { if (x[0] >= from && x[0] <= to) cc[x[1]] = (cc[x[1]] || 0) + (+x[2] || 0); });
+    var top = Object.keys(cc).sort(function (x, y) { return cc[y] - cc[x]; }).slice(0, 3).map(function (k) { return ccName(k).replace(/^[A-Z]{2} · /, "") + " — " + num(cc[k]); });
+    var l = has ? lastOf("gp_installs", R.a, R.b) : null;
+    return { l: "Установки по Google Play", v: has ? num(sum("gp_installs", R.a, R.b)) : "—", k: has ? "gp_installs" : null,
+      s: !has ? "Отчёты Google ещё не пришли." : (top.length ? top.join(", ") : "по странам — нет данных") + (l ? "; последний день отчёта — " + dShort(R.days[l.i]) : ""),
+      def: "Установки Tabi за период по ежедневным отчётам Google Play: столбец «Daily User Installs», то есть новые установки учётными записями Google. Google считает сутки по тихоокеанскому времени и выкладывает отчёт с задержкой около двух суток, поэтому последние дни периода могут быть пусты. Сюда входят и проверочные устройства Google." };
+  }
   function renderKpis(R) {
     KID = 0;
     if (!ST.ser) return put("kpis", []);
@@ -611,7 +631,7 @@ var TARGETS = {
         s: (l ? "за " + dShort(R.days[l.i]) : "за период нет посчитанных дней") + (c && c.of ? "; по периоду — " + pct(c.back / c.of) + " из " + num(c.of) : ""),
         def: "Доля людей, впервые открывших приложение за " + days + " до дня, которые открыли его в этот день. Карточка показывает последний посчитанный день периода, строка ниже — итог по всем, кто пришёл за период." };
     };
-    var act7 = sum("active_people", a, fb), errY = b >= 1 ? +V("errors")[b - 1] || 0 : 0, errT = +V("errors")[b] || 0, refP = sum("map_key_refusals", a, b);
+    var act7 = sum("active_people", a, fb), errY = b >= 1 ? +V("errors")[b - 1] || 0 : 0, errT = +V("errors")[b] || 0, refP = nokeyPeople(R);
     // Сервер не ответил или ответил сбоем — ошибка; отказ проверки версии или устаревший вход — ответ, но не данные.
     var calls = Object.keys(TIMES).map(function (k) { return TIMES[k]; }), bad = calls.filter(function (x) { return x.kind === "net" || x.kind === "srv"; }),
       refused = calls.filter(function (x) { return x.kind === "ver" || x.kind === "auth"; }),
@@ -622,6 +642,7 @@ var TARGETS = {
           def: "Сумма за период: сколько разных посетителей было на странице «Медиафайлы с компьютера» в каждые сутки (по отпечатку адреса). Человек, пришедший в разные дни, учтён в каждом из них." },
         { l: "Проверки на сайте", v: num(sum("site_scans", a, b)), k: "site_scans", s: "сохранили итог — " + num(sum("site_saves", a, b)),
           def: "Сколько раз страница «Медиафайлы с компьютера» проверила выбранную папку с медиафайлами за период." },
+        gpCard(R),
         { l: "Установки", v: F.ever ? num(fo) : "—", k: F.ever ? "fn_first_open" : null, s: F.ever ? "вошли — " + num(sg) : NO218,
           def: "Первые открытия приложения после установки за период. Приложение отмечает их без учётной записи, начиная со сборки 218." },
         { l: "Новые люди в приложении", v: num(sum("new_people", a, b)), k: "new_people", s: "в среднем в неделю — " + num1(sum("new_people", a, b) / R.n * 7),
@@ -654,10 +675,10 @@ var TARGETS = {
       ["Здоровье", [
         { l: "Ошибки за сутки", v: num(errY), k: "errors", st: errY <= TARGETS.errorsPerDay && errT <= TARGETS.errorsPerDay ? ["good", "в норме"] : ["crit", "есть ошибки"],
           s: "сегодня — " + num(errT) + ", за период — " + num(sum("errors", a, b)),
-          def: "Ошибки приложения у настоящих людей и до входа в учётную запись за прошедшие полные сутки по всемирному времени." },
+          def: "Ошибки приложения у настоящих людей и до входа в учётную запись за прошедшие полные сутки по пражскому времени." },
         { l: "Люди без ключа карты", v: num(refP), k: "map_key_refusals", st: refP <= TARGETS.mapKeyRefusalsPerDay ? ["good", "в норме"] : ["crit", "есть люди без ключа"],
           s: "выдано ключей — " + num(sum("map_keys", a, b)),
-          def: "Сколько настоящих людей за период получили отказ в ключе карты и не получили ключ в следующие 10 минут. Отказ, за которым через несколько секунд выдан ключ, — задуманный повтор и сюда не входит. Без ключа у человека пусты карта, коллекция и карточки мест." },
+          def: "Сколько разных настоящих людей за период открывали приложение на телефоне, который к концу сеанса и ещё через 10 минут не получил ключа карты. Без ключа у человека пусты карта, коллекция и карточки мест. Дни до начала хранения сеансов (21 сутки) считаются по журналу ключа: отказ, за которым ключ не выдан в следующие 10 минут." },
         { l: "Размер базы", v: ok_(db) ? num1(db) + " МБ" : "—", k: "db_mb", st: dbState(db), s: ok_(db) ? pct(db / DB_QUOTA) + " из " + num(DB_QUOTA) + " МБ" : "",
           def: "Размер базы по счёту Supabase. Квота — " + num(DB_QUOTA) + " МБ, рабочий предел записи — " + num(DB_WORK) + " МБ; цель — меньше " + pct(TARGETS.dbShareMax) + " квоты." },
         { l: "Сервер отвечает", v: !calls.length ? "—" : bad.length ? "С ошибками" : "Да",
@@ -879,7 +900,7 @@ var TARGETS = {
       ["Люди", "Сколько людей пользуются Tabi и возвращаются.", [["Людей всего", num(ov.users)], ["Заходили за 7 дней", num(ov.active7)], ["Заходили за 30 дней", num(ov.active30)],
         ["Удержание D7 по периоду", ret7 && ret7.of ? pct(ret7.back / ret7.of) + " из " + num(ret7.of) : "—"]]],
       ["Процессы", "Насколько надёжно работают приложение и сервер.", [["Ошибок за период", ST.ser ? num(sum("errors", R.a, R.b)) : "—"],
-        ["Людей без ключа карты за период", ST.ser ? num(sum("map_key_refusals", R.a, R.b)) : "—"], ["Запуск приложения, медиана", ok_(eng.ready_ms) ? num(eng.ready_ms) + " мс" : "—"],
+        ["Людей без ключа карты за период", ST.ser ? num(nokeyPeople(R)) : "—"], ["Запуск приложения, медиана", ok_(eng.ready_ms) ? num(eng.ready_ms) + " мс" : "—"],
         ["База", ok_(db) ? num1(db) + " МБ · " + pct(db / DB_QUOTA) : "—"]]],
       ["Развитие", "Как новые выпуски доходят до людей.", [["Выпусков на телефонах", num(apps.length)], ["Самый новый у людей", newest ? newest + (since ? " · с " + dFull(since) : "") : "—"],
         ["Телефонов на нём", newest && phones ? num(ov.app[newest]) + " из " + num(phones) + " · " + pct(ov.app[newest] / phones) : "—"], ["Обновлений за период", num(upd)]]]
@@ -918,7 +939,7 @@ var TARGETS = {
         block("Системы и браузеры", [table(["Система", "#Событий"], topKV(s.os, 0, function (k) { return k === "?" ? "не известна" : k; }))])
       ]),
       block("По дням", [table(["День", "#Проверок", "#Сохранений", "#С телефона"], (s.days || []).slice().reverse().map(function (d) { return [dFull(d.d), num(d.scans), num(d.saved), num(d.phones)]; }))],
-        "Дни здесь — по пражскому времени; на общем графике — по всемирному.")
+        "Дни здесь и на общем графике — по пражскому времени.")
     ]);
   }
 
